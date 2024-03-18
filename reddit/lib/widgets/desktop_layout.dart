@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
+import 'package:reddit/widgets/end_drawer.dart';
 
 class DesktopHomePage extends StatefulWidget {
   final int indexOfPage;
@@ -17,8 +18,8 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawerScrimColor: Colors.white,
         appBar: DesktopAppBar(logoTapped: logoTapped,),
+        endDrawer: const EndDrawerReddit(),
         body: Row(
           children: [
             DrawerReddit(
