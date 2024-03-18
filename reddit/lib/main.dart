@@ -3,9 +3,9 @@ import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 
-import 'package:reddit/widgets/Listing.dart';
-import 'package:get/get.dart';
-import 'package:reddit/Pages/Home_Page.dart';
+// import 'package:reddit/widgets/Listing.dart';
+// import 'package:get/get.dart';
+// import 'package:reddit/Pages/Home_Page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,14 +29,14 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green,
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.black,
-            background: Color.fromARGB(255, 255, 255, 255)),
+            background:const  Color.fromARGB(255, 255, 255, 255)),
         fontFamily: 'Georgia',
       ),
       home: const ResponsiveLayout(
-        mobileHomePage: MobileLayout(
+        mobileLayout: MobileLayout(
           mobilePageMode: 0,
         ),
-        desktopHomePage: DesktopHomePage(
+        desktopLayout: DesktopHomePage(
           indexOfPage: 0,
         ),
       ),

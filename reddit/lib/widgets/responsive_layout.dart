@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ResponsiveLayout extends StatelessWidget {
-  final Widget mobileHomePage;
-  final Widget desktopHomePage;
+  final Widget mobileLayout;
+  final Widget desktopLayout;
 
   const ResponsiveLayout(
-      {super.key, required this.mobileHomePage, required this.desktopHomePage});
+      {super.key, required this.mobileLayout, required this.desktopLayout});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       if (constraints.maxWidth < 700) {
-        return mobileHomePage;
+        return mobileLayout;
       } else {
-        return desktopHomePage;
+        return desktopLayout;
       }
     });
   }

@@ -24,150 +24,158 @@ class _DrawerRedditState extends State<DrawerReddit> {
   var userModList = [];
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 15.0),
-      child: Drawer(
-          elevation: 0,
-          width: 220,
-          backgroundColor: Colors.white,
+    return Drawer(
+        elevation: 0,
+        width: 220,
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15.0 , top: 20),
           child: Column(
             children: [
               widget.inHome
-                  ? ListTile(
-                      leading: Icon(
-                          widget.indexOfPage == 0
-                              ? Icons.home_filled
-                              : Icons.home_outlined,
-                          color: Colors.black),
-                      title: const Text("Home"),
-                      onTap: () {
-                        if(widget.indexOfPage == 0)
-                        {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 0,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 0,)),
-                        ));
-                        }
-                        else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 0,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 0,)),
-                        ));
-
-                        }
-                      },
-                    )
+                  ? Flexible(
+                    child: ListTile(
+                        leading: Icon(
+                            widget.indexOfPage == 0
+                                ? Icons.home_filled
+                                : Icons.home_outlined,
+                            color: Colors.black),
+                        title: const Text("Home"),
+                        onTap: () {
+                          if(widget.indexOfPage == 0)
+                          {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 0,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 0,)),
+                          ));
+                          }
+                          else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 0,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 0,)),
+                          ));
+                                  
+                          }
+                        },
+                      ),
+                  )
                   : const SizedBox(
                       width: 0,
                       height: 0,
                     ),
               widget.inHome
-                  ? ListTile(
-                      leading: Icon(
-                          widget.indexOfPage == 1
-                              ? CupertinoIcons.arrow_up_right_circle_fill
-                              : CupertinoIcons.arrow_up_right_circle,
-                          color: Colors.black),
-                      title: const Text("Popular"),
-                      onTap: () {
-                        if(widget.indexOfPage == 1)
-                        {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 1,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 1,)),
-                        ));
-                        }
-                        else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 1,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 1,)),
-                        ));
-
-                        }
-                      },
-                    )
+                  ? Flexible(
+                    child: ListTile(
+                        leading: Icon(
+                            widget.indexOfPage == 1
+                                ? CupertinoIcons.arrow_up_right_circle_fill
+                                : CupertinoIcons.arrow_up_right_circle,
+                            color: Colors.black),
+                        title: const Text("Popular"),
+                        onTap: () {
+                          if(widget.indexOfPage == 1)
+                          {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 1,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
+                          ));
+                          }
+                          else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 1,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
+                          ));
+                                  
+                          }
+                        },
+                      ),
+                  )
                   : const SizedBox(
                       width: 0,
                       height: 0,
                     ),
               widget.inHome
-                  ? ListTile(
-                      leading: Icon(
-                          widget.indexOfPage == 2
-                              ? CupertinoIcons.graph_circle_fill
-                              : CupertinoIcons.graph_circle,
-                          color: Colors.black),
-                      title: const Text("All"),
-                      onTap: () {
-                        if(widget.indexOfPage == 2)
-                        {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 2,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 2,)),
-                        ));
-                        }
-                        else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 2,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 2,)),
-                        ));
-
-                        }
-                      },
-                    )
+                  ? Flexible(
+                    child: ListTile(
+                        leading: Icon(
+                            widget.indexOfPage == 2
+                                ? CupertinoIcons.graph_circle_fill
+                                : CupertinoIcons.graph_circle,
+                            color: Colors.black),
+                        title: const Text("All"),
+                        onTap: () {
+                          if(widget.indexOfPage == 2)
+                          {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 2,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 2,)),
+                          ));
+                          }
+                          else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 2,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 2,)),
+                          ));
+                                  
+                          }
+                        },
+                      ),
+                  )
                   : const SizedBox(
                       width: 0,
                       height: 0,
                     ),
               widget.inHome
-                  ? ListTile(
-                      leading: Icon(
-                          widget.indexOfPage == 3
-                              ? Icons.watch_later
-                              : Icons.watch_later_outlined,
-                          color: Colors.black),
-                      title: const Text("Latest"),
-                      onTap: () {
-                        if(widget.indexOfPage == 3)
-                        {
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 3,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 3,)),
-                        ));
-                        }
-                        else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ResponsiveLayout(
-                              mobileHomePage: MobileLayout(
-                                mobilePageMode: 3,
-                              ),
-                              desktopHomePage: DesktopHomePage(indexOfPage: 3,)),
-                        ));
-
-                        }
-                      },
-                    )
+                  ? Flexible(
+                    child: ListTile(
+                        leading: Icon(
+                            widget.indexOfPage == 3
+                                ? Icons.watch_later
+                                : Icons.watch_later_outlined,
+                            color: Colors.black),
+                        title: const Text("Latest"),
+                        onTap: () {
+                          if(widget.indexOfPage == 3)
+                          {
+                            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 3,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 3,)),
+                          ));
+                          }
+                          else {
+                            Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 3,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 3,)),
+                          ));
+                                  
+                          }
+                        },
+                      ),
+                  )
                   : const SizedBox(
                       width: 0,
                       height: 0,
@@ -178,12 +186,14 @@ class _DrawerRedditState extends State<DrawerReddit> {
                 indent: 30,
                 endIndent: 30,
               ),
-              ListTile(
-                leading: const Icon(Icons.add, color: Colors.black),
-                title: const Text("Create Communities"),
-                onTap: () {
-                  //navigate to Create Community Page
-                },
+              Flexible(
+                child: ListTile(
+                  leading: const Icon(Icons.add, color: Colors.black),
+                  title: const Text("Create Communities"),
+                  onTap: () {
+                    //navigate to Create Community Page
+                  },
+                ),
               ),
               DropdownButton(
                 isExpanded: true,
@@ -205,28 +215,30 @@ class _DrawerRedditState extends State<DrawerReddit> {
                 icon: const Icon(Icons.keyboard_arrow_down_rounded),
               ),
               userMod
-                  ? DropdownButton(
-                      isExpanded: true,
-                      padding: const EdgeInsets.all(8.0),
-                      underline: const SizedBox(),
-                      hint: const Text(
-                        "Moderations",
-                        textAlign: TextAlign.justify,
+                  ? Flexible(
+                    child: DropdownButton(
+                        isExpanded: true,
+                        padding: const EdgeInsets.all(8.0),
+                        underline: const SizedBox(),
+                        hint: const Text(
+                          "Moderations",
+                          textAlign: TextAlign.justify,
+                        ),
+                        items: userModList
+                            .map((modCommunity) => DropdownMenuItem<String>(
+                                value: modCommunity,
+                                onTap: () {
+                                  //navigate to community
+                                },
+                                child: Text(modCommunity)))
+                            .toList(),
+                        onChanged: (test) {}, //to be changedd
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
                       ),
-                      items: userModList
-                          .map((modCommunity) => DropdownMenuItem<String>(
-                              value: modCommunity,
-                              onTap: () {
-                                //navigate to community
-                              },
-                              child: Text(modCommunity)))
-                          .toList(),
-                      onChanged: (test) {}, //to be changedd
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                    )
+                  )
                   : const SizedBox()
             ],
-          )),
-    );
+          ),
+        ));
   }
 }

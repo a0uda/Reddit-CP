@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:reddit/widgets/reportoptions.dart';
 
 class Options extends StatefulWidget {
