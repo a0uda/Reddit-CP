@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Hot_Listing.dart';
 import 'package:reddit/widgets/Top_Listing.dart';
 import 'package:reddit/widgets/Best_Listing.dart';

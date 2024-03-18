@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Report.dart';
 import 'package:reddit/widgets/Video_player.dart';
 
