@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
+import 'package:reddit/Pages/sign-up.dart';
+import 'package:reddit/Pages/forgot-password.dart';
+import 'package:reddit/Pages/forgot-username.dart';
+import 'package:reddit/Pages/login.dart';
 
 // import 'package:reddit/widgets/Listing.dart';
 // import 'package:get/get.dart';
@@ -29,7 +33,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.green,
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.black,
-            background:const  Color.fromARGB(255, 255, 255, 255)),
+            background: const Color.fromARGB(255, 255, 255, 255)),
         fontFamily: 'Georgia',
       ),
       home: const ResponsiveLayout(
