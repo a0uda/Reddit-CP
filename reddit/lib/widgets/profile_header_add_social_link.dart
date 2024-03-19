@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'add_social_link_button.dart';
-import 'package:social_media_flutter/widgets/icons.dart';
 import 'package:social_media_flutter/widgets/text.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
@@ -44,49 +40,48 @@ class _ProfileHeaderAddSocialLinkState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: socialLinks?.map((linkData) {
-                  return TextButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(99, 105, 105, 105)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SocialWidget(
-                            placeholderText: linkData['placeholder'] ?? '',
-                            iconData: linkData['icon'] ?? Icons.link,
-                            link: linkData['link'] ?? '',
-                            iconColor: Color(int.parse(
-                                '0xFF${(linkData['iconColor'] as String).substring(1)}')),
-                            iconSize: 15,
-                            placeholderStyle: TextStyle(
-                                color: Color.fromARGB(255, 212, 211, 211),
-                                fontSize: 12)),
-                      ],
-                    ),
-                  );
-                }).toList() ??
-                [],
+            children: [
+              ...(socialLinks?.map((linkData) {
+                    return TextButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Color.fromARGB(99, 105, 105, 105)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SocialWidget(
+                              placeholderText: linkData['placeholder'] ?? '',
+                              iconData: linkData['icon'] ?? Icons.link,
+                              link: linkData['link'] ?? '',
+                              iconColor: Color(int.parse(
+                                  '0xFF${(linkData['iconColor'] as String).substring(1)}')),
+                              iconSize: 15,
+                              placeholderStyle: TextStyle(
+                                  color: Color.fromARGB(255, 212, 211, 211),
+                                  fontSize: 12)),
+                        ],
+                      ),
+                    );
+                  }).toList() ??
+                  []),
+              if (userType == 'me' && showAddSocialLinkButton)
+                AddSocialLinkButton(onDataReceived: (result) {
+                  setState(() {
+                    socialLinks = (result ?? '') as List?;
+                    updateAddSocialLinkButtonVisibility();
+                  });
+                }),
+            ],
           ),
-          // Add Social Link Button
-          if (userType == 'me' &&
-              showAddSocialLinkButton != null &&
-              showAddSocialLinkButton)
-            AddSocialLinkButton(onDataReceived: (result) {
-              setState(() {
-                socialLinks = (result ?? '') as List?;
-                updateAddSocialLinkButtonVisibility();
-              });
-            }),
         ],
       ),
     );

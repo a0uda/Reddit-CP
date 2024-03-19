@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_media_flutter/widgets/icons.dart';
 import '../test_files/test_arrays.dart';
@@ -22,60 +23,71 @@ class AddSocialLinkButton extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color.fromARGB(220, 215, 213, 213),
-                              width: 0.5,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.3,
+                  maxHeight: MediaQuery.of(context).size.height * 0.8,
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 15),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Color.fromARGB(220, 215, 213, 213),
+                                width: 0.5,
+                              ),
                             ),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(Icons.close),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 90),
-                              child: Text('Add Social Link',
-                                  style: TextStyle(
+                          child: Row(
+                            children: <Widget>[
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                icon: Icon(Icons.close),
+                              ),
+                              Expanded(
+                                // Wrap the text in an Expanded widget
+                                child: Center(
+                                  // Center the text within the Expanded widget
+                                  child: Text(
+                                    'Add Social Link',
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 15)),
-                            ),
-                          ],
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: socialMediaButtons.map((socialMediaButton) {
-                            return IconButtonWithText(
-                              text: socialMediaButton['name'].toString(),
-                              icon: socialMediaButton['icon'] as IconData,
-                              iconColor: Color(int.parse(
-                                  '0xFF${(socialMediaButton['color'] as String).substring(1)}')),
-                              onDataReceived: onDataReceived,
-                            );
-                          }).toList(),
-                        ),
-                      ],
-                    ),
-                  ],
+                      Column(
+                        children: <Widget>[
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children:
+                                socialMediaButtons.map((socialMediaButton) {
+                              return IconButtonWithText(
+                                text: socialMediaButton['name'].toString(),
+                                icon: socialMediaButton['icon'] as IconData,
+                                iconColor: Color(int.parse(
+                                    '0xFF${(socialMediaButton['color'] as String).substring(1)}')),
+                                onDataReceived: onDataReceived,
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -120,31 +132,30 @@ class IconButtonWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: ()async {
+      onPressed: () async {
         Navigator.pop(context);
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => 
-            AddSocialLinkForm(
+            builder: (context) => AddSocialLinkForm(
               socialMediaIcon: TextButton(
-              onPressed: null,
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(backgroundColor),
+                onPressed: null,
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateProperty.all<Color>(backgroundColor),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(icon, color: iconColor, size: 15),
+                    SizedBox(width: 8),
+                    Text(
+                      text,
+                      style: TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FaIcon(icon, color: iconColor, size: 15),
-                  SizedBox(width: 8),
-                  Text(
-                    text,
-                    style: TextStyle(color: Colors.black, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
               socialLink: text,
               iconColor: iconColor,
             ),

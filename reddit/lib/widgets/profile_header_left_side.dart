@@ -18,7 +18,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
-                image: AssetImage('assets/images/Greddit.png'),
+                image: AssetImage('images/Greddit.png'),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,

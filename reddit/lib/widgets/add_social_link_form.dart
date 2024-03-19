@@ -66,11 +66,13 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                         },
                         icon: Icon(Icons.close),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 70, right: 70),
-                        child: Text('Add Social Link',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                      Expanded(
+                        // Wrap the text in an Expanded widget
+                        child: Center(
+                          child: Text('Add Social Link',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                        ),
                       ),
                       TextButton(
                         onPressed: () {

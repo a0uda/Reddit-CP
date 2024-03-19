@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:share_plus/share_plus.dart';
 
 class ProfileHeaderRightSide extends StatefulWidget {
   String userType;
@@ -22,102 +24,108 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 20, left: 30),
-            child: IconButton(
-              icon: Icon(Icons.share, color: Colors.white, size: 40),
-              onPressed: () {
-                // todo: Handle share action
-              },
+      child: Padding(
+        padding: EdgeInsets.only(right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 30),
+              child: IconButton(
+                icon: Icon(Icons.share, color: Colors.white, size: 40),
+                onPressed: () async {
+                  final link =
+                      'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
+                  await Share.share(
+                      'Check out this profile on Reddit: ${link}');
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20, left: 30),
-            child: TextButton(
-              onPressed: () {
-                if (userType == 'me') {
-                  print('Button pressed ${userData} & ${userType}');
-                } else {
-                  setState(() {
-                    if (userData['following'] == 'yes') {
-                      userData['following'] = 'no';
-                    } else {
-                      userData['following'] = 'yes';
-                    }
-                  });
-                }
-              },
-              child: userType == 'me'
-                  ? Container(
-                      child: Text(
-                        'Edit',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: userData['following'] == 'yes'
-                          ? [
-                              Icon(
-                                Icons.check,
-                                color: Colors.white,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  'Following',
-                                  style: TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 30),
+              child: TextButton(
+                onPressed: () {
+                  if (userType == 'me') {
+                    print('Button pressed ${userData} & ${userType}');
+                  } else {
+                    setState(() {
+                      if (userData['following'] == 'yes') {
+                        userData['following'] = 'no';
+                      } else {
+                        userData['following'] = 'yes';
+                      }
+                    });
+                  }
+                },
+                child: userType == 'me'
+                    ? Container(
+                        child: Text(
+                          'Edit',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: userData['following'] == 'yes'
+                            ? [
+                                Icon(
+                                  Icons.check,
+                                  color: Colors.white,
                                 ),
-                              )
-                            ]
-                          : [
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                'Follow',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
+                                Flexible(
+                                  child: Text(
+                                    'Following',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                )
+                              ]
+                            : [
+                                Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'Follow',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                      ),
+                style: TextButton.styleFrom(
+                  backgroundColor:
+                      Color.fromARGB(0, 68, 70, 71), // example background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(
+                      color: Colors.white,
+                      width: 1,
                     ),
-              style: TextButton.styleFrom(
-                backgroundColor:
-                    Color.fromARGB(0, 68, 70, 71), // example background color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  side: BorderSide(
-                    color: Colors.white,
-                    width: 1,
                   ),
                 ),
               ),
             ),
-          ),
-          userType != 'me'
-              ? Padding(
-                  padding: const EdgeInsets.only(top: 20, left: 15),
-                  child: IconButton(
-                    icon: Icon(Icons.message, color: Colors.white, size: 30),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Color.fromARGB(0, 68, 70, 71),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(
-                          color: Colors.white,
-                          width: 1,
+            userType != 'me'
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 15),
+                    child: IconButton(
+                      icon: Icon(Icons.message, color: Colors.white, size: 30),
+                      style: TextButton.styleFrom(
+                        backgroundColor: Color.fromARGB(0, 68, 70, 71),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: BorderSide(
+                            color: Colors.white,
+                            width: 1,
+                          ),
                         ),
                       ),
-                    ),
-                    onPressed: () {},
-                  ))
-              : Container(),
-        ],
+                      onPressed: () {},
+                    ))
+                : Container(),
+          ],
+        ),
       ),
     );
   }

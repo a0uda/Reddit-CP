@@ -10,9 +10,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 228, 228),
-      appBar: AppBar(
-        title: const Text('Flutter Demo'),
-      ),
       body: DefaultTabController(
         length: 3,
         child: Column(
