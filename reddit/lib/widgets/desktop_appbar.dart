@@ -12,8 +12,9 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.white,
       shadowColor: Colors.black,
-      elevation: 0.5,
+      elevation: 0,
       title: Row(
         children: [
           Padding(

@@ -28,9 +28,11 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: Colors.green,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.black,
+            seedColor: const Color.fromARGB(255, 82, 78, 78),
+            primary: Color.fromARGB(255, 211, 208, 208),
+            secondary: Color.fromARGB(255, 0, 0, 0),
             background:const  Color.fromARGB(255, 255, 255, 255)),
-        fontFamily: 'Georgia',
+        fontFamily: 'Arial',
       ),
       home: const ResponsiveLayout(
         mobileLayout: MobileLayout(
