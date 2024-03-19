@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/widgets/search_bar.dart';
 
 class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -12,8 +14,9 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.white,
       shadowColor: Colors.black,
-      elevation: 0.5,
+      elevation: 0,
       title: Row(
         children: [
           Padding(
@@ -72,7 +75,10 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
               foregroundColor: Colors.black,
             ),
             onPressed: () {
-              //Navigate to createe post -> jomana
+              //Navigate to create post -> jomana
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const CreatePost(),
+              ));
             },
             child: const Row(
               children: [Icon(Icons.add), Text("Create")],
