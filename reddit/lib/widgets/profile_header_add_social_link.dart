@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:reddit_app/widgets/add_social_link_button.dart';
+import 'add_social_link_button.dart';
 import 'package:social_media_flutter/widgets/icons.dart';
 import 'package:social_media_flutter/widgets/text.dart';
 
@@ -78,7 +78,9 @@ class _ProfileHeaderAddSocialLinkState
                 [],
           ),
           // Add Social Link Button
-          if(userType == 'me' && showAddSocialLinkButton != null && showAddSocialLinkButton)
+          if (userType == 'me' &&
+              showAddSocialLinkButton != null &&
+              showAddSocialLinkButton)
             AddSocialLinkButton(onDataReceived: (result) {
               setState(() {
                 socialLinks = (result ?? '') as List?;

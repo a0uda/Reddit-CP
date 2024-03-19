@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../test_files/test_arrays.dart';
-import '../screens/profile_screen.dart';
+import '../Pages/profile_screen.dart';
 
 class followerList extends StatefulWidget {
   const followerList({Key? key}) : super(key: key);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_media_flutter/widgets/icons.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import '../test_files/test_arrays.dart';
 import 'add_social_link_form.dart';
 import '../test_files/test_arrays.dart';
