@@ -38,6 +38,7 @@ class _Listing extends State<Listing> {
               child: Column(
                 children: [
                   ListTile( leading:  Container( width: 71,
+                  height: 70,
                   child:  DropdownButtonHideUnderline(
                     child: DropdownButton(
                       // Initial Value

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/Listing.dart';
 
 class DesktopHomePage extends StatefulWidget {
   final int indexOfPage;
@@ -12,27 +13,35 @@ class DesktopHomePage extends StatefulWidget {
 }
 
 class _DesktopHomePageState extends State<DesktopHomePage> {
-  void logoTapped() {
-      
-    }
+  void logoTapped() {}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: DesktopAppBar(logoTapped: logoTapped,),
+        appBar: DesktopAppBar(
+          logoTapped: logoTapped,
+        ),
         endDrawer: const EndDrawerReddit(),
         body: Row(
           children: [
-            DrawerReddit(
-              indexOfPage: widget.indexOfPage,
-              inHome: true,
+            Expanded(
+              flex: 1,
+              child: DrawerReddit(
+                indexOfPage: widget.indexOfPage,
+                inHome: true,
+              ),
             ),
-            const VerticalDivider(
-              color: Colors.grey,
-              width: 0,
+             VerticalDivider(
+              color:Theme.of(context).colorScheme.primary,
+              width: 1,
             ),
-            const Text("YARAABBBBB") // rest of the desktop home page
+           const  Expanded(
+              flex: 4,
+              child: Listing(),
+            ),    
+       
+            
+           // rest of the desktop home page
           ],
         ));
   }
 }
-
