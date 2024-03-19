@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Report.dart';
 import 'package:reddit/widgets/Video_Player.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/post_service.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -124,7 +126,7 @@ class PostState extends State<Post> {
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 255, 255, 255),
                           shape: BoxShape.rectangle),
-                      child: VideoScreen(),
+                      child: Text("VIDEO") //VideoScreen(),
                       )
                 ],
               ),
