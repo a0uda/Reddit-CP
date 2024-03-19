@@ -124,7 +124,7 @@ class PostState extends State<Post> {
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 255, 255, 255),
                           shape: BoxShape.rectangle),
-                      child: Text("VIDEO") //VideoScreen(),
+                      child: VideoScreen(),
                       )
                 ],
               ),

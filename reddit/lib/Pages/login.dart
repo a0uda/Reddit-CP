@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/sign-up.dart';
 import 'package:reddit/Pages/forgot-password.dart';
 import 'package:reddit/Pages/forgot-username.dart';
+import 'package:reddit/widgets/desktop_layout.dart';
+import 'package:reddit/widgets/mobile_layout.dart';
+import 'package:reddit/widgets/responsive_layout.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -65,6 +68,14 @@ class LoginPageState extends State<LoginPage> {
       );
     } else {
       //TODO Navigate to home page
+     Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 1,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
+                          ));
+      
     }
   }
 
@@ -291,12 +302,13 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              //TODO: Continue as Guest
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => Page()),
-                              // );
+                                 Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 1,
+                                ),
+                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
+                          ));
                             },
                             child: Text(
                               "Continue as Guest?",

@@ -7,6 +7,7 @@ import 'package:reddit/Pages/forgot-password.dart';
 import 'package:reddit/Pages/forgot-username.dart';
 import 'package:reddit/Pages/login.dart';
 
+
 // import 'package:reddit/widgets/Listing.dart';
 // import 'package:get/get.dart';
 // import 'package:reddit/Pages/Home_Page.dart';
@@ -40,14 +41,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Arial',
 
       ),
-      home: const ResponsiveLayout(
-        mobileLayout: MobileLayout(
-          mobilePageMode: 0,
-        ),
-        desktopLayout: DesktopHomePage(
-          indexOfPage: 0,
-        ),
-      ),
+      home: LoginPage()
     );
   }
 }
