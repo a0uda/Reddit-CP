@@ -2,7 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/widgets/desktop_layout.dart';
+import 'package:reddit/widgets/mobile_layout.dart';
+import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:video_player/video_player.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/post_service.dart';
 
 class CreatePost extends StatefulWidget {
   const CreatePost({Key? key}) : super(key: key);
@@ -12,6 +17,7 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
+  final postService = GetIt.instance.get<PostService>();
   XFile? _image;
   XFile? _video;
   bool imageSelected = false;
@@ -51,7 +57,7 @@ class _CreatePostState extends State<CreatePost> {
         await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _video = pickedFile as XFile;
+        _video = pickedFile;
         videoSelected = true;
         if (showLinkField) {
           showLinkField = false;
@@ -86,6 +92,7 @@ class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
     List<String> userCommunities = ["r/news", "r/programming", "r/Flutter"];
+    var counter = 0;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -104,7 +111,25 @@ class _CreatePostState extends State<CreatePost> {
                   color: Colors.white)),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: (() => {
+                      postService.addPost(
+                          counter++,
+                          titleController.text,
+                          bodyController.text,
+                          DateTime.now(),
+                          _image?.path,
+                          null,
+                          _video?.path),
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const ResponsiveLayout(
+                            mobileLayout: MobileLayout(
+                              mobilePageMode: 0,
+                            ),
+                            desktopLayout: DesktopHomePage(
+                              indexOfPage: 0,
+                            )),
+                      ))
+                    }),
                 icon: const Icon(Icons.check, color: Colors.white)),
           ],
           title: const Text('Create Post'),
@@ -143,7 +168,7 @@ class _CreatePostState extends State<CreatePost> {
                                     return ListTile(
                                       title: Text(
                                         userCommunities[index],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: Colors.black,
                                         ),
                                       ),
@@ -342,8 +367,9 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () {
                         setState(() {
                           showLinkField = true;
-                          if (imageSelected)
+                          if (imageSelected) {
                             setState(() => imageSelected = false);
+                          }
                         });
                       },
                       child: const Icon(Icons.link),
@@ -355,8 +381,8 @@ class _CreatePostState extends State<CreatePost> {
                         foregroundColor: Colors.deepOrange,
                       ),
                       onPressed: _pickImage,
-                      child: Column(
-                        children: const [
+                      child: const Column(
+                        children: [
                           Icon(Icons.image),
                         ],
                       ),
@@ -368,8 +394,8 @@ class _CreatePostState extends State<CreatePost> {
                         foregroundColor: Colors.deepOrange,
                       ),
                       onPressed: _pickVideo,
-                      child: Column(
-                        children: const [
+                      child: const Column(
+                        children: [
                           Icon(Icons.video_call),
                           // Text('Video'),
                         ],
@@ -378,17 +404,6 @@ class _CreatePostState extends State<CreatePost> {
                   ],
                 ),
               ),
-              // const Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: [
-              //       Text("Link"),
-              //       Text("Image"),
-              //       Text("Video"),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),
