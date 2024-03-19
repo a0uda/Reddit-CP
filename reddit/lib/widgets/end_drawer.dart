@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import '../Pages/profile_screen.dart';
+import '../test_files/test_arrays.dart';
 
 class EndDrawerReddit extends StatelessWidget {
   const EndDrawerReddit({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return  Drawer(
+    return Drawer(
       child: Column(
         children: [
           const DrawerHeader(
@@ -27,7 +29,12 @@ class EndDrawerReddit extends StatelessWidget {
             leading: const Icon(Icons.account_circle_outlined),
             title: const Text("Profile"),
             onTap: () {
-              //Navigate to profile -> rawann 
+              //Navigate to profile -> rawann
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProfileScreen(user_data, 'me')),
+              );
             },
           ),
           ListTile(
@@ -51,7 +58,6 @@ class EndDrawerReddit extends StatelessWidget {
               //Navigate to Settings
             },
           ),
-          
         ],
       ),
     );
