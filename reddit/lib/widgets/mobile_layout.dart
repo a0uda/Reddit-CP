@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
-
 
 class MobileLayout extends StatefulWidget {
   final int mobilePageMode;
@@ -40,10 +40,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         widgetIndex: widget.mobilePageMode,
       ),
       const CommunitiesMobile(), //Communities Page here
-      MobileHomePage(
-        widgetIndex:
-            0, //Create post Page here -> Jomana (el mafrood bel u bas mashy)
-      ),
+      const CreatePost(), //TODO: Create Post Page here - not implemented (BADR)
       MobileHomePage(
         widgetIndex: 0, //Chat page here
       ),
@@ -66,20 +63,17 @@ class _MobileLayoutState extends State<MobileLayout> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
-
           items: [
-            BottomNavigationBarItem(          
+            BottomNavigationBarItem(
                 icon: selectedIndexPage == 0
                     ? const Icon(
                         Icons.home,
                         size: kToolbarHeight * (3 / 5),
-                        
                       )
                     : const Icon(
                         Icons.home_outlined,
                         size: kToolbarHeight * (3 / 5),
                       ),
-                      
                 label: "Home"),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 1
@@ -91,7 +85,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                         CupertinoIcons.group,
                         size: kToolbarHeight * (3 / 5),
                       ),
-                label: "Communities" ),
+                label: "Communities"),
             const BottomNavigationBarItem(
                 icon: Icon(
                   Icons.add,

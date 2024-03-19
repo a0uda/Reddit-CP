@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Report.dart';
 import 'package:reddit/widgets/Video_Player.dart';
 
-
 class Post extends StatefulWidget {
   final String profileImageUrl;
   final String name;
@@ -88,8 +87,10 @@ class PostState extends State<Post> {
                     },
                     child: Text(
                       widget.name,
-                      style:
-                          TextStyle(fontSize: 10, fontWeight: FontWeight.bold,fontFamily:'Arial'),
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Arial'),
                     ),
                   ),
                   Padding(padding: EdgeInsets.all(0)),
@@ -110,26 +111,29 @@ class PostState extends State<Post> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       widget.postContent,
-                      style: TextStyle(fontSize:10, fontWeight: FontWeight.bold,fontFamily: 'Arial'),
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Arial'),
                     ),
                   ),
                   Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    // Border width
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255),
-                        shape: BoxShape.rectangle),
-                    child: VideoScreen(),
-                  )
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      // Border width
+                      decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          shape: BoxShape.rectangle),
+                      child: Text("VIDEO") //VideoScreen(),
+                      )
                 ],
               ),
             ),
             Row(
               children: <Widget>[
                 IconButton(
-                  color:Theme.of(context).colorScheme.secondary,
-                  highlightColor:Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
+                  highlightColor: Theme.of(context).colorScheme.primary,
                   icon: Icon(Icons.arrow_upward_outlined),
                   onPressed: () {
                     IncrementCounter();
