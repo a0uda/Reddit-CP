@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/desktop_layout.dart';
-import 'package:reddit/widgets/mobile_layout.dart';
-import 'package:reddit/widgets/post.dart';
-import 'package:reddit/widgets/responsive_layout.dart';
-import 'package:reddit/Pages/sign-up.dart';
-import 'package:reddit/Pages/forgot-password.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'Services/post_service.dart';
@@ -26,7 +20,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: "Appbar and Sidebar",
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
@@ -37,11 +30,13 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: Color.fromARGB(255, 211, 208, 208),
-              secondary: Color.fromARGB(255, 0, 0, 0),
+              primary: const Color.fromARGB(255, 211, 208, 208),
+              secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
         ),
-        home: LoginPage());
+        home: LoginPage()
+        
+        );
   }
 }

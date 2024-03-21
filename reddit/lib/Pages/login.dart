@@ -54,7 +54,7 @@ class LoginPageState extends State<LoginPage> {
     }
     if (!isValidUser) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             'Incorrect username or password',
             textAlign: TextAlign.center,
@@ -67,13 +67,12 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      //TODO Navigate to home page
      Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) => const ResponsiveLayout(
                                 mobileLayout: MobileLayout(
-                                  mobilePageMode: 1,
+                                  mobilePageMode: 0,
                                 ),
-                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
+                                desktopLayout: DesktopHomePage(indexOfPage: 0,)),
                           ));
       
     }

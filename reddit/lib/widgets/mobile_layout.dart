@@ -40,7 +40,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         widgetIndex: widget.mobilePageMode,
       ),
       const CommunitiesMobile(), //Communities Page here
-      const CreatePost(), //TODO: Create Post Page here - not implemented (BADR)
+      const CreatePost(), 
       MobileHomePage(
         widgetIndex: 0, //Chat page here
       ),
@@ -114,9 +114,17 @@ class _MobileLayoutState extends State<MobileLayout> {
                 label: "Inbox")
           ],
           onTap: (value) => {
-            setState(() {
-              selectedIndexPage = value;
-            })
+            if (value != 2)
+              {
+                setState(() {
+                  selectedIndexPage = value;
+                })
+              }
+              else {
+                Navigator.of(context).push(MaterialPageRoute(builder: 
+                (context) => const CreatePost(),
+                ))
+              }
           },
         ),
         body: selectedScreen);
