@@ -5,7 +5,6 @@ import 'package:reddit/widgets/post.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:reddit/Pages/sign-up.dart';
 import 'package:reddit/Pages/forgot-password.dart';
-import 'package:reddit/Pages/forgot-username.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'Services/post_service.dart';
