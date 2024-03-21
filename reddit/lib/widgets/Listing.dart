@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Hot_Listing.dart';
-import 'package:reddit/widgets/Top_Listing.dart';
+import 'package:reddit/widgets/top_listing.dart';
 import 'package:reddit/widgets/Best_Listing.dart';
-import 'package:reddit/widgets/Rising_Listing.dart';
-import 'package:reddit/widgets/New_Listing.dart';
+import 'package:reddit/widgets/rising_listing.dart';
+import 'package:reddit/widgets/new_listing.dart';
 
 
 class Listing extends StatefulWidget {

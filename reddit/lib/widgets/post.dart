@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Report.dart';
-import 'package:reddit/widgets/Video_Player.dart';
+import 'package:reddit/widgets/report.dart';
+import 'package:reddit/widgets/video_player.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
 
