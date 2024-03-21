@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Listing.dart';
+import 'package:reddit/widgets/listing.dart';
 //import 'package:proj/components/drawer_reddit.dart';
 
 class MobileHomePage extends StatelessWidget {
