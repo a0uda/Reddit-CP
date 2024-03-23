@@ -72,10 +72,10 @@ class LoginPageState extends State<LoginPage> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const ResponsiveLayout(
             mobileLayout: MobileLayout(
-              mobilePageMode: 1,
+              mobilePageMode: 0,
             ),
             desktopLayout: DesktopHomePage(
-              indexOfPage: 1,
+              indexOfPage: 0,
             )),
       ));
     }
