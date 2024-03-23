@@ -10,7 +10,7 @@ import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({Key? key}) : super(key: key);
+  const CreatePost({super.key});
 
   @override
   State<CreatePost> createState() => _CreatePostState();

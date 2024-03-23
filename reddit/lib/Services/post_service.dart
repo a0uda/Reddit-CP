@@ -19,12 +19,12 @@ class PostItem {
 }
 
 final List<PostItem> posts = [];
-bool Testing = true;
+bool testing = true;
 
 class PostService {
   void addPost(int id, String title, String text, DateTime date, String? url,
       String? imageUrl, String? videoUrl) {
-    if (Testing) {
+    if (testing) {
       posts.add(PostItem(
         id: id,
         title: title,

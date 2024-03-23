@@ -3,9 +3,10 @@ import '../widgets/profile_header.dart';
 import '../widgets/tab_bar_views.dart';
 
 class ProfileScreen extends StatelessWidget {
+  // ignore: prefer_typing_uninitialized_variables
   var userData;
   String userType;
-  ProfileScreen(this.userData, this.userType);
+  ProfileScreen(this.userData, this.userType, {super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +21,7 @@ class ProfileScreen extends StatelessWidget {
             ProfileHeader(userData, userType),
             Container(
               color: Colors.white,
-              child: TabBar(
+              child: const TabBar(
                 indicatorColor: Color.fromARGB(255, 24, 82, 189),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
@@ -32,9 +33,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Container(
-                child: TabBarViews(),
-              ),
+              child: TabBarViews(),
             ),
           ],
         ),
