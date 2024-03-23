@@ -12,47 +12,44 @@ class MobileAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: IntrinsicWidth(
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 30.0),
-              child: GestureDetector(
-                child: const CircleAvatar(
-                  backgroundImage: AssetImage(
-                    "images/logo-mobile.png",
-                  ),
-                  radius: 18,
+      title: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 30.0),
+            child: GestureDetector(
+              child: const CircleAvatar(
+                backgroundImage: AssetImage(
+                  "images/logo-mobile.png",
                 ),
-                onTap: () {
-                  logoTapped();
-                },
+                radius: 18,
               ),
+              onTap: () {
+                logoTapped();
+              },
             ),
-            SizedBox(
-              width: 200,
-              child: ElevatedButton(
-                onPressed: () {
-                  showSearch(context: context, delegate: SearchBarClass());
-                },
-                style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    backgroundColor: Colors.grey[200],
-                    foregroundColor: Colors.grey,
-                    shadowColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0))),
-                child: const Row(children: [
-                  Icon(
-                    Icons.search,
-                    color: Colors.black,
-                  ),
-                  Text("Search...")
-                ]),
-              ),
+          ),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                showSearch(context: context, delegate: SearchBarClass());
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.grey,
+                  shadowColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0))),
+              child: const Row(children: [
+                Icon(
+                  Icons.search,
+                  color: Colors.black,
+                ),
+                Text("Search...")
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       actions: [
         Padding(
