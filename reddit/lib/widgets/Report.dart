@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/reportoptions.dart';
+import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
   const Options({
@@ -47,11 +47,11 @@ class Postoptions extends State<Options> {
           onTap: () => {
             showDialog(
               context: context,
-               barrierDismissible: true,
+              barrierDismissible: true,
               builder: (BuildContext context) {
                 return Container(
-                height: 100,
-                width: 100,
+                  height: 100,
+                  width: 100,
                   child: AlertDialog(
                     scrollable: true,
                     title: Text('Submit a report'),
@@ -61,8 +61,7 @@ class Postoptions extends State<Options> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                       ),
-                      Report_Options(),
-                    
+                      ReportOptions(),
                     ],
                   ),
                 );
