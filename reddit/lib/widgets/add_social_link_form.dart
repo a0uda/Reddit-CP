@@ -1,40 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:social_media_flutter/widgets/icons.dart';
-import '../test_files/test_arrays.dart';
+import '../Controllers/user_controller.dart';
+import '../Services/user_service.dart';
+import 'package:get_it/get_it.dart';
 
 class AddSocialLinkForm extends StatefulWidget {
   final Widget socialMediaIcon;
   final String socialLink;
-  final Color iconColor;
 
-  const AddSocialLinkForm(
-      {Key? key,
-      required this.socialMediaIcon,
-      required this.socialLink,
-      required this.iconColor})
-      : super(key: key);
+  const AddSocialLinkForm({
+    Key? key,
+    required this.socialMediaIcon,
+    required this.socialLink,
+  }) : super(key: key);
 
   @override
   _AddSocialLinkFormState createState() => _AddSocialLinkFormState(
-      socialMediaIcon: socialMediaIcon,
-      socialLink: socialLink,
-      iconColor: iconColor);
+      socialMediaIcon: socialMediaIcon, socialLink: socialLink);
 }
 
 class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
   final Widget socialMediaIcon;
   final String socialLink;
-  final Color iconColor;
 
   _AddSocialLinkFormState(
-      {required this.socialMediaIcon,
-      required this.socialLink,
-      required this.iconColor});
+      {required this.socialMediaIcon, required this.socialLink});
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController linkController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final userService = GetIt.instance.get<UserService>();
+  final userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +38,14 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
       child: FractionallySizedBox(
         heightFactor: 0.9,
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(bottom: 15),
+                padding: const EdgeInsets.only(bottom: 15),
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
                         color: Color.fromARGB(220, 215, 213, 213),
@@ -64,10 +60,9 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(Icons.close),
+                        icon: const Icon(Icons.close),
                       ),
-                      Expanded(
-                        // Wrap the text in an Expanded widget
+                      const Expanded(
                         child: Center(
                           child: Text('Add Social Link',
                               style: TextStyle(
@@ -77,33 +72,27 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                       TextButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            var socialLinkIcon = socialMediaButtons.firstWhere(
-                                (element) =>
-                                    (element['name'] as String?)
-                                        ?.contains(socialLink) ??
-                                    false,
-                                orElse: () => <String, Object>{});
-                            print('Before update: ${socialLinkIcon['icon']}');
-                            (user_data['socialLinks'] as List).add({
-                              'icon': socialLinkIcon['icon'] ?? Icons.link,
-                              'link': linkController.text,
-                              'iconColor': socialLinkIcon['color'].toString(),
-                              'placeholder': usernameController.text
-                            });
-                            print(
-                                '----------------------Data added successfully------------------------');
-                            print('After update: $user_data');
-                            Navigator.pop(context, user_data['socialLinks']);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Please enter valid data'),
-                              ),
+                            userService.addSocialLink(
+                              userController.userAbout!.username,
+                              usernameController.text,
+                              socialLink,
+                              linkController.text,
                             );
+                            userController
+                                .getUser(userController.userAbout!.username);
+                            print(
+                                'social link added successfully ${userController.userAbout?.social_links}');
+                            Navigator.pop(context,
+                                userController.userAbout?.social_links);
+                          } else {
+                            print('form is invalid');
                           }
                         },
-                        child: Text('Save'),
-                      )
+                        child: Text(
+                          'Save',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
                     ],
                   ),
                 ),

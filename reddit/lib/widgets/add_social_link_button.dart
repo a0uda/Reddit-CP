@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:social_media_flutter/widgets/icons.dart';
-import '../test_files/test_arrays.dart';
+import 'social_media_buttons.dart';
 import 'add_social_link_form.dart';
-import '../test_files/test_arrays.dart';
+import '../Services/user_service.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class AddSocialLinkButton extends StatelessWidget {
-  Function(List<dynamic>?) onDataReceived;
-  AddSocialLinkButton({required this.onDataReceived});
+  final Function(List<SocialLlinkItem>?) onDataReceived;
+  const AddSocialLinkButton({super.key, required this.onDataReceived});
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
         backgroundColor:
-            MaterialStateProperty.all(Color.fromARGB(99, 105, 105, 105)),
+            MaterialStateProperty.all(const Color.fromARGB(99, 105, 105, 105)),
       ),
       onPressed: () {
         showModalBottomSheet(
@@ -29,13 +28,13 @@ class AddSocialLinkButton extends StatelessWidget {
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(bottom: 15),
+                        padding: const EdgeInsets.only(bottom: 15),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
                                 color: Color.fromARGB(220, 215, 213, 213),
@@ -49,12 +48,10 @@ class AddSocialLinkButton extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                icon: Icon(Icons.close),
+                                icon: const Icon(Icons.close),
                               ),
-                              Expanded(
-                                // Wrap the text in an Expanded widget
+                              const Expanded(
                                 child: Center(
-                                  // Center the text within the Expanded widget
                                   child: Text(
                                     'Add Social Link',
                                     style: TextStyle(
@@ -77,9 +74,7 @@ class AddSocialLinkButton extends StatelessWidget {
                                 socialMediaButtons.map((socialMediaButton) {
                               return IconButtonWithText(
                                 text: socialMediaButton['name'].toString(),
-                                icon: socialMediaButton['icon'] as IconData,
-                                iconColor: Color(int.parse(
-                                    '0xFF${(socialMediaButton['color'] as String).substring(1)}')),
+                                icon: socialMediaButton['brand'] as Brand,
                                 onDataReceived: onDataReceived,
                               );
                             }).toList(),
@@ -95,12 +90,12 @@ class AddSocialLinkButton extends StatelessWidget {
         );
       },
       child: Container(
-        padding: EdgeInsets.only(left: 5, right: 5, bottom: 2, top: 2),
-        child: Row(
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2, top: 2),
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(Icons.add,
-                color: const Color.fromARGB(255, 175, 174, 174), size: 20),
+                color: Color.fromARGB(255, 175, 174, 174), size: 20),
             SizedBox(width: 3),
             Text(
               'Add social link',
@@ -116,21 +111,18 @@ class AddSocialLinkButton extends StatelessWidget {
 
 class IconButtonWithText extends StatelessWidget {
   final String text;
-  final IconData icon;
-  final Color iconColor;
-  final Color backgroundColor;
-  Function(List<dynamic>?) onDataReceived;
+  final Brand icon;
+  Function(List<SocialLlinkItem>?) onDataReceived;
 
   IconButtonWithText({
     required this.text,
     required this.icon,
-    required this.iconColor,
-    this.backgroundColor = const Color.fromARGB(255, 229, 228, 228),
     required this.onDataReceived,
   });
 
   @override
   Widget build(BuildContext context) {
+    print('text: $text icon: $icon');
     return TextButton(
       onPressed: () async {
         Navigator.pop(context);
@@ -141,13 +133,13 @@ class IconButtonWithText extends StatelessWidget {
               socialMediaIcon: TextButton(
                 onPressed: null,
                 style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(backgroundColor),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 229, 228, 228)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    FaIcon(icon, color: iconColor, size: 15),
+                    Container(width: 20, height: 20, child: icon),
                     SizedBox(width: 8),
                     Text(
                       text,
@@ -157,19 +149,19 @@ class IconButtonWithText extends StatelessWidget {
                 ),
               ),
               socialLink: text,
-              iconColor: iconColor,
             ),
           ),
         );
         onDataReceived(result);
       },
       style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all<Color>(backgroundColor),
+        backgroundColor: MaterialStateProperty.all<Color>(
+            const Color.fromARGB(255, 229, 228, 228)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FaIcon(icon, color: iconColor, size: 15),
+          Container(width: 20, height: 20, child: icon),
           SizedBox(width: 8),
           Text(
             text,

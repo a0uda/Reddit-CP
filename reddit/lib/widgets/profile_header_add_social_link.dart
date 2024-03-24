@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '../Services/user_service.dart';
+import 'package:get_it/get_it.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'add_social_link_button.dart';
-import 'package:social_media_flutter/widgets/text.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
-  var userData;
+  UserAbout userData;
   String userType;
   ProfileHeaderAddSocialLink(this.userData, this.userType);
   @override
@@ -13,17 +16,19 @@ class ProfileHeaderAddSocialLink extends StatefulWidget {
 
 class _ProfileHeaderAddSocialLinkState
     extends State<ProfileHeaderAddSocialLink> {
-  late List<dynamic>? socialLinks;
+  late List<SocialLlinkItem>? socialLinks;
   late bool showAddSocialLinkButton;
-  var userData;
-  var userType;
+  UserAbout userData;
+  String userType;
 
   _ProfileHeaderAddSocialLinkState(this.userData, this.userType);
+
+  final userService = GetIt.instance.get<UserService>();
 
   @override
   void initState() {
     super.initState();
-    socialLinks = userData['socialLinks'] as List<dynamic>?;
+    socialLinks = userData.social_links;
     updateAddSocialLinkButtonVisibility();
   }
 
@@ -49,8 +54,11 @@ class _ProfileHeaderAddSocialLinkState
             runSpacing: 8,
             children: [
               ...(socialLinks?.map((linkData) {
+                    String websiteName = linkData.type.toLowerCase();
                     return TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        launchUrl(Uri.parse(linkData.custom_url));
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             Color.fromARGB(99, 105, 105, 105)),
@@ -58,16 +66,19 @@ class _ProfileHeaderAddSocialLinkState
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          SocialWidget(
-                              placeholderText: linkData['placeholder'] ?? '',
-                              iconData: linkData['icon'] ?? Icons.link,
-                              link: linkData['link'] ?? '',
-                              iconColor: Color(int.parse(
-                                  '0xFF${(linkData['iconColor'] as String).substring(1)}')),
-                              iconSize: 15,
-                              placeholderStyle: TextStyle(
-                                  color: Color.fromARGB(255, 212, 211, 211),
-                                  fontSize: 12)),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            child: getSocialMediaIcon(websiteName),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            linkData.display_text,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -76,7 +87,7 @@ class _ProfileHeaderAddSocialLinkState
               if (userType == 'me' && showAddSocialLinkButton)
                 AddSocialLinkButton(onDataReceived: (result) {
                   setState(() {
-                    socialLinks = (result ?? '') as List?;
+                    socialLinks = result;
                     updateAddSocialLinkButtonVisibility();
                   });
                 }),
@@ -85,5 +96,51 @@ class _ProfileHeaderAddSocialLinkState
         ],
       ),
     );
+  }
+}
+
+Brand? getSocialMediaIcon(String websiteName) {
+  switch (websiteName.toLowerCase()) {
+    case 'instagram':
+      return Brand(Brands.instagram);
+    case 'facebook':
+      return Brand(Brands.facebook);
+    case 'twitter':
+      return Brand(Brands.twitter);
+    case 'linkedin':
+      return Brand(Brands.linkedin);
+    case 'youtube':
+      return Brand(Brands.youtube);
+    case 'reddit':
+      return Brand(Brands.reddit);
+    case 'pinterest':
+      return Brand(Brands.pinterest);
+    case 'snapchat':
+      return Brand(Brands.snapchat);
+    case 'tiktok':
+      return Brand(Brands.tiktok);
+    case 'whatsapp':
+      return Brand(Brands.whatsapp);
+    case 'skype':
+      return Brand(Brands.skype);
+    case 'renren':
+      return Brand(Brands.renren);
+    case 'flickr':
+      return Brand(Brands.flickr);
+    case 'twitch':
+      return Brand(Brands.twitch);
+    case 'github':
+      return Brand(Brands.github);
+    case 'stakoverflow':
+      return Brand(Brands.stack_overflow);
+    case 'paypal':
+      return Brand(Brands.paypal);
+    case 'etsy':
+      return Brand(Brands.etsy);
+    case 'shopify':
+      return Brand(Brands.shopify);
+
+    default:
+      return null;
   }
 }

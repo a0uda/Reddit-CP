@@ -137,7 +137,7 @@ class UserService {
           .userAbout
           .social_links!
           .add(SocialLlinkItem(
-            username: username,
+            username: display_text,
             display_text: display_text,
             type: type,
             custom_url: custom_url,

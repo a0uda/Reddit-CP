@@ -32,7 +32,7 @@ class ProfileHeader extends StatelessWidget {
                 ProfileHeaderRightSide(userData: userData, userType: userType),
               ],
             ),
-            //ProfileHeaderAddSocialLink(userData, userType),
+            ProfileHeaderAddSocialLink(userData, userType),
           ],
         ),
       ),
