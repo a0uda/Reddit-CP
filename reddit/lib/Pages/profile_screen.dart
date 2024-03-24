@@ -6,7 +6,8 @@ import '../Services/user_service.dart';
 class ProfileScreen extends StatelessWidget {
   UserAbout? userData;
   String userType;
-  ProfileScreen(this.userData, this.userType, {super.key});
+  Function? onUpdate;
+  ProfileScreen(this.userData, this.userType,this.onUpdate ,{super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
         length: 3,
         child: Column(
           children: <Widget>[
-            ProfileHeader(userData, userType),
+            ProfileHeader(userData, userType, onUpdate),
             Container(
               color: Colors.white,
               child: const TabBar(

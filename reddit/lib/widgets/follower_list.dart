@@ -14,14 +14,22 @@ class followerList extends StatefulWidget {
 class _followerListState extends State<followerList> {
   final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
+  late List<FollowersFollowingItem>? followingList;
+  late List<FollowersFollowingItem>? followersList;
+
+  void updateFollowerList() {
+    setState(() {
+      final String userName = userController.userAbout!.username.toString();
+      followingList = userService.getFollowing(userName);
+      followersList = userService.getFollowers(userName);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final String userName = userController.userAbout!.username.toString();
-    List<FollowersFollowingItem>? followersList =
-        UserService().getFollowers(userName);
-    List<FollowersFollowingItem>? followingList =
-        UserService().getFollowing(userName);
+    followersList = UserService().getFollowers(userName);
+    followingList = UserService().getFollowing(userName);
 
     return Container(
       child: Scaffold(
@@ -89,8 +97,11 @@ class _followerListState extends State<followerList> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(otherUserData, 'other'),
+                      builder: (context) => ProfileScreen(
+                        otherUserData,
+                        'other',
+                        updateFollowerList,
+                      ),
                     ),
                   );
                 });

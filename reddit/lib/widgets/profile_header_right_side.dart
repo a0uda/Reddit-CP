@@ -8,21 +8,23 @@ import 'package:get_it/get_it.dart';
 class ProfileHeaderRightSide extends StatefulWidget {
   final String userType;
   final UserAbout userData;
-  
-  const ProfileHeaderRightSide(
-      {super.key, required this.userData, required this.userType});
+  Function? onUpdate;
+
+  ProfileHeaderRightSide(
+      {super.key, required this.userData, required this.userType,this.onUpdate});
 
   @override
   _ProfileHeaderRightSideState createState() =>
-      _ProfileHeaderRightSideState(userData: userData, userType: userType);
+      _ProfileHeaderRightSideState(userData: userData, userType: userType, onUpdate: onUpdate);
 }
 
 class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   String
       userType; //if user type is 'me' then show edit button, else show message and follow button
   UserAbout userData;
+  Function? onUpdate;
   _ProfileHeaderRightSideState(
-      {required this.userData, required this.userType});
+      {required this.userData, required this.userType, this.onUpdate});
 
   final UserController userController = GetIt.I.get<UserController>();
   final UserService userService = GetIt.I.get<UserService>();
@@ -47,8 +49,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                 onPressed: () async {
                   const link =
                       'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
-                  await Share.share(
-                      'Check out this profile on Reddit: $link');
+                  await Share.share('Check out this profile on Reddit: $link');
                 },
               ),
             ),
@@ -69,6 +70,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                         userService.unfollowUser(userData.username,
                             userController.userAbout!.username);
                       }
+                      onUpdate!();
                     });
                   }
                 },
