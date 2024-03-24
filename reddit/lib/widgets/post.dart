@@ -3,7 +3,9 @@ import 'package:reddit/widgets/report.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reddit/widgets/video_player.dart';
 import 'package:get_it/get_it.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Services/post_service.dart';
+import 'package:reddit/widgets/poll_widget.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -16,6 +18,7 @@ class Post extends StatefulWidget {
   final String? imageUrl;
   final String? linkUrl;
   final String? videoUrl;
+  final PollItem? poll;
 
   const Post({
     super.key,
@@ -29,6 +32,7 @@ class Post extends StatefulWidget {
     this.imageUrl,
     this.linkUrl,
     this.videoUrl,
+    this.poll,
   });
 
   @override
@@ -63,6 +67,9 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.imageUrl != null) {
+      print(widget.imageUrl);
+    }
     return InkWell(
       onTap: () => {
         // open this post TODO
@@ -170,7 +177,18 @@ class PostState extends State<Post> {
                             color: Color.fromARGB(255, 255, 255, 255),
                             shape: BoxShape.rectangle),
                         child: Text("VIDEO") //TODO: VideoScreen(),
-                        )
+                        ),
+                  if (widget.poll != null)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: PollView(
+                        question: widget.poll!.question,
+                        options: widget.poll!.options
+                            .map((option) => {option: 0.0})
+                            .toList(),
+                      ),
+                    )
                 ],
               ),
             ),

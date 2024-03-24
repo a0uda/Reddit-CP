@@ -119,7 +119,7 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                           return 'Please enter a link';
                         }
                         final urlPattern = RegExp(
-                            r'^(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$');
+                            r'^(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/+#-]*[\w@?^=%&/+#-])?$');
                         if (!urlPattern.hasMatch(value)) {
                           return 'Please enter a valid link';
                         }

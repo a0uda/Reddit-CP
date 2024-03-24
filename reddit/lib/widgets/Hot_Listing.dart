@@ -59,6 +59,9 @@ class HotListingBuild extends State<HotListing> {
           likes: posts[index].likes.toString(),
           comments: posts[index].comments.toString(),
           linkUrl: posts[index].linkUrl,
+          imageUrl: posts[index].images?[0].path,
+          videoUrl: posts[index].videos?[0].path,
+          poll: posts[index].poll,
         );
       },
     );

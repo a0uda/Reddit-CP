@@ -285,7 +285,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                           contentPadding:
                               EdgeInsets.all(textFieldContentPadding),
                         ),
@@ -304,7 +304,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                           contentPadding:
                               EdgeInsets.all(textFieldContentPadding),
                         ),
@@ -333,8 +333,8 @@ class SignUpPageState extends State<SignUpPage> {
                             },
                             child: Icon(
                               _isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                           ),
                           contentPadding:
