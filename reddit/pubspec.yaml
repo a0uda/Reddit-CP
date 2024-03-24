@@ -1,7 +1,7 @@
 name: reddit
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
+# pub.dev using flutter pub publish. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
@@ -23,22 +23,19 @@ environment:
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
-# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# consider running flutter pub upgrade --major-versions. Alternatively,
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
-# versions available, run `flutter pub outdated`.
+# versions available, run flutter pub outdated.
 dependencies:
   flutter:
     sdk: flutter
   share: ^2.0.4
   get_it: ^7.2.0
   mockito: ^5.0.15 
-<<<<<<< Updated upstream
-=======
   flutter_polls: ^0.1.6
   url_launcher: ^6.0.12
   better_polls: ^1.0.8
->>>>>>> Stashed changes
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -54,6 +51,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   social_media_flutter: ^0.0.2
   share_plus: ^7.2.2
+  icons_plus: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -61,7 +59,7 @@ dev_dependencies:
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
+  # activated in the analysis_options.yaml file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0

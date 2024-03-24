@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'follower_list.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/user_service.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
-  var userData;
-  String
+  final userService = GetIt.instance.get<UserService>();
+  final UserAbout userData;
+  final String
       userType; //if user type is 'me' then can show followers, else if others profile then don't show follow button
-  ProfileHeaderLeftSide(this.userData, this.userType);
+
+  ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -18,7 +23,9 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
-                image: AssetImage('images/Greddit.png'),
+                image: AssetImage((userData.profile_picture != null
+                    ? userData.profile_picture!
+                    : 'images/Greddit.png')),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -28,8 +35,10 @@ class ProfileHeaderLeftSide extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
-              userData['username'].toString(),
-              style: TextStyle(
+              userData.display_name == null
+                  ? userData.username.toString()
+                  : userData.display_name.toString(),
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -42,8 +51,8 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                 ? Row(
                     children: <Widget>[
                       Text(
-                        '${userData['followers'].toString()} followers',
-                        style: TextStyle(
+                        '${userService.getFollowersCount(userData.username.toString())} followers',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                         ),
@@ -53,42 +62,24 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => followerList(),
+                              builder: (context) => const followerList(),
                             ),
                           );
                         },
-                        icon: Icon(Icons.arrow_forward_ios_rounded),
+                        icon: const Icon(Icons.arrow_forward_ios_rounded),
                         color: Colors.white,
                         iconSize: 15,
                       )
                     ],
                   )
-                : Text(
-                    'u/${userData['username'].toString()} - ${userData['karma'].toString()} karma - ${userData['date'].toString()}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                  ),
-            subtitle: userType == 'me'
-                ? Text(
-                    'u/${userData['username'].toString()} - ${userData['karma'].toString()} karma - ${userData['date'].toString()}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                  )
                 : null,
-<<<<<<< Updated upstream
-=======
             subtitle: Text(
-              'u/${userData.username.toString()}- ${userData.createdAt.toString()}',
+              'u/${userData.username.toString()}- ${userData.created_at.toString()}',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 10,
               ),
             ),
->>>>>>> Stashed changes
           ),
         ],
       ),

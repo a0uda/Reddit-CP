@@ -3,35 +3,35 @@ import 'dart:developer';
 class SocialLlinkItem {
   final String? id;
   final String username;
-  final String displayText;
+  final String display_text;
   final String type;
-  final String customUrl;
+  final String custom_url;
 
   SocialLlinkItem({
     this.id,
     required this.username,
-    required this.displayText,
+    required this.display_text,
     required this.type,
-    required this.customUrl,
+    required this.custom_url,
   });
 }
 
 class FollowersFollowingItem {
   final String? id;
-  final String? createdAt;
+  final String? created_at;
   final String username;
   final String? email;
-  final bool? verifiedEmailFlag;
+  final bool? verified_email_flag;
   final FollowersProfileSettings? profileSettings;
   final String? country;
   final String? gender;
 
   FollowersFollowingItem({
     this.id,
-    this.createdAt,
+    this.created_at,
     required this.username,
     this.email,
-    this.verifiedEmailFlag,
+    this.verified_email_flag,
     this.profileSettings,
     this.country,
     this.gender,
@@ -54,10 +54,10 @@ class FollowersProfileSettings {
 
 class UserAbout {
   final String? id;
-  final String? createdAt;
+  final String? created_at;
   final String username;
   final String? email;
-  final bool? verifiedEmailFlag;
+  final bool? verified_email_flag;
   final String? gmail;
   final String? facebook_email;
   final String? display_name;
@@ -71,10 +71,10 @@ class UserAbout {
 
   UserAbout({
     this.id,
-    this.createdAt,
+    this.created_at,
     required this.username,
     this.email,
-    this.verifiedEmailFlag,
+    this.verified_email_flag,
     this.gmail,
     this.facebook_email,
     this.display_name,
@@ -119,28 +119,28 @@ class UserService {
     }
   }
 
-  UserAbout? getUserAbout(String username) {
-    if (testing) {
+  UserAbout? getUserAbout(String Username) {
+    if (testing)
       return users
-          .firstWhere((element) => element.userAbout.username == username)
+          .firstWhere((element) => element.userAbout.username == Username)
           .userAbout;
-    } else {
+    else {
       //to be fetched from database
     }
   }
 
   void addSocialLink(
-      String username, String displayText, String type, String customUrl) {
+      String username, String display_text, String type, String custom_url) {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .social_links!
           .add(SocialLlinkItem(
-            username: displayText,
-            displayText: displayText,
+            username: display_text,
+            display_text: display_text,
             type: type,
-            customUrl: customUrl,
+            custom_url: custom_url,
           ));
     } else {
       // add social link to database
@@ -272,7 +272,7 @@ class UserService {
     UserAbout newUserAbout = UserAbout(
       username: username,
       email: email,
-      verifiedEmailFlag: false,
+      verified_email_flag: false,
       gender: gender,
     );
 
@@ -320,10 +320,10 @@ final List<UserItem> users = [
   UserItem(
     userAbout: UserAbout(
       id: '0',
-      createdAt: '5 March 2024',
+      created_at: '5 March 2024',
       username: 'Purple-7544',
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: true,
+      verified_email_flag: true,
       display_name: 'Rawan Adel',
       about: 'I am a software engineer',
       profile_picture: 'images/pp.jpg',
@@ -331,25 +331,25 @@ final List<UserItem> users = [
         SocialLlinkItem(
           id: '0',
           username: 'rawan_adel165',
-          displayText: 'rawan_adel165',
+          display_text: 'rawan_adel165',
           type: 'instagram',
-          customUrl:
+          custom_url:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
         ),
         SocialLlinkItem(
           id: '1',
           username: 'rawan adel',
-          displayText: 'rawan adel',
+          display_text: 'rawan adel',
           type: 'facebook',
-          customUrl:
+          custom_url:
               'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
         ),
         SocialLlinkItem(
           id: '2',
           username: 'rawan7544',
-          displayText: 'rawan7544',
+          display_text: 'rawan7544',
           type: 'twitter',
-          customUrl:
+          custom_url:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
         ),
       ],
@@ -358,10 +358,10 @@ final List<UserItem> users = [
     followers: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'johndoe',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'John',
           about: 'I am a software engineer',
@@ -372,20 +372,20 @@ final List<UserItem> users = [
       ),
       FollowersFollowingItem(
         id: '1',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           about: 'I am a software engineer',
         ),
       ),
       FollowersFollowingItem(
         id: '2',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Mark_45',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Mark',
           about: 'I am a software engineer',
@@ -396,10 +396,10 @@ final List<UserItem> users = [
     following: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'johndoe',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'John',
           about: 'I am a software engineer',
@@ -410,10 +410,10 @@ final List<UserItem> users = [
       ),
       FollowersFollowingItem(
         id: '1',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           about: 'I am a software engineer',
           profile_picture: 'images/pp.jpg',
@@ -424,10 +424,10 @@ final List<UserItem> users = [
   UserItem(
     userAbout: UserAbout(
       id: '1',
-      createdAt: '5 March 2024',
+      created_at: '5 March 2024',
       username: 'johndoe',
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: true,
+      verified_email_flag: true,
       display_name: 'John',
       about: 'I am a software engineer',
       profile_picture: 'images/pp.jpg',
@@ -435,17 +435,17 @@ final List<UserItem> users = [
         SocialLlinkItem(
           id: '0',
           username: 'john_doe',
-          displayText: 'john_doe',
+          display_text: 'john_doe',
           type: 'instagram',
-          customUrl:
+          custom_url:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
         ),
         SocialLlinkItem(
           id: '1',
           username: 'john_doe',
-          displayText: 'john_doe',
+          display_text: 'john_doe',
           type: 'facebook',
-          customUrl:
+          custom_url:
               'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
         ),
       ],
@@ -454,10 +454,10 @@ final List<UserItem> users = [
     followers: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Rawan Adel',
           about: 'I am a software engineer',
@@ -468,10 +468,10 @@ final List<UserItem> users = [
     following: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Rawan Adel',
           about: 'I am a software engineer',
@@ -483,19 +483,19 @@ final List<UserItem> users = [
   UserItem(
     userAbout: UserAbout(
       id: '2',
-      createdAt: '5 March 2024',
+      created_at: '5 March 2024',
       username: 'jane123',
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: true,
+      verified_email_flag: true,
       display_name: 'Jane',
       about: 'I am a software engineer',
       social_links: [
         SocialLlinkItem(
           id: '0',
           username: 'jane_123',
-          displayText: 'jane_123',
+          display_text: 'jane_123',
           type: 'instagram',
-          customUrl:
+          custom_url:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
         ),
       ],
@@ -504,10 +504,10 @@ final List<UserItem> users = [
     followers: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawn7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Rawan Adel',
           about: 'I am a software engineer',
@@ -518,10 +518,10 @@ final List<UserItem> users = [
     following: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawn7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Rawan Adel',
           about: 'I am a software engineer',
@@ -533,10 +533,10 @@ final List<UserItem> users = [
   UserItem(
     userAbout: UserAbout(
       id: '3',
-      createdAt: '5 March 2024',
+      created_at: '5 March 2024',
       username: 'Mark_45',
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: true,
+      verified_email_flag: true,
       display_name: 'Mark',
       about: 'I am a software engineer',
       profile_picture: 'images/Greddit.png',
@@ -544,17 +544,17 @@ final List<UserItem> users = [
         SocialLlinkItem(
           id: '0',
           username: 'mark_45',
-          displayText: 'mark_45',
+          display_text: 'mark_45',
           type: 'instagram',
-          customUrl:
+          custom_url:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
         ),
         SocialLlinkItem(
           id: '1',
           username: 'mark_45',
-          displayText: 'mark_45',
+          display_text: 'mark_45',
           type: 'facebook',
-          customUrl:
+          custom_url:
               'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
         ),
       ],
@@ -564,10 +564,10 @@ final List<UserItem> users = [
     following: [
       FollowersFollowingItem(
         id: '0',
-        createdAt: '5 March 2024',
+        created_at: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
+        verified_email_flag: true,
         profileSettings: FollowersProfileSettings(
           display_name: 'Rawan Adel',
           about: 'I am a software engineer',
