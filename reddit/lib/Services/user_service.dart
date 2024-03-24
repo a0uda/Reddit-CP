@@ -429,7 +429,7 @@ final List<UserItem> users = [
       email: 'rawan7544@gmail.com',
       verified_email_flag: true,
       display_name: 'John',
-      about: 'I am a software engineer',
+      about: '',
       profile_picture: 'images/pp.jpg',
       social_links: [
         SocialLlinkItem(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import '../Controllers/user_controller.dart';
 import '../Services/user_service.dart';
 import 'package:get_it/get_it.dart';
 
 class AddSocialLinkForm extends StatefulWidget {
-  final Widget socialMediaIcon;
+  final Brand socialMediaIcon;
   final String socialLink;
 
   const AddSocialLinkForm({
@@ -19,7 +20,7 @@ class AddSocialLinkForm extends StatefulWidget {
 }
 
 class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
-  final Widget socialMediaIcon;
+  final Brand socialMediaIcon;
   final String socialLink;
 
   _AddSocialLinkFormState(
@@ -34,16 +35,21 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
+
     return Material(
       child: FractionallySizedBox(
-        heightFactor: 0.9,
+        heightFactor: 0.98,
         child: Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all((1 / 33) * widgetSize),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(bottom: 15),
+                padding: EdgeInsets.only(bottom: (1 / 33) * widgetSize),
                 child: Container(
                   decoration: const BoxDecoration(
                     border: Border(
@@ -58,15 +64,20 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(
+                              context, userController.userAbout?.social_links);
                         },
-                        icon: const Icon(Icons.close),
+                        icon: Icon(
+                          Icons.close,
+                          size: (1 / 25) * widgetSize,
+                        ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
                           child: Text('Add Social Link',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 15)),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: (1 / 33) * widgetSize)),
                         ),
                       ),
                       TextButton(
@@ -90,43 +101,77 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                         },
                         child: Text(
                           'Save',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: (1 / 33) * widgetSize),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              socialMediaIcon,
-              Form(
-                key: formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Username'),
-                      controller: usernameController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a username';
-                        }
-                      },
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Link'),
-                      controller: linkController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a link';
-                        }
-                        final urlPattern = RegExp(
-                            r'^(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$');
-                        if (!urlPattern.hasMatch(value)) {
-                          return 'Please enter a valid link';
-                        }
-                        return null;
-                      },
+              TextButton(
+                onPressed: null,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 229, 228, 228)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                        width: (1 / 25) * widgetSize,
+                        height: (1 / 25) * widgetSize,
+                        child: socialMediaIcon),
+                    SizedBox(width: (1 / 100) * widgetSize),
+                    Text(
+                      socialLink,
+                      style: TextStyle(
+                          color: Colors.black, fontSize: 0.022 * widgetSize),
                     ),
                   ],
+                ),
+              ),
+              Form(
+                key: formKey,
+                child: Padding(
+                  padding: EdgeInsets.only(top: (1 / 33) * widgetSize),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(
+                            labelText: 'Username',
+                            hintStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 0.022 * widgetSize)),
+                        controller: usernameController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a username';
+                          }
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                            labelText: 'Link',
+                            hintStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 0.022 * widgetSize)),
+                        controller: linkController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a link';
+                          }
+                          final urlPattern = RegExp(
+                              r'^(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$');
+                          if (!urlPattern.hasMatch(value)) {
+                            return 'Please enter a valid link';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -10,6 +10,10 @@ class AddSocialLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
     return TextButton(
       style: ButtonStyle(
         backgroundColor:
@@ -28,11 +32,11 @@ class AddSocialLinkButton extends StatelessWidget {
                   maxHeight: MediaQuery.of(context).size.height * 0.8,
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all((1 / 33) * widgetSize),
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 15),
+                        padding: EdgeInsets.only(bottom: (1 / 33) * widgetSize),
                         child: Container(
                           decoration: const BoxDecoration(
                             border: Border(
@@ -50,13 +54,13 @@ class AddSocialLinkButton extends StatelessWidget {
                                 },
                                 icon: const Icon(Icons.close),
                               ),
-                              const Expanded(
+                              Expanded(
                                 child: Center(
                                   child: Text(
                                     'Add Social Link',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 15,
+                                      fontSize: 1 / 33 * widgetSize,
                                     ),
                                   ),
                                 ),
@@ -68,8 +72,8 @@ class AddSocialLinkButton extends StatelessWidget {
                       Column(
                         children: <Widget>[
                           Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
+                            spacing: (1 / 50) * widgetSize,
+                            runSpacing: (1 / 50) * widgetSize,
                             children:
                                 socialMediaButtons.map((socialMediaButton) {
                               return IconButtonWithText(
@@ -89,21 +93,22 @@ class AddSocialLinkButton extends StatelessWidget {
           },
         );
       },
-      child: Container(
-        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2, top: 2),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.add,
-                color: Color.fromARGB(255, 175, 174, 174), size: 20),
-            SizedBox(width: 3),
-            Text(
-              'Add social link',
-              style: TextStyle(
-                  color: Color.fromARGB(255, 212, 211, 211), fontSize: 12),
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            Icons.add,
+            color: Color.fromARGB(255, 175, 174, 174),
+            size: (1 / 25) * widgetSize,
+          ),
+          SizedBox(width: (1 / 100) * widgetSize),
+          Text(
+            'Add social link',
+            style: TextStyle(
+                color: Color.fromARGB(255, 212, 211, 211),
+                fontSize: 0.022 * widgetSize),
+          ),
+        ],
       ),
     );
   }
@@ -123,6 +128,10 @@ class IconButtonWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('text: $text icon: $icon');
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
     return TextButton(
       onPressed: () async {
         Navigator.pop(context);
@@ -130,24 +139,7 @@ class IconButtonWithText extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => AddSocialLinkForm(
-              socialMediaIcon: TextButton(
-                onPressed: null,
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 229, 228, 228)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(width: 20, height: 20, child: icon),
-                    SizedBox(width: 8),
-                    Text(
-                      text,
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
+              socialMediaIcon: icon,
               socialLink: text,
             ),
           ),
@@ -161,11 +153,14 @@ class IconButtonWithText extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 20, height: 20, child: icon),
-          SizedBox(width: 8),
+          Container(
+              width: (1 / 25) * widgetSize,
+              height: (1 / 25) * widgetSize,
+              child: icon),
+          SizedBox(width: (1 / 100) * widgetSize),
           Text(
             text,
-            style: TextStyle(color: Colors.black, fontSize: 12),
+            style: TextStyle(color: Colors.black, fontSize: 0.022 * widgetSize),
           ),
         ],
       ),

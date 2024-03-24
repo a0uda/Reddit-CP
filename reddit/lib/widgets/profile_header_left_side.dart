@@ -6,55 +6,62 @@ import '../Services/user_service.dart';
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   final UserAbout userData;
-  final String
-      userType; //if user type is 'me' then can show followers, else if others profile then don't show follow button
+  final String userType;
 
-  ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
+  ProfileHeaderLeftSide(this.userData, this.userType, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
+
     return SizedBox(
-      width: (2 / 3) * MediaQuery.of(context).size.width,
+      width: (2 / 3) * screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 20),
+            padding: EdgeInsets.only(
+                top: (1 / 25) * widgetSize, left: (1 / 25) * widgetSize),
             child: ClipOval(
               child: Image(
-                image: AssetImage((userData.profile_picture != null
-                    ? userData.profile_picture!
-                    : 'images/Greddit.png')),
-                width: 100,
-                height: 100,
+                image: AssetImage(
+                    userData.profile_picture ?? 'images/Greddit.png'),
+                width: widgetSize * 0.2, // Adjust according to your need
+                height: widgetSize * 0.2, // Adjust according to your need
                 fit: BoxFit.cover,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 10),
+            padding: EdgeInsets.only(
+                left: (1 / 25) * widgetSize, bottom: (1 / 50) * widgetSize),
             child: Text(
-              userData.display_name == null
-                  ? userData.username.toString()
-                  : userData.display_name.toString(),
-              style: const TextStyle(
+              userData.display_name ?? userData.username,
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 0.05 * widgetSize, // Adjust according to your need
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           ListTile(
-            contentPadding: const EdgeInsets.only(left: 20, bottom: 20),
+            contentPadding: EdgeInsets.only(
+                left: (1 / 25) * widgetSize, bottom: (1 / 25) * widgetSize),
             title: userType == 'me'
                 ? Row(
                     children: <Widget>[
                       Text(
-                        '${userService.getFollowersCount(userData.username.toString())} followers',
-                        style: const TextStyle(
+                        '${userService.getFollowersCount(userData.username)} followers',
+                        style: TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
+                          fontSize: 0.022 * widgetSize,
+                          fontWeight:
+                              FontWeight.bold, // Adjust according to your need
                         ),
                       ),
                       IconButton(
@@ -68,16 +75,17 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         },
                         icon: const Icon(Icons.arrow_forward_ios_rounded),
                         color: Colors.white,
-                        iconSize: 15,
+                        iconSize:
+                            0.022 * widgetSize, // Adjust according to your need
                       )
                     ],
                   )
                 : null,
             subtitle: Text(
-              'u/${userData.username.toString()}- ${userData.created_at.toString()}',
-              style: const TextStyle(
+              'u/${userData.username} - ${userData.created_at}\n${userData.about}',
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 10,
+                fontSize: 0.022 * widgetSize, // Adjust according to your need
               ),
             ),
           ),

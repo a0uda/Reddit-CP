@@ -44,14 +44,22 @@ class _ProfileHeaderAddSocialLinkState
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
+
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+      padding: EdgeInsets.only(
+          left: (1 / 25) * widgetSize,
+          right: (1 / 25) * widgetSize,
+          bottom: (1 / 12) * widgetSize),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: (1 / 55) * widgetSize,
+            runSpacing: (1 / 55) * widgetSize,
             children: [
               ...(socialLinks?.map((linkData) {
                     String websiteName = linkData.type.toLowerCase();
@@ -67,16 +75,16 @@ class _ProfileHeaderAddSocialLinkState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            width: 20,
-                            height: 20,
+                            width: (1 / 25) * widgetSize,
+                            height: (1 / 25) * widgetSize,
                             child: getSocialMediaIcon(websiteName),
                           ),
-                          SizedBox(width: 5),
+                          SizedBox(width: (1 / 100) * widgetSize),
                           Text(
                             linkData.display_text,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12,
+                              fontSize: 0.022 * widgetSize,
                             ),
                           ),
                         ],
