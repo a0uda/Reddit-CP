@@ -5,6 +5,9 @@ import 'package:reddit/Pages/forgot-username.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/user_service.dart';
+import '../Controllers/user_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,20 +44,30 @@ class LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  List<Map<String, String>> users = [
-    {'username': 'user1', 'password': 'password1'},
-    {'username': 'user2', 'password': 'password2'},
-  ];
   void validateForm(BuildContext context) {
-    bool isValidUser = false;
-    for (var user in users) {
-      if (user['username'] == usernameController.text &&
-          user['password'] == passwordController.text) {
-        isValidUser = true;
-        break;
-      }
-    }
-    if (!isValidUser) {
+    final userService = GetIt.instance.get<UserService>();
+    int validationResult =
+        userService.userLogin(usernameController.text, passwordController.text);
+
+    if (validationResult == 200) {
+      final userController = GetIt.instance.get<UserController>();
+      userController.getUser(usernameController.text);
+      // print('User logged in successfully!');
+      // print('User data: ${userController.userAbout?.email}');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileLayout: MobileLayout(
+              mobilePageMode: 0,
+            ),
+            desktopLayout: DesktopHomePage(
+              indexOfPage: 0,
+            ),
+          ),
+        ),
+      );
+    } else {
+      // Display error message for unsuccessful login
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -68,16 +81,6 @@ class LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.black,
         ),
       );
-    } else {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const ResponsiveLayout(
-            mobileLayout: MobileLayout(
-              mobilePageMode: 0,
-            ),
-            desktopLayout: DesktopHomePage(
-              indexOfPage: 0,
-            )),
-      ));
     }
   }
 

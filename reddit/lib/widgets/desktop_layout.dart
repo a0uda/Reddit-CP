@@ -14,8 +14,10 @@ class DesktopHomePage extends StatefulWidget {
 
 class _DesktopHomePageState extends State<DesktopHomePage> {
   void logoTapped() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DesktopHomePage(indexOfPage: 0)));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const DesktopHomePage(indexOfPage: 0)));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

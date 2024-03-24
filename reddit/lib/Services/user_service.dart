@@ -90,11 +90,13 @@ class UserAbout {
 
 class UserItem {
   final UserAbout userAbout;
+  final String? password;
   final List<FollowersFollowingItem>? followers;
   final List<FollowersFollowingItem>? following;
 
   UserItem({
     required this.userAbout,
+    this.password,
     this.followers,
     this.following,
   });
@@ -103,6 +105,12 @@ class UserItem {
 bool testing = true;
 
 class UserService {
+  final List<String> usedPasswords = [
+    'rawan1234',
+    'john1234',
+    'jane1234',
+    'mark1234',
+  ];
   void addUser() {
     if (testing) {
       //to be implemented
@@ -113,7 +121,9 @@ class UserService {
 
   UserAbout? getUserAbout(String Username) {
     if (testing)
-      return users.firstWhere((element) => element.userAbout.username == Username).userAbout;
+      return users
+          .firstWhere((element) => element.userAbout.username == Username)
+          .userAbout;
     else {
       //to be fetched from database
     }
@@ -124,7 +134,8 @@ class UserService {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
-          .userAbout.social_links!
+          .userAbout
+          .social_links!
           .add(SocialLlinkItem(
             username: username,
             display_text: display_text,
@@ -140,7 +151,8 @@ class UserService {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
-          .userAbout.social_links!
+          .userAbout
+          .social_links!
           .removeWhere((element) => element.id == id);
     } else {
       // delete social link from database
@@ -226,6 +238,78 @@ class UserService {
       // get following from database
     }
   }
+
+  int userSignup(
+      String username, String password, String email, String gender) {
+    if (password.length < 8) {
+      return 400;
+    }
+
+    if (username == password) {
+      return 400;
+    }
+
+    if (!_isValidEmail(email)) {
+      return 400;
+    }
+
+    if (availableUsername(username) == 400) {
+      return 400;
+    }
+
+    if (availableEmail(email) == 400) {
+      return 400;
+    }
+
+    if (availablePassword(password) == 400) {
+      return 400;
+    }
+
+    UserAbout newUserAbout = UserAbout(
+      username: username,
+      email: email,
+      verified_email_flag: false,
+      gender: gender,
+    );
+
+    UserItem newUserItem = UserItem(
+      userAbout: newUserAbout,
+      password: password,
+      followers: [],
+      following: [],
+    );
+
+    users.add(newUserItem);
+    usedPasswords.add(password);
+
+    return 200;
+  }
+
+  int userLogin(String username, String password) {
+    if (users.any((user) =>
+        user.userAbout.username == username && user.password == password)) {
+      return 200;
+    } else {
+      return 400;
+    }
+  }
+
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  int availableUsername(String username) {
+    return users.any((user) => user.userAbout.username == username) ? 400 : 200;
+  }
+
+  int availableEmail(String email) {
+    return users.any((user) => user.userAbout.email == email) ? 400 : 200;
+  }
+
+  int availablePassword(String password) {
+    return usedPasswords.contains(password) ? 400 : 200;
+  }
 }
 
 final List<UserItem> users = [
@@ -266,6 +350,7 @@ final List<UserItem> users = [
         ),
       ],
     ),
+    password: 'rawan1234',
     followers: [
       FollowersFollowingItem(
         id: '0',
@@ -361,6 +446,7 @@ final List<UserItem> users = [
         ),
       ],
     ),
+    password: 'john1234',
     followers: [
       FollowersFollowingItem(
         id: '0',
@@ -410,6 +496,7 @@ final List<UserItem> users = [
         ),
       ],
     ),
+    password: 'jane1234',
     followers: [
       FollowersFollowingItem(
         id: '0',
@@ -468,6 +555,7 @@ final List<UserItem> users = [
         ),
       ],
     ),
+    password: 'mark1234',
     following: [
       FollowersFollowingItem(
         id: '0',

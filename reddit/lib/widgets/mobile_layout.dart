@@ -7,6 +7,9 @@ import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 
+import 'package:get_it/get_it.dart';
+import '../Controllers/user_controller.dart';
+
 class MobileLayout extends StatefulWidget {
   final int mobilePageMode;
   const MobileLayout({super.key, required this.mobilePageMode});
@@ -25,6 +28,8 @@ class _MobileLayoutState extends State<MobileLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final UserController userController = GetIt.instance.get<UserController>();
+    // print('mobile layout: ${userController.userAbout?.username}');
     final drawers = [
       DrawerReddit(
         indexOfPage: widget.mobilePageMode,
@@ -40,7 +45,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         widgetIndex: widget.mobilePageMode,
       ),
       const CommunitiesMobile(), //Communities Page here
-      const CreatePost(), 
+      const CreatePost(),
       MobileHomePage(
         widgetIndex: 0, //Chat page here
       ),
@@ -120,9 +125,10 @@ class _MobileLayoutState extends State<MobileLayout> {
                   selectedIndexPage = value;
                 })
               }
-              else {
-                Navigator.of(context).push(MaterialPageRoute(builder: 
-                (context) => const CreatePost(),
+            else
+              {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const CreatePost(),
                 ))
               }
           },
