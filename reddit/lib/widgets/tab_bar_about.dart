@@ -5,14 +5,18 @@ class TabBarAbout extends StatelessWidget {
   Widget build(BuildContext context) {
     var postKarma = 1;
     var commentKarma = 0;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double widgetSize =
+        screenWidth < screenHeight ? screenWidth : screenHeight;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           color: Colors.white,
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            padding: EdgeInsets.all(
+                (1 / 50) * widgetSize), // Adjust the padding as needed
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
@@ -26,24 +30,25 @@ class TabBarAbout extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 20,
-                          top: 20,
-                          left: 20), // Adjust the padding as needed
+                      padding: EdgeInsets.only(
+                          bottom: (1 / 25) * widgetSize,
+                          top: (1 / 25) * widgetSize,
+                          left: (1 / 25) *
+                              widgetSize), // Adjust the padding as needed
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             '$postKarma',
                             style: TextStyle(
-                              fontSize: 15.0,
+                              fontSize: (1 / 33) * widgetSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             'Post Karma',
                             style: TextStyle(
-                              fontSize: 13.0,
+                              fontSize: 0.022 * widgetSize,
                               color: const Color.fromARGB(255, 142, 141, 141),
                             ),
                           ),
@@ -53,24 +58,25 @@ class TabBarAbout extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 20,
-                          top: 20,
-                          left: 60), // Adjust the padding as needed
+                      padding: EdgeInsets.only(
+                          bottom: (1 / 25) * widgetSize,
+                          top: (1 / 25) * widgetSize,
+                          left: (1 / 8) *
+                              widgetSize), // Adjust the padding as needed
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             '$commentKarma',
                             style: TextStyle(
-                              fontSize: 15.0,
+                              fontSize: (1 / 33) * widgetSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             'Comment Karma',
                             style: TextStyle(
-                              fontSize: 13.0,
+                              fontSize: 0.022 * widgetSize,
                               color: const Color.fromARGB(255, 142, 141, 141),
                             ),
                           ),
@@ -83,13 +89,6 @@ class TabBarAbout extends StatelessWidget {
             ),
           ),
         ),
-        // Padding(
-        //     padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
-        //     child: Text('TROPHIES',
-        //         style: TextStyle(
-        //             fontSize: 12,
-        //             fontWeight: FontWeight.bold,
-        //             color: Color.fromARGB(255, 119, 119, 119)))),
       ],
     );
   }

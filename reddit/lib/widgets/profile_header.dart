@@ -28,7 +28,8 @@ class ProfileHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 ProfileHeaderLeftSide(userData, userType),
-                ProfileHeaderRightSide(userData: userData, userType: userType, onUpdate: onUpdate),
+                ProfileHeaderRightSide(
+                    userData: userData, userType: userType, onUpdate: onUpdate),
               ],
             ),
             ProfileHeaderAddSocialLink(userData, userType),
