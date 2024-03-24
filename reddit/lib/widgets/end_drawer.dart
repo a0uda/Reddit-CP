@@ -8,8 +8,6 @@ class EndDrawerReddit extends StatelessWidget {
   final userController = GetIt.instance.get<UserController>();
   @override
   Widget build(BuildContext context) {
-    userController
-        .getUser('Purple-7544'); //rawannnn: to be replaced 
     return Drawer(
       child: Column(
         children: [
