@@ -6,9 +6,11 @@ import '../Services/user_service.dart';
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   final UserAbout userData;
-  String
+  final String
       userType; //if user type is 'me' then can show followers, else if others profile then don't show follow button
-  ProfileHeaderLeftSide(this.userData, this.userType);
+
+  ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -36,7 +38,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               userData.display_name == null
                   ? userData.username.toString()
                   : userData.display_name.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
@@ -50,7 +52,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         '${userService.getFollowersCount(userData.username.toString())} followers',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                         ),
@@ -60,11 +62,11 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => followerList(),
+                              builder: (context) => const followerList(),
                             ),
                           );
                         },
-                        icon: Icon(Icons.arrow_forward_ios_rounded),
+                        icon: const Icon(Icons.arrow_forward_ios_rounded),
                         color: Colors.white,
                         iconSize: 15,
                       )
@@ -73,7 +75,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                 : null,
             subtitle: Text(
               'u/${userData.username.toString()}- ${userData.created_at.toString()}',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 10,
               ),

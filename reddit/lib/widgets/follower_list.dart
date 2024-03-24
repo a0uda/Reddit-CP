@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
@@ -13,17 +12,16 @@ class followerList extends StatefulWidget {
 }
 
 class _followerListState extends State<followerList> {
-
   final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
-
-    final List<FollowersFollowingItem>? followersList =
-        UserService().getFollowers(userController.userAbout!.username.toString());
-    final List<FollowersFollowingItem>? followingList =
-        UserService().getFollowing(userController.userAbout!.username.toString());
+    final String userName = userController.userAbout!.username.toString();
+    List<FollowersFollowingItem>? followersList =
+        UserService().getFollowers(userName);
+    List<FollowersFollowingItem>? followingList =
+        UserService().getFollowing(userName);
 
     return Container(
       child: Scaffold(
@@ -32,50 +30,53 @@ class _followerListState extends State<followerList> {
           backgroundColor: Colors.white,
         ),
         body: ListView.builder(
-          itemCount: userService
-              .getFollowersCount(userController.userAbout!.username.toString()),
+          itemCount: userService.getFollowersCount(userName),
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
                 leading: CircleAvatar(
                     backgroundImage: AssetImage(
                   (followersList![index].profileSettings!.profile_picture !=
                           null
-                      ? followersList[index].profileSettings!.profile_picture!
+                      ? followersList![index].profileSettings!.profile_picture!
                       : 'images/Greddit.png'),
                 )),
                 title: Text(
-                    (followersList[index].profileSettings!.display_name != null
-                        ? followersList[index].profileSettings!.display_name
-                        : followersList[index].username)!),
-                subtitle: Text('u/${followersList[index].username}'),
+                    (followersList![index].profileSettings!.display_name ??
+                        followersList![index].username)),
+                subtitle: Text('u/${followersList![index].username}'),
                 trailing: TextButton(
                   onPressed: () {
                     setState(() {
-                      if (followingList
+                      if (followingList!
                           .where((element) =>
-                              element.username == followersList[index].username)
+                              element.username ==
+                              followersList![index].username)
                           .isNotEmpty) {
-                        userService.unfollowUser(followersList[index].username,
-                            userController.userAbout!.username.toString());
+                        userService.unfollowUser(
+                            followersList![index].username, userName);
                       } else {
-                        userService.followUser(followersList[index].username,
-                            userController.userAbout!.username.toString());
+                        userService.followUser(
+                            followersList![index].username, userName);
                       }
+                      followingList = userService.getFollowing(
+                          userController.userAbout!.username.toString());
+                      followersList = userService.getFollowers(
+                          userController.userAbout!.username.toString());
                     });
                   },
                   child: Text(
                     (followingList!
                             .where((element) =>
                                 element.username ==
-                                followersList[index].username)
+                                followersList![index].username)
                             .isNotEmpty)
                         ? 'Following'
                         : 'Follow',
                     style: TextStyle(
-                      color: (followingList
+                      color: (followingList!
                               .where((element) =>
                                   element.username ==
-                                  followersList[index].username)
+                                  followersList![index].username)
                               .isNotEmpty)
                           ? const Color.fromARGB(255, 110, 110, 110)
                           : Colors.blue,
@@ -83,7 +84,7 @@ class _followerListState extends State<followerList> {
                   ),
                 ),
                 onTap: () {
-                  var username = followersList[index].username.toString();
+                  var username = followersList![index].username.toString();
                   UserAbout otherUserData = userService.getUserAbout(username)!;
                   Navigator.push(
                     context,
