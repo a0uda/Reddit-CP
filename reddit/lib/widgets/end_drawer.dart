@@ -35,7 +35,7 @@ class EndDrawerReddit extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ProfileScreen(userController.userAbout, 'me')),
+                        ProfileScreen(userController.userAbout, 'me', null)),
               );
             },
           ),

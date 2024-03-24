@@ -6,11 +6,10 @@ import 'profile_header_add_social_link.dart';
 class ProfileHeader extends StatelessWidget {
   var userData;
   String userType;
-  ProfileHeader(this.userData, this.userType);
+  Function? onUpdate;
+  ProfileHeader(this.userData, this.userType, this.onUpdate, {Key? key});
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     return Expanded(
       child: Container(
         decoration: const BoxDecoration(
@@ -29,7 +28,7 @@ class ProfileHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 ProfileHeaderLeftSide(userData, userType),
-                ProfileHeaderRightSide(userData: userData, userType: userType),
+                ProfileHeaderRightSide(userData: userData, userType: userType, onUpdate: onUpdate),
               ],
             ),
             ProfileHeaderAddSocialLink(userData, userType),
