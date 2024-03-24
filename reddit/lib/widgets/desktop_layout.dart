@@ -32,17 +32,16 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                 inHome: true,
               ),
             ),
-             VerticalDivider(
-              color:Theme.of(context).colorScheme.primary,
+            VerticalDivider(
+              color: Theme.of(context).colorScheme.primary,
               width: 1,
             ),
-           const  Expanded(
+            const Expanded(
               flex: 4,
               child: Listing(),
-            ),    
-       
-            
-           // rest of the desktop home page
+            ),
+
+            // rest of the desktop home page
           ],
         ));
   }

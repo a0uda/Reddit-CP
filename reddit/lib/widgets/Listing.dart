@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Hot_Listing.dart';
+import 'package:reddit/widgets/hot_listing.dart';
 import 'package:reddit/widgets/top_listing.dart';
-import 'package:reddit/widgets/Best_Listing.dart';
-import 'package:reddit/widgets/rising_listing.dart';
+import 'package:reddit/widgets/best_listing.dart';
+import 'package:reddit/widgets/Rising_Listing.dart';
 import 'package:reddit/widgets/new_listing.dart';
-
 
 class Listing extends StatefulWidget {
   const Listing({Key? key}) : super(key: key);
@@ -26,52 +25,66 @@ class _Listing extends State<Listing> {
     'Top',
     'Rising',
   ];
-  
-  // List of items in our dropdown menu
 
+  // List of items in our dropdown menu
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
-              
-              color:Theme.of(context).colorScheme.background,
-              child: Column(
-                children: [
-                  ListTile( leading:  Container( width: 71,
-                  height: 70,
-                  child:  DropdownButtonHideUnderline(
-                    child: DropdownButton(
-                      // Initial Value
-                      value: dropdownvalue,
-                      // Down Arrow Icon
-                      
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: Column(
+        children: [
+          ListTile(
+            leading: Container(
+              width: 71,
+              height: 70,
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  // Initial Value
+                  value: dropdownvalue,
+                  // Down Arrow Icon
 
-                      // Array list of items
-                      items: items.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownvalue = newValue!;
-                        });
-                      },
-                    ),
-                  ),),),
-                  if (dropdownvalue == 'Hot')
-                  Expanded(child: HotListing(),),
-             
-                  if (dropdownvalue == "Best")Expanded(child: BestListing(),),
-                  if (dropdownvalue == "New") Expanded(child: NewListing(),),
-                  if (dropdownvalue == "Top") Expanded(child: TopListing(),),
-                  if (dropdownvalue == "Rising")Expanded(child: RisingListing(),),
-                ],
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  // After selecting the desired option,it will
+                  // change button value to selected value
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      dropdownvalue = newValue!;
+                    });
+                  },
+                ),
               ),
-              // Your content for the second column here
-            );
+            ),
+          ),
+          if (dropdownvalue == 'Hot')
+            Expanded(
+              child: HotListing(),
+            ),
+          if (dropdownvalue == "Best")
+            Expanded(
+              child: BestListing(),
+            ),
+          if (dropdownvalue == "New")
+            Expanded(
+              child: NewListing(),
+            ),
+          if (dropdownvalue == "Top")
+            Expanded(
+              child: TopListing(),
+            ),
+          if (dropdownvalue == "Rising")
+            Expanded(
+              child: RisingListing(),
+            ),
+        ],
+      ),
+      // Your content for the second column here
+    );
   }
 }

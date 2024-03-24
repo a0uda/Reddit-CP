@@ -7,6 +7,8 @@ import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   LoginPageState createState() => LoginPageState();
 }
@@ -67,14 +69,15 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const ResponsiveLayout(
-                                mobileLayout: MobileLayout(
-                                  mobilePageMode: 0,
-                                ),
-                                desktopLayout: DesktopHomePage(indexOfPage: 0,)),
-                          ));
-      
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const ResponsiveLayout(
+            mobileLayout: MobileLayout(
+              mobilePageMode: 0,
+            ),
+            desktopLayout: DesktopHomePage(
+              indexOfPage: 0,
+            )),
+      ));
     }
   }
 
@@ -122,7 +125,7 @@ class LoginPageState extends State<LoginPage> {
               _buildHeader(),
               SizedBox(height: sizedBoxHeightHeader),
               Center(
-                child: Container(
+                child: SizedBox(
                   width: containerWidth,
                   child: Column(
                     children: [
@@ -134,11 +137,9 @@ class LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.all(buttonPadding),
                             textStyle: TextStyle(fontSize: buttonTextSize),
                           ),
-                          icon: Container(
-                            child: Icon(
-                              Icons.facebook,
-                              color: Colors.blue[900],
-                            ),
+                          icon: Icon(
+                            Icons.facebook,
+                            color: Colors.blue[900],
                           ),
                           label: Text(
                             "Continue with Facebook",
@@ -159,12 +160,10 @@ class LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.all(buttonPadding),
                             textStyle: TextStyle(fontSize: buttonTextSize),
                           ),
-                          icon: Container(
-                            child: Image.asset(
-                              'images/google-icon.png',
-                              width: 25,
-                              height: 25,
-                            ),
+                          icon: Image.asset(
+                            'images/google-icon.png',
+                            width: 25,
+                            height: 25,
                           ),
                           label: Text(
                             "Continue with Google",
@@ -185,7 +184,7 @@ class LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               "OR",
                               style: TextStyle(
@@ -202,7 +201,7 @@ class LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(
                           height: sizedBoxHeightBetweenDividerAndTextFields),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextField(
                           controller: usernameController,
@@ -215,14 +214,14 @@ class LoginPageState extends State<LoginPage> {
                             ),
                             filled: true,
                             fillColor: Colors.grey[100],
-                            prefixIcon: Icon(Icons.person),
+                            prefixIcon: const Icon(Icons.person),
                             contentPadding:
                                 EdgeInsets.all(textFieldContentPadding),
                           ),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeightBetweenTextFields),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         child: TextField(
                           controller: passwordController,
@@ -236,7 +235,7 @@ class LoginPageState extends State<LoginPage> {
                             ),
                             filled: true,
                             fillColor: Colors.grey[100],
-                            prefixIcon: Icon(Icons.lock),
+                            prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(_isPasswordVisible
                                   ? Icons.visibility
@@ -301,13 +300,16 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => const ResponsiveLayout(
-                                mobileLayout: MobileLayout(
-                                  mobilePageMode: 1,
-                                ),
-                                desktopLayout: DesktopHomePage(indexOfPage: 1,)),
-                          ));
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => const ResponsiveLayout(
+                                    mobileLayout: MobileLayout(
+                                      mobilePageMode: 1,
+                                    ),
+                                    desktopLayout: DesktopHomePage(
+                                      indexOfPage: 1,
+                                    )),
+                              ));
                             },
                             child: Text(
                               "Continue as Guest?",
