@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Pages/sign-up.dart';
-import 'package:reddit/Pages/forgot-password.dart';
-import 'package:reddit/Pages/forgot-username.dart';
+import 'package:reddit/Pages/sign_up.dart';
+import 'package:reddit/Pages/forgot_password.dart';
+import 'package:reddit/Pages/forgot_username.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -226,7 +226,7 @@ class LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         child: TextField(
                           controller: passwordController,
-                          obscureText: _isPasswordVisible,
+                          obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(
@@ -239,8 +239,8 @@ class LoginPageState extends State<LoginPage> {
                             prefixIcon: Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(_isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
                               onPressed: () {
                                 setState(() {
                                   _isPasswordVisible = !_isPasswordVisible;

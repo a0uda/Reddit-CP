@@ -7,7 +7,8 @@ import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
-import '../Services/post_service.dart';
+import 'package:reddit/Services/post_service.dart';
+import '../Controllers/user_controller.dart';
 
 class CreatePost extends StatefulWidget {
   const CreatePost({Key? key}) : super(key: key);
@@ -91,6 +92,13 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
+=======
+    final UserController userController = GetIt.instance.get<UserController>();
+    String question;
+    List<String> options = ['', ''];
+    int selectedDays = 3;
+>>>>>>> Stashed changes
     List<String> userCommunities = ["r/news", "r/programming", "r/Flutter"];
     var counter = 0;
     return MaterialApp(
@@ -112,6 +120,7 @@ class _CreatePostState extends State<CreatePost> {
           actions: [
             IconButton(
                 onPressed: (() => {
+<<<<<<< Updated upstream
                       postService.addPost(
                           counter++,
                           titleController.text,
@@ -120,6 +129,65 @@ class _CreatePostState extends State<CreatePost> {
                           _image?.path,
                           null,
                           _video?.path),
+=======
+                      if (titleController.text.isEmpty ||
+                          selectedCommunity == "Select Community")
+                        {
+                          AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Please fill in all fields'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          )
+                        }
+                      else
+                        postService.addPost(
+                            counter++,
+                            userController.userAbout!.username,
+                            titleController.text,
+                            'type',
+                            0,
+                            selectedCommunity,
+                            false,
+                            _selections[1],
+                            _selections[0],
+                            0,
+                            0,
+                            [],
+                            DateTime.now(),
+                            profilePic:
+                                "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
+                            description: bodyController.text,
+                            linkUrl: showLinkField ? URLController.text : null,
+                            images: imageSelected
+                                ? [
+                                    ImageItem(
+                                        path:
+                                            "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
+                                        link: 'linkUrl')
+                                  ]
+                                : null,
+                            videos: videoSelected
+                                ? [
+                                    VideoItem(
+                                        path: _video!.path, link: 'linkUrl')
+                                  ]
+                                : null,
+                            poll: pollSelected
+                                ? PollItem(
+                                    question: questionController.text,
+                                    options: options
+                                        .map((option) => {option: 50.0})
+                                        .toList(),
+                                  )
+                                : null),
+>>>>>>> Stashed changes
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => const ResponsiveLayout(
                             mobileLayout: MobileLayout(

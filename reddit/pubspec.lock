@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
+  better_polls:
+    dependency: "direct main"
+    description:
+      name: better_polls
+      sha256: ed952ca0389dac0a54562c8bcb2ef4adb670053f72ec6a8c613ab98e923695e3
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.8"
   boolean_selector:
     dependency: transitive
     description:

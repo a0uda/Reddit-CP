@@ -50,7 +50,13 @@ class _ProfileHeaderAddSocialLinkState
             children: [
               ...(socialLinks?.map((linkData) {
                     return TextButton(
+<<<<<<< Updated upstream
                       onPressed: () {},
+=======
+                      onPressed: () {
+                        launchUrl(Uri.parse(linkData.customUrl));
+                      },
+>>>>>>> Stashed changes
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             Color.fromARGB(99, 105, 105, 105)),
@@ -58,6 +64,7 @@ class _ProfileHeaderAddSocialLinkState
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+<<<<<<< Updated upstream
                           SocialWidget(
                               placeholderText: linkData['placeholder'] ?? '',
                               iconData: linkData['icon'] ?? Icons.link,
@@ -68,6 +75,21 @@ class _ProfileHeaderAddSocialLinkState
                               placeholderStyle: TextStyle(
                                   color: Color.fromARGB(255, 212, 211, 211),
                                   fontSize: 12)),
+=======
+                          Container(
+                            width: 20,
+                            height: 20,
+                            child: getSocialMediaIcon(websiteName),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            linkData.displayText,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+>>>>>>> Stashed changes
                         ],
                       ),
                     );

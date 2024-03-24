@@ -3,6 +3,7 @@ import 'package:reddit/widgets/report.dart';
 import 'package:reddit/widgets/video_player.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
+import 'package:reddit/widgets/poll_widget.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -12,6 +13,14 @@ class Post extends StatefulWidget {
   final String date;
   final String likes;
   final String comments;
+<<<<<<< Updated upstream
+=======
+  final String? imageUrl;
+  final String? linkUrl;
+  final String? videoUrl;
+  final PollItem? poll;
+
+>>>>>>> Stashed changes
   const Post({
     Key? key,
     required this.profileImageUrl,
@@ -21,7 +30,15 @@ class Post extends StatefulWidget {
     required this.date,
     required this.likes,
     required this.comments,
+<<<<<<< Updated upstream
   }) : super(key: key);
+=======
+    this.imageUrl,
+    this.linkUrl,
+    this.videoUrl,
+    this.poll,
+  });
+>>>>>>> Stashed changes
 
   @override
   PostState createState() => PostState();
@@ -55,6 +72,9 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.imageUrl != null) {
+      print(widget.imageUrl);
+    }
     return InkWell(
       onTap: () => {
         // open this post TODO
@@ -119,6 +139,7 @@ class PostState extends State<Post> {
                           fontFamily: 'Arial'),
                     ),
                   ),
+<<<<<<< Updated upstream
                   Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.5,
@@ -128,6 +149,60 @@ class PostState extends State<Post> {
                           shape: BoxShape.rectangle),
                       child: Text("VIDEO") //VideoScreen(),
                       )
+=======
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      widget.postContent,
+                      style: const TextStyle(fontSize: 16, fontFamily: 'Arial'),
+                    ),
+                  ),
+                  if (widget.imageUrl != null) Image.network(widget.imageUrl!),
+                  if (widget.linkUrl != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        child: Text(
+                          widget.linkUrl!,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Arial',
+                            color: Colors.blue,
+                          ),
+                        ),
+                        //TODO: open link
+                        onTap: () async {
+                          if (await canLaunchUrl(Uri.parse(widget.linkUrl!))) {
+                            await launchUrl(Uri.parse(widget.linkUrl!));
+                          } else {
+                            const AlertDialog(
+                              title: Text('Error'),
+                              content: Text('Could not open link'),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  if (widget.videoUrl != null)
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        // Border width
+                        decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 255, 255, 255),
+                            shape: BoxShape.rectangle),
+                        child: Text("VIDEO") //TODO: VideoScreen(),
+                        ),
+                  if (widget.poll != null)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: PollView(
+                        question: widget.poll!.question,
+                        options: widget.poll!.options,
+                      ),
+                    )
+>>>>>>> Stashed changes
                 ],
               ),
             ),

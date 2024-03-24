@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/user_service.dart';
+import '../Controllers/user_controller.dart';
+import 'package:reddit/widgets/desktop_layout.dart';
+import 'package:reddit/widgets/mobile_layout.dart';
+import 'package:reddit/widgets/responsive_layout.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -16,24 +22,55 @@ class SignUpPageState extends State<SignUpPage> {
   String usernameError = '';
   String passwordError = '';
 
-  List<Map<String, String>> users = [
-    {
-      'username': 'user1',
-      'email': 'user1@example.com',
-      'password': 'password1'
-    },
-    {
-      'username': 'user2',
-      'email': 'user2@example.com',
-      'password': 'password2'
-    },
-  ];
+  // List<Map<String, String>> users = [
+  //   {
+  //     'username': 'user1',
+  //     'email': 'user1@example.com',
+  //     'password': 'password1'
+  //   },
+  //   {
+  //     'username': 'user2',
+  //     'email': 'user2@example.com',
+  //     'password': 'password2'
+  //   },
+  // ];
 
   void handleGenderChange(String gender) {
     setState(() {
       genderSelected = gender;
     });
   }
+
+  // void validateForm(BuildContext context) {
+  //   setState(() {
+  //     emailError = '';
+  //     usernameError = '';
+  //     passwordError = '';
+
+  //     if (emailController.text.isEmpty) {
+  //       emailError = 'Email is required';
+  //     } else if (!_isEmailValid(emailController.text)) {
+  //       emailError = 'Enter a valid email';
+  //     }
+  //     if (usernameController.text.isEmpty) {
+  //       usernameError = 'Username is required';
+  //     }
+  //     if (passwordController.text.isEmpty) {
+  //       passwordError = 'Password is required';
+  //     }
+  //     if (usernameController.text == passwordController.text) {
+  //       usernameError = 'Username cannot be same as password';
+  //     }
+  //     if (passwordController.text.length < 8) {
+  //       passwordError = 'Password must be at least 8 characters long';
+  //     }
+  //     if (users.any((user) => user['email'] == emailController.text)) {
+  //       emailError = 'Email already exists';
+  //     }
+  //     if (users.any((user) => user['username'] == usernameController.text)) {
+  //       usernameError = 'Username already exists';
+  //     }
+  //   });
 
   void validateForm(BuildContext context) {
     setState(() {
@@ -51,23 +88,77 @@ class SignUpPageState extends State<SignUpPage> {
       }
       if (passwordController.text.isEmpty) {
         passwordError = 'Password is required';
-      }
-      if (usernameController.text == passwordController.text) {
-        usernameError = 'Username cannot be same as password';
-      }
-      if (passwordController.text.length < 8) {
+      } else if (passwordController.text.length < 8) {
         passwordError = 'Password must be at least 8 characters long';
       }
-      if (users.any((user) => user['email'] == emailController.text)) {
+      if (usernameController.text == passwordController.text &&
+          passwordController.text.isNotEmpty &&
+          usernameController.text.isNotEmpty) {
+        usernameError = 'Username cannot be same as password';
+      }
+
+      if (UserService().availableEmail(emailController.text) == 400) {
         emailError = 'Email already exists';
       }
-      if (users.any((user) => user['username'] == usernameController.text)) {
+      if (UserService().availableUsername(usernameController.text) == 400) {
         usernameError = 'Username already exists';
+      }
+      if (UserService().availablePassword(passwordController.text) == 400) {
+        passwordError = 'Password already exists';
       }
     });
 
     if (emailError.isEmpty && usernameError.isEmpty && passwordError.isEmpty) {
-      print('Sign up successful!');
+      int statusCode = UserService().userSignup(
+        usernameController.text,
+        passwordController.text,
+        emailController.text,
+        genderSelected,
+      );
+
+      if (statusCode == 200) {
+        final userController = GetIt.instance.get<UserController>();
+        userController.getUser(usernameController.text);
+        // print('User signed up successfully!');
+        // print('User data: ${userController.userAbout?.email}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Sign up successful! Redirecting to home page...',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        Future.delayed(const Duration(seconds: 3), () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const ResponsiveLayout(
+                mobileLayout: MobileLayout(
+                  mobilePageMode: 0,
+                ),
+                desktopLayout: DesktopHomePage(
+                  indexOfPage: 0,
+                ),
+              ),
+            ),
+          );
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Sign up failed! Please try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     } else {
       _showErrorSnackbar(context);
     }
@@ -95,10 +186,10 @@ class SignUpPageState extends State<SignUpPage> {
         content: Text(
           errorMessage,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -177,7 +268,7 @@ class SignUpPageState extends State<SignUpPage> {
               _buildHeader(screenWidth, screenHeight),
               SizedBox(height: sizedBoxHeightHeader),
               Center(
-                child: Container(
+                child: SizedBox(
                   width: containerWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -194,7 +285,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                           contentPadding:
                               EdgeInsets.all(textFieldContentPadding),
                         ),
@@ -213,7 +304,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                           contentPadding:
                               EdgeInsets.all(textFieldContentPadding),
                         ),
@@ -233,7 +324,7 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: const Icon(Icons.lock),
                           suffixIcon: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -242,8 +333,8 @@ class SignUpPageState extends State<SignUpPage> {
                             },
                             child: Icon(
                               _isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                           ),
                           contentPadding:
@@ -271,7 +362,7 @@ class SignUpPageState extends State<SignUpPage> {
                                     handleGenderChange(value.toString()),
                                 activeColor: Colors.black,
                               ),
-                              Text("Male"),
+                              const Text("Male"),
                               SizedBox(width: sizedBoxWidthGenders),
                               Radio(
                                 value: 'Female',
@@ -280,7 +371,7 @@ class SignUpPageState extends State<SignUpPage> {
                                     handleGenderChange(value.toString()),
                                 activeColor: Colors.black,
                               ),
-                              Text("Female"),
+                              const Text("Female"),
                             ],
                           ),
                         ],
@@ -294,7 +385,7 @@ class SignUpPageState extends State<SignUpPage> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               "OR",
                               style: TextStyle(
@@ -317,11 +408,9 @@ class SignUpPageState extends State<SignUpPage> {
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
-                        icon: Container(
-                          child: Icon(
-                            Icons.facebook,
-                            color: Colors.blue[900],
-                          ),
+                        icon: Icon(
+                          Icons.facebook,
+                          color: Colors.blue[900],
                         ),
                         label: Text(
                           "Continue with Facebook",
@@ -339,12 +428,10 @@ class SignUpPageState extends State<SignUpPage> {
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
-                        icon: Container(
-                          child: Image.asset(
-                            'images/google-icon.png',
-                            width: 25,
-                            height: 25,
-                          ),
+                        icon: Image.asset(
+                          'images/google-icon.png',
+                          width: 25,
+                          height: 25,
                         ),
                         label: Text(
                           "Continue with Google",
@@ -405,7 +492,7 @@ class SignUpPageState extends State<SignUpPage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
+              MaterialPageRoute(builder: (context) => const LoginPage()),
             );
           },
           child: Padding(

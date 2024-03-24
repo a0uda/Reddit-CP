@@ -12,9 +12,39 @@ class PostItem {
     required this.title,
     required this.text,
     required this.date,
-    this.url,
-    this.imageUrl,
-    this.videoUrl,
+    required this.likes,
+    required this.comments,
+    required this.commentsList,
+  });
+}
+
+class ImageItem {
+  final String path;
+  final String link;
+
+  ImageItem({
+    required this.path,
+    required this.link,
+  });
+}
+
+class VideoItem {
+  final String path;
+  final String link;
+
+  VideoItem({
+    required this.path,
+    required this.link,
+  });
+}
+
+class PollItem {
+  final String question;
+  final List<Map<String, double>> options;
+
+  PollItem({
+    required this.question,
+    required this.options,
   });
 }
 

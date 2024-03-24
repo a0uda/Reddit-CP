@@ -33,6 +33,12 @@ dependencies:
   share: ^2.0.4
   get_it: ^7.2.0
   mockito: ^5.0.15 
+<<<<<<< Updated upstream
+=======
+  flutter_polls: ^0.1.6
+  url_launcher: ^6.0.12
+  better_polls: ^1.0.8
+>>>>>>> Stashed changes
 
 
   # The following adds the Cupertino Icons font to your application.

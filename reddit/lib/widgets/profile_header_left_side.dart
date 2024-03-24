@@ -79,6 +79,16 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                     ),
                   )
                 : null,
+<<<<<<< Updated upstream
+=======
+            subtitle: Text(
+              'u/${userData.username.toString()}- ${userData.createdAt.toString()}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+              ),
+            ),
+>>>>>>> Stashed changes
           ),
         ],
       ),
