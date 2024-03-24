@@ -326,7 +326,8 @@ final List<UserItem> users = [
       verified_email_flag: true,
       display_name: 'Rawan Adel',
       about: 'I am a software engineer',
-      profile_picture: 'images/pp.jpg',
+      profile_picture:
+          'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
       social_links: [
         SocialLlinkItem(
           id: '0',

@@ -8,6 +8,7 @@ import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
+import '../Controllers/user_controller.dart';
 
 class CreatePost extends StatefulWidget {
   const CreatePost({super.key});
@@ -100,6 +101,7 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   Widget build(BuildContext context) {
+    final UserController userController = GetIt.instance.get<UserController>();
     String question;
     List<String> options = ['', ''];
     int selectedDays = 3;
@@ -126,7 +128,7 @@ class _CreatePostState extends State<CreatePost> {
                 onPressed: (() => {
                       postService.addPost(
                           counter++,
-                          'username',
+                          userController.userAbout!.username,
                           titleController.text,
                           'type',
                           0,
@@ -138,8 +140,7 @@ class _CreatePostState extends State<CreatePost> {
                           0,
                           [],
                           DateTime.now(),
-                          profilePic:
-                              'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+                          profilePic: userController.userAbout!.profile_picture,
                           description: bodyController.text,
                           linkUrl: showLinkField ? URLController.text : null,
                           images: imageSelected
