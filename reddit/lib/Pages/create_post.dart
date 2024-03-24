@@ -7,11 +7,10 @@ import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
-import 'package:reddit/Services/post_service.dart';
-import '../Controllers/user_controller.dart';
+import '../Services/post_service.dart';
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({Key? key}) : super(key: key);
+  const CreatePost({super.key});
 
   @override
   State<CreatePost> createState() => _CreatePostState();
@@ -23,6 +22,7 @@ class _CreatePostState extends State<CreatePost> {
   XFile? _video;
   bool imageSelected = false;
   bool videoSelected = false;
+  bool pollSelected = false;
   VideoPlayerController? _videoPlayerController;
 
   Future<void> _pickImage() async {
@@ -32,14 +32,20 @@ class _CreatePostState extends State<CreatePost> {
       setState(() {
         _image = pickedFile;
         imageSelected = true;
-        if (showLinkField) {
-          setState(() {
-            showLinkField = false;
-            videoSelected = false;
-          });
-        }
+        showLinkField = false;
+        videoSelected = false;
+        pollSelected = false;
       });
     }
+  }
+
+  void _pollPressed() {
+    setState(() {
+      pollSelected = true;
+      showLinkField = false;
+      imageSelected = false;
+      videoSelected = false;
+    });
   }
 
   @override
@@ -60,10 +66,9 @@ class _CreatePostState extends State<CreatePost> {
       setState(() {
         _video = pickedFile;
         videoSelected = true;
-        if (showLinkField) {
-          showLinkField = false;
-          imageSelected = false;
-        }
+        showLinkField = false;
+        imageSelected = false;
+        pollSelected = false;
       });
 
       _videoPlayerController = VideoPlayerController.file(File(_video!.path))
@@ -75,6 +80,9 @@ class _CreatePostState extends State<CreatePost> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController bodyController = TextEditingController();
+  // ignore: non_constant_identifier_names
+  TextEditingController URLController = TextEditingController();
+  TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
   String selectedCommunity = "Select Community";
   bool showLinkField = false;
@@ -92,13 +100,9 @@ class _CreatePostState extends State<CreatePost> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
-=======
-    final UserController userController = GetIt.instance.get<UserController>();
     String question;
     List<String> options = ['', ''];
     int selectedDays = 3;
->>>>>>> Stashed changes
     List<String> userCommunities = ["r/news", "r/programming", "r/Flutter"];
     var counter = 0;
     return MaterialApp(
@@ -120,74 +124,36 @@ class _CreatePostState extends State<CreatePost> {
           actions: [
             IconButton(
                 onPressed: (() => {
-<<<<<<< Updated upstream
                       postService.addPost(
                           counter++,
+                          'username',
                           titleController.text,
-                          bodyController.text,
+                          'type',
+                          0,
+                          selectedCommunity,
+                          false,
+                          _selections[1],
+                          _selections[0],
+                          0,
+                          0,
+                          [],
                           DateTime.now(),
-                          _image?.path,
-                          null,
-                          _video?.path),
-=======
-                      if (titleController.text.isEmpty ||
-                          selectedCommunity == "Select Community")
-                        {
-                          AlertDialog(
-                            title: const Text('Error'),
-                            content: const Text('Please fill in all fields'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          )
-                        }
-                      else
-                        postService.addPost(
-                            counter++,
-                            userController.userAbout!.username,
-                            titleController.text,
-                            'type',
-                            0,
-                            selectedCommunity,
-                            false,
-                            _selections[1],
-                            _selections[0],
-                            0,
-                            0,
-                            [],
-                            DateTime.now(),
-                            profilePic:
-                                "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-                            description: bodyController.text,
-                            linkUrl: showLinkField ? URLController.text : null,
-                            images: imageSelected
-                                ? [
-                                    ImageItem(
-                                        path:
-                                            "https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-                                        link: 'linkUrl')
-                                  ]
-                                : null,
-                            videos: videoSelected
-                                ? [
-                                    VideoItem(
-                                        path: _video!.path, link: 'linkUrl')
-                                  ]
-                                : null,
-                            poll: pollSelected
-                                ? PollItem(
-                                    question: questionController.text,
-                                    options: options
-                                        .map((option) => {option: 50.0})
-                                        .toList(),
-                                  )
-                                : null),
->>>>>>> Stashed changes
+                          profilePic:
+                              'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+                          description: bodyController.text,
+                          linkUrl: showLinkField ? URLController.text : null,
+                          images: imageSelected
+                              ? [ImageItem(path: _image!.path, link: 'linkUrl')]
+                              : null,
+                          videos: videoSelected
+                              ? [VideoItem(path: _video!.path, link: 'linkUrl')]
+                              : null,
+                          poll: pollSelected
+                              ? PollItem(
+                                  question: questionController.text,
+                                  options: options,
+                                  votes: [0, 0])
+                              : null),
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
                         builder: (context) => const ResponsiveLayout(
                             mobileLayout: MobileLayout(
@@ -213,171 +179,215 @@ class _CreatePostState extends State<CreatePost> {
           child: Column(
             children: [
               Expanded(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          selectedCommunity,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            final result = await showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (context) {
-                                return ListView.builder(
-                                  itemCount: userCommunities.length,
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      title: Text(
-                                        userCommunities[index],
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(
-                                            context, userCommunities[index]);
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                            setState(() {
-                              if (result != null) selectedCommunity = result;
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.deepOrange,
-                            size: 20,
-                          ),
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () => {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        'Community Rules',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Colors.black,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          redditRules,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          },
-                          child: const Text(
-                            'RULES',
-                            style: TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.grey,
-                    ),
-                    TextFormField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'Title',
-                        labelStyle: TextStyle(
-                          color: Colors.black54,
-                          fontSize: 20,
+                child: Column(children: [
+                  Row(
+                    children: [
+                      Text(
+                        selectedCommunity,
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    if (showLinkField) // Add this block
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                  border: InputBorder.none,
-                                  labelText: 'URL',
-                                  labelStyle: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500)),
-                            ),
+                      IconButton(
+                        onPressed: () async {
+                          final result = await showModalBottomSheet(
+                            backgroundColor: Colors.white,
+                            context: context,
+                            builder: (context) {
+                              return ListView.builder(
+                                itemCount: userCommunities.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    title: Text(
+                                      userCommunities[index],
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(
+                                          context, userCommunities[index]);
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                          setState(() {
+                            if (result != null) selectedCommunity = result;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.deepOrange,
+                          size: 20,
+                        ),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => {
+                          showModalBottomSheet(
+                            backgroundColor: Colors.white,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    const Text(
+                                      'Community Rules',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const Divider(
+                                      color: Colors.black,
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        redditRules,
+                                        textAlign: TextAlign.left,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
+                        },
+                        child: const Text(
+                          'RULES',
+                          style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    color: Colors.grey,
+                  ),
+                  TextFormField(
+                    controller: titleController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      labelText: 'Title',
+                      labelStyle: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (showLinkField) // Add this block
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: URLController,
+                            decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'URL',
+                                labelStyle: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500)),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            setState(() {
+                              showLinkField = false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  TextFormField(
+                    controller: bodyController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      labelText: 'body text (optional)',
+                    ),
+                    maxLines: null,
+                  ),
+                  if (imageSelected)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.file(
+                        File(_image!.path),
+                        fit: BoxFit.scaleDown,
+                        height: MediaQuery.of(context).size.height / 2.5,
+                      ),
+                    ),
+                  if (videoSelected)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: _videoPlayerController!.value.isInitialized
+                          ? AspectRatio(
+                              aspectRatio:
+                                  _videoPlayerController!.value.aspectRatio,
+                              child: VideoPlayer(_videoPlayerController!),
+                            )
+                          : Container(),
+                    ),
+                  if (pollSelected)
+                    Container(
+                      padding: EdgeInsets.all(10.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      child: Column(
+                        children: [
                           IconButton(
-                            icon: const Icon(Icons.close),
+                            icon: Icon(Icons.close),
                             onPressed: () {
                               setState(() {
-                                showLinkField = false;
+                                pollSelected = false;
                               });
                             },
                           ),
+                          TextField(
+                            controller: questionController,
+                            onChanged: (value) => question = value,
+                            decoration: InputDecoration(labelText: 'Question'),
+                          ),
+                          TextField(
+                            onChanged: (value) => options[0] = value,
+                            decoration: InputDecoration(labelText: 'Option 1'),
+                          ),
+                          TextField(
+                            onChanged: (value) => options[1] = value,
+                            decoration: InputDecoration(labelText: 'Option 2'),
+                          ),
+                          DropdownButton<int>(
+                            value: selectedDays,
+                            items: [1, 2, 3, 4, 5].map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text('$value days'),
+                              );
+                            }).toList(),
+                            onChanged: (value) =>
+                                setState(() => selectedDays = value!),
+                          ),
                         ],
                       ),
-                    TextFormField(
-                      controller: bodyController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        labelText: 'body text (optional)',
-                      ),
-                      maxLines: null,
-                    ),
-                    if (imageSelected)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.file(
-                          File(_image!.path),
-                          fit: BoxFit.scaleDown,
-                          height: MediaQuery.of(context).size.height / 2.5,
-                        ),
-                      ),
-                    if (videoSelected)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _videoPlayerController!.value.isInitialized
-                            ? AspectRatio(
-                                aspectRatio:
-                                    _videoPlayerController!.value.aspectRatio,
-                                child: VideoPlayer(_videoPlayerController!),
-                              )
-                            : Container(),
-                      ),
-                  ],
-                ),
+                    )
+                ]),
               ),
               // TOGGLE BUTTONS
               Align(
@@ -465,6 +475,20 @@ class _CreatePostState extends State<CreatePost> {
                       child: const Column(
                         children: [
                           Icon(Icons.video_call),
+                          // Text('Video'),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(24),
+                        foregroundColor: Colors.deepOrange,
+                      ),
+                      onPressed: _pollPressed,
+                      child: const Column(
+                        children: [
+                          Icon(Icons.poll),
                           // Text('Video'),
                         ],
                       ),

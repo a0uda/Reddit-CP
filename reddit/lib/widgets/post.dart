@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/report.dart';
 import 'package:reddit/widgets/video_player.dart';
 import 'package:get_it/get_it.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Services/post_service.dart';
 import 'package:reddit/widgets/poll_widget.dart';
 
@@ -13,14 +14,11 @@ class Post extends StatefulWidget {
   final String date;
   final String likes;
   final String comments;
-<<<<<<< Updated upstream
-=======
   final String? imageUrl;
   final String? linkUrl;
   final String? videoUrl;
   final PollItem? poll;
 
->>>>>>> Stashed changes
   const Post({
     Key? key,
     required this.profileImageUrl,
@@ -30,15 +28,11 @@ class Post extends StatefulWidget {
     required this.date,
     required this.likes,
     required this.comments,
-<<<<<<< Updated upstream
-  }) : super(key: key);
-=======
     this.imageUrl,
     this.linkUrl,
     this.videoUrl,
     this.poll,
   });
->>>>>>> Stashed changes
 
   @override
   PostState createState() => PostState();
@@ -139,17 +133,6 @@ class PostState extends State<Post> {
                           fontFamily: 'Arial'),
                     ),
                   ),
-<<<<<<< Updated upstream
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.5,
-                      // Border width
-                      decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          shape: BoxShape.rectangle),
-                      child: Text("VIDEO") //VideoScreen(),
-                      )
-=======
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -199,10 +182,11 @@ class PostState extends State<Post> {
                       height: MediaQuery.of(context).size.height * 0.3,
                       child: PollView(
                         question: widget.poll!.question,
-                        options: widget.poll!.options,
+                        options: widget.poll!.options
+                            .map((option) => {option: 0.0})
+                            .toList(),
                       ),
                     )
->>>>>>> Stashed changes
                 ],
               ),
             ),
