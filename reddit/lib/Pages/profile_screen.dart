@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/tab_bar_views.dart';
+import '../Services/user_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  // ignore: prefer_typing_uninitialized_variables
-  var userData;
+  UserAbout? userData;
   String userType;
   ProfileScreen(this.userData, this.userType, {super.key});
   @override
