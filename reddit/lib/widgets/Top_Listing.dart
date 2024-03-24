@@ -56,8 +56,8 @@ class TopListingBuild extends State<TopListing> {
         return Post(
           profileImageUrl: posts[index].profileImage,
           name: posts[index].name,
+          title: posts[index].postContent,
           postContent: posts[index].postContent,
-          postView: posts[index].profileImage,
           date: posts[index].name,
           likes: posts[index].likes,
           comments: posts[index].comments,

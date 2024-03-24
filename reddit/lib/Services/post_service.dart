@@ -1,20 +1,75 @@
 class PostItem {
   final int id;
+  final String username;
+  final String? profilePic;
   final String title;
-  final String text;
+  final String? description;
+  final String type;
+  final String? linkUrl;
+  final List<ImageItem>? images;
+  final List<VideoItem>? videos;
+  final PollItem? poll;
+  final int communityId;
+  final String communityName;
+  final bool ocFlag;
+  final bool spoilerFlag;
+  final bool nsfwFlag;
   final DateTime date;
-  final String? url;
-  final String? imageUrl;
-  final String? videoUrl;
-
+  final int likes;
+  final int comments;
+  final List<String> commentsList;
   PostItem({
     required this.id,
+    required this.username,
+    this.profilePic,
     required this.title,
-    required this.text,
+    this.description,
+    required this.type,
+    this.linkUrl,
+    this.images,
+    this.videos,
+    this.poll,
+    required this.communityId,
+    required this.communityName,
+    required this.ocFlag,
+    required this.spoilerFlag,
+    required this.nsfwFlag,
     required this.date,
-    this.url,
-    this.imageUrl,
-    this.videoUrl,
+    required this.likes,
+    required this.comments,
+    required this.commentsList,
+  });
+}
+
+class ImageItem {
+  final String path;
+  final String link;
+
+  ImageItem({
+    required this.path,
+    required this.link,
+  });
+}
+
+class VideoItem {
+  final String path;
+  final String link;
+
+  VideoItem({
+    required this.path,
+    required this.link,
+  });
+}
+
+class PollItem {
+  final String question;
+  final List<String> options;
+  final List<int> votes;
+
+  PollItem({
+    required this.question,
+    required this.options,
+    required this.votes,
   });
 }
 
@@ -22,18 +77,51 @@ final List<PostItem> posts = [];
 bool testing = true;
 
 class PostService {
-  void addPost(int id, String title, String text, DateTime date, String? url,
-      String? imageUrl, String? videoUrl) {
+  void addPost(
+    int id,
+    String username,
+    String title,
+    String type,
+    int communityId,
+    String communityName,
+    bool ocFlag,
+    bool spoilerFlag,
+    bool nsfwFlag,
+    int likes,
+    int comments,
+    List<String> commentsList,
+    DateTime date, {
+    String? profilePic,
+    String? description,
+    String? linkUrl,
+    List<ImageItem>? images,
+    List<VideoItem>? videos,
+    PollItem? poll,
+  }) {
     if (testing) {
-      posts.add(PostItem(
-        id: id,
-        title: title,
-        text: text,
-        date: date,
-        url: url,
-        imageUrl: imageUrl,
-        videoUrl: videoUrl,
-      ));
+      posts.add(
+        PostItem(
+          id: id,
+          username: username,
+          profilePic: profilePic,
+          title: title,
+          description: description,
+          type: type,
+          linkUrl: linkUrl,
+          images: images,
+          videos: videos,
+          poll: poll,
+          communityId: communityId,
+          communityName: communityName,
+          ocFlag: ocFlag,
+          spoilerFlag: spoilerFlag,
+          nsfwFlag: nsfwFlag,
+          likes: likes,
+          comments: comments,
+          commentsList: commentsList,
+          date: date,
+        ),
+      );
     } else {
       // add post to database
     }

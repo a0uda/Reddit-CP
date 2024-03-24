@@ -36,14 +36,29 @@ class HotListingBuild extends State<HotListing> {
       itemCount: posts.length,
       controller: controller,
       itemBuilder: (context, index) {
+        //       const Post({
+        //   super.key,
+        //   required this.profileImageUrl,
+        //   required this.name,
+        //   required this.title,
+        //   required this.postContent,
+        //   required this.postView,
+        //   required this.date,
+        //   required this.likes,
+        //   required this.comments,
+        //   this.imageUrl,
+        //   this.linkUrl,
+        //   this.videoUrl,
+        // });
         return Post(
-          profileImageUrl: "",
-          name: "fouda",
-          postContent: posts[index].title,
-          postView: "",
+          profileImageUrl: posts[index].profilePic!,
+          name: posts[index].username,
+          title: posts[index].title,
+          postContent: posts[index].description!,
           date: posts[index].date.toString(),
-          likes: "45",
-          comments: "20",
+          likes: posts[index].likes.toString(),
+          comments: posts[index].comments.toString(),
+          linkUrl: posts[index].linkUrl,
         );
       },
     );

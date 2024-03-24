@@ -30,13 +30,11 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: const Color.fromARGB(255, 211, 208, 208),
+              primary: Color.fromARGB(255, 224, 223, 223),
               secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
         ),
-        home: LoginPage()
-        
-        );
+        home: const LoginPage());
   }
 }
