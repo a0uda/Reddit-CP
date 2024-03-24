@@ -138,7 +138,7 @@ class _CommunityPageState extends State<CommunityPage> {
       drawer: MediaQuery.of(context).size.width < 700
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
           : null,
-      endDrawer: const EndDrawerReddit(),
+      endDrawer: EndDrawerReddit(),
       body: Row(
         children: [
           MediaQuery.of(context).size.width > 700
