@@ -1,4 +1,3 @@
-import 'package:social_media_flutter/widgets/icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 var user_data = {

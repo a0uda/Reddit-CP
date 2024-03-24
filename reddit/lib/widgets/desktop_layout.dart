@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
-import 'package:reddit/widgets/Listing.dart';
+import 'package:reddit/widgets/listing.dart';
 
 class DesktopHomePage extends StatefulWidget {
   final int indexOfPage;
@@ -13,7 +13,9 @@ class DesktopHomePage extends StatefulWidget {
 }
 
 class _DesktopHomePageState extends State<DesktopHomePage> {
-  void logoTapped() {}
+  void logoTapped() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const DesktopHomePage(indexOfPage: 0)));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +32,16 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
                 inHome: true,
               ),
             ),
-             VerticalDivider(
-              color:Theme.of(context).colorScheme.primary,
+            VerticalDivider(
+              color: Theme.of(context).colorScheme.primary,
               width: 1,
             ),
-           const  Expanded(
+            const Expanded(
               flex: 4,
               child: Listing(),
-            ),    
-       
-            
-           // rest of the desktop home page
+            ),
+
+            // rest of the desktop home page
           ],
         ));
   }
