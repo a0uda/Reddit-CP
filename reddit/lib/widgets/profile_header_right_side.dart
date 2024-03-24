@@ -6,11 +6,11 @@ import '../Controllers/user_controller.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileHeaderRightSide extends StatefulWidget {
-  String userType;
-  UserAbout userData;
-  ProfileHeaderRightSide(
-      {Key? key, required this.userData, required this.userType})
-      : super(key: key);
+  final String userType;
+  final UserAbout userData;
+  
+  const ProfileHeaderRightSide(
+      {super.key, required this.userData, required this.userType});
 
   @override
   _ProfileHeaderRightSideState createState() =>
@@ -29,14 +29,13 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
 
   @override
   Widget build(BuildContext context) {
-    final List<FollowersFollowingItem>? followersList =
-        userService.getFollowers(userController.userAbout!.username);
+    userService.getFollowers(userController.userAbout!.username);
     final List<FollowersFollowingItem>? followingList =
         userService.getFollowing(userController.userAbout!.username);
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
       child: Padding(
-        padding: EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
@@ -46,10 +45,10 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: IconButton(
                 icon: Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
-                  final link =
+                  const link =
                       'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
                   await Share.share(
-                      'Check out this profile on Reddit: ${link}');
+                      'Check out this profile on Reddit: $link');
                 },
               ),
             ),
@@ -58,7 +57,6 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
-                    print('Button pressed ${userData} & ${userType}');
                   } else {
                     setState(() {
                       if (followingList!

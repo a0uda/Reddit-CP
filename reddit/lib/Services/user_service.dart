@@ -206,6 +206,7 @@ class UserService {
     } else {
       // get followers count from database
     }
+    return null;
   }
 
   List<FollowersFollowingItem>? getFollowers(String username) {
@@ -216,6 +217,7 @@ class UserService {
     } else {
       // get followers from database
     }
+    return null;
   }
 
   int? getFollowingCount(String username) {
@@ -227,6 +229,7 @@ class UserService {
     } else {
       // get following count from database
     }
+    return null;
   }
 
   List<FollowersFollowingItem>? getFollowing(String username) {
@@ -237,6 +240,7 @@ class UserService {
     } else {
       // get following from database
     }
+    return null;
   }
 
   int userSignup(
@@ -556,6 +560,7 @@ final List<UserItem> users = [
       ],
     ),
     password: 'mark1234',
+    followers: [],
     following: [
       FollowersFollowingItem(
         id: '0',
