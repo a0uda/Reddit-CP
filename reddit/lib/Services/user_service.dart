@@ -1,0 +1,486 @@
+import 'dart:developer';
+
+class SocialLlinkItem {
+  final String? id;
+  final String username;
+  final String display_text;
+  final String type;
+  final String custom_url;
+
+  SocialLlinkItem({
+    this.id,
+    required this.username,
+    required this.display_text,
+    required this.type,
+    required this.custom_url,
+  });
+}
+
+class FollowersFollowingItem {
+  final String? id;
+  final String? created_at;
+  final String username;
+  final String? email;
+  final bool? verified_email_flag;
+  final FollowersProfileSettings? profileSettings;
+  final String? country;
+  final String? gender;
+
+  FollowersFollowingItem({
+    this.id,
+    this.created_at,
+    required this.username,
+    this.email,
+    this.verified_email_flag,
+    this.profileSettings,
+    this.country,
+    this.gender,
+  });
+}
+
+class FollowersProfileSettings {
+  final String? display_name;
+  final String? about;
+  final String? profile_picture;
+  final String? banner_picture;
+
+  FollowersProfileSettings({
+    this.display_name,
+    this.about,
+    this.profile_picture,
+    this.banner_picture,
+  });
+}
+
+class UserAbout {
+  final String? id;
+  final String? created_at;
+  final String username;
+  final String? email;
+  final bool? verified_email_flag;
+  final String? gmail;
+  final String? facebook_email;
+  final String? display_name;
+  final String? about;
+  final List<SocialLlinkItem>? social_links;
+  final String? profile_picture;
+  final String? banner_picture;
+  final String? country;
+  final String? gender;
+  final bool? connected_google;
+
+  UserAbout({
+    this.id,
+    this.created_at,
+    required this.username,
+    this.email,
+    this.verified_email_flag,
+    this.gmail,
+    this.facebook_email,
+    this.display_name,
+    this.about,
+    this.social_links,
+    this.profile_picture,
+    this.banner_picture,
+    this.country,
+    this.gender,
+    this.connected_google,
+  });
+}
+
+class UserItem {
+  final UserAbout userAbout;
+  final List<FollowersFollowingItem>? followers;
+  final List<FollowersFollowingItem>? following;
+
+  UserItem({
+    required this.userAbout,
+    this.followers,
+    this.following,
+  });
+}
+
+bool testing = true;
+
+class UserService {
+  void addUser() {
+    if (testing) {
+      //to be implemented
+    } else {
+      // add post to database
+    }
+  }
+
+  UserAbout? getUserAbout(String Username) {
+    if (testing)
+      return users.firstWhere((element) => element.userAbout.username == Username).userAbout;
+    else {
+      //to be fetched from database
+    }
+  }
+
+  void addSocialLink(
+      String username, String display_text, String type, String custom_url) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout.social_links!
+          .add(SocialLlinkItem(
+            username: username,
+            display_text: display_text,
+            type: type,
+            custom_url: custom_url,
+          ));
+    } else {
+      // add social link to database
+    }
+  }
+
+  void deleteSocialLinkService(String username, String id) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout.social_links!
+          .removeWhere((element) => element.id == id);
+    } else {
+      // delete social link from database
+    }
+  }
+
+  void followUser(String username, String follower) {
+    if (testing) {
+      //add myself to the user being followed followers list
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .followers!
+          .add(FollowersFollowingItem(
+            username: follower,
+          ));
+      //add user being followed to my following list
+      users
+          .firstWhere((element) => element.userAbout.username == follower)
+          .following!
+          .add(FollowersFollowingItem(
+            username: username,
+          ));
+    } else {
+      // follow user in database
+    }
+  }
+
+  void unfollowUser(String username, String follower) {
+    if (testing) {
+      //remove myself from the user being followed followers list
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .followers!
+          .removeWhere((element) => element.username == follower);
+      //remove user being followed from my following list
+      users
+          .firstWhere((element) => element.userAbout.username == follower)
+          .following!
+          .removeWhere((element) => element.username == username);
+    } else {
+      // unfollow user in database
+    }
+  }
+
+  int? getFollowersCount(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .followers!
+          .length;
+    } else {
+      // get followers count from database
+    }
+  }
+
+  List<FollowersFollowingItem>? getFollowers(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .followers!;
+    } else {
+      // get followers from database
+    }
+  }
+
+  int? getFollowingCount(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .following!
+          .length;
+    } else {
+      // get following count from database
+    }
+  }
+
+  List<FollowersFollowingItem>? getFollowing(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .following!;
+    } else {
+      // get following from database
+    }
+  }
+}
+
+final List<UserItem> users = [
+  UserItem(
+    userAbout: UserAbout(
+      id: '0',
+      created_at: '5 March 2024',
+      username: 'Purple-7544',
+      email: 'rawan7544@gmail.com',
+      verified_email_flag: true,
+      display_name: 'Rawan Adel',
+      about: 'I am a software engineer',
+      profile_picture: 'images/pp.jpg',
+      social_links: [
+        SocialLlinkItem(
+          id: '0',
+          username: 'rawan_adel165',
+          display_text: 'rawan_adel165',
+          type: 'instagram',
+          custom_url:
+              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+        ),
+        SocialLlinkItem(
+          id: '1',
+          username: 'rawan adel',
+          display_text: 'rawan adel',
+          type: 'facebook',
+          custom_url:
+              'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
+        ),
+        SocialLlinkItem(
+          id: '2',
+          username: 'rawan7544',
+          display_text: 'rawan7544',
+          type: 'twitter',
+          custom_url:
+              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+        ),
+      ],
+    ),
+    followers: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'johndoe',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'John',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+        country: 'Egypt',
+        gender: 'Male',
+      ),
+      FollowersFollowingItem(
+        id: '1',
+        created_at: '5 March 2024',
+        username: 'jane123',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          about: 'I am a software engineer',
+        ),
+      ),
+      FollowersFollowingItem(
+        id: '2',
+        created_at: '5 March 2024',
+        username: 'Mark_45',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Mark',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+    following: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'johndoe',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'John',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+        country: 'Egypt',
+        gender: 'Male',
+      ),
+      FollowersFollowingItem(
+        id: '1',
+        created_at: '5 March 2024',
+        username: 'jane123',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+  ),
+  UserItem(
+    userAbout: UserAbout(
+      id: '1',
+      created_at: '5 March 2024',
+      username: 'johndoe',
+      email: 'rawan7544@gmail.com',
+      verified_email_flag: true,
+      display_name: 'John',
+      about: 'I am a software engineer',
+      profile_picture: 'images/pp.jpg',
+      social_links: [
+        SocialLlinkItem(
+          id: '0',
+          username: 'john_doe',
+          display_text: 'john_doe',
+          type: 'instagram',
+          custom_url:
+              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+        ),
+        SocialLlinkItem(
+          id: '1',
+          username: 'john_doe',
+          display_text: 'john_doe',
+          type: 'facebook',
+          custom_url:
+              'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
+        ),
+      ],
+    ),
+    followers: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'Purple-7544',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Rawan Adel',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+    following: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'Purple-7544',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Rawan Adel',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+  ),
+  UserItem(
+    userAbout: UserAbout(
+      id: '2',
+      created_at: '5 March 2024',
+      username: 'jane123',
+      email: 'rawan7544@gmail.com',
+      verified_email_flag: true,
+      display_name: 'Jane',
+      about: 'I am a software engineer',
+      social_links: [
+        SocialLlinkItem(
+          id: '0',
+          username: 'jane_123',
+          display_text: 'jane_123',
+          type: 'instagram',
+          custom_url:
+              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+        ),
+      ],
+    ),
+    followers: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'Purple-7544',
+        email: 'rawn7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Rawan Adel',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+    following: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'Purple-7544',
+        email: 'rawn7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Rawan Adel',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+  ),
+  UserItem(
+    userAbout: UserAbout(
+      id: '3',
+      created_at: '5 March 2024',
+      username: 'Mark_45',
+      email: 'rawan7544@gmail.com',
+      verified_email_flag: true,
+      display_name: 'Mark',
+      about: 'I am a software engineer',
+      profile_picture: 'images/Greddit.png',
+      social_links: [
+        SocialLlinkItem(
+          id: '0',
+          username: 'mark_45',
+          display_text: 'mark_45',
+          type: 'instagram',
+          custom_url:
+              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+        ),
+        SocialLlinkItem(
+          id: '1',
+          username: 'mark_45',
+          display_text: 'mark_45',
+          type: 'facebook',
+          custom_url:
+              'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
+        ),
+      ],
+    ),
+    following: [
+      FollowersFollowingItem(
+        id: '0',
+        created_at: '5 March 2024',
+        username: 'Purple-7544',
+        email: 'rawan7544@gmail.com',
+        verified_email_flag: true,
+        profileSettings: FollowersProfileSettings(
+          display_name: 'Rawan Adel',
+          about: 'I am a software engineer',
+          profile_picture: 'images/pp.jpg',
+        ),
+      ),
+    ],
+  ),
+];

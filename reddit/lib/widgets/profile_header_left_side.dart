@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'follower_list.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/user_service.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
-  var userData;
+  final userService = GetIt.instance.get<UserService>();
+  final UserAbout userData;
   String
       userType; //if user type is 'me' then can show followers, else if others profile then don't show follow button
   ProfileHeaderLeftSide(this.userData, this.userType);
@@ -18,7 +21,9 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
-                image: AssetImage('images/Greddit.png'),
+                image: AssetImage((userData.profile_picture != null
+                    ? userData.profile_picture!
+                    : 'images/Greddit.png')),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -28,7 +33,9 @@ class ProfileHeaderLeftSide extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
-              userData['username'].toString(),
+              userData.display_name == null
+                  ? userData.username.toString()
+                  : userData.display_name.toString(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 30,
@@ -42,7 +49,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                 ? Row(
                     children: <Widget>[
                       Text(
-                        '${userData['followers'].toString()} followers',
+                        '${userService.getFollowersCount(userData.username.toString())} followers',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 15,
@@ -63,22 +70,14 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                       )
                     ],
                   )
-                : Text(
-                    'u/${userData['username'].toString()} - ${userData['karma'].toString()} karma - ${userData['date'].toString()}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                  ),
-            subtitle: userType == 'me'
-                ? Text(
-                    'u/${userData['username'].toString()} - ${userData['karma'].toString()} karma - ${userData['date'].toString()}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                  )
                 : null,
+            subtitle: Text(
+              'u/${userData.username.toString()}- ${userData.created_at.toString()}',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+              ),
+            ),
           ),
         ],
       ),

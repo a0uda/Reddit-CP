@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import '../Pages/profile_screen.dart';
-import '../test_files/test_arrays.dart';
+import 'package:get_it/get_it.dart';
+import '../Controllers/user_controller.dart';
 
 class EndDrawerReddit extends StatelessWidget {
-  const EndDrawerReddit({super.key});
-
+  EndDrawerReddit({super.key});
+  final userController = GetIt.instance.get<UserController>();
   @override
   Widget build(BuildContext context) {
+    userController
+        .getUser('Purple-7544'); //rawannnn: to be replaced 
     return Drawer(
       child: Column(
         children: [
@@ -33,7 +36,8 @@ class EndDrawerReddit extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ProfileScreen(user_data, 'me')),
+                    builder: (context) =>
+                        ProfileScreen(userController.userAbout, 'me')),
               );
             },
           ),

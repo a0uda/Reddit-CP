@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/tab_bar_views.dart';
+import '../Services/user_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  var userData;
+  UserAbout? userData;
   String userType;
   ProfileScreen(this.userData, this.userType);
   @override

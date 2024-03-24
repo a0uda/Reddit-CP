@@ -20,7 +20,7 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
         appBar: DesktopAppBar(
           logoTapped: logoTapped,
         ),
-        endDrawer: const EndDrawerReddit(),
+        endDrawer: EndDrawerReddit(),
         body: Row(
           children: [
             Expanded(

@@ -9,6 +9,8 @@ import 'package:reddit/Pages/forgot-username.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'Services/post_service.dart';
+import 'Services/user_service.dart';
+import '../Controllers/user_controller.dart';
 
 // import 'package:reddit/widgets/Listing.dart';
 // import 'package:get/get.dart';
@@ -17,12 +19,13 @@ import 'Services/post_service.dart';
 void main() {
   // Registering MockService with GetIt
   GetIt.instance.registerSingleton<PostService>(PostService());
+  GetIt.instance.registerSingleton<UserService>(UserService());
+  GetIt.instance.registerSingleton<UserController>(UserController());
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

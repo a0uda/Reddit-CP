@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:share_plus/share_plus.dart';
+import '../Services/user_service.dart';
+import '../Controllers/user_controller.dart';
+import 'package:get_it/get_it.dart';
 
 class ProfileHeaderRightSide extends StatefulWidget {
   String userType;
-  var userData;
-  ProfileHeaderRightSide({Key? key, this.userData, required this.userType})
+  UserAbout userData;
+  ProfileHeaderRightSide(
+      {Key? key, required this.userData, required this.userType})
       : super(key: key);
 
   @override
@@ -16,12 +20,19 @@ class ProfileHeaderRightSide extends StatefulWidget {
 class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   String
       userType; //if user type is 'me' then show edit button, else show message and follow button
-  var userData;
+  UserAbout userData;
   _ProfileHeaderRightSideState(
       {required this.userData, required this.userType});
 
+  final UserController userController = GetIt.I.get<UserController>();
+  final UserService userService = GetIt.I.get<UserService>();
+
   @override
   Widget build(BuildContext context) {
+    final List<FollowersFollowingItem>? followersList =
+        userService.getFollowers(userController.userAbout!.username);
+    final List<FollowersFollowingItem>? followingList =
+        userService.getFollowing(userController.userAbout!.username);
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
       child: Padding(
@@ -50,10 +61,15 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                     print('Button pressed ${userData} & ${userType}');
                   } else {
                     setState(() {
-                      if (userData['following'] == 'yes') {
-                        userData['following'] = 'no';
+                      if (followingList!
+                          .where((element) =>
+                              element.username == userData.username)
+                          .isEmpty) {
+                        userService.followUser(userData.username,
+                            userController.userAbout!.username);
                       } else {
-                        userData['following'] = 'yes';
+                        userService.unfollowUser(userData.username,
+                            userController.userAbout!.username);
                       }
                     });
                   }
@@ -68,7 +84,10 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                     : Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: userData['following'] == 'yes'
+                        children: (!followingList!
+                                .where((element) =>
+                                    element.username == userData.username)
+                                .isEmpty)
                             ? [
                                 Icon(
                                   Icons.check,

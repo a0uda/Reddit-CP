@@ -55,7 +55,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         appBar: MobileAppBar(
           logoTapped: logoTapped,
         ),
-        endDrawer: const EndDrawerReddit(),
+        endDrawer: EndDrawerReddit(),
         drawer: selectedDrawer,
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,

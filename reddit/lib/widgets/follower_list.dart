@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../test_files/test_arrays.dart';
 import '../Pages/profile_screen.dart';
+import 'package:get_it/get_it.dart';
+import '../Services/user_service.dart';
+import '../Controllers/user_controller.dart';
 
 class followerList extends StatefulWidget {
   const followerList({Key? key}) : super(key: key);
@@ -11,8 +13,18 @@ class followerList extends StatefulWidget {
 }
 
 class _followerListState extends State<followerList> {
+
+  final userService = GetIt.instance.get<UserService>();
+  final userController = GetIt.instance.get<UserController>();
+
   @override
   Widget build(BuildContext context) {
+
+    final List<FollowersFollowingItem>? followersList =
+        UserService().getFollowers(userController.userAbout!.username.toString());
+    final List<FollowersFollowingItem>? followingList =
+        UserService().getFollowing(userController.userAbout!.username.toString());
+
     return Container(
       child: Scaffold(
         appBar: AppBar(
@@ -20,53 +32,59 @@ class _followerListState extends State<followerList> {
           backgroundColor: Colors.white,
         ),
         body: ListView.builder(
-          itemCount: (user_data['followersList'] as List).length,
+          itemCount: userService
+              .getFollowersCount(userController.userAbout!.username.toString()),
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/Greddit.png'),
-                ),
+                    backgroundImage: AssetImage(
+                  (followersList![index].profileSettings!.profile_picture !=
+                          null
+                      ? followersList[index].profileSettings!.profile_picture!
+                      : 'images/Greddit.png'),
+                )),
                 title: Text(
-                    (user_data['followersList'] as List)[index]['username']),
-                subtitle: Text(
-                    'u/${(user_data['followersList'] as List)[index]['username']}·${(user_data['followersList'] as List)[index]['Karma']} Karma'),
+                    (followersList[index].profileSettings!.display_name != null
+                        ? followersList[index].profileSettings!.display_name
+                        : followersList[index].username)!),
+                subtitle: Text('u/${followersList[index].username}'),
                 trailing: TextButton(
                   onPressed: () {
                     setState(() {
-                      if ((user_data['followersList'] as List)[index]
-                              ['Following'] ==
-                          'yes') {
-                        (user_data['followersList'] as List)[index]
-                            ['Following'] = 'no';
+                      if (followingList
+                          .where((element) =>
+                              element.username == followersList[index].username)
+                          .isNotEmpty) {
+                        userService.unfollowUser(followersList[index].username,
+                            userController.userAbout!.username.toString());
                       } else {
-                        (user_data['followersList'] as List)[index]
-                            ['Following'] = 'yes';
+                        userService.followUser(followersList[index].username,
+                            userController.userAbout!.username.toString());
                       }
                     });
                   },
                   child: Text(
-                    (user_data['followersList'] as List)[index]['Following'] ==
-                            'yes'
+                    (followingList!
+                            .where((element) =>
+                                element.username ==
+                                followersList[index].username)
+                            .isNotEmpty)
                         ? 'Following'
                         : 'Follow',
                     style: TextStyle(
-                      color: (user_data['followersList'] as List)[index]
-                                  ['Following'] ==
-                              'yes'
+                      color: (followingList
+                              .where((element) =>
+                                  element.username ==
+                                  followersList[index].username)
+                              .isNotEmpty)
                           ? const Color.fromARGB(255, 110, 110, 110)
                           : Colors.blue,
                     ),
                   ),
                 ),
                 onTap: () {
-                  var username =
-                      (user_data['followersList'] as List)[index]['username'];
-                  var otherUserData;
-                  for (var userData in otherUsersData) {
-                    if (userData['username'] == username) {
-                      otherUserData = userData;
-                    }
-                  }
+                  var username = followersList[index].username.toString();
+                  UserAbout otherUserData = userService.getUserAbout(username)!;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
