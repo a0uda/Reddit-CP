@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/login.dart';
-import 'package:reddit/Pages/verify-password.dart';
+import 'package:reddit/Pages/verify_password.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -108,12 +108,13 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange[400],
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Reset Password",
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],

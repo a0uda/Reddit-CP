@@ -97,9 +97,14 @@ class _VerifyPasswordPageState extends State<VerifyPasswordPage> {
                           _showSnackBar('Passwords do not match');
                         } else {}
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange[400],
+                        padding: const EdgeInsets.all(16),
+                        textStyle: const TextStyle(fontSize: 16),
+                      ),
                       child: Text(
                         'Submit',
-                        style: TextStyle(color: Colors.grey[700]),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                   ],

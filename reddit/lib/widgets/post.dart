@@ -7,6 +7,8 @@ import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reddit/widgets/poll_widget.dart';
 import 'package:reddit/Models/poll_item.dart';
+import 'package:reddit/Pages/profile_screen.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -75,7 +77,9 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    UserService userService = GetIt.instance.get<UserService>();
     UserController userController = GetIt.instance.get<UserController>();
+    String userType;
     return InkWell(
       onTap: () => {
         // open this post TODO
@@ -123,7 +127,20 @@ class PostState extends State<Post> {
                     children: [
                       InkWell(
                         onTap: () => {
-                          //TODO: go to profile
+                          userType =
+                              userController.userAbout!.username == widget.name
+                                  ? 'me'
+                                  : 'other',
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                userService.getUserAbout(widget.name),
+                                userType,
+                                null,
+                              ),
+                            ),
+                          ),
                         },
                         onHover: (hover) {
                           setState(() {

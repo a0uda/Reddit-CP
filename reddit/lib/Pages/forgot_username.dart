@@ -81,12 +81,13 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange[400],
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
                         child: Text(
                           "Reset Username",
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],

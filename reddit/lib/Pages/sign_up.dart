@@ -446,13 +446,14 @@ class SignUpPageState extends State<SignUpPage> {
                       ElevatedButton(
                         onPressed: () => validateForm(context),
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange[400],
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
                         child: Text(
                           "Continue",
                           style: TextStyle(
-                            color: Colors.grey[700],
+                            color: Colors.white,
                             fontSize: buttonTextSize,
                             fontWeight: FontWeight.bold,
                           ),
