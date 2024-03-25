@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/tab_bar_views.dart';
-import '../Services/user_service.dart';
+import '../Models/user_about.dart';
 
 class ProfileScreen extends StatelessWidget {
-  UserAbout? userData;
-  String userType;
-  Function? onUpdate;
-  ProfileScreen(this.userData, this.userType,this.onUpdate ,{super.key});
+  final UserAbout? userData;
+  final String userType;
+  final Function? onUpdate;
+  const ProfileScreen(this.userData, this.userType, this.onUpdate, {super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 228, 228),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 28, 83, 165),
+        backgroundColor: const Color.fromARGB(255, 28, 83, 165),
       ),
       body: DefaultTabController(
         length: 3,
@@ -34,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: TabBarViews(),
+              child: TabBarViews(userData),
             ),
           ],
         ),

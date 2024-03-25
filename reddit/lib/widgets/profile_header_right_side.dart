@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 import 'package:get_it/get_it.dart';
+import '../Models/user_about.dart';
+import '../Models/followers_following_item.dart';
 
 class ProfileHeaderRightSide extends StatefulWidget {
   final String userType;
   final UserAbout userData;
-  Function? onUpdate;
+  final Function? onUpdate;
 
-  ProfileHeaderRightSide(
-      {super.key, required this.userData, required this.userType,this.onUpdate});
+  const ProfileHeaderRightSide(
+      {super.key,
+      required this.userData,
+      required this.userType,
+      this.onUpdate});
 
   @override
-  _ProfileHeaderRightSideState createState() =>
-      _ProfileHeaderRightSideState(userData: userData, userType: userType, onUpdate: onUpdate);
+  _ProfileHeaderRightSideState createState() => _ProfileHeaderRightSideState(
+      userData: userData, userType: userType, onUpdate: onUpdate);
 }
 
 class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
@@ -34,6 +38,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
     userService.getFollowers(userController.userAbout!.username);
     final List<FollowersFollowingItem>? followingList =
         userService.getFollowing(userController.userAbout!.username);
+
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
       child: Padding(
@@ -43,7 +48,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 30),
+              padding: const EdgeInsets.only(top: 20, left: 20),
               child: IconButton(
                 icon: Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
@@ -54,32 +59,43 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 30),
+              padding: const EdgeInsets.only(top: 20, left: 20),
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
                   } else {
-                    setState(() {
-                      if (followingList!
-                          .where((element) =>
-                              element.username == userData.username)
-                          .isEmpty) {
-                        userService.followUser(userData.username,
-                            userController.userAbout!.username);
-                      } else {
-                        userService.unfollowUser(userData.username,
-                            userController.userAbout!.username);
-                      }
-                      onUpdate!();
-                    });
+                    setState(
+                      () {
+                        if (followingList!
+                            .where((element) =>
+                                element.username == userData.username)
+                            .isEmpty) {
+                          userService.followUser(userData.username,
+                              userController.userAbout!.username);
+                        } else {
+                          userService.unfollowUser(userData.username,
+                              userController.userAbout!.username);
+                        }
+                        onUpdate!();
+                      },
+                    );
                   }
                 },
+                style: TextButton.styleFrom(
+                  backgroundColor:
+                      Color.fromARGB(0, 68, 70, 71), // example background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: const BorderSide(
+                      color: Colors.white,
+                      width: 1,
+                    ),
+                  ),
+                ),
                 child: userType == 'me'
-                    ? Container(
-                        child: Text(
-                          'Edit',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                    ? const Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.white),
                       )
                     : Row(
                         mainAxisSize: MainAxisSize.min,
@@ -89,59 +105,53 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                                     element.username == userData.username)
                                 .isEmpty)
                             ? [
-                                Icon(
+                                const Icon(
                                   Icons.check,
                                   color: Colors.white,
                                 ),
-                                Flexible(
+                                const Flexible(
                                   child: Text(
                                     'Following',
                                     style: TextStyle(color: Colors.white),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                )
+                                ),
                               ]
                             : [
-                                Icon(
+                                const Icon(
                                   Icons.add,
                                   color: Colors.white,
                                 ),
-                                Text(
-                                  'Follow',
-                                  style: TextStyle(color: Colors.white),
+                                const Flexible(
+                                  child: Text(
+                                    'Follow',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                       ),
-                style: TextButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(0, 68, 70, 71), // example background color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(
-                      color: Colors.white,
-                      width: 1,
-                    ),
-                  ),
-                ),
               ),
             ),
             userType != 'me'
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 15),
+                    padding: const EdgeInsets.only(top: 20, left: 5),
                     child: IconButton(
-                      icon: Icon(Icons.message, color: Colors.white, size: 30),
+                      icon: const Icon(Icons.message,
+                          color: Colors.white, size: 30),
                       style: TextButton.styleFrom(
-                        backgroundColor: Color.fromARGB(0, 68, 70, 71),
+                        backgroundColor: const Color.fromARGB(0, 68, 70, 71),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: Colors.white,
                             width: 1,
                           ),
                         ),
                       ),
                       onPressed: () {},
-                    ))
+                    ),
+                  )
                 : Container(),
           ],
         ),

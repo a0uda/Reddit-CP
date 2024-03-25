@@ -4,11 +4,12 @@ import 'package:get_it/get_it.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_social_link_button.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
-  UserAbout userData;
-  String userType;
-  ProfileHeaderAddSocialLink(this.userData, this.userType);
+  final UserAbout userData;
+  final String userType;
+  const ProfileHeaderAddSocialLink(this.userData, this.userType);
   @override
   _ProfileHeaderAddSocialLinkState createState() =>
       _ProfileHeaderAddSocialLinkState(userData, userType);
@@ -28,7 +29,7 @@ class _ProfileHeaderAddSocialLinkState
   @override
   void initState() {
     super.initState();
-    socialLinks = userData.social_links;
+    socialLinks = userData.socialLinks;
     updateAddSocialLinkButtonVisibility();
   }
 
@@ -57,7 +58,7 @@ class _ProfileHeaderAddSocialLinkState
                     String websiteName = linkData.type.toLowerCase();
                     return TextButton(
                       onPressed: () {
-                        launchUrl(Uri.parse(linkData.custom_url));
+                        launchUrl(Uri.parse(linkData.customUrl));
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -71,9 +72,9 @@ class _ProfileHeaderAddSocialLinkState
                             height: 20,
                             child: getSocialMediaIcon(websiteName),
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           Text(
-                            linkData.display_text,
+                            linkData.displayText,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,

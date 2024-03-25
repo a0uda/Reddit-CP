@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import '../Controllers/user_controller.dart';
 import '../Services/user_service.dart';
 import 'package:get_it/get_it.dart';
 
 class AddSocialLinkForm extends StatefulWidget {
-  final Widget socialMediaIcon;
+  final Brand socialMediaIcon;
   final String socialLink;
 
   const AddSocialLinkForm({
@@ -19,7 +20,7 @@ class AddSocialLinkForm extends StatefulWidget {
 }
 
 class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
-  final Widget socialMediaIcon;
+  final Brand socialMediaIcon;
   final String socialLink;
 
   _AddSocialLinkFormState(
@@ -58,7 +59,8 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pop(
+                              context, userController.userAbout?.socialLinks);
                         },
                         icon: const Icon(Icons.close),
                       ),
@@ -81,23 +83,42 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                             userController
                                 .getUser(userController.userAbout!.username);
                             print(
-                                'social link added successfully ${userController.userAbout?.social_links}');
-                            Navigator.pop(context,
-                                userController.userAbout?.social_links);
+                                'social link added successfully ${userController.userAbout?.socialLinks}');
+                            Navigator.pop(
+                                context, userController.userAbout?.socialLinks);
                           } else {
                             print('form is invalid');
                           }
                         },
-                        child: Text(
+                        child: const Text(
                           'Save',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              socialMediaIcon,
+              TextButton(
+                onPressed: null,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 229, 228, 228)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(width: 20, height: 20, child: socialMediaIcon),
+                    SizedBox(width: 8),
+                    Text(
+                      socialLink,
+                      style: TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
               Form(
                 key: formKey,
                 child: Column(

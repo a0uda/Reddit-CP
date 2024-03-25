@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import '../Services/user_service.dart';
+import 'package:get_it/get_it.dart';
+import '../Models/user_about.dart';
 
 class TabBarAbout extends StatelessWidget {
+  final UserService userService = GetIt.instance.get<UserService>();
+  final UserAbout? userData;
+
+  TabBarAbout(this.userData, {super.key});
+
   @override
   Widget build(BuildContext context) {
-    var postKarma = 1;
-    var commentKarma = 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
           color: Colors.white,
           child: Padding(
-            padding:
-                const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            padding: const EdgeInsets.all(10),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
                     color: Color.fromARGB(220, 215, 213, 213),
@@ -26,25 +31,23 @@ class TabBarAbout extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 20,
-                          top: 20,
-                          left: 20), // Adjust the padding as needed
+                      padding:
+                          const EdgeInsets.only(bottom: 20, top: 20, left: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '$postKarma',
-                            style: TextStyle(
+                            '${userService.getFollowersCount(userData!.username)}',
+                            style: const TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            'Post Karma',
+                          const Text(
+                            'Followers',
                             style: TextStyle(
                               fontSize: 13.0,
-                              color: const Color.fromARGB(255, 142, 141, 141),
+                              color: Color.fromARGB(255, 142, 141, 141),
                             ),
                           ),
                         ],
@@ -53,25 +56,23 @@ class TabBarAbout extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 20,
-                          top: 20,
-                          left: 60), // Adjust the padding as needed
+                      padding:
+                          const EdgeInsets.only(bottom: 20, top: 20, left: 60),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '$commentKarma',
-                            style: TextStyle(
+                            '${userService.getFollowingCount(userData!.username)}',
+                            style: const TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            'Comment Karma',
+                          const Text(
+                            'Following',
                             style: TextStyle(
                               fontSize: 13.0,
-                              color: const Color.fromARGB(255, 142, 141, 141),
+                              color: Color.fromARGB(255, 142, 141, 141),
                             ),
                           ),
                         ],
@@ -83,13 +84,23 @@ class TabBarAbout extends StatelessWidget {
             ),
           ),
         ),
-        // Padding(
-        //     padding: EdgeInsets.only(left: 20, top: 10, bottom: 10),
-        //     child: Text('TROPHIES',
-        //         style: TextStyle(
-        //             fontSize: 12,
-        //             fontWeight: FontWeight.bold,
-        //             color: Color.fromARGB(255, 119, 119, 119)))),
+        const SizedBox(
+          height: 20, // Add empty space
+        ),
+        userData!.about!.isEmpty
+            ? Container()
+            : Container(
+                padding: const EdgeInsets.all(20),
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Text(
+                  userData!.about!,
+                  style: const TextStyle(
+                    fontSize: 15.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
       ],
     );
   }

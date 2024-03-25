@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'follower_list.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   final UserAbout userData;
-  final String
-      userType; //if user type is 'me' then can show followers, else if others profile then don't show follow button
+  final String userType;
 
-  ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
+  ProfileHeaderLeftSide(this.userData, this.userType, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
-      width: (2 / 3) * MediaQuery.of(context).size.width,
+      width: (2 / 3) * screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -23,9 +26,8 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
-                image: AssetImage((userData.profile_picture != null
-                    ? userData.profile_picture!
-                    : 'images/Greddit.png')),
+                image:
+                    AssetImage(userData.profilePicture ?? 'images/Greddit.png'),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -35,9 +37,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
-              userData.display_name == null
-                  ? userData.username.toString()
-                  : userData.display_name.toString(),
+              userData.displayName ?? userData.username,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 30,
@@ -51,10 +51,11 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                 ? Row(
                     children: <Widget>[
                       Text(
-                        '${userService.getFollowersCount(userData.username.toString())} followers',
+                        '${userService.getFollowersCount(userData.username)} followers',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       IconButton(
@@ -74,10 +75,10 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                   )
                 : null,
             subtitle: Text(
-              'u/${userData.username.toString()}- ${userData.created_at.toString()}',
+              'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 10,
+                fontSize: 12,
               ),
             ),
           ),

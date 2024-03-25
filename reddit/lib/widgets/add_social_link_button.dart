@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'social_media_buttons.dart';
 import 'add_social_link_form.dart';
-import '../Services/user_service.dart';
 import 'package:icons_plus/icons_plus.dart';
+import '../Models/user_about.dart';
 
 class AddSocialLinkButton extends StatelessWidget {
   final Function(List<SocialLlinkItem>?) onDataReceived;
@@ -122,7 +122,6 @@ class IconButtonWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('text: $text icon: $icon');
     return TextButton(
       onPressed: () async {
         Navigator.pop(context);
@@ -130,24 +129,7 @@ class IconButtonWithText extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => AddSocialLinkForm(
-              socialMediaIcon: TextButton(
-                onPressed: null,
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 229, 228, 228)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(width: 20, height: 20, child: icon),
-                    SizedBox(width: 8),
-                    Text(
-                      text,
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
+              socialMediaIcon: icon,
               socialLink: text,
             ),
           ),

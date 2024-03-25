@@ -3,6 +3,8 @@ import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
+import '../Models/followers_following_item.dart';
+import '../Models/user_about.dart';
 
 class followerList extends StatefulWidget {
   const followerList({Key? key}) : super(key: key);
@@ -43,13 +45,12 @@ class _followerListState extends State<followerList> {
             return ListTile(
                 leading: CircleAvatar(
                     backgroundImage: AssetImage(
-                  (followersList![index].profileSettings!.profile_picture !=
-                          null
-                      ? followersList![index].profileSettings!.profile_picture!
+                  (followersList![index].profileSettings!.profilePicture != null
+                      ? followersList![index].profileSettings!.profilePicture!
                       : 'images/Greddit.png'),
                 )),
                 title: Text(
-                    (followersList![index].profileSettings!.display_name ??
+                    (followersList![index].profileSettings!.displayName ??
                         followersList![index].username)),
                 subtitle: Text('u/${followersList![index].username}'),
                 trailing: TextButton(
