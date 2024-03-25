@@ -78,7 +78,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               'u/${userData.username} - ${userData.created_at}\n${userData.about}',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 10,
+                fontSize: 12,
               ),
             ),
           ),
