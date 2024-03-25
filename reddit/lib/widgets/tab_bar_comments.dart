@@ -62,10 +62,6 @@ const comments = [
 class TabBarComments extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double widgetSize =
-        screenWidth < screenHeight ? screenWidth : screenHeight;
     return ListView.separated(
       padding: EdgeInsets.zero,
       itemCount: comments.length,
@@ -75,32 +71,32 @@ class TabBarComments extends StatelessWidget {
           tileColor: Colors.white,
           title: Text(
             comment['person']!,
-            style:
-                TextStyle(fontSize: (1 / 33) * widgetSize, color: Colors.black),
+            style: const TextStyle(fontSize: 14, color: Colors.black),
           ),
           subtitle: Column(
             children: <Widget>[
               Row(
                 children: <Widget>[
                   Text(
-                    'r/${comment['subreddit']} • ${getDateTimeDifferenceWithLabel(comment['time']!)} • ${comment['ups']}',
-                    style: TextStyle(
-                      fontSize: 0.022 * widgetSize,
-                      color: const Color.fromARGB(255, 156, 156, 156),
+                    'r/${comment['subreddit']} • ${getDateTimeDifferenceWithLabel(comment['time']!)} • ${comment['ups'] != '0' ? comment['ups'] : ''}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color.fromARGB(255, 156, 156, 156),
                     ),
                   ),
-                  Icon(
-                    Icons.arrow_upward_outlined,
-                    size: 0.022 * widgetSize,
-                  ),
+                  comment['ups'] != '0'
+                      ? const Icon(
+                          Icons.arrow_upward_outlined,
+                          size: 16,
+                        )
+                      : Container(),
                 ],
               ),
               Row(
                 children: <Widget>[
                   Text(
                     comment['comment']!,
-                    style: TextStyle(
-                        fontSize: 0.025 * widgetSize, color: Colors.black),
+                    style: const TextStyle(fontSize: 14, color: Colors.black),
                   ),
                 ],
               ),
@@ -109,7 +105,7 @@ class TabBarComments extends StatelessWidget {
         );
       },
       separatorBuilder: (BuildContext context, int index) {
-        return Divider(
+        return const Divider(
           color: Color.fromARGB(255, 223, 222, 222),
           height: 1, // Adjust the height of the divider as needed
         );

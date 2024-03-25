@@ -1,6 +1,6 @@
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
-import '../Models/followers_following_item.dart'; 
+import '../Models/followers_following_item.dart';
 
 bool testing = true;
 
@@ -11,7 +11,7 @@ class UserService {
     'jane1234',
     'mark1234',
   ];
-  
+
   void addUser() {
     if (testing) {
       //to be implemented
@@ -21,13 +21,14 @@ class UserService {
   }
 
   UserAbout? getUserAbout(String Username) {
-    if (testing)
+    if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == Username)
           .userAbout;
-    else {
+    } else {
       //to be fetched from database
     }
+    return null;
   }
 
   void addSocialLink(

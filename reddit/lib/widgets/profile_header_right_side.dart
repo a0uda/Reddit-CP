@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -10,9 +9,9 @@ import '../Models/followers_following_item.dart';
 class ProfileHeaderRightSide extends StatefulWidget {
   final String userType;
   final UserAbout userData;
-  Function? onUpdate;
+  final Function? onUpdate;
 
-  ProfileHeaderRightSide(
+  const ProfileHeaderRightSide(
       {super.key,
       required this.userData,
       required this.userType,
@@ -40,25 +39,18 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
     final List<FollowersFollowingItem>? followingList =
         userService.getFollowing(userController.userAbout!.username);
 
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double widgetSize =
-        screenWidth < screenHeight ? screenWidth : screenHeight;
-
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
       child: Padding(
-        padding: EdgeInsets.only(right: (1 / 25) * widgetSize),
+        padding: const EdgeInsets.only(right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(
-                  top: (1 / 25) * widgetSize, left: (1 / 17) * widgetSize),
+              padding: const EdgeInsets.only(top: 20, left: 30),
               child: IconButton(
-                icon: Icon(Icons.share,
-                    color: Colors.white, size: 0.07 * widgetSize),
+                icon: Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
                   const link =
                       'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
@@ -67,113 +59,96 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  top: (1 / 25) * widgetSize, left: (1 / 17) * widgetSize),
+              padding: const EdgeInsets.only(top: 20, left: 30),
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
                   } else {
-                    setState(() {
-                      if (followingList!
-                          .where((element) =>
-                              element.username == userData.username)
-                          .isEmpty) {
-                        userService.followUser(userData.username,
-                            userController.userAbout!.username);
-                      } else {
-                        userService.unfollowUser(userData.username,
-                            userController.userAbout!.username);
-                      }
-                      onUpdate!();
-                    });
+                    setState(
+                      () {
+                        if (followingList!
+                            .where((element) =>
+                                element.username == userData.username)
+                            .isEmpty) {
+                          userService.followUser(userData.username,
+                              userController.userAbout!.username);
+                        } else {
+                          userService.unfollowUser(userData.username,
+                              userController.userAbout!.username);
+                        }
+                        onUpdate!();
+                      },
+                    );
                   }
                 },
-                child: userType == 'me'
-                    ? Container(
-                        padding: EdgeInsets.all(
-                          (1 / 75) * widgetSize,
-                        ),
-                        child: Text(
-                          'Edit',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 0.03 * widgetSize),
-                        ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.all(
-                          (1 / 75) * widgetSize,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: (!followingList!
-                                  .where((element) =>
-                                      element.username == userData.username)
-                                  .isEmpty)
-                              ? [
-                                  Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 0.03 * widgetSize,
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      'Following',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 0.03 * widgetSize),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  )
-                                ]
-                              : [
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 0.03 * widgetSize,
-                                  ),
-                                  Text(
-                                    'Follow',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 0.03 * widgetSize),
-                                  ),
-                                ],
-                        ),
-                      ),
                 style: TextButton.styleFrom(
                   backgroundColor:
                       Color.fromARGB(0, 68, 70, 71), // example background color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(
+                    side: const BorderSide(
                       color: Colors.white,
                       width: 1,
                     ),
                   ),
                 ),
+                child: userType == 'me'
+                    ? const Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: (!followingList!
+                                .where((element) =>
+                                    element.username == userData.username)
+                                .isEmpty)
+                            ? [
+                                const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
+                                const Flexible(
+                                  child: Text(
+                                    'Following',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ]
+                            : [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                                const Text(
+                                  'Follow',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
+                      ),
               ),
             ),
             userType != 'me'
                 ? Padding(
-                    padding: EdgeInsets.only(
-                        top: (1 / 25) * widgetSize,
-                        left: (1 / 33) * widgetSize),
+                    padding: const EdgeInsets.only(top: 20, left: 15),
                     child: IconButton(
-                      icon: Icon(Icons.message,
-                          color: Colors.white, size: 0.06 * widgetSize),
+                      icon: const Icon(Icons.message,
+                          color: Colors.white, size: 30),
                       style: TextButton.styleFrom(
-                        backgroundColor: Color.fromARGB(0, 68, 70, 71),
+                        backgroundColor: const Color.fromARGB(0, 68, 70, 71),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: Colors.white,
                             width: 1,
                           ),
                         ),
                       ),
                       onPressed: () {},
-                    ))
+                    ),
+                  )
                 : Container(),
           ],
         ),
