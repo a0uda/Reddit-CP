@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import '../Services/user_service.dart';
+import 'package:get_it/get_it.dart';
+import '../Models/user_about.dart';
 
 class TabBarAbout extends StatelessWidget {
+  final UserService userService = GetIt.instance.get<UserService>();
+  final UserAbout? userData;
+
+  TabBarAbout(this.userData);
+
   @override
   Widget build(BuildContext context) {
-    var postKarma = 1;
-    var commentKarma = 0;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double widgetSize =
@@ -39,14 +45,14 @@ class TabBarAbout extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '$postKarma',
+                            '${userService.getFollowersCount(userData!.username)}',
                             style: TextStyle(
                               fontSize: (1 / 33) * widgetSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Post Karma',
+                            'Followers',
                             style: TextStyle(
                               fontSize: 0.022 * widgetSize,
                               color: const Color.fromARGB(255, 142, 141, 141),
@@ -67,14 +73,14 @@ class TabBarAbout extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '$commentKarma',
+                            '${userService.getFollowingCount(userData!.username)}',
                             style: TextStyle(
                               fontSize: (1 / 33) * widgetSize,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            'Comment Karma',
+                            'Following',
                             style: TextStyle(
                               fontSize: 0.022 * widgetSize,
                               color: const Color.fromARGB(255, 142, 141, 141),
@@ -89,6 +95,23 @@ class TabBarAbout extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(
+          height: (1 / 25) * widgetSize, // Add empty space
+        ),
+        userData!.about!.isEmpty
+            ? Container()
+            : Container(
+                padding: EdgeInsets.all((1 / 25) * widgetSize),
+                width: screenWidth,
+                color: Colors.white,
+                child: Text(
+                  userData!.about!,
+                  style: TextStyle(
+                    fontSize: (1 / 33) * widgetSize,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
       ],
     );
   }

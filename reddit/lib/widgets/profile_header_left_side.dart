@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'follower_list.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
@@ -59,7 +60,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         '${userService.getFollowersCount(userData.username)} followers',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 0.022 * widgetSize,
+                          fontSize: 0.025 * widgetSize,
                           fontWeight:
                               FontWeight.bold, // Adjust according to your need
                         ),
@@ -76,7 +77,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         icon: const Icon(Icons.arrow_forward_ios_rounded),
                         color: Colors.white,
                         iconSize:
-                            0.022 * widgetSize, // Adjust according to your need
+                            0.025 * widgetSize, // Adjust according to your need
                       )
                     ],
                   )
@@ -85,7 +86,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               'u/${userData.username} - ${userData.created_at}\n${userData.about}',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 0.022 * widgetSize, // Adjust according to your need
+                fontSize: 0.025 * widgetSize, // Adjust according to your need
               ),
             ),
           ),

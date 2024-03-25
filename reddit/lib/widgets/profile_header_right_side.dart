@@ -4,6 +4,8 @@ import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 import 'package:get_it/get_it.dart';
+import '../Models/user_about.dart';
+import '../Models/followers_following_item.dart';
 
 class ProfileHeaderRightSide extends StatefulWidget {
   final String userType;

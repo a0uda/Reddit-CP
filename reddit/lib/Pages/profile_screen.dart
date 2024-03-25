@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/tab_bar_views.dart';
 import '../Services/user_service.dart';
+import '../Models/user_about.dart';
 
 class ProfileScreen extends StatelessWidget {
   UserAbout? userData;
@@ -36,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                     child: Text(
                       'Posts',
                       style: TextStyle(
-                          fontSize: 0.025 *
+                          fontSize: 0.028 *
                               widgetSize), // Adjust the font size as needed
                     ),
                   ),
@@ -44,7 +45,7 @@ class ProfileScreen extends StatelessWidget {
                     child: Text(
                       'Comments',
                       style: TextStyle(
-                          fontSize: 0.025 *
+                          fontSize: 0.028 *
                               widgetSize), // Adjust the font size as needed
                     ),
                   ),
@@ -52,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                     child: Text(
                       'About',
                       style: TextStyle(
-                          fontSize: 0.025 *
+                          fontSize: 0.028 *
                               widgetSize), // Adjust the font size as needed
                     ),
                   ),
@@ -60,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: TabBarViews(),
+              child: TabBarViews(userData),
             ),
           ],
         ),

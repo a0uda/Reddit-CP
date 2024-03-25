@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'social_media_buttons.dart';
 import 'add_social_link_form.dart';
-import '../Services/user_service.dart';
 import 'package:icons_plus/icons_plus.dart';
+import '../Models/user_about.dart';
 
 class AddSocialLinkButton extends StatelessWidget {
   final Function(List<SocialLlinkItem>?) onDataReceived;

@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_social_link_button.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
   UserAbout userData;
@@ -84,7 +85,7 @@ class _ProfileHeaderAddSocialLinkState
                             linkData.display_text,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 0.022 * widgetSize,
+                              fontSize: 0.025 * widgetSize,
                             ),
                           ),
                         ],
