@@ -76,7 +76,8 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
             onPressed: () {
               //Navigate to create post -> jomana
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const CreatePost(),
+                builder: (context) =>
+                    const CreatePost(currentCommunity: "Create Post"),
               ));
             },
             child: const Row(

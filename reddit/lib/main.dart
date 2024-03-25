@@ -4,13 +4,14 @@ import 'package:get_it/get_it.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
+import 'package:reddit/resources/add_data.dart';
+//TODO : FIREBASE
+// import 'package:firebase_core/firebase_core.dart';
 
-// import 'package:reddit/widgets/Listing.dart';
-// import 'package:get/get.dart';
-// import 'package:reddit/Pages/Home_Page.dart';
-
-void main() {
+void main() async {
   // Registering MockService with GetIt
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(); //TODO : FIREBASE
   GetIt.instance.registerSingleton<PostService>(PostService());
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
@@ -20,6 +21,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

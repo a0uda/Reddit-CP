@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/resources/add_data.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -12,11 +15,19 @@ import '../Controllers/user_controller.dart';
 import '../Models/image_item.dart';
 import '../Models/poll_item.dart';
 import '../Models/video_item.dart';
+
+// TODO: FIREBASE
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({super.key});
+  final String? currentCommunity;
+  final String? currentCommunityRules;
+
+  const CreatePost(
+      {super.key, this.currentCommunity, this.currentCommunityRules});
 
   @override
   State<CreatePost> createState() => _CreatePostState();
@@ -24,6 +35,7 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   final postService = GetIt.instance.get<PostService>();
+
   // firebase_storage.FirebaseStorage storage =
   //     firebase_storage.FirebaseStorage.instance;
   XFile? _image;
@@ -33,6 +45,7 @@ class _CreatePostState extends State<CreatePost> {
   bool pollSelected = false;
   VideoPlayerController? _videoPlayerController;
   String? url;
+  String? imageUrl;
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -45,27 +58,17 @@ class _CreatePostState extends State<CreatePost> {
         videoSelected = false;
         pollSelected = false;
       });
-      //TODO: Upload image to firebase storage
-      // try {
-      //   // Make sure to replace 'path/to/image' with the path of the image you want to upload
-      //   File file = File(_image!.path);
 
-      //   // Upload the file to Firebase Storage under the specified path
-      //   firebase_storage.Reference ref =
-      //       firebase_storage.FirebaseStorage.instance.ref('/path/to/image');
-      //   firebase_storage.UploadTask uploadTask = ref.putFile(file);
-
-      //   // Wait until the file is uploaded and then get the download URL
-      //   final firebase_storage.TaskSnapshot downloadUrl = (await uploadTask);
-      //   final String url = (await downloadUrl.ref.getDownloadURL());
-
-      //   print('Download-URL: $url');
-      // } on FirebaseException catch (e) {
-      //   // Handle any errors
-      //   print(e);
-      // }
+      //TODO: FIREBASE
+      //saveImage();
     }
   }
+
+  // void saveImage() async {
+  //   imageUrl = await StoreData().saveData(
+  //       collection: 'images',
+  //       file: Uint8List.fromList(await File(_image!.path).readAsBytesSync()));
+  // }
 
   void _pollPressed() {
     setState(() {
@@ -112,9 +115,13 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController URLController = TextEditingController();
   TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
-  String selectedCommunity = "Select Community";
   bool showLinkField = false;
-  String redditRules = '''
+
+  @override
+  Widget build(BuildContext context) {
+    String selectedCommunity = widget.currentCommunity ?? "Select Community";
+    String redditRules = widget.currentCommunityRules ??
+        '''
 1. Be Respectful
 
 2. No Spam or Self-Promotion
@@ -125,9 +132,6 @@ class _CreatePostState extends State<CreatePost> {
 
 5. Follow Reddit's Content Policy
 ''';
-
-  @override
-  Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
     // ignore: unused_local_variable
     String question;
@@ -140,7 +144,7 @@ class _CreatePostState extends State<CreatePost> {
         primaryColor: Colors.orange[900],
       ),
       home: Scaffold(
-        backgroundColor: const Color.fromARGB(235, 255, 255, 255),
+        backgroundColor: Color.fromARGB(235, 255, 255, 255),
         appBar: AppBar(
           elevation: 40,
           centerTitle: true,
@@ -200,7 +204,7 @@ class _CreatePostState extends State<CreatePost> {
                               images: imageSelected
                                   ? [
                                       ImageItem(
-                                          path: _image!.path, link: 'linkUrl')
+                                          path: _image!.path, link: imageUrl!)
                                     ]
                                   : null,
                               videos: videoSelected
@@ -255,41 +259,42 @@ class _CreatePostState extends State<CreatePost> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      IconButton(
-                        onPressed: () async {
-                          final result = await showModalBottomSheet(
-                            backgroundColor: Colors.white,
-                            context: context,
-                            builder: (context) {
-                              return ListView.builder(
-                                itemCount: userCommunities.length,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    title: Text(
-                                      userCommunities[index],
-                                      style: const TextStyle(
-                                        color: Colors.black,
+                      if (widget.currentCommunity == null)
+                        IconButton(
+                          onPressed: () async {
+                            final result = await showModalBottomSheet(
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) {
+                                return ListView.builder(
+                                  itemCount: userCommunities.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                        userCommunities[index],
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                    onTap: () {
-                                      Navigator.pop(
-                                          context, userCommunities[index]);
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          );
-                          setState(() {
-                            if (result != null) selectedCommunity = result;
-                          });
-                        },
-                        icon: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.deepOrange,
-                          size: 20,
+                                      onTap: () {
+                                        Navigator.pop(
+                                            context, userCommunities[index]);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                            setState(() {
+                              if (result != null) selectedCommunity = result;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.deepOrange,
+                            size: 20,
+                          ),
                         ),
-                      ),
                       const Spacer(),
                       TextButton(
                         onPressed: () => {
@@ -391,10 +396,15 @@ class _CreatePostState extends State<CreatePost> {
                   if (imageSelected)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Image.file(
-                        File(_image!.path),
-                        fit: BoxFit.scaleDown,
-                        height: MediaQuery.of(context).size.height / 2.5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          image: DecorationImage(
+                            image: FileImage(File(_image!.path)),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        height: MediaQuery.of(context).size.height * 0.4,
                       ),
                     ),
                   if (videoSelected)
