@@ -7,12 +7,19 @@ class PollView extends StatefulWidget {
   final List<Map<String, double>> options;
   final String question;
   final int id;
+  final List<String> option1UserVotes;
+  final List<String> option2UserVotes;
+  final String currentUser;
 
-  const PollView(
-      {super.key,
-      required this.id,
-      required this.options,
-      required this.question});
+  const PollView({
+    super.key,
+    required this.id,
+    required this.options,
+    required this.question,
+    required this.option1UserVotes,
+    required this.option2UserVotes,
+    required this.currentUser,
+  });
 
   @override
   State<PollView> createState() => _PollViewState();
@@ -20,18 +27,19 @@ class PollView extends StatefulWidget {
 
 class _PollViewState extends State<PollView> {
   String user = "king@mail.com";
-  Map<String, int> usersWhoVoted = {
-    'sam@mail.com': 3,
-    'mike@mail.com': 4,
-    'john@mail.com': 1,
-    'kenny@mail.com': 1
-  };
+  Map<String, int> usersWhoVoted = {};
   String creator = "eddy@mail.com";
 
   @override
   Widget build(BuildContext context) {
     final postService = GetIt.instance.get<PostService>();
-
+    user = widget.currentUser;
+    usersWhoVoted = {
+      ...Map.fromIterable(widget.option1UserVotes,
+          key: (v) => v, value: (v) => 0),
+      ...Map.fromIterable(widget.option2UserVotes,
+          key: (v) => v, value: (v) => 1),
+    };
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -64,18 +72,18 @@ class _PollViewState extends State<PollView> {
             currentUser: user,
             creatorID: creator,
             voteData: usersWhoVoted,
-            userChoice: usersWhoVoted[user],
+            userChoice: usersWhoVoted![user],
             onVoteBackgroundColor: Colors.lightBlueAccent,
             leadingBackgroundColor: Colors.lightBlue,
             backgroundColor: Colors.white,
             voteCastedBackgroundColor: const Color.fromARGB(255, 230, 231, 232),
             onVote: (choice) {
               setState(() {
-                usersWhoVoted[user] = choice;
+                usersWhoVoted![user!] = choice;
                 widget.options[choice][widget.options[choice].keys.first] =
                     widget.options[choice][widget.options[choice].keys.first]! +
                         1.0;
-                postService.updatePoll(widget.id, choice);
+                postService.updatePoll(widget.id, choice, user);
               });
             },
           ),

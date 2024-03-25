@@ -209,7 +209,10 @@ class _CreatePostState extends State<CreatePost> {
                                   ? PollItem(
                                       question: questionController.text,
                                       options: options,
-                                      votes: [0, 0])
+                                      votes: [0, 0],
+                                      option1Votes: [],
+                                      option2Votes: [],
+                                    )
                                   : null),
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(

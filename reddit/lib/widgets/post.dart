@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/report.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:reddit/widgets/video_player.dart';
@@ -72,6 +73,7 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    UserController userController = GetIt.instance.get<UserController>();
     if (widget.imageUrl != null) {
       print(widget.imageUrl);
     }
@@ -165,10 +167,24 @@ class PostState extends State<Post> {
                           if (await canLaunchUrl(Uri.parse(widget.linkUrl!))) {
                             await launchUrl(Uri.parse(widget.linkUrl!));
                           } else {
-                            const AlertDialog(
-                              title: Text('Error'),
-                              content: Text('Could not open link'),
-                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Invalid Link'),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                color: Colors.deepOrange),
+                                          )),
+                                    ],
+                                  );
+                                });
                           }
                         },
                       ),
@@ -196,6 +212,9 @@ class PostState extends State<Post> {
                                 {option: widget.poll!.votes[index].toDouble()}))
                             .values
                             .toList(),
+                        option1UserVotes: widget.poll!.option1Votes,
+                        option2UserVotes: widget.poll!.option2Votes,
+                        currentUser: userController.userAbout!.username,
                       ),
                     )
                 ],

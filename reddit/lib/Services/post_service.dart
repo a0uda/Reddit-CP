@@ -8,7 +8,7 @@ class PostItem {
   final String? linkUrl;
   final List<ImageItem>? images;
   final List<VideoItem>? videos;
-  final PollItem? poll;
+  PollItem? poll;
   final int communityId;
   final String communityName;
   final bool ocFlag;
@@ -64,12 +64,16 @@ class VideoItem {
 class PollItem {
   final String question;
   final List<String> options;
-  final List<int> votes;
+  List<int> votes;
+  List<String> option1Votes;
+  List<String> option2Votes;
 
   PollItem({
     required this.question,
     required this.options,
     required this.votes,
+    required this.option1Votes,
+    required this.option2Votes,
   });
 }
 
@@ -141,7 +145,7 @@ class PostService {
     }
   }
 
-  void updatePoll(int id, int index) {
+  void updatePoll(int id, int index, String username) {
     print('id is : $id');
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
@@ -150,6 +154,10 @@ class PostService {
         return;
       }
       post.poll!.votes[index]++;
+      if (index == 0)
+        post.poll!.option1Votes.add(username);
+      else
+        post.poll!.option2Votes.add(username);
     } else {
       // update poll in database
     }

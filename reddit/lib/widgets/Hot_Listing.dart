@@ -32,7 +32,6 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
-    print(posts[0].poll!.options);
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,
