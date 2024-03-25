@@ -75,6 +75,7 @@ class BestListingBuild extends State<BestListing> {
           date: "2021-09-09",
           likes: posts[index].likes,
           comments: posts[index].comments,
+          communityName: "r/FlutterDev",
         );
       },
     );

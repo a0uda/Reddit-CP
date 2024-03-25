@@ -9,6 +9,9 @@ import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
 import '../Controllers/user_controller.dart';
+import '../Models/image_item.dart';
+import '../Models/poll_item.dart';
+import '../Models/video_item.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -126,6 +129,7 @@ class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
+    // ignore: unused_local_variable
     String question;
     List<String> options = ['', ''];
     int selectedDays = 3;
@@ -406,45 +410,62 @@ class _CreatePostState extends State<CreatePost> {
                     ),
                   if (pollSelected)
                     Container(
-                      padding: EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.transparent,
                         border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
                       ),
                       child: Column(
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () {
-                              setState(() {
-                                pollSelected = false;
-                              });
-                            },
-                          ),
+                          Row(children: [
+                            const Text(
+                              'Poll ends in ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            DropdownButton<int>(
+                              value: selectedDays,
+                              items: [1, 2, 3, 4, 5].map((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Text('$value days'),
+                                );
+                              }).toList(),
+                              onChanged: (value) =>
+                                  setState(() => selectedDays = value!),
+                            ),
+                            const Spacer(),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: () {
+                                  setState(() {
+                                    pollSelected = false;
+                                  });
+                                },
+                              ),
+                            ),
+                          ]),
                           TextField(
                             controller: questionController,
                             onChanged: (value) => question = value,
-                            decoration: InputDecoration(labelText: 'Question'),
+                            decoration:
+                                const InputDecoration(labelText: 'Question'),
                           ),
                           TextField(
                             onChanged: (value) => options[0] = value,
-                            decoration: InputDecoration(labelText: 'Option 1'),
+                            decoration:
+                                const InputDecoration(labelText: 'Option 1'),
                           ),
                           TextField(
                             onChanged: (value) => options[1] = value,
-                            decoration: InputDecoration(labelText: 'Option 2'),
-                          ),
-                          DropdownButton<int>(
-                            value: selectedDays,
-                            items: [1, 2, 3, 4, 5].map((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text('$value days'),
-                              );
-                            }).toList(),
-                            onChanged: (value) =>
-                                setState(() => selectedDays = value!),
+                            decoration:
+                                const InputDecoration(labelText: 'Option 2'),
                           ),
                         ],
                       ),

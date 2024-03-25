@@ -61,6 +61,7 @@ class RisingListingBuild extends State<RisingListing> {
           date: posts[index].name,
           likes: posts[index].likes,
           comments: posts[index].comments,
+          communityName: "r/FlutterDev",
         );
       },
     );

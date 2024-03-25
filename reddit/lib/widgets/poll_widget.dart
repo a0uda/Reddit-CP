@@ -35,10 +35,8 @@ class _PollViewState extends State<PollView> {
     final postService = GetIt.instance.get<PostService>();
     user = widget.currentUser;
     usersWhoVoted = {
-      ...Map.fromIterable(widget.option1UserVotes,
-          key: (v) => v, value: (v) => 0),
-      ...Map.fromIterable(widget.option2UserVotes,
-          key: (v) => v, value: (v) => 1),
+      ...{for (var v in widget.option1UserVotes) v: 0},
+      ...{for (var v in widget.option2UserVotes) v: 1},
     };
     return Scaffold(
       body: SafeArea(
@@ -72,14 +70,14 @@ class _PollViewState extends State<PollView> {
             currentUser: user,
             creatorID: creator,
             voteData: usersWhoVoted,
-            userChoice: usersWhoVoted![user],
+            userChoice: usersWhoVoted[user],
             onVoteBackgroundColor: Colors.lightBlueAccent,
             leadingBackgroundColor: Colors.lightBlue,
             backgroundColor: Colors.white,
             voteCastedBackgroundColor: const Color.fromARGB(255, 230, 231, 232),
             onVote: (choice) {
               setState(() {
-                usersWhoVoted![user!] = choice;
+                usersWhoVoted[user] = choice;
                 widget.options[choice][widget.options[choice].keys.first] =
                     widget.options[choice][widget.options[choice].keys.first]! +
                         1.0;

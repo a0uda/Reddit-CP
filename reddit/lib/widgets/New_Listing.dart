@@ -61,6 +61,7 @@ class NewListingBuild extends State<NewListing> {
           date: '2 days ago',
           likes: posts[index].likes,
           comments: posts[index].comments,
+          communityName: "r/FlutterDev",
         );
       },
     );

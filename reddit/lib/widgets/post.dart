@@ -5,8 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:reddit/widgets/video_player.dart';
 import 'package:get_it/get_it.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../Services/post_service.dart';
 import 'package:reddit/widgets/poll_widget.dart';
+import 'package:reddit/Models/poll_item.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -21,6 +21,7 @@ class Post extends StatefulWidget {
   final String? videoUrl;
   final PollItem? poll;
   final int? id;
+  final String communityName;
 
   const Post({
     super.key,
@@ -36,6 +37,7 @@ class Post extends StatefulWidget {
     this.videoUrl,
     this.poll,
     this.id,
+    required this.communityName,
   });
 
   @override
@@ -74,9 +76,6 @@ class PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     UserController userController = GetIt.instance.get<UserController>();
-    if (widget.imageUrl != null) {
-      print(widget.imageUrl);
-    }
     return InkWell(
       onTap: () => {
         // open this post TODO
@@ -98,32 +97,56 @@ class PostState extends State<Post> {
                 radius: 15,
                 backgroundImage: NetworkImage(widget.profileImageUrl),
               ),
-              title: Row(
+              title: Column(
                 children: [
-                  InkWell(
-                    onTap: () => {
-                      //TODO: go to profile
-                    },
-                    onHover: (hover) {
-                      setState(() {
-                        isHovering = hover;
-                      });
-                    },
-                    child: Text(
-                      widget.name,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Arial'),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () => {
+                        //TODO: go to community
+                      },
+                      onHover: (hover) {
+                        setState(() {
+                          isHovering = hover;
+                        });
+                      },
+                      child: Text(
+                        widget.communityName,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Arial'),
+                      ),
                     ),
                   ),
-                  const Padding(padding: EdgeInsets.all(0)),
-                  Text(
-                    '  • ${widget.date.substring(0, 10)}',
-                    style: const TextStyle(
-                        fontSize: 12,
-                        color: Color.fromARGB(255, 117, 116, 115)),
-                  )
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => {
+                          //TODO: go to profile
+                        },
+                        onHover: (hover) {
+                          setState(() {
+                            isHovering = hover;
+                          });
+                        },
+                        child: Text(
+                          widget.name,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w200,
+                              fontFamily: 'Arial'),
+                        ),
+                      ),
+                      const Padding(padding: EdgeInsets.all(0)),
+                      Text(
+                        '  • ${widget.date.substring(0, 10)}',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 117, 116, 115)),
+                      )
+                    ],
+                  ),
                 ],
               ),
               trailing: const Options(),
@@ -162,7 +185,6 @@ class PostState extends State<Post> {
                             color: Colors.blue,
                           ),
                         ),
-                        //TODO: open link
                         onTap: () async {
                           if (await canLaunchUrl(Uri.parse(widget.linkUrl!))) {
                             await launchUrl(Uri.parse(widget.linkUrl!));
@@ -197,10 +219,10 @@ class PostState extends State<Post> {
                         decoration: const BoxDecoration(
                             color: Color.fromARGB(255, 255, 255, 255),
                             shape: BoxShape.rectangle),
-                        child: Text("VIDEO") //TODO: VideoScreen(),
+                        child: const Text("VIDEO") //TODO: VideoScreen(),
                         ),
                   if (widget.poll != null)
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.3,
                       child: PollView(
@@ -224,7 +246,7 @@ class PostState extends State<Post> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: <Widget>[
-                  Container(
+                  SizedBox(
                     height: 40.0, // Set the height
                     child: Card(
                       color: Theme.of(context).colorScheme.primary,
@@ -260,7 +282,7 @@ class PostState extends State<Post> {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 40.0, // Set the height
                     child: Card(
                       shape: RoundedRectangleBorder(

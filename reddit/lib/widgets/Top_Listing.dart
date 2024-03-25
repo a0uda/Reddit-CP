@@ -61,6 +61,7 @@ class TopListingBuild extends State<TopListing> {
           date: posts[index].name,
           likes: posts[index].likes,
           comments: posts[index].comments,
+          communityName: "r/FlutterDev",
         );
       },
     );

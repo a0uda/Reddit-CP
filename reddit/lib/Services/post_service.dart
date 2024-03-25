@@ -1,83 +1,8 @@
-class PostItem {
-  final int id;
-  final String username;
-  final String? profilePic;
-  final String title;
-  final String? description;
-  final String type;
-  final String? linkUrl;
-  final List<ImageItem>? images;
-  final List<VideoItem>? videos;
-  PollItem? poll;
-  final int communityId;
-  final String communityName;
-  final bool ocFlag;
-  final bool spoilerFlag;
-  final bool nsfwFlag;
-  final DateTime date;
-  int likes;
-  final int comments;
-  final List<String> commentsList;
-  PostItem({
-    required this.id,
-    required this.username,
-    this.profilePic,
-    required this.title,
-    this.description,
-    required this.type,
-    this.linkUrl,
-    this.images,
-    this.videos,
-    this.poll,
-    required this.communityId,
-    required this.communityName,
-    required this.ocFlag,
-    required this.spoilerFlag,
-    required this.nsfwFlag,
-    required this.date,
-    required this.likes,
-    required this.comments,
-    required this.commentsList,
-  });
-}
+import 'package:reddit/Models/image_item.dart';
+import 'package:reddit/Models/poll_item.dart';
+import 'package:reddit/Models/video_item.dart';
+import 'package:reddit/Models/post_item.dart';
 
-class ImageItem {
-  final String path;
-  final String link;
-
-  ImageItem({
-    required this.path,
-    required this.link,
-  });
-}
-
-class VideoItem {
-  final String path;
-  final String link;
-
-  VideoItem({
-    required this.path,
-    required this.link,
-  });
-}
-
-class PollItem {
-  final String question;
-  final List<String> options;
-  List<int> votes;
-  List<String> option1Votes;
-  List<String> option2Votes;
-
-  PollItem({
-    required this.question,
-    required this.options,
-    required this.votes,
-    required this.option1Votes,
-    required this.option2Votes,
-  });
-}
-
-final List<PostItem> posts = [];
 int counter = 0;
 bool testing = true;
 
@@ -154,10 +79,11 @@ class PostService {
         return;
       }
       post.poll!.votes[index]++;
-      if (index == 0)
+      if (index == 0) {
         post.poll!.option1Votes.add(username);
-      else
+      } else {
         post.poll!.option2Votes.add(username);
+      }
     } else {
       // update poll in database
     }

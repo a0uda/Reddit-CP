@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/post.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:get_it/get_it.dart';
 
 class HotListing extends StatefulWidget {
@@ -63,6 +64,7 @@ class HotListingBuild extends State<HotListing> {
           videoUrl: posts[index].videos?[0].path,
           poll: posts[index].poll,
           id: posts[index].id,
+          communityName: posts[index].communityName,
         );
       },
     );
