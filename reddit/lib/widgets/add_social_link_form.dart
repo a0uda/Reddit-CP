@@ -60,7 +60,7 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                       IconButton(
                         onPressed: () {
                           Navigator.pop(
-                              context, userController.userAbout?.social_links);
+                              context, userController.userAbout?.socialLinks);
                         },
                         icon: const Icon(Icons.close),
                       ),
@@ -83,9 +83,9 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                             userController
                                 .getUser(userController.userAbout!.username);
                             print(
-                                'social link added successfully ${userController.userAbout?.social_links}');
-                            Navigator.pop(context,
-                                userController.userAbout?.social_links);
+                                'social link added successfully ${userController.userAbout?.socialLinks}');
+                            Navigator.pop(
+                                context, userController.userAbout?.socialLinks);
                           } else {
                             print('form is invalid');
                           }

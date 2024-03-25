@@ -45,13 +45,12 @@ class _followerListState extends State<followerList> {
             return ListTile(
                 leading: CircleAvatar(
                     backgroundImage: AssetImage(
-                  (followersList![index].profileSettings!.profile_picture !=
-                          null
-                      ? followersList![index].profileSettings!.profile_picture!
+                  (followersList![index].profileSettings!.profilePicture != null
+                      ? followersList![index].profileSettings!.profilePicture!
                       : 'images/Greddit.png'),
                 )),
                 title: Text(
-                    (followersList![index].profileSettings!.display_name ??
+                    (followersList![index].profileSettings!.displayName ??
                         followersList![index].username)),
                 subtitle: Text('u/${followersList![index].username}'),
                 trailing: TextButton(

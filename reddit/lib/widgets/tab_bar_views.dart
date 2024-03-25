@@ -12,7 +12,7 @@ class TabBarViews extends StatelessWidget {
     return TabBarView(
       children: [
         Center(child: TabBarPosts()),
-        TabBarComments(),
+        TabBarComments(userData: userData),
         TabBarAbout(userData),
       ],
     );

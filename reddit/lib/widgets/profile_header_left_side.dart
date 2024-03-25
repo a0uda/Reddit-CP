@@ -26,8 +26,8 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
-                image: AssetImage(
-                    userData.profile_picture ?? 'images/Greddit.png'),
+                image:
+                    AssetImage(userData.profilePicture ?? 'images/Greddit.png'),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,
@@ -37,7 +37,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
-              userData.display_name ?? userData.username,
+              userData.displayName ?? userData.username,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 30,
@@ -75,10 +75,10 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                   )
                 : null,
             subtitle: Text(
-              'u/${userData.username} - ${userData.created_at}\n${userData.about}',
+              'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 10,
+                fontSize: 12,
               ),
             ),
           ),
