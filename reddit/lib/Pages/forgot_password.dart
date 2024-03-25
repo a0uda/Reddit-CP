@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/Pages/verify-password.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   ForgotPasswordPageState createState() => ForgotPasswordPageState();
 }
@@ -96,7 +99,14 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       SizedBox(height: sizedBoxHeightBeforeResetButton),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const VerifyPasswordPage(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
