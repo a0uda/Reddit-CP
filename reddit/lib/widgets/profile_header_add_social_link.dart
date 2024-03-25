@@ -29,7 +29,7 @@ class _ProfileHeaderAddSocialLinkState
   @override
   void initState() {
     super.initState();
-    socialLinks = userData.social_links;
+    socialLinks = userData.socialLinks;
     updateAddSocialLinkButtonVisibility();
   }
 
@@ -58,7 +58,7 @@ class _ProfileHeaderAddSocialLinkState
                     String websiteName = linkData.type.toLowerCase();
                     return TextButton(
                       onPressed: () {
-                        launchUrl(Uri.parse(linkData.custom_url));
+                        launchUrl(Uri.parse(linkData.customUrl));
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -74,7 +74,7 @@ class _ProfileHeaderAddSocialLinkState
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            linkData.display_text,
+                            linkData.displayText,
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,

@@ -34,17 +34,17 @@ class UserService {
   }
 
   void addSocialLink(
-      String username, String display_text, String type, String custom_url) {
+      String username, String displayText, String type, String customUrl) {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
-          .social_links!
+          .socialLinks!
           .add(SocialLlinkItem(
-            username: display_text,
-            display_text: display_text,
+            username: displayText,
+            displayText: displayText,
             type: type,
-            custom_url: custom_url,
+            customUrl: customUrl,
           ));
     } else {
       // add social link to database
@@ -56,7 +56,7 @@ class UserService {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
-          .social_links!
+          .socialLinks!
           .removeWhere((element) => element.id == id);
     } else {
       // delete social link from database
@@ -146,7 +146,7 @@ class UserService {
     }
     return null;
   }
-  
+
   List<Comments>? getcomments(String username) {
     if (testing) {
       return users
@@ -157,7 +157,6 @@ class UserService {
     }
     return null;
   }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   int userSignup(
@@ -189,7 +188,7 @@ class UserService {
     UserAbout newUserAbout = UserAbout(
       username: username,
       email: email,
-      verified_email_flag: false,
+      verifiedEmailFlag: false,
       gender: gender,
     );
 

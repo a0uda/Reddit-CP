@@ -1,51 +1,51 @@
 class UserAbout {
   final String? id;
-  final String? created_at;
+  final String? createdAt;
   final String username;
   final String? email;
-  final bool? verified_email_flag;
+  final bool? verifiedEmailFlag;
   final String? gmail;
-  final String? facebook_email;
-  final String? display_name;
+  final String? facebookEmail;
+  final String? displayName;
   final String? about;
-  final List<SocialLlinkItem>? social_links;
-  final String? profile_picture;
-  final String? banner_picture;
+  final List<SocialLlinkItem>? socialLinks;
+  final String? profilePicture;
+  final String? bannerPicture;
   final String? country;
   final String? gender;
-  final bool? connected_google;
+  final bool? connectedGoogle;
 
   UserAbout({
     this.id,
-    this.created_at,
+    this.createdAt,
     required this.username,
     this.email,
-    this.verified_email_flag,
+    this.verifiedEmailFlag,
     this.gmail,
-    this.facebook_email,
-    this.display_name,
+    this.facebookEmail,
+    this.displayName,
     this.about,
-    this.social_links,
-    this.profile_picture,
-    this.banner_picture,
+    this.socialLinks,
+    this.profilePicture,
+    this.bannerPicture,
     this.country,
     this.gender,
-    this.connected_google,
+    this.connectedGoogle,
   });
 }
 
 class SocialLlinkItem {
   final String? id;
   final String username;
-  final String display_text;
+  final String displayText;
   final String type;
-  final String custom_url;
+  final String customUrl;
 
   SocialLlinkItem({
     this.id,
     required this.username,
-    required this.display_text,
+    required this.displayText,
     required this.type,
-    required this.custom_url,
+    required this.customUrl,
   });
 }

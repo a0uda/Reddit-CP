@@ -48,7 +48,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 30),
+              padding: const EdgeInsets.only(top: 20, left: 20),
               child: IconButton(
                 icon: Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
@@ -59,7 +59,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 30),
+              padding: const EdgeInsets.only(top: 20, left: 20),
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
@@ -122,9 +122,12 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                                   Icons.add,
                                   color: Colors.white,
                                 ),
-                                const Text(
-                                  'Follow',
-                                  style: TextStyle(color: Colors.white),
+                                const Flexible(
+                                  child: Text(
+                                    'Follow',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                       ),
@@ -132,7 +135,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
             ),
             userType != 'me'
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 15),
+                    padding: const EdgeInsets.only(top: 20, left: 5),
                     child: IconButton(
                       icon: const Icon(Icons.message,
                           color: Colors.white, size: 30),

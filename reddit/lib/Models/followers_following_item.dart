@@ -1,19 +1,19 @@
 class FollowersFollowingItem {
   final String? id;
-  final String? created_at;
+  final String? createdAt;
   final String username;
   final String? email;
-  final bool? verified_email_flag;
+  final bool? verifiedEmailFlag;
   final FollowersProfileSettings? profileSettings;
   final String? country;
   final String? gender;
 
   FollowersFollowingItem({
     this.id,
-    this.created_at,
+    this.createdAt,
     required this.username,
     this.email,
-    this.verified_email_flag,
+    this.verifiedEmailFlag,
     this.profileSettings,
     this.country,
     this.gender,
@@ -21,15 +21,15 @@ class FollowersFollowingItem {
 }
 
 class FollowersProfileSettings {
-  final String? display_name;
+  final String? displayName;
   final String? about;
-  final String? profile_picture;
-  final String? banner_picture;
+  final String? profilePicture;
+  final String? bannerPicture;
 
   FollowersProfileSettings({
-    this.display_name,
+    this.displayName,
     this.about,
-    this.profile_picture,
-    this.banner_picture,
+    this.profilePicture,
+    this.bannerPicture,
   });
 }
