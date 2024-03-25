@@ -32,6 +32,7 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
+    print(posts[0].poll!.options);
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,
@@ -62,6 +63,7 @@ class HotListingBuild extends State<HotListing> {
           imageUrl: posts[index].images?[0].path,
           videoUrl: posts[index].videos?[0].path,
           poll: posts[index].poll,
+          id: posts[index].id,
         );
       },
     );

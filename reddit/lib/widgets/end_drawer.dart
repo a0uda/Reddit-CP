@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Pages/login.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
@@ -11,17 +12,19 @@ class EndDrawerReddit extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          const DrawerHeader(
+          DrawerHeader(
               child: IntrinsicHeight(
             child: Column(
               children: [
                 CircleAvatar(
-                  backgroundImage: AssetImage("images/pp.jpg"),
+                  backgroundImage:
+                      AssetImage(userController.userAbout!.profile_picture!),
                   radius: 40,
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Text('"UserNamee"'),
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(userController.userAbout!.username,
+                      style: const TextStyle(fontSize: 20)),
                 )
               ],
             ),
@@ -58,6 +61,16 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("Settings"),
             onTap: () {
               //Navigate to Settings
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("Logout", style: TextStyle(color: Colors.red)),
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const LoginPage()));
             },
           ),
         ],

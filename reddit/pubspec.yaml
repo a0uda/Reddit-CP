@@ -36,6 +36,9 @@ dependencies:
   flutter_polls: ^0.1.6
   url_launcher: ^6.0.12
   better_polls: ^1.0.8
+  
+  firebase_core: "^1.10.5"
+  firebase_storage: "^10.0.4"
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +55,7 @@ dependencies:
   social_media_flutter: ^0.0.2
   share_plus: ^7.2.2
   icons_plus: ^5.0.0
+  
 
 dev_dependencies:
   flutter_test:

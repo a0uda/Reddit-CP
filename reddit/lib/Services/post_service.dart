@@ -15,7 +15,7 @@ class PostItem {
   final bool spoilerFlag;
   final bool nsfwFlag;
   final DateTime date;
-  final int likes;
+  int likes;
   final int comments;
   final List<String> commentsList;
   PostItem({
@@ -74,11 +74,12 @@ class PollItem {
 }
 
 final List<PostItem> posts = [];
+int counter = 0;
 bool testing = true;
 
 class PostService {
   void addPost(
-    int id,
+    // int id,
     String username,
     String title,
     String type,
@@ -101,7 +102,7 @@ class PostService {
     if (testing) {
       posts.add(
         PostItem(
-          id: id,
+          id: counter++,
           username: username,
           profilePic: profilePic,
           title: title,
@@ -129,6 +130,29 @@ class PostService {
 
   List<PostItem> getPosts() {
     return posts;
+  }
+
+  void likePost(int id) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == id);
+      post.likes++;
+    } else {
+      // like post in database
+    }
+  }
+
+  void updatePoll(int id, int index) {
+    print('id is : $id');
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == id);
+      if (post.poll == null) {
+        print('no poll found');
+        return;
+      }
+      post.poll!.votes[index]++;
+    } else {
+      // update poll in database
+    }
   }
 }
 

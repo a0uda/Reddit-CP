@@ -19,6 +19,7 @@ class Post extends StatefulWidget {
   final String? linkUrl;
   final String? videoUrl;
   final PollItem? poll;
+  final int? id;
 
   const Post({
     super.key,
@@ -33,6 +34,7 @@ class Post extends StatefulWidget {
     this.linkUrl,
     this.videoUrl,
     this.poll,
+    this.id,
   });
 
   @override
@@ -40,26 +42,29 @@ class Post extends StatefulWidget {
 }
 
 int counter = 0;
-bool isLiked = false;
+bool upVote = false;
+bool downVote = false;
 
 class PostState extends State<Post> {
   bool isHovering = false;
   bool ishovering = false;
   void incrementCounter() {
     setState(() {
-      if (isLiked == false) {
-        //like todo
-        isLiked = !isLiked;
-      }
+      counter++;
+      // if (isLiked == false) {
+      //like todo
+      upVote = !upVote;
+
+      //}
     });
   }
 
   void decrementCounter() {
     setState(() {
-      if (isLiked == true) {
-        //unlike todo
-        isLiked = !isLiked;
-      }
+      // if (isLiked == true) {
+      //unlike todo
+      downVote = !downVote;
+      // }
     });
   }
 
@@ -183,9 +188,13 @@ class PostState extends State<Post> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height * 0.3,
                       child: PollView(
+                        id: widget.id!,
                         question: widget.poll!.question,
                         options: widget.poll!.options
-                            .map((option) => {option: 0.0})
+                            .asMap()
+                            .map((index, option) => MapEntry(index,
+                                {option: widget.poll!.votes[index].toDouble()}))
+                            .values
                             .toList(),
                       ),
                     )

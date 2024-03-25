@@ -9,6 +9,8 @@ import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/post_service.dart';
 import '../Controllers/user_controller.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class CreatePost extends StatefulWidget {
   const CreatePost({super.key});
@@ -19,12 +21,15 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   final postService = GetIt.instance.get<PostService>();
+  // firebase_storage.FirebaseStorage storage =
+  //     firebase_storage.FirebaseStorage.instance;
   XFile? _image;
   XFile? _video;
   bool imageSelected = false;
   bool videoSelected = false;
   bool pollSelected = false;
   VideoPlayerController? _videoPlayerController;
+  String? url;
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -37,6 +42,25 @@ class _CreatePostState extends State<CreatePost> {
         videoSelected = false;
         pollSelected = false;
       });
+      //TODO: Upload image to firebase storage
+      // try {
+      //   // Make sure to replace 'path/to/image' with the path of the image you want to upload
+      //   File file = File(_image!.path);
+
+      //   // Upload the file to Firebase Storage under the specified path
+      //   firebase_storage.Reference ref =
+      //       firebase_storage.FirebaseStorage.instance.ref('/path/to/image');
+      //   firebase_storage.UploadTask uploadTask = ref.putFile(file);
+
+      //   // Wait until the file is uploaded and then get the download URL
+      //   final firebase_storage.TaskSnapshot downloadUrl = (await uploadTask);
+      //   final String url = (await downloadUrl.ref.getDownloadURL());
+
+      //   print('Download-URL: $url');
+      // } on FirebaseException catch (e) {
+      //   // Handle any errors
+      //   print(e);
+      // }
     }
   }
 
@@ -106,7 +130,6 @@ class _CreatePostState extends State<CreatePost> {
     List<String> options = ['', ''];
     int selectedDays = 3;
     List<String> userCommunities = ["r/news", "r/programming", "r/Flutter"];
-    var counter = 0;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -126,44 +149,79 @@ class _CreatePostState extends State<CreatePost> {
           actions: [
             IconButton(
                 onPressed: (() => {
-                      postService.addPost(
-                          counter++,
-                          userController.userAbout!.username,
-                          titleController.text,
-                          'type',
-                          0,
-                          selectedCommunity,
-                          false,
-                          _selections[1],
-                          _selections[0],
-                          0,
-                          0,
-                          [],
-                          DateTime.now(),
-                          profilePic: userController.userAbout!.profile_picture,
-                          description: bodyController.text,
-                          linkUrl: showLinkField ? URLController.text : null,
-                          images: imageSelected
-                              ? [ImageItem(path: _image!.path, link: 'linkUrl')]
-                              : null,
-                          videos: videoSelected
-                              ? [VideoItem(path: _video!.path, link: 'linkUrl')]
-                              : null,
-                          poll: pollSelected
-                              ? PollItem(
-                                  question: questionController.text,
-                                  options: options,
-                                  votes: [0, 0])
-                              : null),
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const ResponsiveLayout(
-                            mobileLayout: MobileLayout(
-                              mobilePageMode: 0,
-                            ),
-                            desktopLayout: DesktopHomePage(
-                              indexOfPage: 0,
-                            )),
-                      ))
+                      if (titleController.text.isEmpty ||
+                          selectedCommunity == "Select Community")
+                        {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text(
+                                      'Choose a community and add a title to your post!'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          'OK',
+                                          style: TextStyle(
+                                              color: Colors.deepOrange),
+                                        )),
+                                  ],
+                                );
+                              })
+                        }
+                      else
+                        {
+                          postService.addPost(
+                              userController.userAbout!.username,
+                              titleController.text,
+                              'type',
+                              0,
+                              selectedCommunity,
+                              false,
+                              _selections[1],
+                              _selections[0],
+                              0,
+                              0,
+                              [],
+                              DateTime.now(),
+                              profilePic:
+                                  'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+                              description: bodyController.text,
+                              linkUrl:
+                                  showLinkField ? URLController.text : null,
+                              images: imageSelected
+                                  ? [
+                                      ImageItem(
+                                          path: _image!.path, link: 'linkUrl')
+                                    ]
+                                  : null,
+                              videos: videoSelected
+                                  ? [
+                                      VideoItem(
+                                          path: _video!.path, link: 'linkUrl')
+                                    ]
+                                  : null,
+                              poll: pollSelected
+                                  ? PollItem(
+                                      question: questionController.text,
+                                      options: options,
+                                      votes: [0, 0])
+                                  : null),
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 0,
+                                ),
+                                desktopLayout: DesktopHomePage(
+                                  indexOfPage: 0,
+                                )),
+                          ))
+                        }
                     }),
                 icon: const Icon(Icons.check, color: Colors.white)),
           ],
@@ -290,7 +348,7 @@ class _CreatePostState extends State<CreatePost> {
                       ),
                     ),
                   ),
-                  if (showLinkField) // Add this block
+                  if (showLinkField)
                     Row(
                       children: [
                         Expanded(
