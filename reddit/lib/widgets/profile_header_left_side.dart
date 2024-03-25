@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'follower_list.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
@@ -14,9 +15,6 @@ class ProfileHeaderLeftSide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double widgetSize =
-        screenWidth < screenHeight ? screenWidth : screenHeight;
 
     return SizedBox(
       width: (2 / 3) * screenWidth,
@@ -25,43 +23,39 @@ class ProfileHeaderLeftSide extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.only(
-                top: (1 / 25) * widgetSize, left: (1 / 25) * widgetSize),
+            padding: const EdgeInsets.only(top: 20, left: 20),
             child: ClipOval(
               child: Image(
                 image: AssetImage(
                     userData.profile_picture ?? 'images/Greddit.png'),
-                width: widgetSize * 0.2, // Adjust according to your need
-                height: widgetSize * 0.2, // Adjust according to your need
+                width: 100,
+                height: 100,
                 fit: BoxFit.cover,
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(
-                left: (1 / 25) * widgetSize, bottom: (1 / 50) * widgetSize),
+            padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
               userData.display_name ?? userData.username,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: 0.05 * widgetSize, // Adjust according to your need
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           ListTile(
-            contentPadding: EdgeInsets.only(
-                left: (1 / 25) * widgetSize, bottom: (1 / 25) * widgetSize),
+            contentPadding: const EdgeInsets.only(left: 20, bottom: 20),
             title: userType == 'me'
                 ? Row(
                     children: <Widget>[
                       Text(
                         '${userService.getFollowersCount(userData.username)} followers',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 0.022 * widgetSize,
-                          fontWeight:
-                              FontWeight.bold, // Adjust according to your need
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       IconButton(
@@ -75,17 +69,16 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         },
                         icon: const Icon(Icons.arrow_forward_ios_rounded),
                         color: Colors.white,
-                        iconSize:
-                            0.022 * widgetSize, // Adjust according to your need
+                        iconSize: 15,
                       )
                     ],
                   )
                 : null,
             subtitle: Text(
               'u/${userData.username} - ${userData.created_at}\n${userData.about}',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: 0.022 * widgetSize, // Adjust according to your need
+                fontSize: 10,
               ),
             ),
           ),

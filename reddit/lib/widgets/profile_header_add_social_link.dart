@@ -4,11 +4,12 @@ import 'package:get_it/get_it.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_social_link_button.dart';
+import '../Models/user_about.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
-  UserAbout userData;
-  String userType;
-  ProfileHeaderAddSocialLink(this.userData, this.userType);
+  final UserAbout userData;
+  final String userType;
+  const ProfileHeaderAddSocialLink(this.userData, this.userType);
   @override
   _ProfileHeaderAddSocialLinkState createState() =>
       _ProfileHeaderAddSocialLinkState(userData, userType);
@@ -44,22 +45,14 @@ class _ProfileHeaderAddSocialLinkState
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double widgetSize =
-        screenWidth < screenHeight ? screenWidth : screenHeight;
-
     return Container(
-      padding: EdgeInsets.only(
-          left: (1 / 25) * widgetSize,
-          right: (1 / 25) * widgetSize,
-          bottom: (1 / 12) * widgetSize),
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
-            spacing: (1 / 55) * widgetSize,
-            runSpacing: (1 / 55) * widgetSize,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               ...(socialLinks?.map((linkData) {
                     String websiteName = linkData.type.toLowerCase();
@@ -75,16 +68,16 @@ class _ProfileHeaderAddSocialLinkState
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            width: (1 / 25) * widgetSize,
-                            height: (1 / 25) * widgetSize,
+                            width: 20,
+                            height: 20,
                             child: getSocialMediaIcon(websiteName),
                           ),
-                          SizedBox(width: (1 / 100) * widgetSize),
+                          const SizedBox(width: 5),
                           Text(
                             linkData.display_text,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 0.022 * widgetSize,
+                              fontSize: 12,
                             ),
                           ),
                         ],

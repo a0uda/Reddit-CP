@@ -1,106 +1,6 @@
-import 'dart:developer';
-
-class SocialLlinkItem {
-  final String? id;
-  final String username;
-  final String display_text;
-  final String type;
-  final String custom_url;
-
-  SocialLlinkItem({
-    this.id,
-    required this.username,
-    required this.display_text,
-    required this.type,
-    required this.custom_url,
-  });
-}
-
-class FollowersFollowingItem {
-  final String? id;
-  final String? created_at;
-  final String username;
-  final String? email;
-  final bool? verified_email_flag;
-  final FollowersProfileSettings? profileSettings;
-  final String? country;
-  final String? gender;
-
-  FollowersFollowingItem({
-    this.id,
-    this.created_at,
-    required this.username,
-    this.email,
-    this.verified_email_flag,
-    this.profileSettings,
-    this.country,
-    this.gender,
-  });
-}
-
-class FollowersProfileSettings {
-  final String? display_name;
-  final String? about;
-  final String? profile_picture;
-  final String? banner_picture;
-
-  FollowersProfileSettings({
-    this.display_name,
-    this.about,
-    this.profile_picture,
-    this.banner_picture,
-  });
-}
-
-class UserAbout {
-  final String? id;
-  final String? created_at;
-  final String username;
-  final String? email;
-  final bool? verified_email_flag;
-  final String? gmail;
-  final String? facebook_email;
-  final String? display_name;
-  final String? about;
-  final List<SocialLlinkItem>? social_links;
-  final String? profile_picture;
-  final String? banner_picture;
-  final String? country;
-  final String? gender;
-  final bool? connected_google;
-
-  UserAbout({
-    this.id,
-    this.created_at,
-    required this.username,
-    this.email,
-    this.verified_email_flag,
-    this.gmail,
-    this.facebook_email,
-    this.display_name,
-    this.about,
-    this.social_links,
-    this.profile_picture,
-    this.banner_picture,
-    this.country,
-    this.gender,
-    this.connected_google,
-  });
-}
-
-class UserItem {
-  final UserAbout userAbout;
-  final String? password;
-  final List<FollowersFollowingItem>? followers;
-  final List<FollowersFollowingItem>? following;
-
-  UserItem({
-    required this.userAbout,
-    this.password,
-    this.followers,
-    this.following,
-  });
-}
+import '../Models/user_item.dart';
+import '../Models/user_about.dart';
+import '../Models/followers_following_item.dart';
 
 bool testing = true;
 
@@ -111,6 +11,7 @@ class UserService {
     'jane1234',
     'mark1234',
   ];
+
   void addUser() {
     if (testing) {
       //to be implemented
@@ -120,13 +21,14 @@ class UserService {
   }
 
   UserAbout? getUserAbout(String Username) {
-    if (testing)
+    if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == Username)
           .userAbout;
-    else {
+    } else {
       //to be fetched from database
     }
+    return null;
   }
 
   void addSocialLink(
