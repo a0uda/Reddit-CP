@@ -50,7 +50,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 20),
               child: IconButton(
-                icon: Icon(Icons.share, color: Colors.white, size: 40),
+                icon: const Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
                   const link =
                       'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
@@ -82,8 +82,8 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                   }
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor:
-                      Color.fromARGB(0, 68, 70, 71), // example background color
+                  backgroundColor: const Color.fromARGB(
+                      0, 68, 70, 71), // example background color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                     side: const BorderSide(
@@ -100,10 +100,10 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                     : Row(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: (!followingList!
+                        children: (followingList!
                                 .where((element) =>
                                     element.username == userData.username)
-                                .isEmpty)
+                                .isNotEmpty)
                             ? [
                                 const Icon(
                                   Icons.check,

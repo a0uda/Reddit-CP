@@ -30,12 +30,13 @@ class TopListing extends StatefulWidget {
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
+  @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(HandleScrolling);
+    controller = ScrollController()..addListener(handleScrolling);
   }
 
-  void HandleScrolling() {
+  void handleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list

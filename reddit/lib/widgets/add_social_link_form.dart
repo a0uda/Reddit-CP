@@ -9,10 +9,10 @@ class AddSocialLinkForm extends StatefulWidget {
   final String socialLink;
 
   const AddSocialLinkForm({
-    Key? key,
+    super.key,
     required this.socialMediaIcon,
     required this.socialLink,
-  }) : super(key: key);
+  });
 
   @override
   _AddSocialLinkFormState createState() => _AddSocialLinkFormState(
@@ -110,11 +110,11 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(width: 20, height: 20, child: socialMediaIcon),
-                    SizedBox(width: 8),
+                    SizedBox(width: 20, height: 20, child: socialMediaIcon),
+                    const SizedBox(width: 8),
                     Text(
                       socialLink,
-                      style: TextStyle(color: Colors.black, fontSize: 12),
+                      style: const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ],
                 ),
@@ -124,16 +124,17 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Username'),
+                      decoration: const InputDecoration(labelText: 'Username'),
                       controller: usernameController,
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please enter a username';
                         }
+                        return null;
                       },
                     ),
                     TextFormField(
-                      decoration: InputDecoration(labelText: 'Link'),
+                      decoration: const InputDecoration(labelText: 'Link'),
                       controller: linkController,
                       validator: (value) {
                         if (value == null || value.isEmpty) {

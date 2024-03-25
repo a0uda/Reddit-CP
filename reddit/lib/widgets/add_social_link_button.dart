@@ -115,6 +115,7 @@ class IconButtonWithText extends StatelessWidget {
   Function(List<SocialLlinkItem>?) onDataReceived;
 
   IconButtonWithText({
+    super.key,
     required this.text,
     required this.icon,
     required this.onDataReceived,
@@ -143,11 +144,11 @@ class IconButtonWithText extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 20, height: 20, child: icon),
-          SizedBox(width: 8),
+          SizedBox(width: 20, height: 20, child: icon),
+          const SizedBox(width: 8),
           Text(
             text,
-            style: TextStyle(color: Colors.black, fontSize: 12),
+            style: const TextStyle(color: Colors.black, fontSize: 12),
           ),
         ],
       ),

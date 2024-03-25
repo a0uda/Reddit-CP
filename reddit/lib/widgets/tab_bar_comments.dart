@@ -18,7 +18,7 @@ class TabBarComments extends StatelessWidget {
           )
         : ListView.separated(
             padding: EdgeInsets.zero,
-            itemCount: comments!.length,
+            itemCount: comments.length,
             itemBuilder: (BuildContext context, int index) {
               Comments comment = comments[index];
               return ListTile(

@@ -7,7 +7,7 @@ class ProfileHeader extends StatelessWidget {
   var userData;
   String userType;
   Function? onUpdate;
-  ProfileHeader(this.userData, this.userType, this.onUpdate, {Key? key});
+  ProfileHeader(this.userData, this.userType, this.onUpdate, {super.key});
   @override
   Widget build(BuildContext context) {
     return Expanded(

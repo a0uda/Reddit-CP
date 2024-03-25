@@ -9,8 +9,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
   final UserAbout userData;
   final String userType;
 
-  ProfileHeaderLeftSide(this.userData, this.userType, {Key? key})
-      : super(key: key);
+  ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +62,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const followerList(),
+                              builder: (context) => const FollowerList(),
                             ),
                           );
                         },

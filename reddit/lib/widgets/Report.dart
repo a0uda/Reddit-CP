@@ -3,8 +3,8 @@ import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
   const Options({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Postoptions createState() => Postoptions();
@@ -14,12 +14,12 @@ class Postoptions extends State<Options> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
-      icon: Icon(Icons.more_horiz),
+      icon: const Icon(Icons.more_horiz),
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
           onTap: () => {},
-          child: Row(
+          child: const Row(
             children: [
               Icon(Icons.save),
               SizedBox(
@@ -30,7 +30,7 @@ class Postoptions extends State<Options> {
           ),
         ),
         // PopupMenuItem 2
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 2,
           child: Row(
             children: [
@@ -49,7 +49,7 @@ class Postoptions extends State<Options> {
               context: context,
               barrierDismissible: true,
               builder: (BuildContext context) {
-                return Container(
+                return const SizedBox(
                   height: 100,
                   width: 100,
                   child: AlertDialog(
@@ -59,7 +59,7 @@ class Postoptions extends State<Options> {
                         'Thanks for looking out for yourself and your fellow redditors by reporting things that break the rules. Let us know what s happening, and we ll look into it. '),
                     actions: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                       ),
                       ReportOptions(),
                     ],
@@ -68,7 +68,7 @@ class Postoptions extends State<Options> {
               },
             )
           },
-          child: Row(
+          child: const Row(
             children: [
               Icon(Icons.report),
               SizedBox(
@@ -79,7 +79,7 @@ class Postoptions extends State<Options> {
           ),
         ),
       ],
-      offset: Offset(0, 25),
+      offset: const Offset(0, 25),
       color: Colors.grey,
       elevation: 2,
       // on selected we show the dialog box

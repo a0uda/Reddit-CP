@@ -6,14 +6,14 @@ import '../Controllers/user_controller.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/user_about.dart';
 
-class followerList extends StatefulWidget {
-  const followerList({Key? key}) : super(key: key);
+class FollowerList extends StatefulWidget {
+  const FollowerList({super.key});
 
   @override
-  _followerListState createState() => _followerListState();
+  FollowerListState createState() => FollowerListState();
 }
 
-class _followerListState extends State<followerList> {
+class FollowerListState extends State<FollowerList> {
   final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
   late List<FollowersFollowingItem>? followingList;

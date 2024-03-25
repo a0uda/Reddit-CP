@@ -62,7 +62,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
               _buildHeader(),
               SizedBox(height: sizedBoxHeightHeader),
               Center(
-                child: Container(
+                child: SizedBox(
                   width: containerWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,7 +77,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeightBetweenTextFields),
@@ -91,7 +91,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeightBeforeResetButton),
@@ -128,7 +128,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );
         },
       ),

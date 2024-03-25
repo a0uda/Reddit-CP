@@ -160,21 +160,17 @@ class _CommunityPageState extends State<CommunityPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Container(
-                              child: CommunityDescription('reddittest', 7),
-                            ),
-                            Container(
-                              child: Row(
-                                children: [
-                                  ButtonWidgets(buttonState, () {
-                                    setButton();
-                                  }),
-                                  ButtonWidgets(
-                                      'Create a post',
-                                      icon: const Icon(Icons.add),
-                                      () {}),
-                                ],
-                              ),
+                            const CommunityDescription('reddittest', 7),
+                            Row(
+                              children: [
+                                ButtonWidgets(buttonState, () {
+                                  setButton();
+                                }),
+                                ButtonWidgets(
+                                    'Create a post',
+                                    icon: const Icon(Icons.add),
+                                    () {}),
+                              ],
                             ),
                           ],
                         ),
