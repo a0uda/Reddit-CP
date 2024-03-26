@@ -22,7 +22,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 20),
+            padding: const EdgeInsets.only(top: 15, left: 20),
             child: ClipOval(
               child: Image(
                 image:
@@ -34,7 +34,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 10),
+            padding: const EdgeInsets.only(left: 20, bottom: 5),
             child: Text(
               userData.displayName ?? userData.username,
               style: const TextStyle(
@@ -45,7 +45,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             ),
           ),
           ListTile(
-            contentPadding: const EdgeInsets.only(left: 20, bottom: 20),
+            contentPadding: const EdgeInsets.only(left: 20, bottom: 15),
             title: userType == 'me'
                 ? Row(
                     children: <Widget>[
