@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Models/rules_item.dart';
 
 class DescriptionWidget extends StatelessWidget {
-  const DescriptionWidget({super.key, required this.communityDescription, required this.communityRules});
+  const DescriptionWidget(
+      {super.key,
+      required this.communityDescription,
+      required this.communityRules});
 
   final String communityDescription;
   final communityRules;
@@ -12,14 +15,21 @@ class DescriptionWidget extends StatelessWidget {
     return Material(
       child: SingleChildScrollView(
         child: Card(
-        color:const Color.fromARGB(255, 255, 255, 255), 
+          color: const Color.fromARGB(255, 255, 255, 255),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
               Container(
                 margin: const EdgeInsets.only(top: 20),
                 child: Padding(
-                  padding: const EdgeInsets.only(left:20.0,right:20,top:20),
+                  padding:
+                      const EdgeInsets.only(left: 20.0, right: 20, top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -120,51 +130,16 @@ class RuleTileState extends State<RuleTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              title: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${widget.index}. ${widget.rule.ruleTitle}',
-                      style: const TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      isExpanded ? Icons.arrow_upward : Icons.arrow_downward,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isExpanded = !isExpanded;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              onTap: () {
-                setState(() {
-                  isExpanded = !isExpanded;
-                });
-              },
-            ),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 0),
-              opacity: isExpanded ? 1.0 : 0.0,
-              child: Visibility(
-                visible: isExpanded,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ListTile(
+            title: Row(
+              children: [
+                Expanded(
                   child: Text(
-                    widget.rule.ruleDescription,
+                    '${widget.index}. ${widget.rule.ruleTitle}',
                     style: const TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 14,
@@ -172,16 +147,50 @@ class RuleTileState extends State<RuleTile> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: Icon(
+                    isExpanded ? Icons.arrow_upward : Icons.arrow_downward,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isExpanded = !isExpanded;
+                    });
+                  },
+                ),
+              ],
+            ),
+            onTap: () {
+              setState(() {
+                isExpanded = !isExpanded;
+              });
+            },
+          ),
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 0),
+            opacity: isExpanded ? 1.0 : 0.0,
+            child: Visibility(
+              visible: isExpanded,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  widget.rule.ruleDescription,
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                ),
               ),
             ),
-            const Divider(
-              color: Color.fromARGB(255, 215, 215, 215),
-              height: 1,
-              thickness: 1.0,
-            ),
-          ],
-        ),
-      );
-    
+          ),
+          const Divider(
+            color: Color.fromARGB(255, 215, 215, 215),
+            height: 1,
+            thickness: 1.0,
+          ),
+        ],
+      ),
+    );
   }
 }

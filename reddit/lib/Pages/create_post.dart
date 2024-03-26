@@ -306,53 +306,41 @@ class _CreatePostState extends State<CreatePost> {
                             ),
                           ),
                         const Spacer(),
-                        TextButton(
-                          onPressed: () => {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        'Community Rules',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Colors.black,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          redditRules,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          },
-                          child: const Text(
-                            'RULES',
-                            style: TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                        if (selectedCommunity != "Select Community")
+                          TextButton(
+                            onPressed: () => {
+                              setState(() {
+                                communityController
+                                    .getCommunity(selectedCommunity);
+                                communityDescription = communityController
+                                    .communityItem!.communityDescription;
+                                communityRules = communityController
+                                    .communityItem!.communityRules;
+                              }),
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: DescriptionWidget(
+                                      communityDescription:
+                                          communityDescription,
+                                      communityRules: communityRules,
+                                    ),
+                                  );
+                                },
+                              ),
+                            },
+                            child: const Text(
+                              'RULES',
+                              style: TextStyle(
+                                color: Colors.deepOrange,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                     const Divider(

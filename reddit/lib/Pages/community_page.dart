@@ -197,7 +197,7 @@ class _CommunityPageState extends State<CommunityPage> {
                   ),
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         flex: 3,
                         child: Post(
                           profileImageUrl: "assets/images/profile.png",
