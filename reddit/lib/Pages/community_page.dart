@@ -138,6 +138,10 @@ class _CommunityPageState extends State<CommunityPage> {
               : const SizedBox(
                   width: 0,
                 ),
+          VerticalDivider(
+            color: Theme.of(context).colorScheme.primary,
+            width: 1,
+          ),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -187,20 +191,24 @@ class _CommunityPageState extends State<CommunityPage> {
                       ),
                     ],
                   ),
+                  Divider(
+                    color: Theme.of(context).colorScheme.primary,
+                    height: 1,
+                  ),
                   Row(
                     children: [
                       const Expanded(
                         flex: 3,
                         child: Post(
-                                profileImageUrl: "assets/images/profile.png",
-                                name: "John Doe",
-                                title: "Flutter is the best",
-                                postContent: "Flutter is the best",
-                                date: "2021-09-09",
-                                likes: 4,
-                                comments: "1",
-                                communityName: "r/FlutterDev",
-                              ),
+                          profileImageUrl: "assets/images/profile.png",
+                          name: "John Doe",
+                          title: "Flutter is the best",
+                          postContent: "Flutter is the best",
+                          date: "2021-09-09",
+                          likes: 4,
+                          comments: "1",
+                          communityName: "r/FlutterDev",
+                        ),
                       ),
                       if (MediaQuery.of(context).size.width > 700)
                         Expanded(
