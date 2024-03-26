@@ -9,6 +9,7 @@ import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
 
+//for merging
 class Post extends StatefulWidget {
   final String profileImageUrl;
   final String name;
