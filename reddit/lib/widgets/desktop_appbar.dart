@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/search_bar.dart';
 
-class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
+class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
   const DesktopAppBar({super.key, required this.logoTapped});
 
@@ -11,7 +14,15 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
+  State<DesktopAppBar> createState() => _DesktopAppBarState();
+}
+
+class _DesktopAppBarState extends State<DesktopAppBar> {
+  final userController = GetIt.instance.get<UserController>();
+
+  @override
   Widget build(BuildContext context) {
+    final bool userLoggedIn = userController.userAbout != null;
     return AppBar(
       backgroundColor: Colors.white,
       shadowColor: Colors.black,
@@ -27,7 +38,7 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
                 height: kToolbarHeight * (3 / 4),
               ),
               onTap: () {
-                logoTapped();
+                widget.logoTapped();
               },
             ),
           ),
@@ -55,53 +66,80 @@ class DesktopAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        Padding(
-          padding: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * (1 / 50)),
-          child: IconButton(
-            onPressed: () {
-              //Navigate to chattt
-            },
-            icon: const Icon(CupertinoIcons.chat_bubble_text),
-          ),
-        ),
-        TextButton(
-            style: TextButton.styleFrom(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.white,
-              padding: const EdgeInsets.all(7),
-              foregroundColor: Colors.black,
-            ),
-            onPressed: () {
-              //Navigate to create post -> jomana
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const CreatePost(),
-              ));
-            },
-            child: const Row(
-              children: [Icon(Icons.add), Text("Create")],
-            )),
-        IconButton(
-          onPressed: () {
-            //Navigate to Inbox
-          },
-          icon: const Icon(CupertinoIcons.bell),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 20.0, left: 5),
-          child: GestureDetector(
-            child: const CircleAvatar(
-              backgroundImage: AssetImage(
-                "images/pp.jpg",
-              ),
-              radius: 16,
-            ),
-            onTap: () {
-              Scaffold.of(context).openEndDrawer();
-            },
-          ),
-        ),
+        userLoggedIn
+            ? Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * (1 / 50)),
+                child: IconButton(
+                  onPressed: () {
+                    //Navigate to chattt
+                  },
+                  icon: const Icon(CupertinoIcons.chat_bubble_text),
+                ),
+              )
+            : const SizedBox(),
+        userLoggedIn
+            ? TextButton(
+                style: TextButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.white,
+                  padding: const EdgeInsets.all(7),
+                  foregroundColor: Colors.black,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const CreatePost(),
+                  ));
+                },
+                child: const Row(
+                  children: [Icon(Icons.add), Text("Create")],
+                ))
+            : const SizedBox(),
+        userLoggedIn
+            ? IconButton(
+                onPressed: () {
+                  //Navigate to Inbox
+                },
+                icon: const Icon(CupertinoIcons.bell),
+              )
+            : const SizedBox(),
+        userLoggedIn
+            ? Padding(
+                padding: const EdgeInsets.only(right: 20.0, left: 5),
+                child: GestureDetector(
+                  child: const CircleAvatar(
+                    backgroundImage: AssetImage(
+                      "images/pp.jpg",
+                    ),
+                    radius: 16,
+                  ),
+                  onTap: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
+              )
+            : const SizedBox(),
+        !userLoggedIn
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LoginPage()));
+                  },
+                  style: TextButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: Colors.orange[900],
+                    shadowColor: Colors.white,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text("Log In"),
+                ),
+              )
+            : const SizedBox(
+                width: 0,
+              )
       ],
     );
   }
