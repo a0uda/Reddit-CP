@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/community_description.dart';
@@ -256,74 +257,88 @@ class _CreatePostState extends State<CreatePost> {
           child: Column(
             children: [
               Expanded(
-                child: Column(children: [
-                  Row(
-                    children: [
-                      Text(
-                        selectedCommunity,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (widget.currentCommunity == null)
-                        IconButton(
-                          onPressed: () async {
-                            final result = await showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (context) {
-                                return ListView.builder(
-                                  itemCount: userCommunities.length,
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      title: Text(
-                                        userCommunities[index],
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(
-                                            context, userCommunities[index]);
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                            setState(() {
-                              if (result != null) selectedCommunity = result;
-                              print(selectedCommunity);
-                            });
-                          },
-                          icon: const Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.deepOrange,
-                            size: 20,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          selectedCommunity,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      const Spacer(),
-                      if (selectedCommunity != "Select Community")
+                        if (widget.currentCommunity == null)
+                          IconButton(
+                            onPressed: () async {
+                              final result = await showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                context: context,
+                                builder: (context) {
+                                  return ListView.builder(
+                                    itemCount: userCommunities.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Text(
+                                          userCommunities[index],
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(
+                                              context, userCommunities[index]);
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                              setState(() {
+                                if (result != null) selectedCommunity = result;
+                                print(selectedCommunity);
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.deepOrange,
+                              size: 20,
+                            ),
+                          ),
+                        const Spacer(),
                         TextButton(
                           onPressed: () => {
-                            setState(() {
-                              communityController
-                                  .getCommunity(selectedCommunity);
-                              communityDescription = communityController
-                                  .communityItem!.communityDescription;
-                              communityRules = communityController
-                                  .communityItem!.communityRules;
-                            }),
                             showModalBottomSheet(
                               backgroundColor: Colors.white,
                               context: context,
                               builder: (BuildContext context) {
                                 return Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: DescriptionWidget(
-                                    communityDescription: communityDescription,
-                                    communityRules: communityRules,
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                        'Community Rules',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: Colors.black,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text(
+                                          redditRules,
+                                          textAlign: TextAlign.left,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
                               },
@@ -338,28 +353,27 @@ class _CreatePostState extends State<CreatePost> {
                             ),
                           ),
                         ),
-                    ],
-                  ),
-                  const Divider(
-                    color: Colors.grey,
-                  ),
-                  TextFormField(
-                    controller: titleController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'Title',
-                      labelStyle: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    const Divider(
+                      color: Colors.grey,
+                    ),
+                    TextFormField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        labelText: 'Title',
+                        labelStyle: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  if (showLinkField)
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
+                    if (showLinkField)
+                      Row(
+                        children: [
+                          TextFormField(
                             controller: URLController,
                             decoration: const InputDecoration(
                                 border: InputBorder.none,
@@ -369,113 +383,124 @@ class _CreatePostState extends State<CreatePost> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500)),
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              showLinkField = false;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  TextFormField(
-                    controller: bodyController,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'body text (optional)',
-                    ),
-                    maxLines: null,
-                  ),
-                  if (imageSelected)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                            image: FileImage(File(_image!.path)),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        height: MediaQuery.of(context).size.height * 0.4,
-                      ),
-                    ),
-                  if (videoSelected)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: _videoPlayerController!.value.isInitialized
-                          ? AspectRatio(
-                              aspectRatio:
-                                  _videoPlayerController!.value.aspectRatio,
-                              child: VideoPlayer(_videoPlayerController!),
-                            )
-                          : Container(),
-                    ),
-                  if (pollSelected)
-                    Container(
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.transparent,
-                        border: Border.all(color: Colors.black),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20)),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(children: [
-                            const Text(
-                              'Poll ends in ',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            DropdownButton<int>(
-                              value: selectedDays,
-                              items: [1, 2, 3, 4, 5].map((int value) {
-                                return DropdownMenuItem<int>(
-                                  value: value,
-                                  child: Text('$value days'),
-                                );
-                              }).toList(),
-                              onChanged: (value) =>
-                                  setState(() => selectedDays = value!),
-                            ),
-                            const Spacer(),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                icon: const Icon(Icons.close),
-                                onPressed: () {
-                                  setState(() {
-                                    pollSelected = false;
-                                  });
-                                },
-                              ),
-                            ),
-                          ]),
-                          TextField(
-                            controller: questionController,
-                            onChanged: (value) => question = value,
-                            decoration:
-                                const InputDecoration(labelText: 'Question'),
-                          ),
-                          TextField(
-                            onChanged: (value) => options[0] = value,
-                            decoration:
-                                const InputDecoration(labelText: 'Option 1'),
-                          ),
-                          TextField(
-                            onChanged: (value) => options[1] = value,
-                            decoration:
-                                const InputDecoration(labelText: 'Option 2'),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                showLinkField = false;
+                              });
+                            },
                           ),
                         ],
                       ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: bodyController,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                labelText: 'body text (optional)',
+                              ),
+                              maxLines: null,
+                            ),
+                            if (imageSelected)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    image: DecorationImage(
+                                      image: FileImage(File(_image!.path)),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.4,
+                                ),
+                              ),
+                            if (videoSelected)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child:
+                                    _videoPlayerController!.value.isInitialized
+                                        ? AspectRatio(
+                                            aspectRatio: _videoPlayerController!
+                                                .value.aspectRatio,
+                                            child: VideoPlayer(
+                                                _videoPlayerController!),
+                                          )
+                                        : Container(),
+                              ),
+                            if (pollSelected)
+                              Container(
+                                padding: const EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(color: Colors.black),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(children: [
+                                      const Text(
+                                        'Poll ends in ',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                      DropdownButton<int>(
+                                        value: selectedDays,
+                                        items: [1, 2, 3, 4, 5].map((int value) {
+                                          return DropdownMenuItem<int>(
+                                            value: value,
+                                            child: Text('$value days'),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) => setState(
+                                            () => selectedDays = value!),
+                                      ),
+                                      const Spacer(),
+                                      Align(
+                                        alignment: Alignment.topRight,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () {
+                                            setState(() {
+                                              pollSelected = false;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                    ]),
+                                    TextField(
+                                      controller: questionController,
+                                      onChanged: (value) => question = value,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Question'),
+                                    ),
+                                    TextField(
+                                      onChanged: (value) => options[0] = value,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Option 1'),
+                                    ),
+                                    TextField(
+                                      onChanged: (value) => options[1] = value,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Option 2'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     )
-                ]),
+                  ],
+                ),
               ),
               // TOGGLE BUTTONS
               Align(

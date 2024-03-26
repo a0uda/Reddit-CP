@@ -1,7 +1,11 @@
+//import 'package:media_kit/ffi/ffi.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/post_item.dart';
+import '../test_files/test_posts.dart';
+
+
 
 int counter = 0;
 bool testing = true;
@@ -31,7 +35,7 @@ class PostService {
     if (testing) {
       posts.add(
         PostItem(
-          id: counter++,
+          id: posts.length + 1,
           username: username,
           profilePic: profilePic,
           title: title,
