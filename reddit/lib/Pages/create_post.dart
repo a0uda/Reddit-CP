@@ -117,9 +117,12 @@ class _CreatePostState extends State<CreatePost> {
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
 
+  String selectedCommunity = "Select Community";
   @override
   Widget build(BuildContext context) {
-    String selectedCommunity = widget.currentCommunity ?? "Select Community";
+    if (widget.currentCommunity != null) {
+      selectedCommunity = widget.currentCommunity!;
+    }
     String redditRules = widget.currentCommunityRules ??
         '''
 1. Be Respectful
@@ -160,6 +163,7 @@ class _CreatePostState extends State<CreatePost> {
                       if (titleController.text.isEmpty ||
                           selectedCommunity == "Select Community")
                         {
+                          print(selectedCommunity),
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -287,6 +291,7 @@ class _CreatePostState extends State<CreatePost> {
                             );
                             setState(() {
                               if (result != null) selectedCommunity = result;
+                              print(selectedCommunity);
                             });
                           },
                           icon: const Icon(

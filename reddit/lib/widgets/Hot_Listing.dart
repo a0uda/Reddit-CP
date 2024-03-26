@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Models/post_item.dart';
@@ -37,20 +38,26 @@ class HotListingBuild extends State<HotListing> {
       itemCount: posts.length,
       controller: controller,
       itemBuilder: (context, index) {
-        //       const Post({
-        //   super.key,
-        //   required this.profileImageUrl,
-        //   required this.name,
-        //   required this.title,
-        //   required this.postContent,
-        //   required this.postView,
-        //   required this.date,
-        //   required this.likes,
-        //   required this.comments,
-        //   this.imageUrl,
-        //   this.linkUrl,
-        //   this.videoUrl,
-        // });
+        if (posts[index].nsfwFlag == true) {
+          // TODO : NSFW , Spoiler
+          return buildBlur(
+              context: context,
+              child: Post(
+                profileImageUrl: posts[index].profilePic!,
+                name: posts[index].username,
+                title: posts[index].title,
+                postContent: posts[index].description!,
+                date: posts[index].date.toString(),
+                likes: posts[index].likes.toString(),
+                comments: posts[index].comments.toString(),
+                linkUrl: posts[index].linkUrl,
+                imageUrl: posts[index].images?[0].path,
+                videoUrl: posts[index].videos?[0].path,
+                poll: posts[index].poll,
+                id: posts[index].id,
+                communityName: posts[index].communityName,
+              ));
+        }
         return Post(
           profileImageUrl: posts[index].profilePic!,
           name: posts[index].username,
