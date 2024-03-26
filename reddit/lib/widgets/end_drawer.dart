@@ -67,6 +67,7 @@ class EndDrawerReddit extends StatelessWidget {
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
             onTap: () {
+              userController.userAbout = null;
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
