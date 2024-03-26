@@ -140,7 +140,7 @@ class PostState extends State<Post> {
               ListTile(
                 leading: CircleAvatar(
                   radius: 15,
-                  backgroundImage: NetworkImage(widget.profileImageUrl),
+                  backgroundImage: AssetImage('images/reddit-logo.png'),
                 ),
                 title: Column(
                   children: [

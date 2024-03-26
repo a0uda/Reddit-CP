@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:reddit/Pages/description_widget.dart';
@@ -188,24 +189,19 @@ class _CommunityPageState extends State<CommunityPage> {
                   ),
                   Row(
                     children: [
-                      // TODO: Implement the Listing widget
-                      Text("list"),
-                      Post(
-                        profileImageUrl: "assets/images/profile.png",
-                        name: "John Doe",
-                        title: "Flutter is the best",
-                        postContent: "Flutter is the best",
-                        date: "2021-09-09",
-                        likes: 4,
-                        comments: "1",
-                        communityName: "r/FlutterDev",
+                      const Expanded(
+                        flex: 3,
+                        child: Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
                       ),
-                      // flex: 4,
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * 0.65,
-                      //   child: Listing(),
-                      // ),
-
                       if (MediaQuery.of(context).size.width > 700)
                         Expanded(
                           child: Align(
