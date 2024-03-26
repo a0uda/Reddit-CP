@@ -5,7 +5,7 @@ class PostItems {
   final String name;
   final String profileImage;
   final String postContent;
-  final String likes;
+  final int likes;
   final String comments;
 
   PostItems(this.name, this.profileImage, this.postContent, this.likes,
@@ -17,7 +17,7 @@ final List<PostItems> posts = [
       'Jennifer Lopez',
       'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
       'kasdmaklsd askdmlaksd skmlamdlkasd asdmklasm sdkamldklasm askdmlalksmd askldmklamsdlka askldmklasmdlk aksdmlkamsdlk klasmdklasmdkla skmdslamsdlkam asklmdklamsda jkasndklamskldamr',
-      '2',
+      2,
       '3'),
 ];
 
@@ -33,10 +33,10 @@ class RisingListingBuild extends State<RisingListing> {
   @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(HandleScrolling);
+    controller = ScrollController()..addListener(handleScrolling);
   }
 
-  void HandleScrolling() {
+  void handleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list

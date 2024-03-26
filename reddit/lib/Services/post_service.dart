@@ -61,12 +61,21 @@ class PostService {
     return posts;
   }
 
-  void likePost(int id) {
+  void upVote(int id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
       post.likes++;
     } else {
       // like post in database
+    }
+  }
+
+  void downVote(int id) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == id);
+      post.likes--;
+    } else {
+      // dislike post in database
     }
   }
 
