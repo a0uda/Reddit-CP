@@ -44,6 +44,8 @@ class _CreatePostState extends State<CreatePost> {
   String? url;
   String? imageUrl;
 
+List<String> rules = []; 
+
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);

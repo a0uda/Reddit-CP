@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 class ButtonWidgets extends StatelessWidget {
   const ButtonWidgets(this.buttonWidgetsText, this.onTap,
-      {this.icon, super.key});
+      {this.icon, this.backgroundColour, this.foregroundColour, super.key});
 
   final String buttonWidgetsText;
   final Icon? icon;
+  final Color ?backgroundColour;
+  final Color ?foregroundColour;
 
   final void Function() onTap;
 
@@ -19,11 +21,11 @@ class ButtonWidgets extends StatelessWidget {
         onPressed: onTap,
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.grey,
+          backgroundColor: backgroundColour == null ? Colors.white : backgroundColour,
+          foregroundColor: foregroundColour == null ? const Color.fromARGB(255, 0, 0, 0) : foregroundColour,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
-            side: const BorderSide(color: Color.fromARGB(0, 238, 12, 0)),
+            side: const BorderSide(color: Colors.black),
           ),
         ),
         child: Row(
@@ -36,8 +38,8 @@ class ButtonWidgets extends StatelessWidget {
             Text(
               buttonWidgetsText,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 144, 144, 144),
+              style: TextStyle(
+                  color: foregroundColour == null ? const Color.fromARGB(255, 0, 0, 0) : foregroundColour,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),

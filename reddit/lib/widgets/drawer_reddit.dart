@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/drawer_tile.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
@@ -19,6 +22,41 @@ class DrawerReddit extends StatefulWidget {
 
 class _DrawerRedditState extends State<DrawerReddit> {
   bool userMod = true, isExpanded = false;
+  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
+  List<Map<String, dynamic>> communities = []; 
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCommunities(); 
+  }
+  Future<void> fetchCommunities() async {
+    for (String communityName in communityNames) {
+      communityController.getCommunity(communityName);
+      if (communityController.communityItem != null) {
+          communities.add({
+            'name': communityName,
+            'communityPage': CommunityPage(
+              communityDescription: communityController.communityItem!.communityDescription,
+              communityMembersNo: communityController.communityItem!.communityMembersNo,
+              communityName: communityController.communityItem!.communityName,
+              communityProfilePicturePath: communityController.communityItem!.communityProfilePicturePath,
+              communityRule: communityController.communityItem!.communityRules,
+            ),
+          });
+      }
+    }
+  }
+
+
+  List<String> communityNames = [
+    'Flutter Enthusiasts',
+    'Cooking Masters',
+    'Fitness Warriors',
+    'Photography Passion',
+    'Gaming Universe',
+  ];
+
   var userModList = [];
   @override
   Widget build(BuildContext context) {
@@ -186,7 +224,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                   endIndent: 30,
                 ),
                 
-                DrawerTile(tileTitle: "COMMUNITIES", lists: communites),
+                DrawerTile(tileTitle: "COMMUNITIES", lists: communities),
                 const Divider(
                   color: Colors.grey,
                   height: 30,
@@ -196,7 +234,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                 userMod
                     ? DrawerTile(
                         tileTitle: "MODERATION",
-                        lists: moderatorCommunities,
+                        lists: communities,
                       )
                     : const SizedBox()
               ],
@@ -206,44 +244,54 @@ class _DrawerRedditState extends State<DrawerReddit> {
   }
 }
 
-List<Map<String, dynamic>> communites = [
-  {
-    'name': "r/mostafa",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-  {
-    'name': "r/badr",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-  {
-    'name': "r/badrinho",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-];
-List<Map<String, dynamic>> moderatorCommunities = [
-  {
-    'name': "r/mostafa",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-  {
-    'name': "r/badr",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-  {
-    'name': "r/badrinho",
-    'communityPage': CommunityPage(
-      communityDescription: "nas betheb fouda",
-    )
-  },
-];
+ List<String> communityNames = [
+    'Flutter Enthusiasts',
+    'Cooking Masters',
+    'Fitness Warriors',
+    'Photography Passion',
+    'Gaming Universe',
+  ];
+
+// List<Map<String, dynamic>> communites = [
+//   {
+//     'name': "r/mostafa",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//       communityMembersNo: community.,
+      
+//     )
+//   },
+//   {
+//     'name': "r/badr",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//     )
+//   },
+//   {
+//     'name': "r/badrinho",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//     )
+//   },
+// ];
+// List<Map<String, dynamic>> moderatorCommunities = [
+//   {
+//     'name': "r/mostafa",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//     )
+//   },
+//   {
+//     'name': "r/badr",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//     )
+//   },
+//   {
+//     'name': "r/badrinho",
+//     'communityPage': CommunityPage(
+//       communityDescription: "nas betheb fouda",
+//     )
+//   },
+// ];
 
