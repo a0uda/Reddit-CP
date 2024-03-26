@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
@@ -161,7 +160,6 @@ class _CreatePostState extends State<CreatePost> {
                       if (titleController.text.isEmpty ||
                           selectedCommunity == "Select Community")
                         {
-                          print(selectedCommunity),
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -290,7 +288,6 @@ class _CreatePostState extends State<CreatePost> {
                               );
                               setState(() {
                                 if (result != null) selectedCommunity = result;
-                                print(selectedCommunity);
                               });
                             },
                             icon: const Icon(
