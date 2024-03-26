@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/description_widget.dart';
 
-
-
 class CommunityDescription extends StatelessWidget {
-  const CommunityDescription(this.communityName, this.membersNumber,
-      {super.key});
+  const CommunityDescription({
+      required this.communityName,
+      required this.communityMembersNo,
+      required this.communityRule,
+      required this.communityProfilePicturePath,
+      required this.communityDescription,
+    super.key,
+  });
 
-  final String logoPath = 'images/reddit-logo.png';
   final String communityName;
-  final int membersNumber;
+  final int communityMembersNo;
+  final communityRule;
+  final String communityProfilePicturePath;
+  final String communityDescription;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,7 @@ class CommunityDescription extends StatelessWidget {
               Container(
                 margin: const EdgeInsets.only(left: 10, bottom: 0),
                 child: CircleAvatar(
-                  backgroundImage: AssetImage(logoPath),
+                  backgroundImage: AssetImage(communityProfilePicturePath),
                   backgroundColor: Colors.white,
                   radius: 40,
                 ),
@@ -41,12 +47,11 @@ class CommunityDescription extends StatelessWidget {
                             fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '$membersNumber members',
+                        '$communityMembersNo members',
                         style: const TextStyle(
                             fontFamily: 'Roboto',
                             fontSize: 12,
-                            color: Color.fromARGB(
-                                255, 144, 144, 144)), //rgba(144,144,144,255)
+                            color: Color.fromARGB(255, 144, 144, 144)),
                       ),
                     ],
                   ),
@@ -58,26 +63,37 @@ class CommunityDescription extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 10, left: 0),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => DescriptionWidget(communityDescription: 'nas betheb fouda ka akh kbeer leehom')),
-                        );
-                      },
-                      child: const Text(
-                        'See community info',
-                        style: TextStyle(
+                  if (MediaQuery.of(context).size.width < 700)
+                    Container(
+                      margin: const EdgeInsets.only(top: 10, left: 0),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DescriptionWidget(
+                                communityDescription:communityDescription,
+                                communityRules: communityRule,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'See community info',
+                          style: TextStyle(
                             fontFamily: 'Roboto',
                             fontSize: 12,
-                            color: Color.fromARGB(255, 38, 73, 150)),
+                            color: Color.fromARGB(255, 38, 73, 150),
+                          ),
+                        ),
                       ),
+                    )
+                  else
+                    Container(
+                      margin: const EdgeInsets.only(top: 20, left: 0),
                     ),
-                  ),
                 ],
-              )
+              ),
             ],
           ),
         ],

@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Services/community_service.dart';
 import '../Services/post_service.dart';
 import '../Controllers/user_controller.dart';
 import '../Models/image_item.dart';
@@ -22,10 +26,13 @@ import '../Models/video_item.dart';
 
 class CreatePost extends StatefulWidget {
   final String? currentCommunity;
-  final String? currentCommunityRules;
+  final String? communityName;
 
-  const CreatePost(
-      {super.key, this.currentCommunity, this.currentCommunityRules});
+  const CreatePost({
+    super.key,
+    this.currentCommunity,
+    this.communityName,
+  });
 
   @override
   State<CreatePost> createState() => _CreatePostState();
@@ -33,6 +40,8 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   final postService = GetIt.instance.get<PostService>();
+  final communityService = GetIt.instance.get<CommunityService>();
+  final communityController = GetIt.instance.get<CommunityController>();
 
   // firebase_storage.FirebaseStorage storage =
   //     firebase_storage.FirebaseStorage.instance;
@@ -44,6 +53,8 @@ class _CreatePostState extends State<CreatePost> {
   VideoPlayerController? _videoPlayerController;
   String? url;
   String? imageUrl;
+
+  List<String> rules = [];
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -116,29 +127,24 @@ class _CreatePostState extends State<CreatePost> {
   bool showLinkField = false;
 
   String selectedCommunity = "Select Community";
+  String communityDescription = "Select Community";
+  var communityRules;
   @override
   Widget build(BuildContext context) {
-    if (widget.currentCommunity != null) {
-      selectedCommunity = widget.currentCommunity!;
-    }
-    String redditRules = widget.currentCommunityRules ??
-        '''
-1. Be Respectful
-
-2. No Spam or Self-Promotion
-
-3. Stay on Topic
-
-4. No NSFW Content
-
-5. Follow Reddit's Content Policy
-''';
     final UserController userController = GetIt.instance.get<UserController>();
     // ignore: unused_local_variable
     String question;
-    List<String> options = ['', ''];
     int selectedDays = 3;
-    List<String> userCommunities = ["r/news", "r/programming", "r/Flutter"];
+    List<String> options = ['', ''];
+    List<String> userCommunities = communityService.getCommunityNames();
+    if (widget.currentCommunity != null) {
+      communityController.getCommunity(widget.currentCommunity!);
+      communityDescription =
+          communityController.communityItem!.communityDescription;
+      communityRules = communityController.communityItem!.communityRules;
+      selectedCommunity = widget.currentCommunity!;
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -300,53 +306,41 @@ class _CreatePostState extends State<CreatePost> {
                             ),
                           ),
                         const Spacer(),
-                        TextButton(
-                          onPressed: () => {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        'Community Rules',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Colors.black,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: Text(
-                                          redditRules,
-                                          textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          },
-                          child: const Text(
-                            'RULES',
-                            style: TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                        if (selectedCommunity != "Select Community")
+                          TextButton(
+                            onPressed: () => {
+                              setState(() {
+                                communityController
+                                    .getCommunity(selectedCommunity);
+                                communityDescription = communityController
+                                    .communityItem!.communityDescription;
+                                communityRules = communityController
+                                    .communityItem!.communityRules;
+                              }),
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: DescriptionWidget(
+                                      communityDescription:
+                                          communityDescription,
+                                      communityRules: communityRules,
+                                    ),
+                                  );
+                                },
+                              ),
+                            },
+                            child: const Text(
+                              'RULES',
+                              style: TextStyle(
+                                color: Colors.deepOrange,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                     const Divider(

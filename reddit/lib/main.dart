@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/community_service.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -14,6 +17,9 @@ void main() async {
   GetIt.instance.registerSingleton<PostService>(PostService());
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
+  GetIt.instance.registerSingleton<CommunityService>(CommunityService());
+   GetIt.instance.registerSingleton<CommunityController>(CommunityController());
+
   runApp(const MyApp());
 }
 

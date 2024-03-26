@@ -65,6 +65,12 @@ class PostService {
     return posts;
   }
 
+  List<PostItem> getCommunityPosts(int communityId) {
+    return posts
+        .where((element) => element.communityId == communityId)
+        .toList();
+  }
+
   void upVote(int id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
