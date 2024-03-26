@@ -16,7 +16,7 @@ final List<PostItems> posts = [
   PostItems(
       'Jennifer Lopez',
       'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
-      'kasdmaklsd askdmlaksd skmlamdlkasd asdmklasm sdkamldklasm askdmlalksmd askldmklamsdlka askldmklasmdlk aksdmlkamsdlk klasmdklasmdkla skmdslamsdlkam asklmdklamsda jkasndklamskldamr',
+      'This is an image',
       2,
       '3'),
 ];
@@ -77,6 +77,8 @@ class BestListingBuild extends State<BestListing> {
           likes: posts[index].likes,
           comments: posts[index].comments,
           communityName: "r/FlutterDev",
+          imageUrl:
+              'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
         );
       },
     );

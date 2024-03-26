@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/Best_Listing.dart';
 import 'package:reddit/widgets/button_widgets.dart';
 import 'package:reddit/widgets/community_description.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 import 'package:reddit/Pages/create_post.dart';
+import 'package:reddit/widgets/post.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage(
@@ -171,12 +175,10 @@ class _CommunityPageState extends State<CommunityPage> {
                                     MaterialPageRoute(
                                       builder: (context) => CreatePost(
                                         currentCommunity: widget.communityName,
-                                        currentCommunityRules: 'jomana',
                                       ),
                                     ),
                                   );
                                 }),
-                                //const Listing(),
                               ],
                             ),
                           ],
@@ -186,13 +188,31 @@ class _CommunityPageState extends State<CommunityPage> {
                   ),
                   Row(
                     children: [
+                      // TODO: Implement the Listing widget
+                      Text("list"),
+                      Post(
+                        profileImageUrl: "assets/images/profile.png",
+                        name: "John Doe",
+                        title: "Flutter is the best",
+                        postContent: "Flutter is the best",
+                        date: "2021-09-09",
+                        likes: 4,
+                        comments: "1",
+                        communityName: "r/FlutterDev",
+                      ),
+                      // flex: 4,
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * 0.65,
+                      //   child: Listing(),
+                      // ),
+
                       if (MediaQuery.of(context).size.width > 700)
                         Expanded(
                           child: Align(
                             alignment: Alignment.topRight,
                             child: SingleChildScrollView(
                               child: Container(
-                                width: MediaQuery.of(context).size.width * 0.35,
+                                width: MediaQuery.of(context).size.width * 0.25,
                                 margin: const EdgeInsets.only(right: 20),
                                 child: DescriptionWidget(
                                   communityDescription:
