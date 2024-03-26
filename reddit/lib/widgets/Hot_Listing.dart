@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/test_files/test_posts.dart';
 import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
 import 'package:reddit/Services/post_service.dart';
-import 'package:reddit/Models/post_item.dart';
 import 'package:get_it/get_it.dart';
 
 class HotListing extends StatefulWidget {

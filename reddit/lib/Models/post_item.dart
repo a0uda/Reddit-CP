@@ -45,4 +45,4 @@ class PostItem {
   });
 }
 
-final List<PostItem> posts = [];
+//final List<PostItem> posts = [];

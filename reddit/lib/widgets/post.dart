@@ -11,12 +11,12 @@ import 'package:reddit/Services/post_service.dart';
 
 //for merging
 class Post extends StatefulWidget {
-  final String profileImageUrl;
+  final String? profileImageUrl;
   final String name;
   final String title;
-  final String postContent;
+  final String? postContent ;
   final String date;
-  final int likes;
+  int likes;
   final String comments;
   final String? imageUrl;
   final String? linkUrl;
@@ -25,7 +25,7 @@ class Post extends StatefulWidget {
   final int? id;
   final String communityName;
 
-  const Post({
+  Post({
     super.key,
     required this.profileImageUrl,
     required this.name,
@@ -46,23 +46,20 @@ class Post extends StatefulWidget {
   PostState createState() => PostState();
 }
 
-int counter = 0;
-bool upVote = false;
-bool downVote = false;
 
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
+  bool upVote = false;
+  bool downVote = false;
   bool isHovering = false;
   bool ishovering = false;
-  Color upVoteColor = Colors.black;
-  Color downVoteColor = Colors.black;
-  int votes = 0;
+  Color? upVoteColor;
+  Color? downVoteColor;
 
   void incrementCounter() {
     setState(() {
-      // counter++;
       if (upVote == false) {
         postService.upVote(widget.id!);
         upVoteColor = Colors.blue;
@@ -70,24 +67,22 @@ class PostState extends State<Post> {
         if (downVote == true) {
           postService.upVote(widget.id!);
           downVoteColor = Colors.black;
-          votes++;
+          widget.likes++;
           downVote = false;
         }
-        votes++;
+        widget.likes++;
       } else {
         postService.downVote(widget.id!);
         upVoteColor = Colors.black;
-        votes--;
+        widget.likes--;
       }
       upVote = !upVote;
-
       //}
     });
   }
 
   void decrementCounter() {
     setState(() {
-      // counter--;
       if (downVote == false) {
         postService.downVote(widget.id!);
         downVoteColor = Colors.red;
@@ -95,14 +90,14 @@ class PostState extends State<Post> {
         if (upVote == true) {
           postService.downVote(widget.id!);
           upVoteColor = Colors.black;
-          votes--;
+          widget.likes--;
           upVote = false;
         }
-        votes--;
+        widget.likes--;
       } else {
         postService.upVote(widget.id!);
         downVoteColor = Colors.black;
-        votes++;
+        widget.likes++;
       }
       downVote = !downVote;
     });
@@ -112,7 +107,9 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    votes = widget.likes;
+    upVoteColor = upVote ? Colors.blue : Colors.black;
+    downVoteColor = downVote ? Colors.red : Colors.black;
+
     String userType;
     return InkWell(
       onTap: () => {
@@ -133,7 +130,7 @@ class PostState extends State<Post> {
             ListTile(
               leading: CircleAvatar(
                 radius: 15,
-                backgroundImage: NetworkImage(widget.profileImageUrl),
+                backgroundImage: NetworkImage(widget.profileImageUrl!),
               ),
               title: Column(
                 children: [
@@ -219,7 +216,7 @@ class PostState extends State<Post> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      widget.postContent,
+                      widget.postContent?? "",
                       style: const TextStyle(fontSize: 16, fontFamily: 'Arial'),
                     ),
                   ),
