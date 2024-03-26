@@ -80,7 +80,7 @@ class Postoptions extends State<Options> {
         ),
       ],
       offset: const Offset(0, 25),
-      color: Colors.grey,
+      color: Colors.white,
       elevation: 2,
       // on selected we show the dialog box
     );

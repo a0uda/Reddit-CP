@@ -18,10 +18,10 @@ class HotListingBuild extends State<HotListing> {
   @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(HandleScrolling);
+    controller = ScrollController()..addListener(handleScrolling);
   }
 
-  void HandleScrolling() {
+  void handleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
@@ -49,7 +49,7 @@ class HotListingBuild extends State<HotListing> {
                 title: posts[index].title,
                 postContent: posts[index].description!,
                 date: posts[index].date.toString(),
-                likes: posts[index].likes.toString(),
+                likes: posts[index].likes,
                 comments: posts[index].comments.toString(),
                 linkUrl: posts[index].linkUrl,
                 imageUrl: posts[index].images?[0].path,
@@ -65,7 +65,7 @@ class HotListingBuild extends State<HotListing> {
           title: posts[index].title,
           postContent: posts[index].description!,
           date: posts[index].date.toString(),
-          likes: posts[index].likes.toString(),
+          likes: posts[index].likes,
           comments: posts[index].comments.toString(),
           linkUrl: posts[index].linkUrl,
           imageUrl: posts[index].images?[0].path,

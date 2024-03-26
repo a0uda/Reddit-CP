@@ -7,6 +7,7 @@ import 'package:reddit/widgets/poll_widget.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
+import 'package:reddit/Services/post_service.dart';
 
 class Post extends StatefulWidget {
   final String profileImageUrl;
@@ -14,7 +15,7 @@ class Post extends StatefulWidget {
   final String title;
   final String postContent;
   final String date;
-  final String likes;
+  final int likes;
   final String comments;
   final String? imageUrl;
   final String? linkUrl;
@@ -49,13 +50,34 @@ bool upVote = false;
 bool downVote = false;
 
 class PostState extends State<Post> {
+  PostService postService = GetIt.instance.get<PostService>();
+  UserService userService = GetIt.instance.get<UserService>();
+  UserController userController = GetIt.instance.get<UserController>();
   bool isHovering = false;
   bool ishovering = false;
+  Color upVoteColor = Colors.black;
+  Color downVoteColor = Colors.black;
+  int votes = 0;
+
   void incrementCounter() {
     setState(() {
-      counter++;
-      // if (isLiked == false) {
-      //like todo
+      // counter++;
+      if (upVote == false) {
+        postService.upVote(widget.id!);
+        upVoteColor = Colors.blue;
+        downVoteColor = Colors.black;
+        if (downVote == true) {
+          postService.upVote(widget.id!);
+          downVoteColor = Colors.black;
+          votes++;
+          downVote = false;
+        }
+        votes++;
+      } else {
+        postService.downVote(widget.id!);
+        upVoteColor = Colors.black;
+        votes--;
+      }
       upVote = !upVote;
 
       //}
@@ -64,10 +86,24 @@ class PostState extends State<Post> {
 
   void decrementCounter() {
     setState(() {
-      // if (isLiked == true) {
-      //unlike todo
+      // counter--;
+      if (downVote == false) {
+        postService.downVote(widget.id!);
+        downVoteColor = Colors.red;
+        upVoteColor = Colors.black;
+        if (upVote == true) {
+          postService.downVote(widget.id!);
+          upVoteColor = Colors.black;
+          votes--;
+          upVote = false;
+        }
+        votes--;
+      } else {
+        postService.upVote(widget.id!);
+        downVoteColor = Colors.black;
+        votes++;
+      }
       downVote = !downVote;
-      // }
     });
   }
 
@@ -75,8 +111,7 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    UserService userService = GetIt.instance.get<UserService>();
-    UserController userController = GetIt.instance.get<UserController>();
+    votes = widget.likes;
     String userType;
     return InkWell(
       onTap: () => {
@@ -272,7 +307,7 @@ class PostState extends State<Post> {
                         children: <Widget>[
                           IconButton(
                             iconSize: 20,
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: upVoteColor,
                             highlightColor:
                                 Theme.of(context).colorScheme.primary,
                             icon: const Icon(Icons.arrow_upward_sharp),
@@ -281,13 +316,14 @@ class PostState extends State<Post> {
                             },
                           ),
                           Text(
-                            widget.likes,
+                            widget.likes.toString(),
                             style: const TextStyle(
                               fontSize: 15,
                             ),
                           ),
                           IconButton(
                             iconSize: 20,
+                            color: downVoteColor,
                             icon: const Icon(Icons.arrow_downward_outlined),
                             onPressed: () {
                               decrementCounter();
@@ -298,7 +334,7 @@ class PostState extends State<Post> {
                     ),
                   ),
                   SizedBox(
-                    height: 40.0, // Set the height
+                    height: 40.0,
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
