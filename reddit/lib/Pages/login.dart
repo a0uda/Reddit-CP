@@ -264,7 +264,7 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ForgotPasswordPage()),
+                                    builder: (context) => const ForgotPasswordPage()),
                               );
                             },
                             child: Text(
@@ -285,7 +285,7 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ForgotUsernamePage()),
+                                    builder: (context) => const ForgotUsernamePage()),
                               );
                             },
                             child: Text(
@@ -378,7 +378,7 @@ class LoginPageState extends State<LoginPage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SignUpPage()),
+              MaterialPageRoute(builder: (context) => const SignUpPage()),
             );
           },
           child: Padding(

@@ -8,6 +8,8 @@ import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   SignUpPageState createState() => SignUpPageState();
 }

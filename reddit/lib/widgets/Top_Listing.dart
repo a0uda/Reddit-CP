@@ -22,7 +22,7 @@ final List<PostItems> posts = [
 ];
 
 class TopListing extends StatefulWidget {
-  const TopListing({Key? key}) : super(key: key);
+  const TopListing({super.key});
   @override
   State<TopListing> createState() => TopListingBuild();
 }

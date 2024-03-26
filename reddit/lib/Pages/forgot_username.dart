@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/login.dart';
 
 class ForgotUsernamePage extends StatefulWidget {
+  const ForgotUsernamePage({super.key});
+
   @override
   ForgotUsernamePageState createState() => ForgotUsernamePageState();
 }
@@ -59,7 +61,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
               _buildHeader(),
               SizedBox(height: sizedBoxHeightHeader),
               Center(
-                child: Container(
+                child: SizedBox(
                   width: containerWidth,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,7 +76,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
                           ),
                           filled: true,
                           fillColor: Colors.grey[100],
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: const Icon(Icons.person),
                         ),
                       ),
                       SizedBox(height: sizedBoxHeightBeforeResetButton),
@@ -85,7 +87,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Reset Username",
                           style: TextStyle(color: Colors.white),
                         ),
@@ -111,7 +113,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
+              context, MaterialPageRoute(builder: (context) => const LoginPage()));
         },
       ),
       title: Image.asset(

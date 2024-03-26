@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class VerifyPasswordPage extends StatefulWidget {
-  const VerifyPasswordPage({Key? key}) : super(key: key);
+  const VerifyPasswordPage({super.key});
 
   @override
   _VerifyPasswordPageState createState() => _VerifyPasswordPageState();
@@ -102,7 +102,7 @@ class _VerifyPasswordPageState extends State<VerifyPasswordPage> {
                         padding: const EdgeInsets.all(16),
                         textStyle: const TextStyle(fontSize: 16),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Submit',
                         style: TextStyle(color: Colors.white),
                       ),

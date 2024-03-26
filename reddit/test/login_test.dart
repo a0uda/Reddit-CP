@@ -20,7 +20,7 @@ void main() {
 
   group('Login Test', () {
     testWidgets('Correct Username and', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
 
       await tester.enterText(find.byType(TextField).first, 'Purple-7544');
       await tester.enterText(find.byType(TextField).last, 'rawan1234');
@@ -43,7 +43,7 @@ void main() {
     });
 
     testWidgets('Incorrect Username', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
 
       await tester.enterText(find.byType(TextField).first, 'Purple');
       await tester.enterText(find.byType(TextField).last, 'rawan1234');
@@ -65,7 +65,7 @@ void main() {
       expect(find.text('Incorrect username or password'), findsOneWidget);
     });
     testWidgets('Incorrect Password', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
 
       await tester.enterText(find.byType(TextField).first, 'Purple-7544');
       await tester.enterText(find.byType(TextField).last, 'rawan');
