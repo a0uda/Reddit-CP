@@ -6,7 +6,7 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:get_it/get_it.dart';
 
 class HotListing extends StatefulWidget {
-  const HotListing({Key? key}) : super(key: key);
+  const HotListing({super.key});
   @override
   State<HotListing> createState() => HotListingBuild();
 }
@@ -15,6 +15,7 @@ class HotListingBuild extends State<HotListing> {
   final postService = GetIt.instance.get<PostService>();
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
+  @override
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);

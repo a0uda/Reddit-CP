@@ -6,7 +6,7 @@ import 'package:reddit/widgets/listing.dart';
 //import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
   @override
   State<HomePage> createState() => HomePageBuild();
 }
@@ -28,7 +28,7 @@ class HomePageBuild extends State<HomePage> {
                 // Your content for the first column here
               ),
             ),
-          Expanded(
+          const Expanded(
             flex: 4,
             child: Listing(),
           ),

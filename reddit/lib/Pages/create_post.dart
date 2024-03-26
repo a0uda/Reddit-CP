@@ -1,10 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:reddit/resources/add_data.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -147,7 +144,7 @@ class _CreatePostState extends State<CreatePost> {
         primaryColor: Colors.orange[900],
       ),
       home: Scaffold(
-        backgroundColor: Color.fromARGB(235, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(235, 255, 255, 255),
         appBar: AppBar(
           elevation: 40,
           centerTitle: true,

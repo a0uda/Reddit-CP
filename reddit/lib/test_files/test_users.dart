@@ -33,8 +33,8 @@ final List<UserItem> users = [
         ),
         SocialLlinkItem(
           id: '2',
-          username: 'rawan7544',
-          displayText: 'rawan7544',
+          username: 'rawan',
+          displayText: 'rawan',
           type: 'twitter',
           customUrl:
               'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',

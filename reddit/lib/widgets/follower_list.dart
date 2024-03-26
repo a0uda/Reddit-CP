@@ -36,7 +36,7 @@ class FollowerListState extends State<FollowerList> {
     return Container(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Followers'),
+          title: const Text('Followers'),
           backgroundColor: Colors.white,
         ),
         body: ListView.builder(

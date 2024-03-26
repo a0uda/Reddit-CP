@@ -9,7 +9,7 @@ import '../Models/user_about.dart';
 class ProfileHeaderAddSocialLink extends StatefulWidget {
   final UserAbout userData;
   final String userType;
-  const ProfileHeaderAddSocialLink(this.userData, this.userType);
+  const ProfileHeaderAddSocialLink(this.userData, this.userType, {super.key});
   @override
   _ProfileHeaderAddSocialLinkState createState() =>
       _ProfileHeaderAddSocialLinkState(userData, userType);
@@ -46,7 +46,7 @@ class _ProfileHeaderAddSocialLinkState
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -62,12 +62,12 @@ class _ProfileHeaderAddSocialLinkState
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(99, 105, 105, 105)),
+                            const Color.fromARGB(99, 105, 105, 105)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 20,
                             height: 20,
                             child: getSocialMediaIcon(websiteName),

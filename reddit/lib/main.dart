@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
-import 'package:reddit/resources/add_data.dart';
 //TODO : FIREBASE
 // import 'package:firebase_core/firebase_core.dart';
 
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: Color.fromARGB(255, 224, 223, 223),
+              primary: const Color.fromARGB(255, 224, 223, 223),
               secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',

@@ -6,7 +6,7 @@ import 'package:reddit/widgets/Rising_Listing.dart';
 import 'package:reddit/widgets/new_listing.dart';
 
 class Listing extends StatefulWidget {
-  const Listing({Key? key}) : super(key: key);
+  const Listing({super.key});
   @override
   State<Listing> createState() => _Listing();
 }
@@ -63,23 +63,23 @@ class _Listing extends State<Listing> {
             ),
           ),
           if (dropdownvalue == 'Hot')
-            Expanded(
+            const Expanded(
               child: HotListing(),
             ),
           if (dropdownvalue == "Best")
-            Expanded(
+            const Expanded(
               child: BestListing(),
             ),
           if (dropdownvalue == "New")
-            Expanded(
+            const Expanded(
               child: NewListing(),
             ),
           if (dropdownvalue == "Top")
-            Expanded(
+            const Expanded(
               child: TopListing(),
             ),
           if (dropdownvalue == "Rising")
-            Expanded(
+            const Expanded(
               child: RisingListing(),
             ),
         ],

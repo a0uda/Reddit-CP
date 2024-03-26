@@ -22,7 +22,7 @@ final List<PostItems> posts = [
 ];
 
 class RisingListing extends StatefulWidget {
-  const RisingListing({Key? key}) : super(key: key);
+  const RisingListing({super.key});
   @override
   State<RisingListing> createState() => RisingListingBuild();
 }
@@ -30,6 +30,7 @@ class RisingListing extends StatefulWidget {
 class RisingListingBuild extends State<RisingListing> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
+  @override
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);

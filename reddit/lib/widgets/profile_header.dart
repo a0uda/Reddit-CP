@@ -10,31 +10,31 @@ class ProfileHeader extends StatelessWidget {
   ProfileHeader(this.userData, this.userType, this.onUpdate, {super.key});
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Colors.black,
-              Color.fromARGB(255, 28, 83, 165),
-            ],
-          ),
-        ),
-        child: ListView(
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                ProfileHeaderLeftSide(userData, userType),
-                ProfileHeaderRightSide(
-                    userData: userData, userType: userType, onUpdate: onUpdate),
-              ],
-            ),
-            ProfileHeaderAddSocialLink(userData, userType),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            Colors.black,
+            Color.fromARGB(255, 28, 83, 165),
           ],
         ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ProfileHeaderLeftSide(userData, userType),
+              ProfileHeaderRightSide(
+                  userData: userData, userType: userType, onUpdate: onUpdate),
+            ],
+          ),
+          ProfileHeaderAddSocialLink(userData, userType),
+        ],
       ),
     );
   }
