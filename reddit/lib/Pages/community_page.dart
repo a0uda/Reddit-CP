@@ -143,94 +143,120 @@ class _CommunityPageState extends State<CommunityPage> {
             width: 1,
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            CommunityDescription(
-                              communityName: widget.communityName,
-                              communityMembersNo: widget.communityMembersNo,
-                              communityProfilePicturePath:
-                                  widget.communityProfilePicturePath,
-                              communityRule: widget.communityRule,
-                              communityDescription: widget.communityDescription,
-                            ),
-                            Row(
-                              children: [
-                                if (buttonState == 'Join')
-                                  ButtonWidgets(buttonState,
-                                      backgroundColour: Colors.black,
-                                      foregroundColour: Colors.white, () {
-                                    setButton();
-                                  })
-                                else
-                                  ButtonWidgets(buttonState, () {
-                                    setButton();
-                                  }),
-                                ButtonWidgets('Create a post',
-                                    icon: const Icon(Icons.add), () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CreatePost(
-                                        currentCommunity: widget.communityName,
-                                      ),
-                                    ),
-                                  );
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          CommunityDescription(
+                            communityName: widget.communityName,
+                            communityMembersNo: widget.communityMembersNo,
+                            communityProfilePicturePath:
+                                widget.communityProfilePicturePath,
+                            communityRule: widget.communityRule,
+                            communityDescription: widget.communityDescription,
+                          ),
+                          Row(
+                            children: [
+                              if (buttonState == 'Join')
+                                ButtonWidgets(buttonState,
+                                    backgroundColour: Colors.black,
+                                    foregroundColour: Colors.white, () {
+                                  setButton();
+                                })
+                              else
+                                ButtonWidgets(buttonState, () {
+                                  setButton();
                                 }),
-                              ],
-                            ),
-                          ],
-                        ),
+                              ButtonWidgets('Create a post',
+                                  icon: const Icon(Icons.add), () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreatePost(
+                                      currentCommunity: widget.communityName,
+                                    ),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  Divider(
-                    color: Theme.of(context).colorScheme.primary,
-                    height: 1,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Post(
-                          profileImageUrl: "assets/images/profile.png",
-                          name: "John Doe",
-                          title: "Flutter is the best",
-                          postContent: "Flutter is the best",
-                          date: "2021-09-09",
-                          likes: 4,
-                          comments: "1",
-                          communityName: "r/FlutterDev",
-                        ),
-                      ),
-                      if (MediaQuery.of(context).size.width > 700)
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: SingleChildScrollView(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.25,
-                                margin: const EdgeInsets.only(right: 20),
-                                child: DescriptionWidget(
-                                  communityDescription:
-                                      widget.communityDescription,
-                                  communityRules: widget.communityRule,
-                                ),
+                    ),
+                  ],
+                ),
+                Divider(
+                  color: Theme.of(context).colorScheme.primary,
+                  height: 1,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Post(
+                                    profileImageUrl:
+                                        "assets/images/profile.png",
+                                    name: "John Doe",
+                                    title: "Flutter is the best",
+                                    postContent: "Flutter is the best",
+                                    date: "2021-09-09",
+                                    likes: 4,
+                                    comments: "1",
+                                    communityName: "r/FlutterDev",
+                                  ),
+                                  Post(
+                                    profileImageUrl:
+                                        "assets/images/profile.png",
+                                    name: "John Doe",
+                                    title: "Flutter is the best",
+                                    postContent: "Flutter is the best",
+                                    date: "2021-09-09",
+                                    likes: 4,
+                                    comments: "1",
+                                    communityName: "r/FlutterDev",
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                            if (MediaQuery.of(context).size.width > 700)
+                              Expanded(
+                                flex: 1,
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: SingleChildScrollView(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.25,
+                                      margin: const EdgeInsets.only(right: 20),
+                                      child: DescriptionWidget(
+                                        communityDescription:
+                                            widget.communityDescription,
+                                        communityRules: widget.communityRule,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
-                    ],
-                  )
-                ],
-              ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
         ],

@@ -29,6 +29,7 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
+    final bool userLoggedIn = userController.userAbout != null;
     // print('mobile layout: ${userController.userAbout?.username}');
     final drawers = [
       DrawerReddit(
@@ -60,7 +61,8 @@ class _MobileLayoutState extends State<MobileLayout> {
         appBar: MobileAppBar(
           logoTapped: logoTapped,
         ),
-        endDrawer: EndDrawerReddit(),
+
+        endDrawer: userLoggedIn? EndDrawerReddit() :  Container(),
         drawer: selectedDrawer,
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
