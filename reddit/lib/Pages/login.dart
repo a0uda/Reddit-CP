@@ -210,6 +210,9 @@ class LoginPageState extends State<LoginPage> {
                           controller: usernameController,
                           decoration: InputDecoration(
                             labelText: 'Username',
+                            labelStyle: const TextStyle(
+                              color: Colors.black,
+                            ),
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius:
@@ -231,6 +234,9 @@ class LoginPageState extends State<LoginPage> {
                           obscureText: !_isPasswordVisible,
                           decoration: InputDecoration(
                             labelText: 'Password',
+                            labelStyle: const TextStyle(
+                              color: Colors.black,
+                            ),
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
                               borderRadius:
@@ -264,7 +270,8 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ForgotPasswordPage()),
+                                    builder: (context) =>
+                                        const ForgotPasswordPage()),
                               );
                             },
                             child: Text(
@@ -285,7 +292,8 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ForgotUsernamePage()),
+                                    builder: (context) =>
+                                        const ForgotUsernamePage()),
                               );
                             },
                             child: Text(

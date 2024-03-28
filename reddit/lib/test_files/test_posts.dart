@@ -1,3 +1,4 @@
+import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/test_files/test_users.dart';
 
@@ -8,7 +9,7 @@ final List<PostItem> posts = [
     title: 'Mostafa Fouda',
     type: 'type',
     communityId: 0,
-    communityName: "7otaha hena ya mohaayy",
+    communityName: "r/Flutter",
     ocFlag: false,
     spoilerFlag: false,
     nsfwFlag: false,
@@ -18,6 +19,31 @@ final List<PostItem> posts = [
     commentsList: [],
     profilePic:
         'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
-    description: "testingggggggg",
+    description: "testing",
   ),
+  PostItem(
+      id: 1,
+      username: users[1].userAbout.username,
+      title: 'A pic example',
+      type: 'type',
+      communityId: 0,
+      communityName: "r/Photography",
+      ocFlag: false,
+      spoilerFlag: false,
+      nsfwFlag: false,
+      date: DateTime.now(),
+      likes: 0,
+      comments: 0,
+      commentsList: [],
+      profilePic:
+          'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+      description: "A subreddit for photography enthusiasts.",
+      images: [
+        ImageItem(
+          path:
+              'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+          link:
+              'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
+        )
+      ]),
 ];
