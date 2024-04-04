@@ -23,7 +23,7 @@ class CustomSettingsTile extends StatelessWidget {
       child: ListTile(
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),
         ),
         subtitle: (subtitle != null) ? Text(subtitle!) : null,
         leading: leading,
