@@ -3,6 +3,7 @@ import 'package:reddit/Pages/login.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
+import 'package:reddit/Pages/settings_screen.dart';
 
 class EndDrawerReddit extends StatelessWidget {
   EndDrawerReddit({super.key});
@@ -61,6 +62,10 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("Settings"),
             onTap: () {
               //Navigate to Settings
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
             },
           ),
           ListTile(
