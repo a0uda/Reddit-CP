@@ -14,6 +14,7 @@ final List<UserItem> users = [
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
       profilePicture: 'images/pp.jpg',
+      gender: 'Female',
       socialLinks: [
         SocialLlinkItem(
           id: '0',
@@ -117,6 +118,7 @@ final List<UserItem> users = [
       email: 'rawan7544@gmail.com',
       verifiedEmailFlag: true,
       displayName: 'John',
+      gender: 'Male',
       about: '',
       profilePicture: 'images/pp.jpg',
       socialLinks: [
@@ -174,6 +176,7 @@ final List<UserItem> users = [
       id: '2',
       createdAt: '5 March 2024',
       username: 'jane123',
+      gender: 'Female',
       email: 'rawan7544@gmail.com',
       verifiedEmailFlag: true,
       displayName: 'Jane',
@@ -225,6 +228,7 @@ final List<UserItem> users = [
       id: '3',
       createdAt: '5 March 2024',
       username: 'Mark_45',
+      gender: 'Male',
       email: 'rawan7544@gmail.com',
       verifiedEmailFlag: true,
       displayName: 'Mark',
