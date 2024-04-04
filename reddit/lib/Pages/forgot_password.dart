@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Pages/login.dart';
-import 'package:reddit/Pages/verify_password.dart';
+import 'package:reddit/widgets/reset_password.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -30,7 +29,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).platform == TargetPlatform.android) {
+    if (Theme.of(context).platform == TargetPlatform.android ||
+        MediaQuery.of(context).size.width < 600) {
       marginAppBarTop = MediaQuery.of(context).size.height * 0.0128;
       appBarTitleHeight = MediaQuery.of(context).size.height * 0.05;
       appBarTitleWidth = MediaQuery.of(context).size.width * 0.1;
@@ -103,7 +103,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const VerifyPasswordPage(),
+                              builder: (context) => const ResetPassword(),
                             ),
                           );
                         },
@@ -137,10 +137,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           color: Colors.grey[700],
         ),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-          );
+          Navigator.pop(context);
         },
       ),
       title: Image.asset(

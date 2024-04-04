@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/custom_settings_tile.dart';
 
 class LocationCustomization extends StatefulWidget {
+  const LocationCustomization({super.key});
+
   @override
   State<LocationCustomization> createState() => _LocationCustomizationState();
 }

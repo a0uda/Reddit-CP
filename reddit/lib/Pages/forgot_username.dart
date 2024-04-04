@@ -112,8 +112,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
           color: Colors.grey[700],
         ),
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          Navigator.pop(context);
         },
       ),
       title: Image.asset(
