@@ -17,8 +17,8 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
       title: 'Google',
       leading: Image.asset(
         'images/google-icon.png',
-        width: 32,
-        height: 32,
+        width: 22,
+        height: 22,
       ),
       trailing: GestureDetector(
         child: Text(

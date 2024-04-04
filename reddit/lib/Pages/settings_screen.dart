@@ -4,9 +4,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
-import 'package:reddit/widgets/allow_people_to_follow_tile.dart';
+import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
 import 'package:reddit/widgets/connect_google_tile.dart';
+import 'package:reddit/widgets/gender_settings_tile.dart';
+import 'package:reddit/widgets/notifications_settings.dart';
 import '../Controllers/user_controller.dart';
+import 'package:reddit/widgets/location_customization.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -37,8 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: <Widget>[
                 buildUpdateEmail(userController.userAbout!.email!),
                 buildAddPassword(),
-                buildGender(userController.userAbout!.gender!),
-                buildCountry(),
+                //buildGender(userController.userAbout!.gender!),
+                const GenderTile(),
+                buildCountry(context),
               ],
             ),
             SettingsGroup(
@@ -60,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontSize: 12.0,
                   color: Colors.grey[700]),
               children: <Widget>[
-                buildManageNotifications(),
+                buildManageNotifications(context),
               ],
             ),
             SettingsGroup(
@@ -72,7 +76,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Colors.grey[700]),
               children: <Widget>[
                 buildManageBlockedAccounts(),
-                const AllowPeopleToFollowTile(),
+                buildAllowPeopleToFollowYou(),
               ],
             ),
           ],
@@ -102,34 +106,30 @@ Widget buildAddPassword() => CustomSettingsTile(
         // Navigator.of(context).pushNamed('/add-password');
       },
     );
-Widget buildManageNotifications() => CustomSettingsTile(
+Widget buildManageNotifications(context) => CustomSettingsTile(
       title: 'Manage notifications',
       leading: const Icon(Icons.notifications_none_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {
-        // Navigate to the Manage Notifications Screen
-        // Navigator.of(context).pushNamed('/manage-notifications');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const NotificationsSettings(),
+          ),
+        );
       },
     );
 
-Widget buildGender(String gender) => CustomSettingsTile(
-      title: 'Gender',
-      subtitle: gender,
-      leading: const Icon(Icons.person),
-      trailing: const Icon(Icons.keyboard_arrow_down, size: 16.0),
-      onTap: () {
-        // Navigate
-        // Navigator.of(context).push
-      },
-    );
-Widget buildCountry() => CustomSettingsTile(
+Widget buildCountry(context) => CustomSettingsTile(
       title: 'Location customization',
       subtitle: 'Egypt',
       leading: const Icon(Icons.location_on_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {
-        // Navigate
-        // Navigator.of(context).push
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => LocationCustomization(),
+          ),
+        );
       },
     );
 
@@ -159,5 +159,18 @@ Widget buildManageBlockedAccounts() => CustomSettingsTile(
       onTap: () {
         // Navigate to the Manage Blocked Accounts Screen
         // Navigator.of(context).pushNamed('/manage-blocked-accounts');
+      },
+    );
+
+Widget buildAllowPeopleToFollowYou() => CustomStatefulSettingsTile(
+      title: 'Allow people to follow you',
+      subtitle:
+          'Followers will be notified about posts you make to your profile and see them in their home feed.',
+      leading: const Icon(Icons.account_circle_outlined),
+      onChanged: (value) {
+        // Callback for switch toggle
+      },
+      onTap: () {
+        // Callback for tile tap
       },
     );
