@@ -10,8 +10,6 @@ class NotificationsSettings extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettings> {
-  bool _isSwitched = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -8,6 +8,8 @@ import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
 import 'package:reddit/widgets/connect_google_tile.dart';
 import 'package:reddit/widgets/gender_settings_tile.dart';
 import 'package:reddit/widgets/notifications_settings.dart';
+import 'package:reddit/widgets/reset_password.dart';
+import 'package:reddit/widgets/update_email.dart';
 import '../Controllers/user_controller.dart';
 import 'package:reddit/widgets/location_customization.dart';
 
@@ -38,8 +40,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontSize: 12.0,
                   color: Colors.grey[700]),
               children: <Widget>[
-                buildUpdateEmail(userController.userAbout!.email!),
-                buildAddPassword(),
+                buildUpdateEmail(userController.userAbout!.email!, context),
+                buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
                 const GenderTile(),
                 buildCountry(context),
@@ -86,24 +88,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-Widget buildUpdateEmail(String email) => CustomSettingsTile(
+Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
       title: 'Update email address',
       subtitle: email,
       leading: const Icon(Icons.settings_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {
-        // Navigate to the Update Email Screen
-        // Navigator.of(context).pushNamed('/update-email');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const UpdateEmail(),
+          ),
+        );
       },
     );
 
-Widget buildAddPassword() => CustomSettingsTile(
-      title: 'Add password',
+Widget buildAddPassword(context) => CustomSettingsTile(
+      title: 'Change password',
       leading: const Icon(Icons.settings_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {
-        // Navigate to the Add Password Screen
-        // Navigator.of(context).pushNamed('/add-password');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ResetPassword(),
+          ),
+        );
       },
     );
 Widget buildManageNotifications(context) => CustomSettingsTile(
