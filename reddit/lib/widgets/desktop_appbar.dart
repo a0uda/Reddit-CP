@@ -26,7 +26,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     return AppBar(
       backgroundColor: Colors.white,
       shadowColor: Colors.black,
-      elevation: 0,
+      scrolledUnderElevation: 0,
       title: Row(
         children: [
           Padding(
