@@ -7,6 +7,7 @@ import 'package:reddit/widgets/custom_settings_tile.dart';
 import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
 import 'package:reddit/widgets/connect_google_tile.dart';
 import 'package:reddit/widgets/gender_settings_tile.dart';
+import 'package:reddit/widgets/manage_blocked_accounts.dart';
 import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:reddit/widgets/reset_password.dart';
 import 'package:reddit/widgets/update_email.dart';
@@ -77,7 +78,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontSize: 12.0,
                   color: Colors.grey[700]),
               children: <Widget>[
-                buildManageBlockedAccounts(),
+                buildManageBlockedAccounts(context),
                 buildAllowPeopleToFollowYou(),
               ],
             ),
@@ -135,7 +136,7 @@ Widget buildCountry(context) => CustomSettingsTile(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => LocationCustomization(),
+            builder: (context) => const LocationCustomization(),
           ),
         );
       },
@@ -160,13 +161,16 @@ Widget buildConnectFacebook() => CustomSettingsTile(
         // Navigator.of(context).pushNamed('/connect-facebook');
       },
     );
-Widget buildManageBlockedAccounts() => CustomSettingsTile(
+Widget buildManageBlockedAccounts(context) => CustomSettingsTile(
       title: 'Manage blocked accounts',
       leading: const Icon(Icons.block_flipped),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {
-        // Navigate to the Manage Blocked Accounts Screen
-        // Navigator.of(context).pushNamed('/manage-blocked-accounts');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ManageBlockedAccounts(),
+          ),
+        );
       },
     );
 
