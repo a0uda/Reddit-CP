@@ -1,3 +1,7 @@
+import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/safety_settings_item.dart';
+import 'package:reddit/test_files/test_safety_settings.dart';
+
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -229,5 +233,37 @@ class UserService {
 
   int availablePassword(String password) {
     return usedPasswords.contains(password) ? 400 : 200;
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  List<BlockedUsersItem> getBlockedUsers() {
+    if (testing) {
+      return safetySettings.blockedUsers;
+    } else {
+      // get safety settings from database
+    }
+    return safetySettings.blockedUsers;
+  }
+
+  void blockUser(String username) {
+    if (testing) {
+      safetySettings.blockedUsers.add(BlockedUsersItem(
+        id: safetySettings.blockedUsers.length.toString(),
+        username: username,
+        profilePicture: 'images/pp.jpg',
+        blockedDate: '5 March 2024',
+      ));
+    } else {
+      // block user in database
+    }
+  }
+
+  void unblockUser(String username) {
+    if (testing) {
+      safetySettings.blockedUsers
+          .removeWhere((element) => element.username == username);
+    } else {
+      // unblock user in database
+    }
   }
 }
