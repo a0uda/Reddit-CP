@@ -365,16 +365,6 @@ class LoginPageState extends State<LoginPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          size: appBarIconSize,
-          color: Colors.grey[700],
-        ),
-        onPressed: () {
-          // Handle arrow back button press
-        },
-      ),
       title: Image.asset(
         'images/reddit_orange.jpg',
         width: appBarTitleWidth,

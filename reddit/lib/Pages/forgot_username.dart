@@ -9,6 +9,9 @@ class ForgotUsernamePage extends StatefulWidget {
 }
 
 class ForgotUsernamePageState extends State<ForgotUsernamePage> {
+  final TextEditingController emailController = TextEditingController();
+
+  String emailError = '';
   double marginAppBarTop = 0;
   double appBarIconSize = 30;
   double appBarTitleWidth = 50;
@@ -25,6 +28,22 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
   double sizedBoxHeightAppBar = 60;
   double sizedBoxHeightHeader = 30;
   double sizedBoxHeightBeforeResetButton = 140;
+
+  void validateForm() {
+    setState(() {
+      emailError = '';
+
+      if (emailController.text.isEmpty) {
+        emailError = 'Email is required';
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+          .hasMatch(emailController.text)) {
+        emailError = 'Please enter a valid email address';
+      }
+      if (emailError.isEmpty) {
+        //database
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +86,10 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'Email address',
+                          errorText: emailError.isNotEmpty ? emailError : null,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius:
@@ -81,7 +102,9 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
                       ),
                       SizedBox(height: sizedBoxHeightBeforeResetButton),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          validateForm();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange[400],
                           padding: EdgeInsets.all(buttonPadding),
@@ -105,16 +128,6 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          size: appBarIconSize,
-          color: Colors.grey[700],
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       title: Image.asset(
         'images/reddit_orange.jpg',
         width: appBarTitleWidth,
@@ -139,7 +152,7 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
           Padding(
             padding: EdgeInsets.all(paddingHeader),
             child: Text(
-              "Enter your email address and \n we'll send you a link to reset your Username.",
+              "Enter your email address and \n we'll send you an email with your Username.",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: fontSizeSecondHeader,

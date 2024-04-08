@@ -9,6 +9,11 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  String emailError = '';
+  String usernameError = '';
+
   double marginAppBarTop = 0;
   double appBarIconSize = 30;
   double appBarTitleWidth = 50;
@@ -26,6 +31,31 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   double sizedBoxHeightHeader = 30;
   double sizedBoxHeightBeforeResetButton = 100;
   double sizedBoxHeightBetweenTextFields = 20;
+
+  void validateForm() {
+    setState(() {
+      emailError = '';
+      usernameError = '';
+      if (emailController.text.isEmpty) {
+        emailError = 'Email address is required';
+      } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+          .hasMatch(emailController.text)) {
+        emailError = 'Please enter a valid email address';
+      }
+      if (usernameController.text.isEmpty) {
+        usernameError = 'Username is required';
+      }
+      if (emailError.isEmpty && usernameError.isEmpty) {
+        //database call to check if email and username are valid
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => const ResetPassword(),
+        //   ),
+        // );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +101,10 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'Email address',
+                          errorText: emailError.isNotEmpty ? emailError : null,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius:
@@ -85,8 +117,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       SizedBox(height: sizedBoxHeightBetweenTextFields),
                       TextField(
+                        controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
+                          errorText:
+                              usernameError.isNotEmpty ? usernameError : null,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius:
@@ -100,12 +135,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       SizedBox(height: sizedBoxHeightBeforeResetButton),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ResetPassword(),
-                            ),
-                          );
+                          validateForm();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrange[400],
@@ -130,16 +160,6 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          size: appBarIconSize,
-          color: Colors.grey[700],
-        ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
       title: Image.asset(
         'images/reddit_orange.jpg',
         width: appBarTitleWidth,
