@@ -24,55 +24,11 @@ class SignUpPageState extends State<SignUpPage> {
   String usernameError = '';
   String passwordError = '';
 
-  // List<Map<String, String>> users = [
-  //   {
-  //     'username': 'user1',
-  //     'email': 'user1@example.com',
-  //     'password': 'password1'
-  //   },
-  //   {
-  //     'username': 'user2',
-  //     'email': 'user2@example.com',
-  //     'password': 'password2'
-  //   },
-  // ];
-
   void handleGenderChange(String gender) {
     setState(() {
       genderSelected = gender;
     });
   }
-
-  // void validateForm(BuildContext context) {
-  //   setState(() {
-  //     emailError = '';
-  //     usernameError = '';
-  //     passwordError = '';
-
-  //     if (emailController.text.isEmpty) {
-  //       emailError = 'Email is required';
-  //     } else if (!_isEmailValid(emailController.text)) {
-  //       emailError = 'Enter a valid email';
-  //     }
-  //     if (usernameController.text.isEmpty) {
-  //       usernameError = 'Username is required';
-  //     }
-  //     if (passwordController.text.isEmpty) {
-  //       passwordError = 'Password is required';
-  //     }
-  //     if (usernameController.text == passwordController.text) {
-  //       usernameError = 'Username cannot be same as password';
-  //     }
-  //     if (passwordController.text.length < 8) {
-  //       passwordError = 'Password must be at least 8 characters long';
-  //     }
-  //     if (users.any((user) => user['email'] == emailController.text)) {
-  //       emailError = 'Email already exists';
-  //     }
-  //     if (users.any((user) => user['username'] == usernameController.text)) {
-  //       usernameError = 'Username already exists';
-  //     }
-  //   });
 
   void validateForm(BuildContext context) {
     setState(() {
@@ -104,9 +60,6 @@ class SignUpPageState extends State<SignUpPage> {
       }
       if (UserService().availableUsername(usernameController.text) == 400) {
         usernameError = 'Username already exists';
-      }
-      if (UserService().availablePassword(passwordController.text) == 400) {
-        passwordError = 'Password already exists';
       }
     });
 
@@ -474,16 +427,6 @@ class SignUpPageState extends State<SignUpPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          size: appBarIconSize,
-          color: Colors.grey[700],
-        ),
-        onPressed: () {
-          // Handle arrow back button press
-        },
-      ),
       title: Image.asset(
         'images/reddit_orange.jpg',
         width: appBarTitleWidth,

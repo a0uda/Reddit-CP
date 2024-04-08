@@ -185,10 +185,6 @@ class UserService {
       return 400;
     }
 
-    if (availablePassword(password) == 400) {
-      return 400;
-    }
-
     UserAbout newUserAbout = UserAbout(
       username: username,
       email: email,
@@ -229,10 +225,6 @@ class UserService {
 
   int availableEmail(String email) {
     return users.any((user) => user.userAbout.email == email) ? 400 : 200;
-  }
-
-  int availablePassword(String password) {
-    return usedPasswords.contains(password) ? 400 : 200;
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
