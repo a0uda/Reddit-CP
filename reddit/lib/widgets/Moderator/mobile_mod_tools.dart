@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_list.dart';
+import 'package:reddit/widgets/Moderator/mod_tools_ui.dart';
 
 class MobileModTools extends StatelessWidget {
   const MobileModTools({super.key});
-
   @override
   Widget build(BuildContext context) {
+    void changePage(selected) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => modTools[selected],
+      ));
+    }
+
     return Scaffold(
         appBar: AppBar(
           scrolledUnderElevation: 0,
@@ -18,12 +24,16 @@ class MobileModTools extends StatelessWidget {
             ),
           )),
         ),
-        body: const Column(
+        body: Column(
           children: [
-            Divider(height: 0.3,color: Colors.grey,),
+            const Divider(
+              height: 0.3,
+              color: Colors.grey,
+            ),
             Expanded(
                 child: ModToolsList(
               isMobile: true,
+              changePage: changePage,
             )),
           ],
         ));

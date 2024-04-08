@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_list.dart';
+import 'package:reddit/widgets/Moderator/mod_tools_ui.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
@@ -13,6 +14,13 @@ class DesktopModTools extends StatefulWidget {
 }
 
 class _DesktopModToolsState extends State<DesktopModTools> {
+  var modToolIndex = 0;
+  void changePage(selected) {
+    setState(() {
+      modToolIndex = selected;
+    });
+  }
+
   void logoTapped() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
@@ -42,14 +50,16 @@ class _DesktopModToolsState extends State<DesktopModTools> {
                 children: [
                   ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 275),
-                      child: const ModToolsList(
+                      child: ModToolsList(
                         isMobile: false,
+                        changePage: changePage,
                       )),
                   VerticalDivider(
                     color: Theme.of(context).colorScheme.primary,
                     width: 1,
                   ),
                   //here the body of each mod tool can be changed by the setstate
+                  Expanded(child: modTools[modToolIndex])
                 ],
               ),
             ),

@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 
 class ModToolsList extends StatelessWidget {
   final bool isMobile;
-  const ModToolsList({super.key, required this.isMobile});
+  final Function(int) changePage;
+  const ModToolsList(
+      {super.key, required this.isMobile, required this.changePage});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,10 @@ class ModToolsList extends StatelessWidget {
         !isMobile
             ? ListTile(
                 leading: const Icon(Icons.arrow_back),
-                title: const Text('Exit mod tools' , style: TextStyle(color: Colors.grey),),
+                title: const Text(
+                  'Exit mod tools',
+                  style: TextStyle(color: Colors.grey),
+                ),
                 onTap: () {
                   //navigate back to community page
                 },
@@ -20,11 +25,11 @@ class ModToolsList extends StatelessWidget {
             : const SizedBox(),
         !isMobile
             ? const Divider(
-                  color: Colors.grey,
-                  height: 10,
-                  indent: 30,
-                  endIndent: 30,
-                )
+                color: Colors.grey,
+                height: 10,
+                indent: 30,
+                endIndent: 30,
+              )
             : const SizedBox(),
         ListTile(
           leading: const Icon(CupertinoIcons.pencil),
@@ -35,52 +40,48 @@ class ModToolsList extends StatelessWidget {
           trailing: isMobile
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
-          onTap: () {
-            //navigate to community name widget
-          },
+          onTap: () => {changePage(0)},
         ),
         ListTile(
           leading: const Icon(CupertinoIcons.pencil),
-          title:  Text(
+          title: Text(
             'Description',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
           trailing: isMobile
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
-          onTap: () {
-            //navigate to community Description widget
-          },
+          onTap: () => {changePage(1)},
         ),
         ListTile(
           leading: const Icon(CupertinoIcons.lock),
-          title:  Text(
+          title: Text(
             'Community Type',
-           style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
           trailing: isMobile
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to community Type widget
+            changePage(2);
           },
         ),
         ListTile(
           leading: const Icon(Icons.post_add_rounded),
-          title:  Text(
+          title: Text(
             ' Post Types',
-           style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
           trailing: isMobile
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to post Type widget
+            changePage(3);
           },
         ),
         ListTile(
           leading: const Icon(CupertinoIcons.placemark),
-          title:  Text(
+          title: Text(
             'Location',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
@@ -88,12 +89,12 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to location widget
+            changePage(4);
           },
         ),
         ListTile(
           leading: const Icon(CupertinoIcons.shield),
-          title:  Text(
+          title: Text(
             'Moderators',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
@@ -101,12 +102,12 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to Moderators widget
+            changePage(5);
           },
         ),
         ListTile(
           leading: const Icon(CupertinoIcons.person),
-          title:  Text(
+          title: Text(
             'Approved Users',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
@@ -114,12 +115,12 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to approved user widget
+            changePage(6);
           },
         ),
         ListTile(
           leading: const Icon(Icons.person_off_outlined),
-          title:  Text(
+          title: Text(
             'Banned Users',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
@@ -127,12 +128,12 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to Banned User widget
+            changePage(7);
           },
         ),
         ListTile(
           leading: const Icon(Icons.queue),
-          title:  Text(
+          title: Text(
             'Queues',
             style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
           ),
@@ -140,7 +141,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            //navigate to Queues widget
+            changePage(8);
           },
         ),
       ],
