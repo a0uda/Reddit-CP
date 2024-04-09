@@ -7,7 +7,7 @@ class CommunityController {
 
   CommunityItem? communityItem;
 
-    void getCommunity(String communityName) async {
-    communityItem = communityService.getCommunityData(communityName); 
+  void getCommunity(String communityName) async {
+    communityItem = communityService.getCommunityData(communityName);
   }
 }
