@@ -56,7 +56,6 @@ class Post extends StatefulWidget {
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
-  CommentsService commentsService = GetIt.instance.get<CommentsService>();
   UserController userController = GetIt.instance.get<UserController>();
   UserController ownerController = GetIt.instance.get<UserController>();
 
@@ -123,8 +122,7 @@ class PostState extends State<Post> {
     downVoteColor = downVote ? Colors.red : Colors.black;
 
     String userType;
-    List<Comments> comments =
-        commentsService.getCommentByPostId(widget.id.toString());
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
@@ -388,13 +386,13 @@ class PostState extends State<Post> {
                         ),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            //comment
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const CommentsWidget(),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentsWidget(
+                                    postId: widget.id), // pass the post ID here
+                              ),
+                            );
                           },
                           icon: Icon(Icons.messenger_outline,
                               color: Theme.of(context).colorScheme.secondary),
