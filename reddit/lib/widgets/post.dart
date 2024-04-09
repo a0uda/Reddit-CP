@@ -14,34 +14,34 @@ import 'package:reddit/Controllers/community_controller.dart';
 
 //for merging
 class Post extends StatefulWidget {
-  final String? profileImageUrl;
+  // final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent ;
+  final String? postContent;
   final String date;
   int likes;
-  final String comments;
+  final int commentsCount;
   final String? imageUrl;
   final String? linkUrl;
   final String? videoUrl;
   final PollItem? poll;
-  final int? id;
+  final String id;
   final String communityName;
 
   Post({
     super.key,
-    required this.profileImageUrl,
+    required this.id,
+    // required this.profileImageUrl,
     required this.name,
     required this.title,
     required this.postContent,
     required this.date,
     required this.likes,
-    required this.comments,
+    required this.commentsCount,
     this.imageUrl,
     this.linkUrl,
     this.videoUrl,
     this.poll,
-    this.id,
     required this.communityName,
   });
 
@@ -49,11 +49,12 @@ class Post extends StatefulWidget {
   PostState createState() => PostState();
 }
 
-
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
+  UserController ownerController = GetIt.instance.get<UserController>();
+
   bool upVote = false;
   bool downVote = false;
   CommunityController communityController =
@@ -112,6 +113,7 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    ownerController.getUser(widget.name);
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
 
@@ -239,7 +241,7 @@ class PostState extends State<Post> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.postContent?? "",
+                        widget.postContent ?? "",
                         style:
                             const TextStyle(fontSize: 16, fontFamily: 'Arial'),
                       ),
@@ -313,7 +315,7 @@ class PostState extends State<Post> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.3,
                         child: PollView(
-                          id: widget.id!,
+                          id: int.parse(widget.id),
                           question: widget.poll!.question,
                           options: widget.poll!.options
                               .asMap()
@@ -384,7 +386,7 @@ class PostState extends State<Post> {
                           icon: Icon(Icons.messenger_outline,
                               color: Theme.of(context).colorScheme.secondary),
                           label: Text(
-                            widget.comments,
+                            widget.commentsCount.toString(),
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.secondary),
                           ),

@@ -206,28 +206,29 @@ class _CommunityPageState extends State<CommunityPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Post(
-                                    profileImageUrl:
-                                        "assets/images/profile.png",
-                                    name: "John Doe",
-                                    title: "Flutter is the best",
-                                    postContent: "Flutter is the best",
-                                    date: "2021-09-09",
-                                    likes: 4,
-                                    comments: "1",
-                                    communityName: "r/FlutterDev",
-                                  ),
-                                  Post(
-                                    profileImageUrl:
-                                        "assets/images/profile.png",
-                                    name: "John Doe",
-                                    title: "Flutter is the best",
-                                    postContent: "Flutter is the best",
-                                    date: "2021-09-09",
-                                    likes: 4,
-                                    comments: "1",
-                                    communityName: "r/FlutterDev",
-                                  ),
+                                  //TODO: pot some posts
+                                  // Post(
+                                  //   profileImageUrl:
+                                  //       "assets/images/profile.png",
+                                  //   name: "John Doe",
+                                  //   title: "Flutter is the best",
+                                  //   postContent: "Flutter is the best",
+                                  //   date: "2021-09-09",
+                                  //   likes: 4,
+                                  //   comments: "1",
+                                  //   communityName: "r/FlutterDev",
+                                  // ),
+                                  // Post(
+                                  //   profileImageUrl:
+                                  //       "assets/images/profile.png",
+                                  //   name: "John Doe",
+                                  //   title: "Flutter is the best",
+                                  //   postContent: "Flutter is the best",
+                                  //   date: "2021-09-09",
+                                  //   likes: 4,
+                                  //   comments: "1",
+                                  //   communityName: "r/FlutterDev",
+                                  // ),
                                 ],
                               ),
                             ),

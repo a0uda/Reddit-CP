@@ -188,44 +188,39 @@ class _CreatePostState extends State<CreatePost> {
                       else
                         {
                           postService.addPost(
-                              userController.userAbout!.username,
-                              titleController.text,
-                              'type',
-                              0,
-                              selectedCommunity,
-                              false,
-                              _selections[1],
-                              _selections[0],
-                              0,
-                              0,
-                              [],
-                              DateTime.now(),
-                              profilePic:
-                                  'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
-                              description: bodyController.text,
-                              linkUrl:
-                                  showLinkField ? URLController.text : null,
-                              images: imageSelected
-                                  ? [
-                                      ImageItem(
-                                          path: _image!.path, link: imageUrl!)
-                                    ]
-                                  : null,
-                              videos: videoSelected
-                                  ? [
-                                      VideoItem(
-                                          path: _video!.path, link: 'linkUrl')
-                                    ]
-                                  : null,
-                              poll: pollSelected
-                                  ? PollItem(
-                                      question: questionController.text,
-                                      options: options,
-                                      votes: [0, 0],
-                                      option1Votes: [],
-                                      option2Votes: [],
-                                    )
-                                  : null),
+                            userController.userAbout!.id!,
+                            userController.userAbout!.username,
+                            titleController.text,
+                            bodyController.text,
+                            'type',
+                            showLinkField ? URLController.text : null,
+                            imageSelected
+                                ? [
+                                    ImageItem(
+                                        path: _image!.path, link: imageUrl!)
+                                  ]
+                                : null,
+                            videoSelected
+                                ? [
+                                    VideoItem(
+                                        path: _video!.path, link: 'linkUrl')
+                                  ]
+                                : null,
+                            pollSelected
+                                ? PollItem(
+                                    question: questionController.text,
+                                    options: options,
+                                    votes: [0, 0],
+                                    option1Votes: [],
+                                    option2Votes: [],
+                                  )
+                                : null,
+                            selectedCommunity,
+                            selectedCommunity,
+                            false,
+                            _selections[1],
+                            _selections[0],
+                          ),
                           Navigator.of(context)
                               .pushReplacement(MaterialPageRoute(
                             builder: (context) => const ResponsiveLayout(

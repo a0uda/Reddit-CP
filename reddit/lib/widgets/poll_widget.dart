@@ -81,7 +81,7 @@ class _PollViewState extends State<PollView> {
                 widget.options[choice][widget.options[choice].keys.first] =
                     widget.options[choice][widget.options[choice].keys.first]! +
                         1.0;
-                postService.updatePoll(widget.id, choice, user);
+                postService.updatePoll(widget.id as String, choice, user);
               });
             },
           ),
