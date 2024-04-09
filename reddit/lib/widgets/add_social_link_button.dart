@@ -5,15 +5,17 @@ import 'package:icons_plus/icons_plus.dart';
 import '../Models/user_about.dart';
 
 class AddSocialLinkButton extends StatelessWidget {
-  final Function(List<SocialLlinkItem>?) onDataReceived;
-  const AddSocialLinkButton({super.key, required this.onDataReceived});
+  final bool notEditProfile;
+  const AddSocialLinkButton(
+      {super.key, required this.notEditProfile});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
-        backgroundColor:
-            MaterialStateProperty.all(const Color.fromARGB(99, 105, 105, 105)),
+        backgroundColor: MaterialStateProperty.all(notEditProfile
+            ? const Color.fromARGB(99, 105, 105, 105)
+            : const Color.fromARGB(220, 234, 234, 234)),
       ),
       onPressed: () {
         showModalBottomSheet(
@@ -74,8 +76,7 @@ class AddSocialLinkButton extends StatelessWidget {
                                 socialMediaButtons.map((socialMediaButton) {
                               return IconButtonWithText(
                                 text: socialMediaButton['name'].toString(),
-                                icon: socialMediaButton['brand'] as Brand,
-                                onDataReceived: onDataReceived,
+                                icon: socialMediaButton['brand'] as Brand
                               );
                             }).toList(),
                           ),
@@ -91,16 +92,22 @@ class AddSocialLinkButton extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2, top: 2),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(Icons.add,
-                color: Color.fromARGB(255, 175, 174, 174), size: 20),
+                color: notEditProfile
+                    ? const Color.fromARGB(255, 175, 174, 174)
+                    : Colors.black,
+                size: 20),
             SizedBox(width: 3),
             Text(
               'Add social link',
               style: TextStyle(
-                  color: Color.fromARGB(255, 212, 211, 211), fontSize: 12),
+                  color: notEditProfile
+                      ? const Color.fromARGB(255, 212, 211, 211)
+                      : Colors.black,
+                  fontSize: 12),
             ),
           ],
         ),
@@ -112,13 +119,11 @@ class AddSocialLinkButton extends StatelessWidget {
 class IconButtonWithText extends StatelessWidget {
   final String text;
   final Brand icon;
-  Function(List<SocialLlinkItem>?) onDataReceived;
 
   IconButtonWithText({
     super.key,
     required this.text,
     required this.icon,
-    required this.onDataReceived,
   });
 
   @override
@@ -135,7 +140,6 @@ class IconButtonWithText extends StatelessWidget {
             ),
           ),
         );
-        onDataReceived(result);
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import '../Services/user_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -9,93 +11,125 @@ import '../Models/user_about.dart';
 class ProfileHeaderAddSocialLink extends StatefulWidget {
   final UserAbout userData;
   final String userType;
-  const ProfileHeaderAddSocialLink(this.userData, this.userType, {super.key});
+  final bool notEditProfile;
+  const ProfileHeaderAddSocialLink(
+      this.userData, this.userType, this.notEditProfile,
+      {super.key});
   @override
   _ProfileHeaderAddSocialLinkState createState() =>
-      _ProfileHeaderAddSocialLinkState(userData, userType);
+      _ProfileHeaderAddSocialLinkState(userData, userType, notEditProfile);
 }
 
 class _ProfileHeaderAddSocialLinkState
     extends State<ProfileHeaderAddSocialLink> {
-  late List<SocialLlinkItem>? socialLinks;
-  late bool showAddSocialLinkButton;
+  late bool showAddSocialLinkButton = true;
+  late bool notEditProfile;
   UserAbout userData;
   String userType;
 
-  _ProfileHeaderAddSocialLinkState(this.userData, this.userType);
+  _ProfileHeaderAddSocialLinkState(
+      this.userData, this.userType, this.notEditProfile);
 
   final userService = GetIt.instance.get<UserService>();
 
   @override
   void initState() {
     super.initState();
-    socialLinks = userData.socialLinks;
-    updateAddSocialLinkButtonVisibility();
-  }
-
-  void updateAddSocialLinkButtonVisibility() {
-    setState(() {
-      if (socialLinks != null && socialLinks!.length < 5) {
-        showAddSocialLinkButton = true;
-      } else {
-        showAddSocialLinkButton = false;
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              ...(socialLinks?.map((linkData) {
-                    String websiteName = linkData.type.toLowerCase();
-                    return TextButton(
-                      onPressed: () {
-                        launchUrl(Uri.parse(linkData.customUrl));
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(99, 105, 105, 105)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: getSocialMediaIcon(websiteName),
+    return Consumer<SocialLinksController>(
+      builder: (context, socialLinksController, child) {
+        return Container(
+          padding: notEditProfile
+              ? const EdgeInsets.only(left: 20, right: 20, bottom: 10)
+              : EdgeInsets.zero,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ...(socialLinksController.socialLinks?.map((linkData) {
+                        String websiteName = linkData.type.toLowerCase();
+                        return TextButton(
+                          onPressed: () {
+                            launchUrl(Uri.parse(linkData.customUrl));
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                notEditProfile
+                                    ? const Color.fromARGB(99, 105, 105, 105)
+                                    : const Color.fromARGB(220, 234, 234, 234)),
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            linkData.displayText,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: getSocialMediaIcon(websiteName),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                linkData.displayText,
+                                style: TextStyle(
+                                  color: notEditProfile
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              notEditProfile
+                                  ? const SizedBox.shrink()
+                                  : Container(
+                                      width: 23,
+                                      height: 23,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.close,
+                                            color: Colors.black, size: 12),
+                                        onPressed: () {
+                                          socialLinksController
+                                              .removeSocialLink(
+                                                  userData, linkData);
+                                          // if (socialLinksController
+                                          //             .socialLinks !=
+                                          //         null &&
+                                          //     socialLinksController
+                                          //             .socialLinks!.length <
+                                          //         5) {
+                                          //   showAddSocialLinkButton = true;
+                                          // } else {
+                                          //   showAddSocialLinkButton = false;
+                                          // }
+                                        },
+                                        padding: EdgeInsets.zero,
+                                      ),
+                                    ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  }).toList() ??
-                  []),
-              if (userType == 'me' && showAddSocialLinkButton)
-                AddSocialLinkButton(onDataReceived: (result) {
-                  setState(() {
-                    socialLinks = result;
-                    updateAddSocialLinkButtonVisibility();
-                  });
-                }),
+                        );
+                      }).toList() ??
+                      []),
+                  if (userType == 'me' &&
+                      socialLinksController.socialLinks != null &&
+                      socialLinksController.socialLinks!.length < 5)
+                    AddSocialLinkButton(notEditProfile: notEditProfile),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

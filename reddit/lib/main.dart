@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Pages/login.dart';
@@ -18,9 +19,15 @@ void main() async {
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
   GetIt.instance.registerSingleton<CommunityService>(CommunityService());
-   GetIt.instance.registerSingleton<CommunityController>(CommunityController());
-
-  runApp(const MyApp());
+  GetIt.instance.registerSingleton<CommunityController>(CommunityController());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => SocialLinksController(),
+      ),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

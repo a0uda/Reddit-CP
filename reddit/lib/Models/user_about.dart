@@ -35,14 +35,14 @@ class UserAbout {
 }
 
 class SocialLlinkItem {
-  final String? id;
+  final String id;
   final String username;
   final String displayText;
   final String type;
   final String customUrl;
 
   SocialLlinkItem({
-    this.id,
+    required this.id,
     required this.username,
     required this.displayText,
     required this.type,

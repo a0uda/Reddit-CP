@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/edit_profile.dart';
 import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -63,6 +64,10 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
+                      Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => EditProfileScreen()),
+);
                   } else {
                     setState(
                       () {
