@@ -45,6 +45,20 @@ class UserService {
           .userAbout
           .socialLinks!
           .add(SocialLlinkItem(
+            id: (int.parse(users
+                        .firstWhere(
+                            (element) => element.userAbout.username == username)
+                        .userAbout
+                        .socialLinks![users
+                                .firstWhere((element) =>
+                                    element.userAbout.username == username)
+                                .userAbout
+                                .socialLinks!
+                                .length -
+                            1]
+                        .id) +
+                    1)
+                .toString(),
             username: displayText,
             displayText: displayText,
             type: type,

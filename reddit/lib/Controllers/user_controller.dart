@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -10,7 +11,7 @@ class UserController {
   List<BlockedUsersItem>? blockedUsers;
 
   void getUser(String username) async {
-    userAbout = userService.getUserAbout(username); //to be replaced by username
+    userAbout = userService.getUserAbout(username);
     blockedUsers = userService.getBlockedUsers();
   }
 
@@ -22,5 +23,27 @@ class UserController {
   void unblockUser(String username) {
     userService.unblockUser(username);
     blockedUsers = userService.getBlockedUsers();
+  }
+}
+
+class SocialLinksController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+  late List<SocialLlinkItem>? socialLinks =
+      userController.userAbout?.socialLinks;
+
+  void removeSocialLink(UserAbout userData, SocialLlinkItem socialLink) {
+    userService.deleteSocialLinkService(userData.username, socialLink.id);
+    userController.getUser(userData.username);
+    socialLinks!.remove(socialLink);
+    notifyListeners();
+  }
+
+  void addSocialLink(
+      String username, String displayName, String type, String link) {
+    userService.addSocialLink(username, displayName, type, link);
+    userController.getUser(username);
+    socialLinks = userController.userAbout?.socialLinks;
+    notifyListeners();
   }
 }

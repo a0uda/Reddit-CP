@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:provider/provider.dart';
 import '../Controllers/user_controller.dart';
 import '../Services/user_service.dart';
 import 'package:get_it/get_it.dart';
@@ -15,26 +16,27 @@ class AddSocialLinkForm extends StatefulWidget {
   });
 
   @override
-  _AddSocialLinkFormState createState() => _AddSocialLinkFormState(
+  AddSocialLinkFormState createState() => AddSocialLinkFormState(
       socialMediaIcon: socialMediaIcon, socialLink: socialLink);
 }
 
-class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
-  final Brand socialMediaIcon;
-  final String socialLink;
+class AddSocialLinkFormState extends State<AddSocialLinkForm> {
+  late Brand socialMediaIcon;
+  late String socialLink;
 
-  _AddSocialLinkFormState(
+  AddSocialLinkFormState(
       {required this.socialMediaIcon, required this.socialLink});
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController linkController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final userService = GetIt.instance.get<UserService>();
+//  final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
+    var socialLinksController = context.watch<SocialLinksController>();
     return Material(
       child: FractionallySizedBox(
         heightFactor: 0.9,
@@ -74,14 +76,25 @@ class _AddSocialLinkFormState extends State<AddSocialLinkForm> {
                       TextButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            userService.addSocialLink(
+                            // userService.addSocialLink(
+                            //   userController.userAbout!.username,
+                            //   usernameController.text,
+                            //   socialLink,
+                            //   linkController.text,
+                            // );
+                            // Provider.of<SocialLinksController>(context,
+                            //         listen: false)
+                            //     .addSocialLink(
+                            //   userController.userAbout!,
+                            //   socialLink,
+                            //   linkController.text,
+                            // );
+                            socialLinksController.addSocialLink(
                               userController.userAbout!.username,
                               usernameController.text,
                               socialLink,
                               linkController.text,
                             );
-                            userController
-                                .getUser(userController.userAbout!.username);
                             print(
                                 'social link added successfully ${userController.userAbout?.socialLinks}');
                             Navigator.pop(

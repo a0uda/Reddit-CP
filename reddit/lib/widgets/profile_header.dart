@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'profile_header_left_side.dart';
 import 'profile_header_right_side.dart';
 import 'profile_header_add_social_link.dart';
@@ -33,7 +35,11 @@ class ProfileHeader extends StatelessWidget {
                   userData: userData, userType: userType, onUpdate: onUpdate),
             ],
           ),
-          ProfileHeaderAddSocialLink(userData, userType),
+          Consumer<SocialLinksController>(
+            builder: (context, socialLinksController, child) {
+              return ProfileHeaderAddSocialLink(userData, userType, true);
+            },
+          ),
         ],
       ),
     );
