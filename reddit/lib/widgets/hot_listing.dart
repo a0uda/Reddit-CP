@@ -37,6 +37,7 @@ class HotListingBuild extends State<HotListing> {
   @override
   Widget build(BuildContext context) {
     final PostController postController = PostController();
+
     postController.getPost();
     List<PostItem> posts = postController.postItems!;
     return ListView.builder(
@@ -48,13 +49,13 @@ class HotListingBuild extends State<HotListing> {
           return buildBlur(
               context: context,
               child: Post(
-                profileImageUrl: posts[index].profilePic!,
+                // profileImageUrl: posts[index].profilePic!,
                 name: posts[index].username,
                 title: posts[index].title,
                 postContent: posts[index].description!,
-                date: posts[index].date.toString(),
-                likes: posts[index].likes,
-                comments: posts[index].comments.toString(),
+                date: posts[index].createdAt.toString(),
+                likes: posts[index].upvotesCount - posts[index].downvotesCount,
+                commentsCount: posts[index].commentsCount,
                 linkUrl: posts[index].linkUrl,
                 imageUrl: posts[index].images?[0].path,
                 videoUrl: posts[index].videos?[0].path,
@@ -64,13 +65,13 @@ class HotListingBuild extends State<HotListing> {
               ));
         }
         return Post(
-          profileImageUrl: posts[index].profilePic!,
+          // profileImageUrl: posts[index].profilePic!,
           name: posts[index].username,
           title: posts[index].title,
           postContent: posts[index].description!,
-          date: posts[index].date.toString(),
-          likes: posts[index].likes,
-          comments: posts[index].comments.toString(),
+          date: posts[index].createdAt.toString(),
+          likes: posts[index].upvotesCount - posts[index].downvotesCount,
+          commentsCount: posts[index].commentsCount,
           linkUrl: posts[index].linkUrl,
           imageUrl: posts[index].images?[0].path,
           videoUrl: posts[index].videos?[0].path,

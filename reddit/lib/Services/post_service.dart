@@ -1,45 +1,40 @@
 //import 'package:media_kit/ffi/ffi.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import '../test_files/test_posts.dart';
 
-
-
 int counter = 0;
 bool testing = true;
 
 class PostService {
   void addPost(
-    // int id,
+    String userId,
     String username,
     String title,
-    String type,
-    int communityId,
-    String communityName,
-    bool ocFlag,
-    bool spoilerFlag,
-    bool nsfwFlag,
-    int likes,
-    int comments,
-    List<String> commentsList,
-    DateTime date, {
-    String? profilePic,
     String? description,
+    String type,
     String? linkUrl,
     List<ImageItem>? images,
     List<VideoItem>? videos,
     PollItem? poll,
-  }) {
+    String communityId,
+    String communityName,
+    bool ocFlag,
+    bool spoilerFlag,
+    bool nsfwFlag,
+  ) {
     if (testing) {
       posts.add(
         PostItem(
-          id: posts.length + 1,
+          id: (posts.length + 1).toString(),
+          userId: userId,
           username: username,
-          profilePic: profilePic,
           title: title,
           description: description,
+          createdAt: DateTime.now(),
           type: type,
           linkUrl: linkUrl,
           images: images,
@@ -47,13 +42,17 @@ class PostService {
           poll: poll,
           communityId: communityId,
           communityName: communityName,
+          commentsCount: 0,
+          viewsCount: 0,
+          sharesCount: 0,
+          upvotesCount: 0,
+          downvotesCount: 0,
           ocFlag: ocFlag,
           spoilerFlag: spoilerFlag,
           nsfwFlag: nsfwFlag,
-          likes: likes,
-          comments: comments,
-          commentsList: commentsList,
-          date: date,
+          lockedFlag: false, // Assuming initial locked flag is false
+          allowrepliesFlag: true, // Assuming initial allow replies flag is true
+          setSuggestedSort: "None",
         ),
       );
     } else {
@@ -65,31 +64,31 @@ class PostService {
     return posts;
   }
 
-  List<PostItem> getCommunityPosts(int communityId) {
+  List<PostItem> getCommunityPosts(String communityId) {
     return posts
         .where((element) => element.communityId == communityId)
         .toList();
   }
 
-  void upVote(int id) {
+  void upVote(String id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
-      post.likes++;
+      post.upvotesCount++;
     } else {
       // like post in database
     }
   }
 
-  void downVote(int id) {
+  void downVote(String id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
-      post.likes--;
+      post.downvotesCount++;
     } else {
       // dislike post in database
     }
   }
 
-  void updatePoll(int id, int index, String username) {
+  void updatePoll(String id, int index, String username) {
     print('id is : $id');
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
