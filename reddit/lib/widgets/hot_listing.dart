@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/test_files/test_posts.dart';
 import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
@@ -12,7 +14,6 @@ class HotListing extends StatefulWidget {
 }
 
 class HotListingBuild extends State<HotListing> {
-  final postService = GetIt.instance.get<PostService>();
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override
@@ -35,6 +36,10 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
+    final PostController postController = PostController();
+
+    postController.getPost();
+    List<PostItem> posts = postController.postItems!;
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,
@@ -44,13 +49,13 @@ class HotListingBuild extends State<HotListing> {
           return buildBlur(
               context: context,
               child: Post(
-                profileImageUrl: posts[index].profilePic!,
+                // profileImageUrl: posts[index].profilePic!,
                 name: posts[index].username,
                 title: posts[index].title,
                 postContent: posts[index].description!,
-                date: posts[index].date.toString(),
-                likes: posts[index].likes,
-                comments: posts[index].comments.toString(),
+                date: posts[index].createdAt.toString(),
+                likes: posts[index].upvotesCount - posts[index].downvotesCount,
+                commentsCount: posts[index].commentsCount,
                 linkUrl: posts[index].linkUrl,
                 imageUrl: posts[index].images?[0].path,
                 videoUrl: posts[index].videos?[0].path,
@@ -60,13 +65,13 @@ class HotListingBuild extends State<HotListing> {
               ));
         }
         return Post(
-          profileImageUrl: posts[index].profilePic!,
+          // profileImageUrl: posts[index].profilePic!,
           name: posts[index].username,
           title: posts[index].title,
           postContent: posts[index].description!,
-          date: posts[index].date.toString(),
-          likes: posts[index].likes,
-          comments: posts[index].comments.toString(),
+          date: posts[index].createdAt.toString(),
+          likes: posts[index].upvotesCount - posts[index].downvotesCount,
+          commentsCount: posts[index].commentsCount,
           linkUrl: posts[index].linkUrl,
           imageUrl: posts[index].images?[0].path,
           videoUrl: posts[index].videos?[0].path,
