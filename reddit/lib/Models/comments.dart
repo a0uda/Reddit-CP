@@ -17,7 +17,7 @@ class Comments {
   bool? spamFlag;
   bool? lockedFlag;
   bool? showCommentFlag;
-  ModeratorDetailsClass? moderatorDetails;
+  ModeratorDetails? moderatorDetails;
 
   Comments({
     this.id,
@@ -42,7 +42,7 @@ class Comments {
   });
 }
 
-class ModeratorDetailsClass {
+class ModeratorDetails {
   String? approvedBy;
   String? approvedDate;
   String? removedBy;
@@ -50,7 +50,7 @@ class ModeratorDetailsClass {
   String? spammedBy;
   String? spammedType;
 
-  ModeratorDetailsClass({
+  ModeratorDetails({
     this.approvedBy,
     this.approvedDate,
     this.removedBy,
@@ -80,7 +80,7 @@ List<Comments> comments1 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -108,7 +108,7 @@ List<Comments> comments1 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -136,7 +136,7 @@ List<Comments> comments1 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -167,7 +167,7 @@ List<Comments> comments2 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -195,7 +195,7 @@ List<Comments> comments2 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -226,7 +226,7 @@ List<Comments> comments3 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -254,7 +254,7 @@ List<Comments> comments3 = [
     spamFlag: false,
     lockedFlag: false,
     showCommentFlag: true,
-    moderatorDetails: ModeratorDetailsClass(
+    moderatorDetails: ModeratorDetails(
       approvedBy: 'moderator1',
       approvedDate: '2021-09-01 12:00:00',
       removedBy: 'moderator1',
@@ -264,4 +264,3 @@ List<Comments> comments3 = [
     ),
   ),
 ];
-

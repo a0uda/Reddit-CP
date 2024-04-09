@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/report.dart';
@@ -10,14 +12,16 @@ import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/widgets/comments_widget.dart';
 
 //for merging
 class Post extends StatefulWidget {
   final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent ;
+  final String? postContent;
   final String date;
   int likes;
   final String comments;
@@ -49,10 +53,10 @@ class Post extends StatefulWidget {
   PostState createState() => PostState();
 }
 
-
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
+  CommentsService commentsService = GetIt.instance.get<CommentsService>();
   UserController userController = GetIt.instance.get<UserController>();
   bool upVote = false;
   bool downVote = false;
@@ -116,6 +120,8 @@ class PostState extends State<Post> {
     downVoteColor = downVote ? Colors.red : Colors.black;
 
     String userType;
+    List<Comments> comments =
+        commentsService.getCommentByPostId(widget.id.toString());
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
@@ -239,7 +245,7 @@ class PostState extends State<Post> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.postContent?? "",
+                        widget.postContent ?? "",
                         style:
                             const TextStyle(fontSize: 16, fontFamily: 'Arial'),
                       ),
@@ -380,6 +386,12 @@ class PostState extends State<Post> {
                         child: ElevatedButton.icon(
                           onPressed: () {
                             //comment
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const CommentsWidget(),
+                            //   ),
+                            // );
                           },
                           icon: Icon(Icons.messenger_outline,
                               color: Theme.of(context).colorScheme.secondary),
