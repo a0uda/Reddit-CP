@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/test_files/test_posts.dart';
 import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
@@ -12,7 +14,6 @@ class HotListing extends StatefulWidget {
 }
 
 class HotListingBuild extends State<HotListing> {
-  final postService = GetIt.instance.get<PostService>();
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override
@@ -35,6 +36,9 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
+    final PostController postController = PostController();
+    postController.getPost();
+    List<PostItem> posts = postController.postItems!;
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,

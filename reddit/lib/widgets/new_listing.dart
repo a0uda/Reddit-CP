@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/widgets/post.dart';
 
 import '../test_files/test_posts.dart';
@@ -30,6 +32,7 @@ class NewListing extends StatefulWidget {
 }
 
 class NewListingBuild extends State<NewListing> {
+  final PostController postController = PostController();
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override
@@ -52,6 +55,8 @@ class NewListingBuild extends State<NewListing> {
 
   @override
   Widget build(BuildContext context) {
+    postController.getPost();
+    List<PostItem> posts = postController.postItems!;
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,

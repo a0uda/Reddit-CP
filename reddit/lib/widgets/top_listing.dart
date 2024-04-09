@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/widgets/post.dart';
 
 import '../test_files/test_posts.dart';
@@ -31,6 +33,7 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
+  final PostController postController = PostController();
   // List of items in our dropdown menu
   @override
   void initState() {
@@ -52,6 +55,8 @@ class TopListingBuild extends State<TopListing> {
 
   @override
   Widget build(BuildContext context) {
+    postController.getPost();
+    List<PostItem> posts = postController.postItems!;
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,
@@ -66,7 +71,6 @@ class TopListingBuild extends State<TopListing> {
           likes: posts[index].likes,
           comments: posts[index].comments.toString(),
           communityName: posts[index].communityName,
-
         );
       },
     );
