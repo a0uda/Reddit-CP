@@ -1,3 +1,4 @@
+import 'package:reddit/Models/account_settings_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
@@ -6,12 +7,13 @@ import '../Models/safety_settings_item.dart';
 
 class UserItem {
   final UserAbout userAbout;
-  final String? password;
+  String? password;
   final List<FollowersFollowingItem>? followers;
   final List<FollowersFollowingItem>? following;
   final List<Comments>? comments;
   final ProfileSettings? profileSettings;
   final SafetyAndPrivacySettings? safetySettings;
+  final AccountSettings? accountSettings;
 
   UserItem({
     required this.userAbout,
@@ -21,5 +23,6 @@ class UserItem {
     this.comments,
     this.profileSettings,
     this.safetySettings,
+    this.accountSettings,
   });
 }

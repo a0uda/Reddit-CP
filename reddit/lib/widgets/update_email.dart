@@ -43,7 +43,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            userController.userAbout!.username!,
+                            userController.userAbout!.username,
                             style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -160,9 +160,31 @@ class _UpdateEmailState extends State<UpdateEmail> {
                 child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Email updated')),
-                        );
+                        if (userController.userAbout!.email ==
+                            _emailController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Email already in use')),
+                          );
+                        }
+                        bool changed = userController.changeEmail(
+                            userController.userAbout!.username,
+                            _emailController.text,
+                            _passwordController.text);
+                        if (changed) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Email updated')),
+                          );
+                          userController.changeEmail(
+                              userController.userAbout!.username,
+                              _emailController.text,
+                              _passwordController.text);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Email update failed')),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(
