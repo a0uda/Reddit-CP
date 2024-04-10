@@ -13,17 +13,17 @@ class UserController {
 
   void getUser(String username) async {
     userAbout = userService.getUserAbout(username);
-    blockedUsers = userService.getBlockedUsers();
+    blockedUsers = userService.getBlockedUsers(username);
   }
 
-  void blockUser(String username) {
-    userService.blockUser(username);
-    blockedUsers = userService.getBlockedUsers();
+  void blockUser(UserAbout userData, String username) {
+    userService.blockUser(userData.username, username);
+    blockedUsers = userService.getBlockedUsers(userData.username);
   }
 
-  void unblockUser(String username) {
-    userService.unblockUser(username);
-    blockedUsers = userService.getBlockedUsers();
+  void unblockUser(UserAbout userData, String username) {
+    userService.unblockUser(userData.username, username);
+    blockedUsers = userService.getBlockedUsers(userData.username);
   }
 }
 

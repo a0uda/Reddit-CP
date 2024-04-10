@@ -1,4 +1,6 @@
+import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 
 import '../Models/comments.dart';
@@ -119,6 +121,34 @@ final List<UserItem> users = [
       contentVisibility: true,
       activeCommunity: true,
     ),
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+        MutedCommunity(
+          id: '1',
+          communityName: 'Dart',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
   ),
   UserItem(
     userAbout: UserAbout(
@@ -180,6 +210,23 @@ final List<UserItem> users = [
       ),
     ],
     comments: [],
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
   ),
   UserItem(
     userAbout: UserAbout(
@@ -233,6 +280,29 @@ final List<UserItem> users = [
       ),
     ],
     comments: comments2,
+    profileSettings: ProfileSettings(
+      displayName: 'Jane',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
   ),
   UserItem(
     userAbout: UserAbout(
