@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screen_ex/flutter_settings_screen_ex.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/country_tile.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
 import 'package:reddit/widgets/connect_google_tile.dart';
@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
                 const GenderTile(),
-                buildCountry(context),
+                CountryTile(),
               ],
             ),
             SettingsGroup(
@@ -128,9 +128,9 @@ Widget buildManageNotifications(context) => CustomSettingsTile(
       },
     );
 
-Widget buildCountry(context) => CustomSettingsTile(
+Widget buildCountry(context, String country) => CustomSettingsTile(
       title: 'Location customization',
-      subtitle: 'Egypt',
+      subtitle: country,
       leading: const Icon(Icons.location_on_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () {

@@ -1,7 +1,7 @@
+import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
-import 'package:reddit/test_files/test_safety_settings.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -175,6 +175,7 @@ class UserService {
     }
     return null;
   }
+
   void updateProfileSettings(
       String username,
       String displayName,
@@ -258,8 +259,9 @@ class UserService {
   void editSocialLink(
       String username, String id, String displayText, String customUrl) {
     if (testing) {
-      var socialLink =
-          users.firstWhere((element) => element.userAbout.username == username).userAbout
+      var socialLink = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
           .socialLinks!
           .firstWhere((element) => element.id == id);
       socialLink.displayText = displayText;
@@ -336,34 +338,149 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<BlockedUsersItem> getBlockedUsers() {
+  List<BlockedUsersItem> getBlockedUsers(String username) {
     if (testing) {
-      return safetySettings.blockedUsers;
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
     } else {
       // get safety settings from database
     }
-    return safetySettings.blockedUsers;
+    return [];
   }
 
-  void blockUser(String username) {
+  void blockUser(String username, String blockedUsername) {
     if (testing) {
-      safetySettings.blockedUsers.add(BlockedUsersItem(
-        id: safetySettings.blockedUsers.length.toString(),
-        username: username,
-        profilePicture: 'images/pp.jpg',
-        blockedDate: '5 March 2024',
-      ));
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers
+          .add(BlockedUsersItem(
+            username: blockedUsername,
+            profilePicture: users
+                    .firstWhere((element) =>
+                        element.userAbout.username == blockedUsername)
+                    .userAbout
+                    .profilePicture ??
+                'images/Greddit.png',
+            blockedDate: DateTime.now().toString(),
+          ));
     } else {
       // block user in database
     }
   }
 
-  void unblockUser(String username) {
+  void unblockUser(String username, String blockedUsername) {
     if (testing) {
-      safetySettings.blockedUsers
-          .removeWhere((element) => element.username == username);
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers
+          .removeWhere((element) => element.username == blockedUsername);
     } else {
       // unblock user in database
+    }
+  }
+
+  AccountSettings? getAccountSettings(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings;
+    } else {
+      // get account settings from database
+    }
+    return null;
+  }
+
+  bool changeEmail(String username, String newEmail, String password) {
+    if (testing) {
+      if (availableEmail(newEmail) == 400) {
+        return false;
+      }
+      if (password !=
+          users
+              .firstWhere((element) => element.userAbout.username == username)
+              .password) {
+        return false;
+      }
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .email = newEmail;
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings!
+          .email = newEmail;
+      return true;
+    } else {
+      // change email in database
+    }
+    return false;
+  }
+
+  bool changePassword(String username, String newPassword) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .password = newPassword;
+    } else {
+      // change password in database
+    }
+    return true;
+  }
+
+  void changeGender(String username, String gender) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings
+          ?.gender = gender;
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .gender = gender;
+    } else {
+      // change gender in db
+    }
+  }
+
+  void changeCountry(String username, String country) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings
+          ?.country = country;
+
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .country = country;
+    } else {
+      // change country in db
+    }
+  }
+
+  void connectToGoogle(String username) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings
+          ?.connectedGoogle = true;
+    } else {
+      // toggle connect to google in db
+    }
+  }
+
+  void disconnectFromGoogle(String username) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .accountSettings
+          ?.connectedGoogle = false;
+    } else {
+      // toggle disconnect from google in db
     }
   }
 }

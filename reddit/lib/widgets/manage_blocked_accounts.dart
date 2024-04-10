@@ -65,7 +65,8 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
                   ),
                   trailing: ElevatedButton(
                     onPressed: () {
-                      userController.unblockUser(blockedUser.username);
+                      userController.unblockUser(
+                          userController.userAbout!, blockedUser.username);
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -78,7 +79,9 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
                             onPressed: () {
                               // Code to re-block the user
                               undo = true;
-                              userController.blockUser(blockedUser.username);
+                              userController.blockUser(
+                                  userController.userAbout!,
+                                  blockedUser.username);
                             },
                           ),
                         ),
