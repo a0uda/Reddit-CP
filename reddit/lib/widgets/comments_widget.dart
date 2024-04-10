@@ -4,8 +4,9 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
-import 'package:reddit/services/comments_service.dart';
-import 'package:reddit/widgets/post.dart'; // import your CommentsService
+import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/widgets/comment.dart';
+import 'package:reddit/widgets/post.dart';
 
 class CommentsWidget extends StatefulWidget {
   final String postId;
@@ -20,21 +21,69 @@ class CommentsWidgetState extends State<CommentsWidget> {
   PostService postService = GetIt.instance.get<PostService>();
   late Future<List<Comments>> commentsFuture;
   PostItem? post;
+  final TextEditingController commentController = TextEditingController();
+
+  bool upVote = false;
+  bool downVote = false;
+
+  Color? upVoteColor;
+  Color? downVoteColor;
 
   @override
   void initState() {
     super.initState();
     commentsFuture = CommentsService().getCommentByPostId(widget.postId);
-    post = postService.getPostById(widget.postId);
+  }
+
+  final CommentsService commentService = GetIt.instance.get<CommentsService>();
+
+  void incrementCounter(String commentId) {
+    setState(() {
+      if (upVote == false) {
+        commentService;
+
+        upVoteColor = Colors.blue;
+        downVoteColor = Colors.black;
+
+        if (downVote == true) {
+          commentService.upVoteComment(commentId);
+          downVoteColor = Colors.black;
+
+          downVote = false;
+        }
+      } else {
+        commentService.downVoteComment(commentId);
+        upVoteColor = Colors.black;
+      }
+      upVote = !upVote;
+    });
+  }
+
+  void decrementCounter(String commentId) {
+    setState(() {
+      if (downVote == false) {
+        commentService.downVoteComment(commentId);
+        downVoteColor = Colors.red;
+        upVoteColor = Colors.black;
+        if (upVote == true) {
+          commentService.downVoteComment(commentId);
+          upVoteColor = Colors.black;
+          upVote = false;
+        }
+      } else {
+        commentService.upVoteComment(commentId);
+        downVoteColor = Colors.black;
+      }
+      downVote = !downVote;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
+    post = postService.getPostById(widget.postId);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Comments'),
-      ),
       body: post == null
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -70,112 +119,57 @@ class CommentsWidgetState extends State<CommentsWidget> {
                           itemCount: comments?.length,
                           itemBuilder: (context, index) {
                             final comment = comments![index];
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 15,
-                                        backgroundImage: AssetImage(
-                                            userController.userAbout!
-                                                    .profilePicture ??
-                                                'images/Greddit.png'),
-                                      ),
-                                      const SizedBox(
-                                          width:
-                                              10), // Add some space between the picture and the username
-                                      Text(
-                                        comment.username!,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[700],
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Arial',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 0),
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      comment.description!,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        fontFamily: 'Arial',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      IconButton(
-                                        iconSize: 20,
-                                        highlightColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        icon: const Icon(
-                                            Icons.open_in_new_outlined),
-                                        onPressed: () {},
-                                      ),
-                                      IconButton(
-                                        iconSize: 20,
-                                        highlightColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        icon: const Icon(Icons.reply_outlined),
-                                        onPressed: () {},
-                                      ),
-                                      IconButton(
-                                        iconSize: 20,
-                                        //color: upVoteColor,
-                                        highlightColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        icon: const Icon(
-                                            Icons.arrow_upward_sharp),
-                                        onPressed: () {
-                                          // incrementCounter();
-                                        },
-                                      ),
-                                      Text(
-                                        comment.upvotesCount.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        iconSize: 20,
-                                        // color: downVoteColor,
-                                        icon: const Icon(
-                                            Icons.arrow_downward_outlined),
-                                        onPressed: () {
-                                          // decrementCounter();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              // Your comment widget code
-                            );
+                            return Comment(comment: comment);
                           },
                         ),
                       );
                     }
                   },
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 70),
+                ),
               ],
             ),
+      bottomSheet: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          height: 40,
+          color: Colors.white,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  cursorColor: Colors.grey[800],
+                  controller: commentController,
+                  decoration: InputDecoration(
+                    hintText: 'Add a comment',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
+                  onSubmitted: (String value) {
+                    int status = commentService.addComment(
+                        widget.postId,
+                        value,
+                        userController.userAbout!.username,
+                        userController.userAbout?.id ?? '');
+                    if (status == 200) {
+                      setState(() {
+                        commentsFuture =
+                            commentService.getCommentByPostId(widget.postId);
+                      });
+                      commentController.clear();
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
