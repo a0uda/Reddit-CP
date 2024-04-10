@@ -19,11 +19,15 @@ class UserController {
   void blockUser(UserAbout userData, String username) {
     userService.blockUser(userData.username, username);
     blockedUsers = userService.getBlockedUsers(userData.username);
-  }
 
-  void unblockUser(UserAbout userData, String username) {
-    userService.unblockUser(userData.username, username);
-    blockedUsers = userService.getBlockedUsers(userData.username);
+    UserAbout? getUserAbout(String username) {
+      return userService.getUserAbout(username);
+    }
+
+    void unblockUser(UserAbout userData, String username) {
+      userService.unblockUser(userData.username, username);
+      blockedUsers = userService.getBlockedUsers(userData.username);
+    }
   }
 }
 
