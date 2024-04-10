@@ -1,12 +1,13 @@
-import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'profile_header_add_social_link.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({
@@ -18,12 +19,9 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  File? bannerFile;
-  File? profileFile;
-  var userData;
+  late UserAbout? userData;
+  late ProfileSettings? profileSettings;
 
-  Uint8List? bannerWebFile;
-  Uint8List? profileWebFile;
   late TextEditingController nameController;
   late TextEditingController aboutController;
   final userService = GetIt.instance.get<UserService>();
@@ -41,6 +39,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     remainingNameCharacters = 30 - nameController.text.length;
     remainingAboutCharacters = 200 - aboutController.text.length;
     userData = userController.userAbout;
+    profileSettings = userService.getProfileSettings(userData!.username);
   }
 
   @override
@@ -65,9 +64,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       ),
       body: ListView(
         children: [
-          Container(
-            color: const Color.fromARGB(220, 234, 234, 234),
-            height: 1 / 5 * MediaQuery.of(context).size.height,
+          SizedBox(
+            height: 1 / 5 * MediaQuery.of(context).size.height + 40,
             child: Stack(
               children: [
                 GestureDetector(
@@ -79,41 +77,63 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     color: Colors.grey[400]!,
                     child: Container(
                       width: double.infinity,
-                      height: 150,
+                      height: 1 / 5 * MediaQuery.of(context).size.height,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.camera_alt_outlined,
-                          color: Colors.grey,
-                          size: 40,
-                        ),
-                      ),
+                      child: userData!.bannerPicture != null
+                          ? Image(
+                              image: AssetImage(userData!.bannerPicture!),
+                              fit: BoxFit.fill,
+                            )
+                          : Container(
+                              color: Colors.grey[300],
+                              child: const Center(
+                                child: Icon(
+                                  FluentIcons.camera_add_20_regular,
+                                  size: 30,
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  top: 1 / 5 * MediaQuery.of(context).size.height - 50,
                   left: 20,
                   child: GestureDetector(
                     onTap: () => {},
-                    child: profileWebFile != null
-                        ? CircleAvatar(
-                            backgroundImage: MemoryImage(profileWebFile!),
-                            radius: 32,
-                          )
-                        : profileFile != null
-                            ? CircleAvatar(
-                                backgroundImage: FileImage(profileFile!),
-                                radius: 32,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(userData!.profilePicture ??
+                                  'images/Greddit.png'),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                        userData!.profilePicture == null
+                            ? const CircleAvatar(
+                                radius: 35,
+                                backgroundColor: Color.fromARGB(22, 0, 0, 0),
+                                child: Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  child: Icon(
+                                    FluentIcons.camera_add_20_regular,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
                               )
-                            : CircleAvatar(
-                                backgroundImage: AssetImage(
-                                    userData.profilePicture ??
-                                        'images/Greddit.png'),
-                                radius: 32,
-                              ),
+                            : Container(),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -240,10 +260,37 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Consumer<SocialLinksController>(
-                  builder: (context, socialLinksController, child) {
-                    return ProfileHeaderAddSocialLink(userData, 'me', false);
-                  },
+                ProfileHeaderAddSocialLink(userData!, 'me', false),
+                const SizedBox(height: 30),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    'Content visibility',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  subtitle: const Text(
+                    'Posts to this profile can appear in r/all and your profile can be discovered in /users',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  trailing: Switch(
+                    value: profileSettings!.contentVisibility,
+                    onChanged: (value) {},
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    'Show active communities',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  subtitle: const Text(
+                    'Decide whether to show the communities you are active in on your profile',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  trailing: Switch(
+                    value: profileSettings!.activeCommunity,
+                    onChanged: (value) {},
+                  ),
                 ),
               ],
             ),

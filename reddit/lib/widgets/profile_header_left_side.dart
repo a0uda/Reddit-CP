@@ -23,14 +23,10 @@ class ProfileHeaderLeftSide extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 15, left: 20),
-            child: ClipOval(
-              child: Image(
-                image:
-                    AssetImage(userData.profilePicture ?? 'images/Greddit.png'),
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage:
+                  AssetImage(userData.profilePicture ?? 'images/Greddit.png'),
             ),
           ),
           Padding(

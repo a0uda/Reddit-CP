@@ -1,19 +1,21 @@
+import 'package:reddit/Models/social_link_item.dart';
+
 class UserAbout {
-  final String? id;
-  final String? createdAt;
-  final String username;
-  final String? email;
-  final bool? verifiedEmailFlag;
-  final String? gmail;
-  final String? facebookEmail;
-  final String? displayName;
-  final String? about;
-  final List<SocialLlinkItem>? socialLinks;
-  final String? profilePicture;
-  final String? bannerPicture;
-  final String? country;
-  final String? gender;
-  final bool? connectedGoogle;
+  String? id;
+  String? createdAt;
+  String username;
+  String? email;
+  bool? verifiedEmailFlag;
+  String? gmail;
+  String? facebookEmail;
+  String? displayName;
+  String? about;
+  List<SocialLlinkItem>? socialLinks;
+  String? profilePicture;
+  String? bannerPicture;
+  String? country;
+  String? gender;
+  bool? connectedGoogle;
 
   UserAbout({
     this.id,
@@ -34,18 +36,4 @@ class UserAbout {
   });
 }
 
-class SocialLlinkItem {
-  final String id;
-  final String username;
-  final String displayText;
-  final String type;
-  final String customUrl;
 
-  SocialLlinkItem({
-    required this.id,
-    required this.username,
-    required this.displayText,
-    required this.type,
-    required this.customUrl,
-  });
-}

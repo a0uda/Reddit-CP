@@ -1,3 +1,6 @@
+import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/social_link_item.dart';
+
 import '../Models/comments.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -14,6 +17,7 @@ final List<UserItem> users = [
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
       profilePicture: 'images/pp.jpg',
+      country: 'Egypt',
       gender: 'Female',
       socialLinks: [
         SocialLlinkItem(
@@ -65,8 +69,8 @@ final List<UserItem> users = [
         email: 'rawan7544@gmail.com',
         verifiedEmailFlag: true,
         profileSettings: FollowersProfileSettings(
-          about: 'I am a software engineer',
-        ),
+            about: 'I am a software engineer',
+            bannerPicture: 'images/Greddit.png'),
       ),
       FollowersFollowingItem(
         id: '2',
@@ -109,6 +113,12 @@ final List<UserItem> users = [
       ),
     ],
     comments: comments1,
+    profileSettings: ProfileSettings(
+      displayName: 'Rawan Adel',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
   ),
   UserItem(
     userAbout: UserAbout(
@@ -178,6 +188,7 @@ final List<UserItem> users = [
       username: 'jane123',
       gender: 'Female',
       email: 'rawan7544@gmail.com',
+      bannerPicture: 'images/Greddit.png',
       verifiedEmailFlag: true,
       displayName: 'Jane',
       about: 'I am a software engineer',
