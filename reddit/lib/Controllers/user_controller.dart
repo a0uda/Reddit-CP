@@ -16,6 +16,10 @@ class UserController {
     blockedUsers = userService.getBlockedUsers();
   }
 
+  UserAbout? getUserAbout(String username) {
+    return userService.getUserAbout(username);
+  }
+
   void blockUser(String username) {
     userService.blockUser(username);
     blockedUsers = userService.getBlockedUsers();

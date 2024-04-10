@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/report.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -53,7 +54,6 @@ class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
-  UserController ownerController = GetIt.instance.get<UserController>();
 
   bool upVote = false;
   bool downVote = false;
@@ -113,7 +113,7 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    ownerController.getUser(widget.name);
+    UserAbout ownerAbout = userController.getUserAbout(widget.name)!;
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
 
