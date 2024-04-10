@@ -1,7 +1,7 @@
 import 'package:reddit/Models/blocked_users_item.dart';
-import 'package:reddit/Models/safety_settings_item.dart';
+import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/test_files/test_safety_settings.dart';
-
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -66,18 +66,6 @@ class UserService {
           ));
     } else {
       // add social link to database
-    }
-  }
-
-  void deleteSocialLinkService(String username, String id) {
-    if (testing) {
-      users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .removeWhere((element) => element.id == id);
-    } else {
-      // delete social link from database
     }
   }
 
@@ -174,6 +162,112 @@ class UserService {
       // get comments from database
     }
     return null;
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ProfileSettings? getProfileSettings(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .profileSettings;
+    } else {
+      // get profile settings from database
+    }
+    return null;
+  }
+  void updateProfileSettings(
+      String username,
+      String displayName,
+      String about,
+      bool? nsfwFlag,
+      bool? allowFollowers,
+      bool contentVisibility,
+      bool activeCommunity) {
+    if (testing) {
+      var user =
+          users.firstWhere((element) => element.userAbout.username == username);
+      user.userAbout.displayName = displayName;
+      user.userAbout.about = about;
+      nsfwFlag != null ? user.profileSettings?.nsfwFlag = nsfwFlag : null;
+      allowFollowers != null
+          ? user.profileSettings?.allowFollowers = allowFollowers
+          : null;
+      user.profileSettings?.contentVisibility = contentVisibility;
+      user.profileSettings?.activeCommunity = activeCommunity;
+    } else {
+      // update profile settings in database
+    }
+  }
+
+  void addBannerPicture(String username, String bannerPicture) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .bannerPicture = bannerPicture;
+    } else {
+      // add banner picture to database
+    }
+  }
+
+  void addProfilePicture(String username, String profilePicture) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .profilePicture = profilePicture;
+    } else {
+      // add profile picture to database
+    }
+  }
+
+  void removeBannerPicture(String username) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .bannerPicture = null;
+    } else {
+      // remove banner picture from database
+    }
+  }
+
+  void removeProfilePicture(String username) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .profilePicture = null;
+    } else {
+      // remove profile picture from database
+    }
+  }
+
+  void deleteSocialLink(String username, String id) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .removeWhere((element) => element.id == id);
+    } else {
+      // delete social link from database
+    }
+  }
+
+  void editSocialLink(
+      String username, String id, String displayText, String customUrl) {
+    if (testing) {
+      var socialLink =
+          users.firstWhere((element) => element.userAbout.username == username).userAbout
+          .socialLinks!
+          .firstWhere((element) => element.id == id);
+      socialLink.displayText = displayText;
+      socialLink.username = displayText;
+      socialLink.customUrl = customUrl;
+    } else {
+      // edit social link in database
+    }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

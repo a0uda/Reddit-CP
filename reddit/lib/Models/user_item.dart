@@ -1,6 +1,7 @@
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
+import '../Models/profile_settings.dart';
 
 class UserItem {
   final UserAbout userAbout;
@@ -8,6 +9,7 @@ class UserItem {
   final List<FollowersFollowingItem>? followers;
   final List<FollowersFollowingItem>? following;
   final List<Comments>? comments;
+  final ProfileSettings? profileSettings;
 
   UserItem({
     required this.userAbout,
@@ -15,5 +17,6 @@ class UserItem {
     this.followers,
     this.following,
     this.comments,
+    this.profileSettings,
   });
 }

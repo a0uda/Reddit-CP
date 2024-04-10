@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
         length: 3,
         child: Column(
           children: <Widget>[
-            ProfileHeader(userData, userType, onUpdate),
+            ProfileHeader(userData!, userType, onUpdate),
             Container(
               height: 50,
               color: Colors.white,

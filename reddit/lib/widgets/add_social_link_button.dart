@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'social_media_buttons.dart';
 import 'add_social_link_form.dart';
 import 'package:icons_plus/icons_plus.dart';
-import '../Models/user_about.dart';
+
 
 class AddSocialLinkButton extends StatelessWidget {
   final bool notEditProfile;
@@ -120,7 +120,7 @@ class IconButtonWithText extends StatelessWidget {
   final String text;
   final Brand icon;
 
-  IconButtonWithText({
+  const IconButtonWithText({
     super.key,
     required this.text,
     required this.icon,
@@ -131,7 +131,7 @@ class IconButtonWithText extends StatelessWidget {
     return TextButton(
       onPressed: () async {
         Navigator.pop(context);
-        final result = await Navigator.push(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => AddSocialLinkForm(

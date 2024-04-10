@@ -19,7 +19,7 @@ class EndDrawerReddit extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundImage:
-                      AssetImage(userController.userAbout!.profilePicture!),
+                      AssetImage(userController.userAbout?.profilePicture??'images/Greddit.png'),
                   radius: 40,
                 ),
                 Padding(
