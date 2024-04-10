@@ -7,6 +7,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_social_link_button.dart';
 import '../Models/user_about.dart';
+import 'add_social_link_form.dart';
 
 class ProfileHeaderAddSocialLink extends StatefulWidget {
   final UserAbout userData;
@@ -56,7 +57,22 @@ class _ProfileHeaderAddSocialLinkState
                         String websiteName = linkData.type.toLowerCase();
                         return TextButton(
                           onPressed: () {
-                            launchUrl(Uri.parse(linkData.customUrl));
+                            if (notEditProfile) {
+                              launchUrl(Uri.parse(linkData.customUrl));
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddSocialLinkForm(
+                                    socialMediaIcon:
+                                        getSocialMediaIcon(websiteName)!,
+                                    socialLink: websiteName,
+                                    isEdit: true,
+                                    socialLinkItem: linkData,
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(

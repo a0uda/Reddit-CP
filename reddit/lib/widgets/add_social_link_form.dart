@@ -1,42 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Models/social_link_item.dart';
 import '../Controllers/user_controller.dart';
-import '../Services/user_service.dart';
 import 'package:get_it/get_it.dart';
 
 class AddSocialLinkForm extends StatefulWidget {
   final Brand socialMediaIcon;
   final String socialLink;
+  final bool isEdit;
+  final SocialLlinkItem? socialLinkItem;
 
   const AddSocialLinkForm({
     super.key,
     required this.socialMediaIcon,
     required this.socialLink,
+    this.isEdit = false,
+    this.socialLinkItem,
   });
 
   @override
-  AddSocialLinkFormState createState() => AddSocialLinkFormState(
-      socialMediaIcon: socialMediaIcon, socialLink: socialLink);
+  AddSocialLinkFormState createState() => AddSocialLinkFormState();
 }
 
 class AddSocialLinkFormState extends State<AddSocialLinkForm> {
   late Brand socialMediaIcon;
   late String socialLink;
-
-  AddSocialLinkFormState(
-      {required this.socialMediaIcon, required this.socialLink});
-
+  bool isEdit = false;
+  SocialLlinkItem? socialLinkItem;
   TextEditingController usernameController = TextEditingController();
   TextEditingController linkController = TextEditingController();
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-//  final userService = GetIt.instance.get<UserService>();
+  @override
+  void initState() {
+    super.initState();
+    socialMediaIcon = widget.socialMediaIcon;
+    socialLink = widget.socialLink;
+    isEdit = widget.isEdit;
+    socialLinkItem = widget.socialLinkItem;
+    if (isEdit == true) {
+      usernameController =
+          TextEditingController(text: socialLinkItem!.username);
+      linkController = TextEditingController(text: socialLinkItem!.customUrl);
+    } else {
+      usernameController = TextEditingController();
+      linkController = TextEditingController();
+    }
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
-    var socialLinksController = context.watch<SocialLinksController>();
+    var socialLinksController = context.read<SocialLinksController>();
     return Material(
       child: FractionallySizedBox(
         heightFactor: 0.9,
@@ -61,46 +78,37 @@ class AddSocialLinkFormState extends State<AddSocialLinkForm> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          Navigator.pop(
-                              context, userController.userAbout?.socialLinks);
+                          Navigator.pop(context);
                         },
                         icon: const Icon(Icons.close),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
-                          child: Text('Add Social Link',
-                              style: TextStyle(
+                          child: Text(
+                              isEdit ? 'Edit Social link' : 'Add Social Link',
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15)),
                         ),
                       ),
                       TextButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
-                            // userService.addSocialLink(
-                            //   userController.userAbout!.username,
-                            //   usernameController.text,
-                            //   socialLink,
-                            //   linkController.text,
-                            // );
-                            // Provider.of<SocialLinksController>(context,
-                            //         listen: false)
-                            //     .addSocialLink(
-                            //   userController.userAbout!,
-                            //   socialLink,
-                            //   linkController.text,
-                            // );
-                            socialLinksController.addSocialLink(
-                              userController.userAbout!.username,
-                              usernameController.text,
-                              socialLink,
-                              linkController.text,
-                            );
-                            print(
-                                'social link added successfully ${userController.userAbout?.socialLinks}');
-                            Navigator.pop(
-                                context, userController.userAbout?.socialLinks);
-                          } else {
-                            print('form is invalid');
+                            if (isEdit) {
+                              socialLinksController.editSocialLink(
+                                userController.userAbout!.username,
+                                socialLinkItem!.id,
+                                usernameController.text,
+                                linkController.text,
+                              );
+                            } else {
+                              socialLinksController.addSocialLink(
+                                usernameController.text,
+                                usernameController.text,
+                                socialLink,
+                                linkController.text,
+                              );
+                            }
+                            Navigator.pop(context);
                           }
                         },
                         child: const Text(
