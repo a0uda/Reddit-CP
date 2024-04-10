@@ -11,8 +11,8 @@ class Comments {
   String? editedAt;
   String? deletedAt;
   String? description;
-  int? upvotesCount;
-  int? downvotesCount;
+  int upvotesCount;
+  int downvotesCount;
   bool? allowrepliesFlag;
   bool? spamFlag;
   bool? lockedFlag;
@@ -32,8 +32,8 @@ class Comments {
     this.editedAt,
     this.deletedAt,
     this.description,
-    this.upvotesCount,
-    this.downvotesCount,
+    required this.upvotesCount,
+    required this.downvotesCount,
     this.allowrepliesFlag,
     this.spamFlag,
     this.lockedFlag,

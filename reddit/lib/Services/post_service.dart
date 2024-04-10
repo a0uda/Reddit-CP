@@ -106,6 +106,10 @@ class PostService {
       // update poll in database
     }
   }
+
+  PostItem getPostById(String id) {
+    return posts.firstWhere((element) => element.id == id);
+  }
 }
 
 

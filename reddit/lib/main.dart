@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
@@ -15,6 +17,7 @@ void main() async {
   // Registering MockService with GetIt
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(); //TODO : FIREBASE
+  GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
