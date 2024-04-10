@@ -89,8 +89,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).platform == TargetPlatform.android &&
-        MediaQuery.of(context).size.width < 600) {
+    if (Theme.of(context).platform == TargetPlatform.android) {
       double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
       marginAppBarTop = screenHeight * 0.0128;
