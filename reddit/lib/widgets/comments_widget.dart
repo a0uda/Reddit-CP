@@ -40,7 +40,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
   void incrementCounter(String commentId) {
     setState(() {
       if (upVote == false) {
-        commentService;
+        commentService.upVoteComment(commentId);
 
         upVoteColor = Colors.blue;
         downVoteColor = Colors.black;

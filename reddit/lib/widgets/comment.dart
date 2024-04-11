@@ -26,7 +26,7 @@ class _CommentState extends State<Comment> {
   void incrementCounter(String commentId) {
     setState(() {
       if (upVote == false) {
-        commentService;
+        commentService.upVoteComment(commentId);
 
         upVoteColor = Colors.blue;
         downVoteColor = Colors.black;
