@@ -483,4 +483,38 @@ class UserService {
       // toggle disconnect from google in db
     }
   }
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void savePost(String username, String postId) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .savedPostsIds!
+          .add(postId);
+    } else {
+      // save post in db
+    }
+  }
+
+  void unsavePost(String username, String postId) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .savedPostsIds!
+          .remove(postId);
+    } else {
+      // unsave post in db
+    }
+  }
+
+  List<String>? getSavedPosts(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .savedPostsIds;
+    } else {
+      // get saved posts from db
+    }
+    return null;
+  }
 }

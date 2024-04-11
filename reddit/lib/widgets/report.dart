@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
+  final String postId;
   const Options({
     super.key,
+    required this.postId,
   });
 
   @override
@@ -11,6 +15,7 @@ class Options extends StatefulWidget {
 }
 
 class Postoptions extends State<Options> {
+  UserController userController = GetIt.instance.get<UserController>();
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
@@ -18,7 +23,10 @@ class Postoptions extends State<Options> {
       itemBuilder: (context) => [
         PopupMenuItem(
           value: 1,
-          onTap: () => {},
+          onTap: () => {
+            userController.savePost(
+                userController.userAbout!.username, widget.postId)
+          },
           child: const Row(
             children: [
               Icon(Icons.save),

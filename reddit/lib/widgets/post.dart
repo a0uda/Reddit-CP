@@ -226,7 +226,7 @@ class PostState extends State<Post> {
                     ),
                   ],
                 ),
-                trailing: const Options(),
+                trailing: Options(postId: widget.id),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),

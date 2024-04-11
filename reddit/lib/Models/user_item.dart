@@ -14,6 +14,7 @@ class UserItem {
   final ProfileSettings? profileSettings;
   final SafetyAndPrivacySettings? safetySettings;
   final AccountSettings? accountSettings;
+  final List<String>? savedPostsIds;
 
   UserItem({
     required this.userAbout,
@@ -24,5 +25,6 @@ class UserItem {
     this.profileSettings,
     this.safetySettings,
     this.accountSettings,
+    this.savedPostsIds,
   });
 }

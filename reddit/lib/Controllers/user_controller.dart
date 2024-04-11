@@ -61,6 +61,18 @@ class UserController {
   void disconnectFromGoogle(String username) {
     userService.disconnectFromGoogle(username);
   }
+
+  void savePost(String username, String postId) {
+    userService.savePost(username, postId);
+  }
+
+  void unsavePost(String username, String postId) {
+    userService.unsavePost(username, postId);
+  }
+
+  List<String>? getSavedPosts(String username) {
+    return userService.getSavedPosts(username);
+  }
 }
 
 class SocialLinksController extends ChangeNotifier {
@@ -98,7 +110,8 @@ class BannerPictureController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
 
   void changeBannerPicture(String bannerPicture) {
-    userService.addBannerPicture(userController.userAbout!.username, bannerPicture);
+    userService.addBannerPicture(
+        userController.userAbout!.username, bannerPicture);
     userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }
@@ -115,7 +128,8 @@ class ProfilePictureController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
 
   void changeProfilePicture(String profilePicture) {
-    userService.addProfilePicture(userController.userAbout!.username, profilePicture);
+    userService.addProfilePicture(
+        userController.userAbout!.username, profilePicture);
     userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }
@@ -146,8 +160,16 @@ class EditProfileController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  void editProfile(String displayName,String about,bool? nsfw,bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
-    userService.updateProfileSettings(userController.userAbout!.username, displayName, about, nsfw, allowFollowers, contentVisibility, activeCommunity);
+  void editProfile(String displayName, String about, bool? nsfw,
+      bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
+    userService.updateProfileSettings(
+        userController.userAbout!.username,
+        displayName,
+        about,
+        nsfw,
+        allowFollowers,
+        contentVisibility,
+        activeCommunity);
     userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }

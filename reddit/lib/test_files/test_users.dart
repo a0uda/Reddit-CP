@@ -11,6 +11,7 @@ import '../Models/followers_following_item.dart';
 
 final List<UserItem> users = [
   UserItem(
+    savedPostsIds: [],
     userAbout: UserAbout(
       id: '0',
       createdAt: '5 March 2024',
@@ -161,6 +162,7 @@ final List<UserItem> users = [
     ),
   ),
   UserItem(
+      savedPostsIds: [],
       userAbout: UserAbout(
         id: '1',
         createdAt: '5 March 2024',
@@ -246,6 +248,7 @@ final List<UserItem> users = [
         connectedGoogle: true,
       )),
   UserItem(
+    savedPostsIds: [],
     userAbout: UserAbout(
       id: '2',
       createdAt: '5 March 2024',
@@ -323,6 +326,7 @@ final List<UserItem> users = [
     ),
   ),
   UserItem(
+    savedPostsIds: [],
     userAbout: UserAbout(
       id: '3',
       createdAt: '5 March 2024',
