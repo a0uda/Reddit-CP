@@ -37,47 +37,6 @@ class CommentsWidgetState extends State<CommentsWidget> {
 
   final CommentsService commentService = GetIt.instance.get<CommentsService>();
 
-  void incrementCounter(String commentId) {
-    setState(() {
-      if (upVote == false) {
-        commentService.upVoteComment(commentId);
-
-        upVoteColor = Colors.blue;
-        downVoteColor = Colors.black;
-
-        if (downVote == true) {
-          commentService.upVoteComment(commentId);
-          downVoteColor = Colors.black;
-
-          downVote = false;
-        }
-      } else {
-        commentService.downVoteComment(commentId);
-        upVoteColor = Colors.black;
-      }
-      upVote = !upVote;
-    });
-  }
-
-  void decrementCounter(String commentId) {
-    setState(() {
-      if (downVote == false) {
-        commentService.downVoteComment(commentId);
-        downVoteColor = Colors.red;
-        upVoteColor = Colors.black;
-        if (upVote == true) {
-          commentService.downVoteComment(commentId);
-          upVoteColor = Colors.black;
-          upVote = false;
-        }
-      } else {
-        commentService.upVoteComment(commentId);
-        downVoteColor = Colors.black;
-      }
-      downVote = !downVote;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
