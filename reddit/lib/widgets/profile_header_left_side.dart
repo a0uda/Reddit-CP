@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'follower_list.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
@@ -21,14 +25,27 @@ class ProfileHeaderLeftSide extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 15, left: 20),
-            child: CircleAvatar(
-              radius: 50,
-              backgroundImage:
-                  AssetImage(userData.profilePicture ?? 'images/Greddit.png'),
-            ),
-          ),
+          Consumer<ProfilePictureController>(
+              builder: (context, profilepicturecontroller, child) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 15, left: 20),
+              child: userData.profilePicture == null
+                  ? const CircleAvatar(
+                      radius: 50,
+                      backgroundImage: AssetImage('images/Greddit.png'),
+                    )
+                  : File(userData.profilePicture!).existsSync()
+                      ? CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              FileImage(File(userData.profilePicture!)),
+                        )
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage(userData.profilePicture!),
+                        ),
+            );
+          }),
           Padding(
             padding: const EdgeInsets.only(left: 20, bottom: 5),
             child: Text(

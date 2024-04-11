@@ -28,6 +28,18 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => SocialLinksController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => BannerPictureController(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ProfilePictureController(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => FollowerFollowingController(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => EditProfileController(),
+      ),
     ],
     child: MyApp(),
   ));
