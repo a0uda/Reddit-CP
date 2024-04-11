@@ -20,7 +20,7 @@ class ProfileScreen extends StatelessWidget {
           children: <Widget>[
             ProfileHeader(userData!, userType),
             Container(
-              height: 50,
+              height: 40,
               color: Colors.white,
               child: const TabBar(
                 indicatorColor: Color.fromARGB(255, 24, 82, 189),

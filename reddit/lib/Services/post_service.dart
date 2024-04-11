@@ -1,5 +1,4 @@
 //import 'package:media_kit/ffi/ffi.dart';
-import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';

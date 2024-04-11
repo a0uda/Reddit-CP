@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
-import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/user_about.dart';

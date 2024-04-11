@@ -4,6 +4,7 @@ import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
 import '../Models/profile_settings.dart';
 import '../Models/safety_settings_item.dart';
+import '../Models/community_item.dart';
 
 class UserItem {
   final UserAbout userAbout;
@@ -14,6 +15,7 @@ class UserItem {
   final ProfileSettings? profileSettings;
   final SafetyAndPrivacySettings? safetySettings;
   final AccountSettings? accountSettings;
+  List<CommunityItem>? activecommunities;
 
   UserItem({
     required this.userAbout,
@@ -24,5 +26,6 @@ class UserItem {
     this.profileSettings,
     this.safetySettings,
     this.accountSettings,
+    this.activecommunities,
   });
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Models/rules_item.dart';
 
 class DescriptionWidget extends StatelessWidget {
   const DescriptionWidget(

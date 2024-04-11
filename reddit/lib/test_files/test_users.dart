@@ -8,6 +8,7 @@ import '../Models/comments.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
+import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
@@ -120,7 +121,7 @@ final List<UserItem> users = [
     profileSettings: ProfileSettings(
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
-      contentVisibility: true,
+      contentVisibility: false,
       activeCommunity: true,
     ),
     safetySettings: SafetyAndPrivacySettings(
@@ -159,6 +160,11 @@ final List<UserItem> users = [
       gmail: 'rawan7544@gmail.com',
       connectedGoogle: true,
     ),
+    activecommunities: [
+      communities[0],
+      communities[1],
+      communities[2],
+    ],
   ),
   UserItem(
       userAbout: UserAbout(
@@ -321,6 +327,10 @@ final List<UserItem> users = [
         ),
       ],
     ),
+    activecommunities: [
+      communities[2],
+      communities[3],
+    ],
   ),
   UserItem(
     userAbout: UserAbout(
