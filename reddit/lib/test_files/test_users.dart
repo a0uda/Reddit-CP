@@ -17,6 +17,7 @@ final List<UserItem> users = [
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
       profilePicture: 'images/pp.jpg',
+      bannerPicture: null,
       country: 'Egypt',
       gender: 'Female',
       socialLinks: [
@@ -188,6 +189,7 @@ final List<UserItem> users = [
       username: 'jane123',
       gender: 'Female',
       email: 'rawan7544@gmail.com',
+      profilePicture: null,
       bannerPicture: 'images/Greddit.png',
       verifiedEmailFlag: true,
       displayName: 'Jane',

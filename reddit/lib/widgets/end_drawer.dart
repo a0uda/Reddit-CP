@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Pages/login.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
@@ -13,22 +16,36 @@ class EndDrawerReddit extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          DrawerHeader(
-              child: IntrinsicHeight(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  backgroundImage:
-                      AssetImage(userController.userAbout?.profilePicture??'images/Greddit.png'),
-                  radius: 40,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(userController.userAbout!.username,
-                      style: const TextStyle(fontSize: 20)),
-                )
-              ],
-            ),
+          DrawerHeader(child: IntrinsicHeight(
+            child: Consumer<ProfilePictureController>(
+                builder: (context, profilepicturecontroller, child) {
+              return Column(
+                children: [
+                  userController.userAbout!.profilePicture == null
+                      ? const CircleAvatar(
+                          radius: 40,
+                          backgroundImage: AssetImage('images/Greddit.png'),
+                        )
+                      : File(userController.userAbout!.profilePicture!)
+                              .existsSync()
+                          ? CircleAvatar(
+                              radius: 40,
+                              backgroundImage: FileImage(File(
+                                  userController.userAbout!.profilePicture!)),
+                            )
+                          : CircleAvatar(
+                              radius: 40,
+                              backgroundImage: AssetImage(
+                                  userController.userAbout!.profilePicture!),
+                            ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(userController.userAbout!.username,
+                        style: const TextStyle(fontSize: 20)),
+                  )
+                ],
+              );
+            }),
           )),
           ListTile(
             leading: const Icon(Icons.account_circle_outlined),
@@ -39,7 +56,7 @@ class EndDrawerReddit extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ProfileScreen(userController.userAbout, 'me', null)),
+                        ProfileScreen(userController.userAbout, 'me')),
               );
             },
           ),

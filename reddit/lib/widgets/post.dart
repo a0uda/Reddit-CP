@@ -191,7 +191,6 @@ class PostState extends State<Post> {
                                 builder: (context) => ProfileScreen(
                                   userService.getUserAbout(widget.name),
                                   userType,
-                                  null,
                                 ),
                               ),
                             ),

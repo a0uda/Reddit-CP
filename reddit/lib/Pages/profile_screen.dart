@@ -6,8 +6,7 @@ import '../Models/user_about.dart';
 class ProfileScreen extends StatelessWidget {
   final UserAbout? userData;
   final String userType;
-  final Function? onUpdate;
-  const ProfileScreen(this.userData, this.userType, this.onUpdate, {super.key});
+  const ProfileScreen(this.userData, this.userType, {super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +18,7 @@ class ProfileScreen extends StatelessWidget {
         length: 3,
         child: Column(
           children: <Widget>[
-            ProfileHeader(userData!, userType, onUpdate),
+            ProfileHeader(userData!, userType),
             Container(
               height: 50,
               color: Colors.white,

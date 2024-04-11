@@ -100,7 +100,7 @@ class AddSocialLinkButton extends StatelessWidget {
                     ? const Color.fromARGB(255, 175, 174, 174)
                     : Colors.black,
                 size: 20),
-            SizedBox(width: 3),
+            const SizedBox(width: 3),
             Text(
               'Add social link',
               style: TextStyle(
