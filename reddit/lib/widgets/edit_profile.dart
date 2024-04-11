@@ -35,6 +35,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   int remainingAboutCharacters = 200;
   late String? _bannerimagepath;
   late String? _profileImagePath;
+  late bool activeCommunity;
+  late bool contentVisibility;
 
   @override
   void initState() {
@@ -49,6 +51,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     profileSettings = userService.getProfileSettings(userData!.username);
     _bannerimagepath = userData!.bannerPicture;
     _profileImagePath = userData!.profilePicture;
+    activeCommunity = profileSettings!.activeCommunity;
+    contentVisibility = profileSettings!.contentVisibility;
   }
 
   @override
@@ -152,8 +156,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
       aboutController.text,
       true,
       true,
-      true,
-      true,
+      contentVisibility,
+      activeCommunity,
     );
 
     var bannerPictureController = context.read<BannerPictureController>();
@@ -423,8 +427,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   trailing: Switch(
-                    value: profileSettings!.contentVisibility,
-                    onChanged: (value) {},
+                    value: contentVisibility,
+                    onChanged: (value) {
+                      setState(() {
+                        contentVisibility = value;
+                      });
+                    },
+                    thumbColor: MaterialStateProperty.all(Colors.white),
+                    activeTrackColor: Colors.blue[900],
+                    inactiveTrackColor: Colors.grey[300],
+                    trackOutlineColor:
+                        MaterialStateProperty.all(Colors.grey[300]),
                   ),
                 ),
                 ListTile(
@@ -438,8 +451,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   trailing: Switch(
-                    value: profileSettings!.activeCommunity,
-                    onChanged: (value) {},
+                    value: activeCommunity,
+                    onChanged: (value) {
+                      setState(() {
+                        activeCommunity = value;
+                      });
+                    },
+                    thumbColor: MaterialStateProperty.all(Colors.white),
+                    activeTrackColor: Colors.blue[900],
+                    inactiveTrackColor: Colors.grey[300],
+                    trackOutlineColor:
+                        MaterialStateProperty.all(Colors.grey[300]),
                   ),
                 ),
               ],

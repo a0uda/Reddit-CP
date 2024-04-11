@@ -44,7 +44,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
         padding: const EdgeInsets.only(right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
+          //mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 20),

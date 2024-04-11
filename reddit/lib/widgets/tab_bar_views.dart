@@ -11,7 +11,7 @@ class TabBarViews extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabBarView(
       children: [
-        const Center(child: TabBarPosts()),
+        const TabBarPosts(),
         TabBarComments(userData: userData),
         TabBarAbout(userData),
       ],

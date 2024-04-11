@@ -1,5 +1,6 @@
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import '../Models/user_item.dart';
@@ -270,6 +271,18 @@ class UserService {
     } else {
       // edit social link in database
     }
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  List<CommunityItem>? getActiveCommunities(String username) {
+    if (testing) {
+      return users
+          .firstWhere((element) => element.userAbout.username == username)
+          .activecommunities!;
+    } else {
+      // get active communities from database
+    }
+    return null;
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

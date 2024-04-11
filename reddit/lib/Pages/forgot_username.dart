@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Pages/login.dart';
 
 class ForgotUsernamePage extends StatefulWidget {
   const ForgotUsernamePage({super.key});

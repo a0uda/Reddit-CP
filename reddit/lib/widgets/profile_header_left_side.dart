@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'follower_list.dart';
@@ -23,12 +24,11 @@ class ProfileHeaderLeftSide extends StatelessWidget {
       width: (2 / 3) * screenWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Consumer<ProfilePictureController>(
               builder: (context, profilepicturecontroller, child) {
             return Padding(
-              padding: const EdgeInsets.only(top: 15, left: 20),
+              padding: const EdgeInsets.only(left: 20),
               child: userData.profilePicture == null
                   ? const CircleAvatar(
                       radius: 50,
@@ -47,51 +47,63 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             );
           }),
           Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 5),
+            padding: const EdgeInsets.only(left: 20, bottom: 0),
             child: Text(
               userData.displayName ?? userData.username,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          ListTile(
-            contentPadding: const EdgeInsets.only(left: 20, bottom: 15),
-            title: userType == 'me'
-                ? Row(
-                    children: <Widget>[
-                      Text(
-                        '${userService.getFollowersCount(userData.username)} followers',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const FollowerList(),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 10, top: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                userType == 'me'
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            '${userService.getFollowersCount(userData.username)} followers',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        },
-                        icon: const Icon(Icons.arrow_forward_ios_rounded),
-                        color: Colors.white,
-                        iconSize: 15,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const FollowerList(),
+                                ),
+                              );
+                            },
+                            padding: const EdgeInsets.only(top: 28),
+                            icon: const Icon(Icons.arrow_forward_ios_rounded),
+                            color: Colors.white,
+                            iconSize: 12,
+                          )
+                        ],
                       )
-                    ],
-                  )
-                : null,
-            subtitle: Text(
-              'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
+                    : Container(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
