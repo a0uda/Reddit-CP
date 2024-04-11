@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
@@ -107,18 +110,31 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
         userLoggedIn
             ? Padding(
                 padding: const EdgeInsets.only(right: 20.0, left: 5),
-                child: GestureDetector(
-                  child: const CircleAvatar(
-                    backgroundImage: AssetImage(
-                      "images/pp.jpg",
-                    ),
-                    radius: 16,
-                  ),
-                  onTap: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                ),
-              )
+                child: Consumer<ProfilePictureController>(
+                    builder: (context, profilepicturecontroller, child) {
+                  return GestureDetector(
+                    child: userController.userAbout!.profilePicture == null
+                        ? const CircleAvatar(
+                            radius: 18,
+                            backgroundImage: AssetImage('images/Greddit.png'),
+                          )
+                        : File(userController.userAbout!.profilePicture!)
+                                .existsSync()
+                            ? CircleAvatar(
+                                radius: 18,
+                                backgroundImage: FileImage(File(
+                                    userController.userAbout!.profilePicture!)),
+                              )
+                            : CircleAvatar(
+                                radius: 18,
+                                backgroundImage: AssetImage(
+                                    userController.userAbout!.profilePicture!),
+                              ),
+                    onTap: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  );
+                }))
             : const SizedBox(),
         !userLoggedIn
             ? Padding(

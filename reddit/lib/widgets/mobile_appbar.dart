@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/search_bar.dart';
@@ -64,18 +67,31 @@ class _MobileAppBarState extends State<MobileAppBar> {
         userLoggedIn
             ? Padding(
                 padding: const EdgeInsets.only(right: 20.0),
-                child: GestureDetector(
-                  child: const CircleAvatar(
-                    backgroundImage: AssetImage(
-                      "images/pp.jpg",
-                    ),
-                    radius: 16,
-                  ),
-                  onTap: () {
-                    Scaffold.of(context).openEndDrawer();
-                  },
-                ),
-              )
+                child: Consumer<ProfilePictureController>(
+                    builder: (context, profilepicturecontroller, child) {
+                  return GestureDetector(
+                    child: userController.userAbout!.profilePicture == null
+                        ? const CircleAvatar(
+                            radius: 18,
+                            backgroundImage: AssetImage('images/Greddit.png'),
+                          )
+                        : File(userController.userAbout!.profilePicture!)
+                                .existsSync()
+                            ? CircleAvatar(
+                                radius: 18,
+                                backgroundImage: FileImage(File(
+                                    userController.userAbout!.profilePicture!)),
+                              )
+                            : CircleAvatar(
+                                radius: 18,
+                                backgroundImage: AssetImage(
+                                    userController.userAbout!.profilePicture!),
+                              ),
+                    onTap: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  );
+                }))
             : Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: TextButton(
