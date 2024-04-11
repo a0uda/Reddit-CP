@@ -110,29 +110,29 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
         userLoggedIn
             ? Padding(
                 padding: const EdgeInsets.only(right: 20.0, left: 5),
-                // child: Consumer<ProfilePictureController>(
-                //     builder: (context, profilepicturecontroller, child) {
-                //   return GestureDetector(
-                //     child: userController.userAbout!.profilePicture == null
-                //         ? const CircleAvatar(
-                //             radius: 18,
-                //             backgroundImage: AssetImage('images/Greddit.png'),
-                //           )
-                //         : File(userController.userAbout!.profilePicture!)
-                //                 .existsSync()
-                //             ? CircleAvatar(
-                //                 radius: 18,
-                //                 backgroundImage: FileImage(File(
-                //                     userController.userAbout!.profilePicture!)),
-                //               )
-                //             : CircleAvatar(
-                //                 radius: 18,
-                //                 backgroundImage: AssetImage(
-                //                     userController.userAbout!.profilePicture!),
-                //               ),
-                //     onTap: () {
-                //       Scaffold.of(context).openEndDrawer();
-                //     },
+                child: Consumer<ProfilePictureController>(
+                    builder: (context, profilepicturecontroller, child) {
+                  return GestureDetector(
+                    child: userController.userAbout!.profilePicture == null
+                        ? const CircleAvatar(
+                            radius: 18,
+                            backgroundImage: AssetImage('images/Greddit.png'),
+                          )
+                        : File(userController.userAbout!.profilePicture!)
+                                .existsSync()
+                            ? CircleAvatar(
+                                radius: 18,
+                                backgroundImage: FileImage(File(
+                                    userController.userAbout!.profilePicture!)),
+                              )
+                            : CircleAvatar(
+                                radius: 18,
+                                backgroundImage: AssetImage(
+                                    userController.userAbout!.profilePicture!),
+                              ),
+                    onTap: () {
+                      Scaffold.of(context).openEndDrawer();
+                    },
                   );
                 }))
             : const SizedBox(),
