@@ -67,31 +67,31 @@ class _MobileAppBarState extends State<MobileAppBar> {
         userLoggedIn
             ? Padding(
                 padding: const EdgeInsets.only(right: 20.0),
-                child: Consumer<ProfilePictureController>(
-                    builder: (context, profilepicturecontroller, child) {
-                  return GestureDetector(
-                    child: userController.userAbout!.profilePicture == null
-                        ? const CircleAvatar(
-                            radius: 18,
-                            backgroundImage: AssetImage('images/Greddit.png'),
-                          )
-                        : File(userController.userAbout!.profilePicture!)
-                                .existsSync()
-                            ? CircleAvatar(
-                                radius: 18,
-                                backgroundImage: FileImage(File(
-                                    userController.userAbout!.profilePicture!)),
-                              )
-                            : CircleAvatar(
-                                radius: 18,
-                                backgroundImage: AssetImage(
-                                    userController.userAbout!.profilePicture!),
-                              ),
-                    onTap: () {
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  );
-                }))
+                // child: Consumer<ProfilePictureController>(
+                //     builder: (context, profilepicturecontroller, child) {
+                //   return GestureDetector(
+                //     child: userController.userAbout!.profilePicture == null
+                //         ? const CircleAvatar(
+                //             radius: 18,
+                //             backgroundImage: AssetImage('images/Greddit.png'),
+                //           )
+                //         : File(userController.userAbout!.profilePicture!)
+                //                 .existsSync()
+                //             ? CircleAvatar(
+                //                 radius: 18,
+                //                 backgroundImage: FileImage(File(
+                //                     userController.userAbout!.profilePicture!)),
+                //               )
+                //             : CircleAvatar(
+                //                 radius: 18,
+                //                 backgroundImage: AssetImage(
+                //                     userController.userAbout!.profilePicture!),
+                //               ),
+                //     onTap: () {
+                //       Scaffold.of(context).openEndDrawer();
+                //     },
+                //   );
+                // }))
             : Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: TextButton(
