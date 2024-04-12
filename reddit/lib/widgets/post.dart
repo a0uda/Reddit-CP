@@ -58,7 +58,7 @@ class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
-bool issaved=false;
+  bool issaved = false;
   bool upVote = false;
   bool downVote = false;
   CommunityController communityController =
@@ -117,12 +117,11 @@ bool issaved=false;
 
   @override
   Widget build(BuildContext context) {
-    UserAbout ownerAbout = userController.getUserAbout(widget.name)!;
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
-  String username = userController.userAbout!.username;
-  var saved=postService.getSavePost( username);
-   issaved = saved.any((obj) => obj.id == widget.id);
+    String username = userController.userAbout!.username;
+    var saved = postService.getSavePost(username);
+    issaved = saved.any((obj) => obj.id == widget.id);
 
     String userType;
 
@@ -229,7 +228,7 @@ bool issaved=false;
                     ),
                   ],
                 ),
-                trailing:  Options(postId:widget.id,saved:issaved),
+                trailing: Options(postId: widget.id, saved: issaved),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
