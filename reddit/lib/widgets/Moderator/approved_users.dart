@@ -1,26 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 
 List<Map<String, String>> approvedUsers = [
   {
-    "pictureUrl": "images/reddit_orange.jpg",
-    "username": "u/Purple-7544",
+    "pictureUrl": "images/Greddit.png",
+    "username": "Purple-7544",
     "jointime": "1 mo ago",
   },
   {
-    "pictureUrl": "images/reddit_orange.jpg",
-    "username": "u/Purple-7544",
+    "pictureUrl": "images/Greddit.png",
+    "username": "Purple-7544",
     "jointime": "1 mo ago"
   },
   {
-    "pictureUrl": "images/reddit_orange.jpg",
-    "username": "u/Purple-7544",
+    "pictureUrl": "images/Greddit.png",
+    "username": "Purple-7544",
     "jointime": "1 mo ago"
   },
   {
-    "pictureUrl": "images/reddit_orange.jpg",
-    "username": "u/Purple-7544",
+    "pictureUrl": "images/Greddit.png",
+    "username": "Purple-7544",
     "jointime": "1 mo ago"
   },
 ];
@@ -42,10 +45,6 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
           scrolledUnderElevation: 0,
           title: const Center(child: Text("Approved Users")),
           actions: [
-            IconButton(
-                onPressed: () {},
-                icon: const Icon(CupertinoIcons
-                    .search)), //Badrr mesh 3aref ehh nezam el search hena
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: IconButton(
@@ -53,12 +52,11 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
             ) //implement add in mock
           ],
         ),
-        body: Container(
-          color: Colors.grey[200],
-          child: const ApprovedUserList()
-        ),
+        body:
+            Container(color: Colors.grey[200], child: const ApprovedUserList()),
       );
+    } else {
+      return const ApprovedUserList();
     }
-    return const ApprovedUserList();
   }
 }

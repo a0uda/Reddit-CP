@@ -7,14 +7,22 @@ import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 
 class DesktopModTools extends StatefulWidget {
-  const DesktopModTools({super.key});
+  final int index;
+  const DesktopModTools({super.key, required this.index});
 
   @override
   State<DesktopModTools> createState() => _DesktopModToolsState();
 }
 
 class _DesktopModToolsState extends State<DesktopModTools> {
-  var modToolIndex = 0;
+  late int modToolIndex ;
+
+  @override
+  void initState() {
+    super.initState();
+    modToolIndex = widget.index;
+  }
+
   void changePage(selected) {
     setState(() {
       modToolIndex = selected;

@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         home: const ModResponsive(
           mobileLayout: MobileModTools(),
-          desktopLayout: DesktopModTools(),
+          desktopLayout: DesktopModTools(index: 0,),
 
         ));
   }
