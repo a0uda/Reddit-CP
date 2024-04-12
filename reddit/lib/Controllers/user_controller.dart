@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -63,14 +64,18 @@ class UserController {
 }
 
 class SocialLinksController extends ChangeNotifier {
-  final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  late List<SocialLlinkItem>? socialLinks =
-      userController.userAbout?.socialLinks;
+  final UserController userController = GetIt.instance.get<UserController>();
+  List<SocialLlinkItem>? socialLinks;
 
-  void removeSocialLink(UserAbout userData, SocialLlinkItem socialLink) {
-    userService.deleteSocialLink(userData.username, socialLink.id);
-    userController.getUser(userData.username);
+  void getSocialLinks(String username) {
+    socialLinks = userService.getUserAbout(username)!.socialLinks;
+    notifyListeners();
+  }
+
+  void removeSocialLink(String username, SocialLlinkItem socialLink) {
+    userService.deleteSocialLink(username, socialLink.id);
+    userController.getUser(username);
     socialLinks!.remove(socialLink);
     notifyListeners();
   }
@@ -79,7 +84,7 @@ class SocialLinksController extends ChangeNotifier {
       String username, String displayName, String type, String link) {
     userService.addSocialLink(username, displayName, type, link);
     userController.getUser(username);
-    socialLinks = userController.userAbout?.socialLinks;
+    socialLinks = userController.userAbout!.socialLinks;
     notifyListeners();
   }
 
@@ -87,7 +92,7 @@ class SocialLinksController extends ChangeNotifier {
       String username, String id, String displayName, String link) {
     userService.editSocialLink(username, id, displayName, link);
     userController.getUser(username);
-    socialLinks = userController.userAbout?.socialLinks;
+    socialLinks = userController.userAbout!.socialLinks;
     notifyListeners();
   }
 }
@@ -97,7 +102,8 @@ class BannerPictureController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
 
   void changeBannerPicture(String bannerPicture) {
-    userService.addBannerPicture(userController.userAbout!.username, bannerPicture);
+    userService.addBannerPicture(
+        userController.userAbout!.username, bannerPicture);
     userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }
@@ -114,7 +120,8 @@ class ProfilePictureController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
 
   void changeProfilePicture(String profilePicture) {
-    userService.addProfilePicture(userController.userAbout!.username, profilePicture);
+    userService.addProfilePicture(
+        userController.userAbout!.username, profilePicture);
     userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }
@@ -144,10 +151,25 @@ class FollowerFollowingController extends ChangeNotifier {
 class EditProfileController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
+  ProfileSettings? profileSettings;
 
-  void editProfile(String displayName,String about,bool? nsfw,bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
-    userService.updateProfileSettings(userController.userAbout!.username, displayName, about, nsfw, allowFollowers, contentVisibility, activeCommunity);
+  void getProfileSettings(String username) {
+    profileSettings = userService.getProfileSettings(username);
+  }
+
+  void editProfile(String displayName, String about, bool? nsfw,
+      bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
+    userService.updateProfileSettings(
+        userController.userAbout!.username,
+        displayName,
+        about,
+        nsfw,
+        allowFollowers,
+        contentVisibility,
+        activeCommunity);
     userController.getUser(userController.userAbout!.username);
+    profileSettings =
+        userService.getProfileSettings(userController.userAbout!.username);
     notifyListeners();
   }
 }

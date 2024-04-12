@@ -8,6 +8,7 @@ class CommunityItem {
     required this.communityRules,
     required this.communityProfilePicturePath,
     required this.communityDescription,
+    this.communityCoverPicturePath,
   });
 
   final int communityID;
@@ -16,4 +17,5 @@ class CommunityItem {
   final List<RulesItem> communityRules;
   final String communityProfilePicturePath;
   final String communityDescription;
+  final String? communityCoverPicturePath;
 }
