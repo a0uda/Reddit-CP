@@ -27,8 +27,8 @@ class PostItem {
   final bool ocFlag;
   final bool spoilerFlag;
   final bool nsfwFlag;
-  final bool lockedFlag;
-  final bool allowrepliesFlag;
+  bool lockedFlag;
+  bool allowrepliesFlag;
   final String setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;

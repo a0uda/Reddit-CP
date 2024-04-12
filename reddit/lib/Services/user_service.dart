@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = false;
+bool testing = true;
 
 class UserService {
   final List<String> usedPasswords = [
@@ -35,10 +35,10 @@ class UserService {
     }
   }
 
-  Future<UserAbout>? getUserAbout(String Username) async {
+  Future<UserAbout>? getUserAbout(String username) async {
     if (testing) {
       return users
-          .firstWhere((element) => element.userAbout.username == Username)
+          .firstWhere((element) => element.userAbout.username == username)
           .userAbout;
     } else {
       //to be fetched from database

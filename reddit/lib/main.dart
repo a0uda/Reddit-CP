@@ -46,6 +46,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => EditProfileController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => LockPost(),
+      )
     ],
     child: MyApp(),
   ));
