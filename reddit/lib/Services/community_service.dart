@@ -1,6 +1,7 @@
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/test_files/test_posts_mohy.dart';
+import 'package:reddit/widgets/post.dart';
 import '../test_files/test_communities.dart';
-import 'package:get_it/get_it.dart';
 
 class CommunityService {
   bool testing = true;
@@ -20,5 +21,13 @@ class CommunityService {
       communityNames.add(community.communityName);
     }
     return communityNames;
+  }
+
+  List<Post> getCommunityPosts(String communityName) {
+    List<Post> communityPosts = [];
+    for (var post in postsMohy) {
+      communityPosts.add(post);
+    }
+      return communityPosts;
   }
 }

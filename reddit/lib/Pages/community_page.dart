@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Best_Listing.dart';
 import 'package:reddit/widgets/button_widgets.dart';
@@ -35,6 +37,29 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String buttonState = 'Join';
+  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
+
+    List<Post> communityPost = []; 
+
+  @override
+  void initState() {
+    super.initState();
+  //  fetchCommunityPosts(); 
+  }
+  // Future<void> fetchCommunityPosts() async {
+  //   for (String communityName in communityNames) {
+  //     communityController.getCommunityPost(communityName);
+  //     if (communityController.communityItem != null) {
+  //         communityPost.add({
+            
+  //         });
+  //     }
+  //   }
+  // }
+
+
+
+
 
   void setButton() {
     setState(() {
@@ -143,120 +168,95 @@ class _CommunityPageState extends State<CommunityPage> {
             width: 1,
           ),
           Expanded(
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          CommunityDescription(
-                            communityName: widget.communityName,
-                            communityMembersNo: widget.communityMembersNo,
-                            communityProfilePicturePath:
-                                widget.communityProfilePicturePath,
-                            communityRule: widget.communityRule,
-                            communityDescription: widget.communityDescription,
-                          ),
-                          Row(
-                            children: [
-                              if (buttonState == 'Join')
-                                ButtonWidgets(buttonState,
-                                    backgroundColour: Colors.black,
-                                    foregroundColour: Colors.white, () {
-                                  setButton();
-                                })
-                              else
-                                ButtonWidgets(buttonState, () {
-                                  setButton();
-                                }),
-                              ButtonWidgets('Create a post',
-                                  icon: const Icon(Icons.add), () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CreatePost(
-                                      currentCommunity: widget.communityName,
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Divider(
-                  color: Theme.of(context).colorScheme.primary,
-                  height: 1,
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Post(
-                                    profileImageUrl:
-                                        "assets/images/profile.png",
-                                    name: "John Doe",
-                                    title: "Flutter is the best",
-                                    postContent: "Flutter is the best",
-                                    date: "2021-09-09",
-                                    likes: 4,
-                                    comments: "1",
-                                    communityName: "r/FlutterDev",
-                                  ),
-                                  Post(
-                                    profileImageUrl:
-                                        "assets/images/profile.png",
-                                    name: "John Doe",
-                                    title: "Flutter is the best",
-                                    postContent: "Flutter is the best",
-                                    date: "2021-09-09",
-                                    likes: 4,
-                                    comments: "1",
-                                    communityName: "r/FlutterDev",
-                                  ),
-                                ],
-                              ),
+                            CommunityDescription(
+                              communityName: widget.communityName,
+                              communityMembersNo: widget.communityMembersNo,
+                              communityProfilePicturePath:
+                                  widget.communityProfilePicturePath,
+                              communityRule: widget.communityRule,
+                              communityDescription: widget.communityDescription,
                             ),
-                            if (MediaQuery.of(context).size.width > 700)
-                              Expanded(
-                                flex: 1,
-                                child: Align(
-                                  alignment: Alignment.topRight,
-                                  child: SingleChildScrollView(
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.25,
-                                      margin: const EdgeInsets.only(right: 20),
-                                      child: DescriptionWidget(
-                                        communityDescription:
-                                            widget.communityDescription,
-                                        communityRules: widget.communityRule,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (buttonState == 'Join')
+                                  ButtonWidgets(buttonState,
+                                      backgroundColour: Colors.black,
+                                      foregroundColour: Colors.white, () {
+                                    setButton();
+                                  })
+                                else
+                                  ButtonWidgets(buttonState, () {
+                                    setButton();
+                                  }),
+                                ButtonWidgets('Create a post',
+                                    icon: const Icon(Icons.add), () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CreatePost(
+                                        currentCommunity: widget.communityName,
                                       ),
                                     ),
-                                  ),
-                                ),
-                              ),
+                                  );
+                                }),
+                              ],
+                            ),
                           ],
                         ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    color: Theme.of(context).colorScheme.primary,
+                    height: 1,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(20),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              ListView.builder(itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            
+                          ],
+                        );
+                      },)
+
+                              
+                            ],
+                          ),
+                        ),
+                        if (MediaQuery.of(context).size.width > 700)
+                          Positioned(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.25,
+                              child: DescriptionWidget(
+                                communityDescription: widget.communityDescription,
+                                communityRules: widget.communityRule,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -264,3 +264,6 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 }
+
+
+

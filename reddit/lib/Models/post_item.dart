@@ -1,6 +1,7 @@
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';
+import 'package:reddit/widgets/post.dart';
 
 class PostItem {
   final int id;

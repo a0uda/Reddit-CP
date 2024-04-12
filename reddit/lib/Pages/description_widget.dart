@@ -19,44 +19,41 @@ class DescriptionWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20, top: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Text(
-                        'Description',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+              if (MediaQuery.of(context).size.width < 700)
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Description',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                      const Divider(
-                        color: Color.fromARGB(255, 215, 215, 215),
-                        height: 10,
-                        thickness: 1.0,
+                    ),
+                    const Divider(
+                      color: Color.fromARGB(255, 215, 215, 215),
+                      height: 10,
+                      thickness: 1.0,
+                    ),
+                    Text(
+                      communityDescription,
+                      style: const TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                        color: Colors.black,
                       ),
-                      Text(
-                        communityDescription,
-                        style: const TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -149,7 +146,7 @@ class RuleTileState extends State<RuleTile> {
                 ),
                 IconButton(
                   icon: Icon(
-                    isExpanded ? Icons.arrow_upward : Icons.arrow_downward,
+                    isExpanded ?  Icons.keyboard_arrow_up_rounded: Icons.keyboard_arrow_down_rounded,
                     color: Colors.black,
                   ),
                   onPressed: () {
@@ -194,3 +191,4 @@ class RuleTileState extends State<RuleTile> {
     );
   }
 }
+
