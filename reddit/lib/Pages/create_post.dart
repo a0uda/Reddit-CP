@@ -1,7 +1,10 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -142,6 +145,7 @@ class _CreatePostState extends State<CreatePost> {
       selectedCommunity = widget.currentCommunity!;
     }
 
+    Future<int> response;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -156,7 +160,7 @@ class _CreatePostState extends State<CreatePost> {
                   Icon(Icons.arrow_back_ios_rounded, color: Colors.blue[900])),
           actions: [
             IconButton(
-                onPressed: (() => {
+                onPressed: (() async => {
                       if (titleController.text.isEmpty ||
                           selectedCommunity == "Select Community")
                         {
@@ -184,50 +188,76 @@ class _CreatePostState extends State<CreatePost> {
                         }
                       else
                         {
-                          postService.addPost(
-                            userController.userAbout!.id!,
-                            userController.userAbout!.username,
-                            titleController.text,
-                            bodyController.text,
-                            'type',
-                            showLinkField ? URLController.text : null,
-                            imageSelected
-                                ? [
-                                    ImageItem(
-                                        path: _image!.path, link: imageUrl!)
-                                  ]
-                                : null,
-                            videoSelected
-                                ? [
-                                    VideoItem(
-                                        path: _video!.path, link: 'linkUrl')
-                                  ]
-                                : null,
-                            pollSelected
-                                ? PollItem(
-                                    question: questionController.text,
-                                    options: options,
-                                    votes: [0, 0],
-                                    option1Votes: [],
-                                    option2Votes: [],
-                                  )
-                                : null,
-                            selectedCommunity,
-                            selectedCommunity,
-                            false,
-                            _selections[1],
-                            _selections[0],
-                          ),
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const ResponsiveLayout(
-                                mobileLayout: MobileLayout(
-                                  mobilePageMode: 0,
-                                ),
-                                desktopLayout: DesktopHomePage(
-                                  indexOfPage: 0,
-                                )),
-                          ))
+                          response = postService.addPost(
+                              userController.userAbout!.id,
+                              userController.userAbout!.username,
+                              titleController.text,
+                              bodyController.text,
+                              'type',
+                              showLinkField ? URLController.text : null,
+                              imageSelected
+                                  ? [
+                                      ImageItem(
+                                          path: _image!.path, link: imageUrl!)
+                                    ]
+                                  : null,
+                              videoSelected
+                                  ? [
+                                      VideoItem(
+                                          path: _video!.path, link: 'linkUrl')
+                                    ]
+                                  : null,
+                              pollSelected
+                                  ? PollItem(
+                                      question: questionController.text,
+                                      options: options,
+                                      votes: [0, 0],
+                                      option1Votes: [],
+                                      option2Votes: [],
+                                    )
+                                  : null,
+                              selectedCommunity,
+                              selectedCommunity,
+                              false,
+                              _selections[1],
+                              _selections[0],
+                              !(selectedCommunity == "Select Community")),
+                          if (await response == 400)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Error'),
+                                      content: const Text(
+                                          'Error creating post, please try again later!'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              'OK',
+                                              style: TextStyle(
+                                                  color: Colors.deepOrange),
+                                            )),
+                                      ],
+                                    );
+                                  })
+                            }
+                          else
+                            {
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => const ResponsiveLayout(
+                                    mobileLayout: MobileLayout(
+                                      mobilePageMode: 0,
+                                    ),
+                                    desktopLayout: DesktopHomePage(
+                                      indexOfPage: 0,
+                                    )),
+                              ))
+                            }
                         }
                     }),
                 icon: Icon(Icons.check, color: Colors.blue[900])),

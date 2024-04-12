@@ -15,12 +15,12 @@ class UserController {
   AccountSettings? accountSettings;
 
   void getUser(String username) async {
-    userAbout = userService.getUserAbout(username);
+    userAbout = await userService.getUserAbout(username);
     blockedUsers = userService.getBlockedUsers(username);
     accountSettings = userService.getAccountSettings(username);
   }
 
-  UserAbout? getUserAbout(String username) {
+  Future<UserAbout>? getUserAbout(String username) {
     return userService.getUserAbout(username);
   }
 
@@ -68,8 +68,8 @@ class SocialLinksController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   List<SocialLlinkItem>? socialLinks;
 
-  void getSocialLinks(String username) {
-    socialLinks = userService.getUserAbout(username)!.socialLinks;
+  void getSocialLinks(String username) async {
+    socialLinks = (await (userService.getUserAbout(username)))!.socialLinks;
     notifyListeners();
   }
 

@@ -197,9 +197,21 @@ class PostState extends State<Post> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
-                                  userService.getUserAbout(widget.name),
-                                  userType,
+                                builder: (context) => FutureBuilder<UserAbout?>(
+                                  future: userService.getUserAbout(widget.name),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return ProfileScreen(
+                                        snapshot.data,
+                                        userType,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                             ),
