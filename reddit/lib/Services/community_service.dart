@@ -1,6 +1,5 @@
 import 'package:reddit/Models/community_item.dart';
 import '../test_files/test_communities.dart';
-import 'package:get_it/get_it.dart';
 
 class CommunityService {
   bool testing = true;

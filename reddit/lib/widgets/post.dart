@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
@@ -11,7 +13,9 @@ import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/widgets/comments_widget.dart';
 
 //for merging
 class Post extends StatefulWidget {
@@ -121,6 +125,7 @@ bool issaved=false;
    issaved = saved.any((obj) => obj.id == widget.id);
 
     String userType;
+
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
@@ -196,7 +201,6 @@ bool issaved=false;
                                 builder: (context) => ProfileScreen(
                                   userService.getUserAbout(widget.name),
                                   userType,
-                                  null,
                                 ),
                               ),
                             ),
@@ -384,7 +388,13 @@ bool issaved=false;
                         ),
                         child: ElevatedButton.icon(
                           onPressed: () {
-                            //comment
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentsWidget(
+                                    postId: widget.id), // pass the post ID here
+                              ),
+                            );
                           },
                           icon: Icon(Icons.messenger_outline,
                               color: Theme.of(context).colorScheme.secondary),

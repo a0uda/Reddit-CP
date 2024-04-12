@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -10,24 +11,54 @@ class UserController {
 
   UserAbout? userAbout;
   List<BlockedUsersItem>? blockedUsers;
+  AccountSettings? accountSettings;
 
   void getUser(String username) async {
     userAbout = userService.getUserAbout(username);
-    blockedUsers = userService.getBlockedUsers();
+    blockedUsers = userService.getBlockedUsers(username);
+    accountSettings = userService.getAccountSettings(username);
   }
 
   UserAbout? getUserAbout(String username) {
     return userService.getUserAbout(username);
   }
 
-  void blockUser(String username) {
-    userService.blockUser(username);
-    blockedUsers = userService.getBlockedUsers();
+  AccountSettings? getAccountSettings(String username) {
+    return userService.getAccountSettings(username);
   }
 
-  void unblockUser(String username) {
-    userService.unblockUser(username);
-    blockedUsers = userService.getBlockedUsers();
+  bool changeEmail(String username, String email, String password) {
+    return userService.changeEmail(username, email, password);
+  }
+
+  bool changePassword(String username, String password) {
+    return userService.changePassword(username, password);
+  }
+
+  void blockUser(UserAbout userData, String username) {
+    userService.blockUser(userData.username, username);
+    blockedUsers = userService.getBlockedUsers(userData.username);
+  }
+
+  void unblockUser(UserAbout userData, String username) {
+    userService.unblockUser(userData.username, username);
+    blockedUsers = userService.getBlockedUsers(userData.username);
+  }
+
+  void changeGender(String username, String gender) {
+    userService.changeGender(username, gender);
+  }
+
+  void changeCountry(String username, String country) {
+    userService.changeCountry(username, country);
+  }
+
+  void connectToGoogle(String username) {
+    userService.connectToGoogle(username);
+  }
+
+  void disconnectFromGoogle(String username) {
+    userService.disconnectFromGoogle(username);
   }
 }
 
@@ -57,6 +88,66 @@ class SocialLinksController extends ChangeNotifier {
     userService.editSocialLink(username, id, displayName, link);
     userController.getUser(username);
     socialLinks = userController.userAbout?.socialLinks;
+    notifyListeners();
+  }
+}
+
+class BannerPictureController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  void changeBannerPicture(String bannerPicture) {
+    userService.addBannerPicture(userController.userAbout!.username, bannerPicture);
+    userController.getUser(userController.userAbout!.username);
+    notifyListeners();
+  }
+
+  void removeBannerPicture() {
+    userService.removeBannerPicture(userController.userAbout!.username);
+    userController.getUser(userController.userAbout!.username);
+    notifyListeners();
+  }
+}
+
+class ProfilePictureController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  void changeProfilePicture(String profilePicture) {
+    userService.addProfilePicture(userController.userAbout!.username, profilePicture);
+    userController.getUser(userController.userAbout!.username);
+    notifyListeners();
+  }
+
+  void removeProfilePicture() {
+    userService.removeProfilePicture(userController.userAbout!.username);
+    userController.getUser(userController.userAbout!.username);
+    notifyListeners();
+  }
+}
+
+class FollowerFollowingController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  followUser(String username) {
+    userService.followUser(username, userController.userAbout!.username);
+    notifyListeners();
+  }
+
+  void unfollowUser(String username) {
+    userService.unfollowUser(username, userController.userAbout!.username);
+    notifyListeners();
+  }
+}
+
+class EditProfileController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  void editProfile(String displayName,String about,bool? nsfw,bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
+    userService.updateProfileSettings(userController.userAbout!.username, displayName, about, nsfw, allowFollowers, contentVisibility, activeCommunity);
+    userController.getUser(userController.userAbout!.username);
     notifyListeners();
   }
 }

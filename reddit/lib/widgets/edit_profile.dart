@@ -1,7 +1,12 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -28,6 +33,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   final userController = GetIt.instance.get<UserController>();
   int remainingNameCharacters = 30;
   int remainingAboutCharacters = 200;
+  late String? _bannerimagepath;
+  late String? _profileImagePath;
+  late bool activeCommunity;
+  late bool contentVisibility;
 
   @override
   void initState() {
@@ -40,12 +49,130 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     remainingAboutCharacters = 200 - aboutController.text.length;
     userData = userController.userAbout;
     profileSettings = userService.getProfileSettings(userData!.username);
+    _bannerimagepath = userData!.bannerPicture;
+    _profileImagePath = userData!.profilePicture;
+    activeCommunity = profileSettings!.activeCommunity;
+    contentVisibility = profileSettings!.contentVisibility;
   }
 
   @override
   void dispose() {
     super.dispose();
     nameController.dispose();
+    aboutController.dispose();
+  }
+
+  selectBannerProfile(bool isBanner) async {
+    String? selectedImagePath = isBanner ? _bannerimagepath : _profileImagePath;
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const ListTile(
+              leading: Icon(
+                FluentIcons.camera_20_regular,
+                color: Colors.black,
+              ),
+              title: Text('Camera'),
+            ),
+            ListTile(
+              leading: const Icon(
+                FluentIcons.image_20_regular,
+                color: Colors.black,
+              ),
+              title: const Text('Library'),
+              onTap: () async {
+                final picker = ImagePicker();
+                final pickedFile =
+                    await picker.pickImage(source: ImageSource.gallery);
+                if (pickedFile != null) {
+                  selectedImagePath = pickedFile.path;
+                  setState(() {
+                    if (isBanner) {
+                      _bannerimagepath = selectedImagePath;
+                    } else {
+                      _profileImagePath = selectedImagePath;
+                    }
+                  });
+                }
+                Navigator.pop(context);
+              },
+            ),
+            if (selectedImagePath != null)
+              ListTile(
+                onTap: () {
+                  setState(() {
+                    selectedImagePath = null;
+                    if (isBanner) {
+                      _bannerimagepath = selectedImagePath;
+                    } else {
+                      _profileImagePath = selectedImagePath;
+                    }
+                  });
+                  Navigator.pop(context);
+                },
+                leading: const Icon(
+                  FluentIcons.delete_20_regular,
+                  color: Colors.red,
+                ),
+                title: const Text(
+                  'Remove',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              width: MediaQuery.of(context).size.width,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.grey[300],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'Close',
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  saveProfile() {
+    var editProfileController = context.read<EditProfileController>();
+    editProfileController.editProfile(
+      nameController.text,
+      aboutController.text,
+      true,
+      true,
+      contentVisibility,
+      activeCommunity,
+    );
+
+    var bannerPictureController = context.read<BannerPictureController>();
+    if (_bannerimagepath == null) {
+      bannerPictureController.removeBannerPicture();
+    } else {
+      bannerPictureController.changeBannerPicture(_bannerimagepath!);
+    }
+    var profilePictureController = context.read<ProfilePictureController>();
+    if (_profileImagePath == null) {
+      profilePictureController.removeProfilePicture();
+    } else {
+      profilePictureController.changeProfilePicture(_profileImagePath!);
+    }
+    Navigator.pop(context);
   }
 
   @override
@@ -57,8 +184,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         centerTitle: false,
         actions: [
           TextButton(
-            onPressed: () => {},
-            child: const Text('Save'),
+            onPressed: () => saveProfile(),
+            child: const Text(
+              'Save',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
         ],
       ),
@@ -69,7 +199,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
             child: Stack(
               children: [
                 GestureDetector(
-                  onTap: () => {},
+                  onTap: () => selectBannerProfile(true),
                   child: DottedBorder(
                     borderType: BorderType.RRect,
                     dashPattern: const [10, 4],
@@ -81,20 +211,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: userData!.bannerPicture != null
-                          ? Image(
-                              image: AssetImage(userData!.bannerPicture!),
-                              fit: BoxFit.fill,
-                            )
-                          : Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  FluentIcons.camera_add_20_regular,
-                                  size: 30,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          _bannerimagepath != null
+                              ? File(_bannerimagepath!).existsSync()
+                                  ? Image.file(
+                                      File(_bannerimagepath!),
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Image(
+                                      image: AssetImage(_bannerimagepath!),
+                                      fit: BoxFit.fill,
+                                    )
+                              : Container(
+                                  color: Colors.grey[300],
                                 ),
-                              ),
-                            ),
+                          const Icon(
+                            FluentIcons.camera_add_20_regular,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -102,7 +241,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                   top: 1 / 5 * MediaQuery.of(context).size.height - 50,
                   left: 20,
                   child: GestureDetector(
-                    onTap: () => {},
+                    onTap: () => selectBannerProfile(false),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -110,28 +249,59 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           width: 70,
                           height: 70,
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(userData!.profilePicture ??
-                                  'images/Greddit.png'),
-                              fit: BoxFit.fill,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Colors.white, // Border color
+                              width: 2, // Border width
                             ),
+                            image: _profileImagePath != null
+                                ? (File(_profileImagePath!).existsSync())
+                                    ? DecorationImage(
+                                        image:
+                                            FileImage(File(_profileImagePath!)),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : DecorationImage(
+                                        image: () {
+                                          try {
+                                            return AssetImage(
+                                                _profileImagePath!);
+                                          } catch (e) {
+                                            // The asset doesn't exist, return a default asset
+                                            return const AssetImage(
+                                                'images/Greddit.png'); // Replace with your default asset path
+                                          }
+                                        }(),
+                                        fit: BoxFit.cover,
+                                      )
+                                : const DecorationImage(
+                                    image: AssetImage('images/Greddit.png'),
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
-                        userData!.profilePicture == null
-                            ? const CircleAvatar(
-                                radius: 35,
-                                backgroundColor: Color.fromARGB(22, 0, 0, 0),
-                                child: Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  child: Icon(
-                                    FluentIcons.camera_add_20_regular,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                              )
-                            : Container(),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: const CircleAvatar(
+                            radius: 33,
+                            backgroundColor: Color.fromARGB(22, 0, 0, 0),
+                            child: Positioned(
+                              bottom: 0,
+                              left: 0,
+                              child: Icon(
+                                FluentIcons.camera_add_20_regular,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -273,8 +443,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   trailing: Switch(
-                    value: profileSettings!.contentVisibility,
-                    onChanged: (value) {},
+                    value: contentVisibility,
+                    onChanged: (value) {
+                      setState(() {
+                        contentVisibility = value;
+                      });
+                    },
+                    thumbColor: MaterialStateProperty.all(Colors.white),
+                    activeTrackColor: Colors.blue[900],
+                    inactiveTrackColor: Colors.grey[300],
+                    trackOutlineColor:
+                        MaterialStateProperty.all(Colors.grey[300]),
                   ),
                 ),
                 ListTile(
@@ -288,8 +467,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(fontSize: 12),
                   ),
                   trailing: Switch(
-                    value: profileSettings!.activeCommunity,
-                    onChanged: (value) {},
+                    value: activeCommunity,
+                    onChanged: (value) {
+                      setState(() {
+                        activeCommunity = value;
+                      });
+                    },
+                    thumbColor: MaterialStateProperty.all(Colors.white),
+                    activeTrackColor: Colors.blue[900],
+                    inactiveTrackColor: Colors.grey[300],
+                    trackOutlineColor:
+                        MaterialStateProperty.all(Colors.grey[300]),
                   ),
                 ),
               ],

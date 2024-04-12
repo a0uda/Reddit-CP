@@ -1,10 +1,14 @@
+import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 
 import '../Models/comments.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
+import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
@@ -17,6 +21,7 @@ final List<UserItem> users = [
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
       profilePicture: 'images/pp.jpg',
+      bannerPicture: null,
       country: 'Egypt',
       gender: 'Female',
       socialLinks: [
@@ -116,71 +121,136 @@ final List<UserItem> users = [
     profileSettings: ProfileSettings(
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
-      contentVisibility: true,
+      contentVisibility: false,
       activeCommunity: true,
     ),
-  ),
-  UserItem(
-    userAbout: UserAbout(
-      id: '1',
-      createdAt: '5 March 2024',
-      username: 'johndoe',
-      email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: true,
-      displayName: 'John',
-      gender: 'Male',
-      about: '',
-      profilePicture: 'images/pp.jpg',
-      socialLinks: [
-        SocialLlinkItem(
-          id: '0',
-          username: 'john_doe',
-          displayText: 'john_doe',
-          type: 'instagram',
-          customUrl:
-              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
         ),
-        SocialLlinkItem(
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+        MutedCommunity(
           id: '1',
-          username: 'john_doe',
-          displayText: 'john_doe',
-          type: 'facebook',
-          customUrl:
-              'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
+          communityName: 'Dart',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
         ),
       ],
     ),
-    password: 'john1234',
-    followers: [
-      FollowersFollowingItem(
-        id: '0',
-        createdAt: '5 March 2024',
-        username: 'Purple-7544',
-        email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
-      ),
+    accountSettings: AccountSettings(
+      email: 'rawan7544@gmail.com',
+      verifiedEmailFlag: '?',
+      country: 'Egypt',
+      gender: 'Female',
+      gmail: 'rawan7544@gmail.com',
+      connectedGoogle: true,
+    ),
+    activecommunities: [
+      communities[0],
+      communities[1],
+      communities[2],
     ],
-    following: [
-      FollowersFollowingItem(
-        id: '0',
-        createdAt: '5 March 2024',
-        username: 'Purple-7544',
-        email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
-      ),
-    ],
-    comments: [],
   ),
+  UserItem(
+      userAbout: UserAbout(
+        id: '1',
+        createdAt: '5 March 2024',
+        username: 'johndoe',
+        email: 'rawan7544@gmail.com',
+        verifiedEmailFlag: true,
+        displayName: 'John',
+        gender: 'Male',
+        about: '',
+        profilePicture: 'images/pp.jpg',
+        socialLinks: [
+          SocialLlinkItem(
+            id: '0',
+            username: 'john_doe',
+            displayText: 'john_doe',
+            type: 'instagram',
+            customUrl:
+                'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+          ),
+          SocialLlinkItem(
+            id: '1',
+            username: 'john_doe',
+            displayText: 'john_doe',
+            type: 'facebook',
+            customUrl:
+                'https://www.facebook.com/rawan.adel.359778?mibextid=LQQJ4d',
+          ),
+        ],
+      ),
+      password: 'john1234',
+      followers: [
+        FollowersFollowingItem(
+          id: '0',
+          createdAt: '5 March 2024',
+          username: 'Purple-7544',
+          email: 'rawan7544@gmail.com',
+          verifiedEmailFlag: true,
+          profileSettings: FollowersProfileSettings(
+            displayName: 'Rawan Adel',
+            about: 'I am a software engineer',
+            profilePicture: 'images/pp.jpg',
+          ),
+        ),
+      ],
+      following: [
+        FollowersFollowingItem(
+          id: '0',
+          createdAt: '5 March 2024',
+          username: 'Purple-7544',
+          email: 'rawan7544@gmail.com',
+          verifiedEmailFlag: true,
+          profileSettings: FollowersProfileSettings(
+            displayName: 'Rawan Adel',
+            about: 'I am a software engineer',
+            profilePicture: 'images/pp.jpg',
+          ),
+        ),
+      ],
+      comments: [],
+      safetySettings: SafetyAndPrivacySettings(
+        blockedUsers: [
+          BlockedUsersItem(
+            username: 'jane123',
+            profilePicture: 'images/pp.jpg',
+            blockedDate: '5 March 2024',
+          ),
+        ],
+        mutedCommunities: [
+          MutedCommunity(
+            id: '0',
+            communityName: 'Flutter',
+            profilePicture: 'images/Greddit.png',
+            mutedDate: '5 March 2024',
+          ),
+        ],
+      ),
+      accountSettings: AccountSettings(
+        email: 'rawan7544@gmail.com',
+        verifiedEmailFlag: '?',
+        country: 'Egypt',
+        gender: 'Male',
+        gmail: 'rawan7544@gmail.com',
+        connectedGoogle: true,
+      )),
   UserItem(
     userAbout: UserAbout(
       id: '2',
@@ -188,6 +258,7 @@ final List<UserItem> users = [
       username: 'jane123',
       gender: 'Female',
       email: 'rawan7544@gmail.com',
+      profilePicture: null,
       bannerPicture: 'images/Greddit.png',
       verifiedEmailFlag: true,
       displayName: 'Jane',
@@ -233,6 +304,33 @@ final List<UserItem> users = [
       ),
     ],
     comments: comments2,
+    profileSettings: ProfileSettings(
+      displayName: 'Jane',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
+    activecommunities: [
+      communities[2],
+      communities[3],
+    ],
   ),
   UserItem(
     userAbout: UserAbout(

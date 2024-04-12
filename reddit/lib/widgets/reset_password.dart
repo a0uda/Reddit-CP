@@ -168,9 +168,18 @@ class _ResetPasswordState extends State<ResetPassword> {
                 child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Password updated')),
-                        );
+                        if (userController.changePassword(
+                            userController.userAbout!.username,
+                            _newPasswordController.text)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Password updated')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Password not updated')),
+                          );
+                        }
                       }
                     },
                     style: ElevatedButton.styleFrom(

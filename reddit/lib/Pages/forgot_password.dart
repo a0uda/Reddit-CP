@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/reset_password.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});

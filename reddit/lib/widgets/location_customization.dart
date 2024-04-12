@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 
 class LocationCustomization extends StatefulWidget {
   const LocationCustomization({super.key});
@@ -32,10 +34,11 @@ List<String> locations = [
 ];
 
 class _LocationCustomizationState extends State<LocationCustomization> {
-  String _selectedLocation = 'United States';
+  final UserController userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
+    String selectedLocation = userController.userAbout!.country!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Location'),
@@ -48,10 +51,12 @@ class _LocationCustomizationState extends State<LocationCustomization> {
             leading: Radio(
               activeColor: Colors.blue[900],
               value: locations[index],
-              groupValue: _selectedLocation,
+              groupValue: selectedLocation,
               onChanged: (String? value) {
                 setState(() {
-                  _selectedLocation = value!;
+                  selectedLocation = value!;
+                  userController.changeCountry(
+                      userController.userAbout!.username, value);
                 });
               },
             ),

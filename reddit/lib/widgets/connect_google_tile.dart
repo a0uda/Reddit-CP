@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 
 class ConnectGoogleTile extends StatefulWidget {
@@ -9,10 +11,11 @@ class ConnectGoogleTile extends StatefulWidget {
 }
 
 class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
-  bool _isConnected = true;
+  final UserController userController = GetIt.instance.get<UserController>();
 
   @override
   Widget build(BuildContext context) {
+    bool isConnected = userController.accountSettings!.connectedGoogle;
     return CustomSettingsTile(
       title: 'Google',
       leading: Image.asset(
@@ -22,7 +25,7 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
       ),
       trailing: GestureDetector(
         child: Text(
-          _isConnected ? 'Disconnect' : 'Connect',
+          isConnected ? 'Disconnect' : 'Connect',
           style: TextStyle(
               color: Colors.blue[900],
               fontSize: 14.0,
@@ -30,7 +33,14 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
         ),
         onTap: () {
           setState(() {
-            _isConnected = !_isConnected;
+            isConnected = !isConnected;
+            if (isConnected) {
+              userController
+                  .connectToGoogle(userController.userAbout!.username!);
+            } else {
+              userController
+                  .disconnectFromGoogle(userController.userAbout!.username!);
+            }
           });
         },
       ),

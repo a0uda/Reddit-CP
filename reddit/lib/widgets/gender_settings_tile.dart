@@ -18,7 +18,7 @@ class _GenderTileState extends State<GenderTile> {
     //TODO: Implement the logic to update the gender in the database
     return CustomSettingsTile(
       title: 'Gender',
-      subtitle: gender,
+      subtitle: userController.userAbout!.gender!,
       leading: const Icon(Icons.person),
       trailing: const Icon(Icons.keyboard_arrow_down, size: 16.0),
       onTap: () {
@@ -57,6 +57,8 @@ class _GenderTileState extends State<GenderTile> {
                   onChanged: (String? value) {
                     setState(() {
                       gender = value!;
+                      userController.changeGender(
+                          userController.userAbout!.username, gender);
                       Navigator.pop(context);
                     });
                   },
@@ -71,6 +73,8 @@ class _GenderTileState extends State<GenderTile> {
                   onChanged: (String? value) {
                     setState(() {
                       gender = value!;
+                      userController.changeGender(
+                          userController.userAbout!.username, gender);
                       Navigator.pop(context);
                     });
                   },
@@ -85,6 +89,8 @@ class _GenderTileState extends State<GenderTile> {
                   onChanged: (String? value) {
                     setState(() {
                       gender = value!;
+                      userController.changeGender(
+                          userController.userAbout!.username, gender);
                       Navigator.pop(context);
                     });
                   },

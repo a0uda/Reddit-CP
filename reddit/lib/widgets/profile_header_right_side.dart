@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/widgets/edit_profile.dart';
 import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
@@ -10,32 +11,29 @@ import '../Models/followers_following_item.dart';
 class ProfileHeaderRightSide extends StatefulWidget {
   final String userType;
   final UserAbout userData;
-  final Function? onUpdate;
 
   const ProfileHeaderRightSide(
-      {super.key,
-      required this.userData,
-      required this.userType,
-      this.onUpdate});
+      {super.key, required this.userData, required this.userType});
 
   @override
-  _ProfileHeaderRightSideState createState() => _ProfileHeaderRightSideState(
-      userData: userData, userType: userType, onUpdate: onUpdate);
+  _ProfileHeaderRightSideState createState() =>
+      _ProfileHeaderRightSideState(userData: userData, userType: userType);
 }
 
 class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   String
       userType; //if user type is 'me' then show edit button, else show message and follow button
   UserAbout userData;
-  Function? onUpdate;
   _ProfileHeaderRightSideState(
-      {required this.userData, required this.userType, this.onUpdate});
+      {required this.userData, required this.userType});
 
   final UserController userController = GetIt.I.get<UserController>();
   final UserService userService = GetIt.I.get<UserService>();
 
   @override
   Widget build(BuildContext context) {
+    var followerFollowingController =
+        context.read<FollowerFollowingController>();
     userService.getFollowers(userController.userAbout!.username);
     final List<FollowersFollowingItem>? followingList =
         userService.getFollowing(userController.userAbout!.username);
@@ -46,7 +44,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
         padding: const EdgeInsets.only(right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
+          //mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 20),
@@ -64,10 +62,11 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: TextButton(
                 onPressed: () {
                   if (userType == 'me') {
-                      Navigator.push(
-  context,
-  MaterialPageRoute(builder: (context) => EditProfileScreen()),
-);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen()),
+                    );
                   } else {
                     setState(
                       () {
@@ -75,13 +74,12 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                             .where((element) =>
                                 element.username == userData.username)
                             .isEmpty) {
-                          userService.followUser(userData.username,
-                              userController.userAbout!.username);
+                          followerFollowingController
+                              .followUser(userData.username);
                         } else {
-                          userService.unfollowUser(userData.username,
-                              userController.userAbout!.username);
+                          followerFollowingController
+                              .unfollowUser(userData.username);
                         }
-                        onUpdate!();
                       },
                     );
                   }

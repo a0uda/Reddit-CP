@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:reddit/Models/rules_item.dart';
 
 class CommunityItem {
@@ -15,9 +14,6 @@ class CommunityItem {
   final String communityName;
   final int communityMembersNo;
   final List<RulesItem> communityRules;
-  final String communityProfilePicturePath; 
+  final String communityProfilePicturePath;
   final String communityDescription;
 }
-
-
-
