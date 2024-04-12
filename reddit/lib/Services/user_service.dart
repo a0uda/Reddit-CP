@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = true;
+bool testing = false;
 
 class UserService {
   final List<String> usedPasswords = [
@@ -35,15 +35,29 @@ class UserService {
     }
   }
 
-  UserAbout? getUserAbout(String Username) {
+  Future<UserAbout>? getUserAbout(String Username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == Username)
           .userAbout;
     } else {
       //to be fetched from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/about/admin');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+
+      print(jsonDecode(response.body));
+      return UserAbout.fromJson(jsonDecode(response.body));
     }
-    return null;
   }
 
   void addSocialLink(
@@ -337,6 +351,7 @@ class UserService {
   }
 
   Future<int> userLogin(String username, String password) async {
+    print("herree");
     if (testing) {
       if (users.any((user) =>
           user.userAbout.username == username && user.password == password)) {
@@ -363,6 +378,7 @@ class UserService {
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token!);
+        prefs.setString('username', username);
         return 200;
       } else {
         return 400;

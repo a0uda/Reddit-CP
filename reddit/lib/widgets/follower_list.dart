@@ -50,22 +50,21 @@ class FollowerListState extends State<FollowerList> {
                   subtitle: Text('u/${followersList![index].username}'),
                   trailing: TextButton(
                     onPressed: () {
-                      
-                        if (followingList!
-                            .where((element) =>
-                                element.username ==
-                                followersList![index].username)
-                            .isNotEmpty) {
-                          followerFollowingController.unfollowUser(
-                              followersList![index].username);
-                        } else {
-                          followerFollowingController.followUser(
-                              followersList![index].username);
-                        }
-                        followingList = userService.getFollowing(
-                            userController.userAbout!.username.toString());
-                        followersList = userService.getFollowers(
-                            userController.userAbout!.username.toString());
+                      if (followingList!
+                          .where((element) =>
+                              element.username ==
+                              followersList![index].username)
+                          .isNotEmpty) {
+                        followerFollowingController
+                            .unfollowUser(followersList![index].username);
+                      } else {
+                        followerFollowingController
+                            .followUser(followersList![index].username);
+                      }
+                      followingList = userService.getFollowing(
+                          userController.userAbout!.username.toString());
+                      followersList = userService.getFollowers(
+                          userController.userAbout!.username.toString());
                     },
                     child: Text(
                       (followingList!
@@ -86,17 +85,15 @@ class FollowerListState extends State<FollowerList> {
                       ),
                     ),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     var username = followersList![index].username.toString();
                     UserAbout otherUserData =
-                        userService.getUserAbout(username)!;
+                        (await (userService.getUserAbout(username)))!;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileScreen(
-                          otherUserData,
-                          'other'
-                        ),
+                        builder: (context) =>
+                            ProfileScreen(otherUserData, 'other'),
                       ),
                     );
                   });

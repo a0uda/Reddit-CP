@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/comments_service.dart';
 
 class Comment extends StatefulWidget {
@@ -72,13 +73,22 @@ class _CommentState extends State<Comment> {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 15,
-                backgroundImage: AssetImage(
-                  userController
-                      .getUserAbout(widget.comment.username!)!
-                      .profilePicture!,
-                ),
+              FutureBuilder<UserAbout>(
+                future: userController.getUserAbout(widget.comment.username!),
+                builder:
+                    (BuildContext context, AsyncSnapshot<UserAbout> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return CircleAvatar(
+                      radius: 15,
+                      backgroundImage:
+                          AssetImage(snapshot.data!.profilePicture!),
+                    );
+                  }
+                },
               ),
               const SizedBox(
                 width: 10,
