@@ -51,7 +51,7 @@ class _ProfileHeaderAddSocialLinkState
             children: <Widget>[
               Wrap(
                 spacing: 8,
-                runSpacing: 8,
+                runSpacing: 4,
                 children: [
                   ...(socialLinksController.socialLinks?.map((linkData) {
                         String websiteName = linkData.type.toLowerCase();
@@ -75,6 +75,9 @@ class _ProfileHeaderAddSocialLinkState
                             }
                           },
                           style: ButtonStyle(
+                            padding:
+                                MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                    const EdgeInsets.only(right: 8, left: 10)),
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 notEditProfile
                                     ? const Color.fromARGB(99, 105, 105, 105)
@@ -117,16 +120,6 @@ class _ProfileHeaderAddSocialLinkState
                                           socialLinksController
                                               .removeSocialLink(
                                                   userData, linkData);
-                                          // if (socialLinksController
-                                          //             .socialLinks !=
-                                          //         null &&
-                                          //     socialLinksController
-                                          //             .socialLinks!.length <
-                                          //         5) {
-                                          //   showAddSocialLinkButton = true;
-                                          // } else {
-                                          //   showAddSocialLinkButton = false;
-                                          // }
                                         },
                                         padding: EdgeInsets.zero,
                                       ),

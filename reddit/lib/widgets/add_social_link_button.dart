@@ -3,16 +3,16 @@ import 'social_media_buttons.dart';
 import 'add_social_link_form.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
 class AddSocialLinkButton extends StatelessWidget {
   final bool notEditProfile;
-  const AddSocialLinkButton(
-      {super.key, required this.notEditProfile});
+  const AddSocialLinkButton({super.key, required this.notEditProfile});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+            const EdgeInsets.only(right: 12, left: 8)),
         backgroundColor: MaterialStateProperty.all(notEditProfile
             ? const Color.fromARGB(99, 105, 105, 105)
             : const Color.fromARGB(220, 234, 234, 234)),
@@ -75,9 +75,8 @@ class AddSocialLinkButton extends StatelessWidget {
                             children:
                                 socialMediaButtons.map((socialMediaButton) {
                               return IconButtonWithText(
-                                text: socialMediaButton['name'].toString(),
-                                icon: socialMediaButton['brand'] as Brand
-                              );
+                                  text: socialMediaButton['name'].toString(),
+                                  icon: socialMediaButton['brand'] as Brand);
                             }).toList(),
                           ),
                         ],
@@ -90,27 +89,25 @@ class AddSocialLinkButton extends StatelessWidget {
           },
         );
       },
-      child: Container(
-        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2, top: 2),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.add,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Icon(Icons.add,
+              color: notEditProfile
+                  ? const Color.fromARGB(255, 175, 174, 174)
+                  : Colors.black,
+              size: 18),
+          const SizedBox(width: 3),
+          Text(
+            'Add social link',
+            style: TextStyle(
                 color: notEditProfile
-                    ? const Color.fromARGB(255, 175, 174, 174)
+                    ? const Color.fromARGB(255, 212, 211, 211)
                     : Colors.black,
-                size: 20),
-            const SizedBox(width: 3),
-            Text(
-              'Add social link',
-              style: TextStyle(
-                  color: notEditProfile
-                      ? const Color.fromARGB(255, 212, 211, 211)
-                      : Colors.black,
-                  fontSize: 12),
-            ),
-          ],
-        ),
+                fontSize: 12),
+          ),
+        ],
       ),
     );
   }
