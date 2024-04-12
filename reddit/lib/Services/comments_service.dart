@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/test_files/test_comments.dart';
+
+import '../test_files/test_posts.dart';
 
 bool testing = true;
 
@@ -12,7 +16,6 @@ class CommentsService {
       }
     }
 
-    void upVoteComment(String commentId) {}
     return commentsList;
   }
 
@@ -29,6 +32,8 @@ class CommentsService {
         upvotesCount: 0,
         downvotesCount: 0,
       ));
+      final post = posts.firstWhere((element) => element.id == postId);
+      post.commentsCount++;
       return 200;
     }
     return 400;
@@ -56,5 +61,14 @@ class CommentsService {
     } else {
       // downvote comment in database
     }
+  }
+
+  Comments? getCommentById(String commentId) {
+    for (var comment in comments) {
+      if (comment.id == commentId) {
+        return comment;
+      }
+    }
+    return null;
   }
 }

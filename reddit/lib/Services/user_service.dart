@@ -1,13 +1,13 @@
 import 'dart:convert';
 
+import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
-
-import 'package:reddit/test_files/test_safety_settings.dart';
+import 'package:reddit/Services/comments_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/user_item.dart';
@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = false;
+bool testing = true;
 
 class UserService {
   final List<String> usedPasswords = [
@@ -355,10 +355,12 @@ class UserService {
     if (testing) {
       if (users.any((user) =>
           user.userAbout.username == username && user.password == password)) {
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('username', username);
         return 200;
       } else {
-        await Future.delayed(Duration(seconds: 1));
+        await Future.delayed(const Duration(seconds: 1));
         return 400;
       }
     } else {
@@ -544,5 +546,51 @@ class UserService {
     } else {
       // toggle disconnect from google in db
     }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  void saveComment(String username, String commentId) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .savedCommentsIds!
+          .add(commentId);
+    } else {
+      // save comment in db
+    }
+  }
+
+  void unsaveComment(String username, String commentId) {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .savedCommentsIds!
+          .remove(commentId);
+    } else {
+      // unsave comment in db
+    }
+  }
+
+  List<Comments> getSavedComments(String username) {
+    if (testing) {
+      List<Comments> savedComments = [];
+      final user =
+          users.firstWhere((element) => element.userAbout.username == username);
+      final commentService = GetIt.instance.get<CommentsService>();
+
+      for (var commentId in user.savedCommentsIds!) {
+        final comment = commentService.getCommentById(commentId);
+        if (comment != null) {
+          savedComments.add(comment);
+        }
+      }
+
+      return savedComments;
+    } else {
+      // Fetch saved comments from db
+    }
+
+    return [];
   }
 }

@@ -5,6 +5,7 @@ import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
@@ -402,7 +403,7 @@ class PostState extends State<Post> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CommentsWidget(
+                                builder: (context) => CommentsDesktop(
                                     postId: widget.id), // pass the post ID here
                               ),
                             );

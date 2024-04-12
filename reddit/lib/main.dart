@@ -35,6 +35,9 @@ void main() async {
         create: (context) => SavePost(),
       ),
       ChangeNotifierProvider(
+        create: (context) => SaveComment(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => ProfilePictureController(),
       ),
       ChangeNotifierProvider(

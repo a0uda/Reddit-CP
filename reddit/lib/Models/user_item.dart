@@ -7,6 +7,7 @@ import '../Models/safety_settings_item.dart';
 import '../Models/community_item.dart';
 
 class UserItem {
+  List<String>? savedCommentsIds;
   final UserAbout userAbout;
   String? password;
   final List<FollowersFollowingItem>? followers;
@@ -27,5 +28,6 @@ class UserItem {
     this.safetySettings,
     this.accountSettings,
     this.activecommunities,
+    this.savedCommentsIds,
   });
 }

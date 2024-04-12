@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -60,6 +61,14 @@ class UserController {
 
   void disconnectFromGoogle(String username) {
     userService.disconnectFromGoogle(username);
+  }
+
+  void saveComment(String username, String commentId) {
+    userService.saveComment(username, commentId);
+  }
+
+  List<Comments>? getSavedComments(String username) {
+    return userService.getSavedComments(username);
   }
 }
 
@@ -170,6 +179,16 @@ class EditProfileController extends ChangeNotifier {
     userController.getUser(userController.userAbout!.username);
     profileSettings =
         userService.getProfileSettings(userController.userAbout!.username);
+    notifyListeners();
+  }
+}
+
+class SaveComment extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  void unsaveComment(String username, String commentId) {
+    userService.unsaveComment(username, commentId);
     notifyListeners();
   }
 }

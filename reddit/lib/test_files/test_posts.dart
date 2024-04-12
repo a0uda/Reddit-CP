@@ -4,7 +4,6 @@ import 'package:reddit/Models/save.dart';
 import 'package:reddit/test_files/test_users.dart';
 import 'package:reddit/Models/report.dart';
 
-
 final List<PostItem> posts = [
   PostItem(
     id: "1",
@@ -25,7 +24,7 @@ final List<PostItem> posts = [
     images: null,
     videos: null,
     poll: null,
-    commentsCount: 0,
+    commentsCount: 2,
     viewsCount: 0,
     sharesCount: 0,
     upvotesCount: 0,
@@ -75,13 +74,6 @@ final List<PostItem> posts = [
   ),
 ];
 
-
-
-
-
-
-
-
 final List<PostItem> popularPosts = [
   PostItem(
     id: "2",
@@ -120,7 +112,7 @@ final List<PostItem> popularPosts = [
     moderatorDetails: null,
     userDetails: null,
   ),
-    PostItem(
+  PostItem(
     id: "2",
     userId: users[1].userAbout.id!,
     username: users[1].userAbout.username,
@@ -158,7 +150,5 @@ final List<PostItem> popularPosts = [
     userDetails: null,
   ),
 ];
-final List <ReportPost> reportPosts=[];
-final List <SaveItem> savedPosts=[];
-
-
+final List<ReportPost> reportPosts = [];
+final List<SaveItem> savedPosts = [];

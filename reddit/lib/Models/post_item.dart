@@ -19,7 +19,7 @@ class PostItem {
   PollItem? poll;
   final String communityId;
   final String communityName;
-  final int commentsCount;
+  int commentsCount;
   final int viewsCount;
   final int sharesCount;
   int upvotesCount;

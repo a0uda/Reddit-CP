@@ -37,47 +37,6 @@ class CommentsWidgetState extends State<CommentsWidget> {
 
   final CommentsService commentService = GetIt.instance.get<CommentsService>();
 
-  void incrementCounter(String commentId) {
-    setState(() {
-      if (upVote == false) {
-        commentService;
-
-        upVoteColor = Colors.blue;
-        downVoteColor = Colors.black;
-
-        if (downVote == true) {
-          commentService.upVoteComment(commentId);
-          downVoteColor = Colors.black;
-
-          downVote = false;
-        }
-      } else {
-        commentService.downVoteComment(commentId);
-        upVoteColor = Colors.black;
-      }
-      upVote = !upVote;
-    });
-  }
-
-  void decrementCounter(String commentId) {
-    setState(() {
-      if (downVote == false) {
-        commentService.downVoteComment(commentId);
-        downVoteColor = Colors.red;
-        upVoteColor = Colors.black;
-        if (upVote == true) {
-          commentService.downVoteComment(commentId);
-          upVoteColor = Colors.black;
-          upVote = false;
-        }
-      } else {
-        commentService.upVoteComment(commentId);
-        downVoteColor = Colors.black;
-      }
-      downVote = !downVote;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
@@ -119,7 +78,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                           itemCount: comments?.length,
                           itemBuilder: (context, index) {
                             final comment = comments![index];
-                            return Comment(comment: comment);
+                            return Comment(comment: comment, isSaved: false);
                           },
                         ),
                       );
@@ -133,9 +92,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
             ),
       bottomSheet: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
+        child: SizedBox(
           height: 40,
-          color: Colors.white,
           child: Row(
             children: [
               Expanded(
@@ -165,6 +123,23 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     }
                   },
                 ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.send),
+                onPressed: () {
+                  int status = commentService.addComment(
+                      widget.postId,
+                      commentController.text,
+                      userController.userAbout!.username,
+                      userController.userAbout?.id ?? '');
+                  if (status == 200) {
+                    setState(() {
+                      commentsFuture =
+                          commentService.getCommentByPostId(widget.postId);
+                    });
+                    commentController.clear();
+                  }
+                },
               ),
             ],
           ),

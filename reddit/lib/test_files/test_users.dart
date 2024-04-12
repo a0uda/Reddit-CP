@@ -3,6 +3,7 @@ import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
+import 'package:reddit/test_files/test_comments.dart';
 
 import '../Models/comments.dart';
 import '../Models/user_item.dart';
@@ -12,6 +13,7 @@ import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '0',
       createdAt: '5 March 2024',
@@ -119,7 +121,7 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments1,
+    comments: comments,
     profileSettings: ProfileSettings(
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
@@ -169,6 +171,7 @@ final List<UserItem> users = [
     ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '1',
       createdAt: '5 March 2024',
@@ -266,6 +269,7 @@ final List<UserItem> users = [
     ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '2',
       createdAt: '5 March 2024',
@@ -317,7 +321,7 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments2,
+    comments: comments,
     profileSettings: ProfileSettings(
       displayName: 'Jane',
       about: 'I am a software engineer',
@@ -347,6 +351,7 @@ final List<UserItem> users = [
     ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '3',
       createdAt: '5 March 2024',
@@ -392,7 +397,7 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments3,
+    // comments: comments3,
     profileSettings: ProfileSettings(
       displayName: 'Mark',
       about: 'I am a software engineer',
