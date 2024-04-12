@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
@@ -30,9 +29,8 @@ class ProfileHeader extends StatelessWidget {
                       try {
                         return AssetImage(userData.bannerPicture!);
                       } catch (e) {
-                        // The asset doesn't exist, return a default asset
                         return const AssetImage(
-                            'images/Greddit.png'); // Replace with your default asset path
+                            'images/Greddit.png');
                       }
                     }(),
                     fit: BoxFit.cover,
@@ -51,6 +49,13 @@ class ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              padding: const EdgeInsets.only(top: 30, bottom: 20, left: 20),
+              icon: const Icon(Icons.arrow_back),
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
