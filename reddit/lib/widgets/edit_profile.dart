@@ -211,25 +211,29 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: _bannerimagepath != null
-                          ? File(_bannerimagepath!).existsSync()
-                              ? Image.file(
-                                  File(_bannerimagepath!),
-                                  fit: BoxFit.fill,
-                                )
-                              : Image(
-                                  image: AssetImage(_bannerimagepath!),
-                                  fit: BoxFit.fill,
-                                )
-                          : Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: Icon(
-                                  FluentIcons.camera_add_20_regular,
-                                  size: 30,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          _bannerimagepath != null
+                              ? File(_bannerimagepath!).existsSync()
+                                  ? Image.file(
+                                      File(_bannerimagepath!),
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Image(
+                                      image: AssetImage(_bannerimagepath!),
+                                      fit: BoxFit.fill,
+                                    )
+                              : Container(
+                                  color: Colors.grey[300],
                                 ),
-                              ),
-                            ),
+                          const Icon(
+                            FluentIcons.camera_add_20_regular,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -242,18 +246,22 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                            width: 70,
-                            height: 70,
-                            decoration: _profileImagePath != null
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Colors.white, // Border color
+                              width: 2, // Border width
+                            ),
+                            image: _profileImagePath != null
                                 ? (File(_profileImagePath!).existsSync())
-                                    ? BoxDecoration(
-                                        image: DecorationImage(
+                                    ? DecorationImage(
                                         image:
                                             FileImage(File(_profileImagePath!)),
                                         fit: BoxFit.cover,
-                                      ))
-                                    : BoxDecoration(
-                                        image: DecorationImage(
+                                      )
+                                    : DecorationImage(
                                         image: () {
                                           try {
                                             return AssetImage(
@@ -265,27 +273,35 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                                           }
                                         }(),
                                         fit: BoxFit.cover,
-                                      ))
-                                : const BoxDecoration(
-                                    image: DecorationImage(
+                                      )
+                                : const DecorationImage(
                                     image: AssetImage('images/Greddit.png'),
                                     fit: BoxFit.cover,
-                                  ))),
-                        _profileImagePath == null
-                            ? const CircleAvatar(
-                                radius: 35,
-                                backgroundColor: Color.fromARGB(22, 0, 0, 0),
-                                child: Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  child: Icon(
-                                    FluentIcons.camera_add_20_regular,
-                                    color: Colors.white,
-                                    size: 20,
                                   ),
-                                ),
-                              )
-                            : Container(),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: const CircleAvatar(
+                            radius: 33,
+                            backgroundColor: Color.fromARGB(22, 0, 0, 0),
+                            child: Positioned(
+                              bottom: 0,
+                              left: 0,
+                              child: Icon(
+                                FluentIcons.camera_add_20_regular,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
