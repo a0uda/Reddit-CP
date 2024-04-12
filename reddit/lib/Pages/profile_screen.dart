@@ -11,9 +11,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 228, 228),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 28, 83, 165),
-      ),
       body: DefaultTabController(
         length: 3,
         child: Column(

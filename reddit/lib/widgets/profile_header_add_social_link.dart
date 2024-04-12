@@ -17,31 +17,34 @@ class ProfileHeaderAddSocialLink extends StatefulWidget {
       this.userData, this.userType, this.notEditProfile,
       {super.key});
   @override
-  _ProfileHeaderAddSocialLinkState createState() =>
-      _ProfileHeaderAddSocialLinkState(userData, userType, notEditProfile);
+  ProfileHeaderAddSocialLinkState createState() =>
+      ProfileHeaderAddSocialLinkState();
 }
 
-class _ProfileHeaderAddSocialLinkState
+class ProfileHeaderAddSocialLinkState
     extends State<ProfileHeaderAddSocialLink> {
   late bool showAddSocialLinkButton = true;
   late bool notEditProfile;
-  UserAbout userData;
-  String userType;
-
-  _ProfileHeaderAddSocialLinkState(
-      this.userData, this.userType, this.notEditProfile);
+  UserAbout? userData;
+  String? userType;
 
   final userService = GetIt.instance.get<UserService>();
 
   @override
+  @override
   void initState() {
     super.initState();
+    userData = widget.userData;
+    userType = widget.userType;
+    notEditProfile = widget.notEditProfile;
+    showAddSocialLinkButton = true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SocialLinksController>(
       builder: (context, socialLinksController, child) {
+        socialLinksController.getSocialLinks(userData!.username);
         return Container(
           padding: notEditProfile
               ? const EdgeInsets.only(left: 20, right: 20, bottom: 10)
@@ -119,7 +122,7 @@ class _ProfileHeaderAddSocialLinkState
                                         onPressed: () {
                                           socialLinksController
                                               .removeSocialLink(
-                                                  userData, linkData);
+                                                  userData!.username, linkData);
                                         },
                                         padding: EdgeInsets.zero,
                                       ),

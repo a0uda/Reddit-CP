@@ -31,7 +31,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
-                  child: userData!.profilePicture == null
+                  child: userData.profilePicture == null
                       ? const CircleAvatar(
                           radius: 50,
                           backgroundImage: AssetImage('images/Greddit.png'),
@@ -57,7 +57,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Text(
-                  userData?.displayName ?? userData!.username,
+                  userData.displayName ?? userData.username,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 25,
@@ -107,7 +107,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 20, bottom: 10),
                 child: Text(
-                  'u/${userData!.username} - ${userData.createdAt}\n${userData.about}',
+                  'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
