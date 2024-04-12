@@ -1,13 +1,21 @@
+import 'dart:convert';
+
 import 'package:reddit/Models/account_settings_item.dart';
+
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
+
+import 'package:reddit/test_files/test_safety_settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
 import '../test_files/test_users.dart';
+import 'package:http/http.dart' as http;
 
 bool testing = true;
 
@@ -328,12 +336,37 @@ class UserService {
     return 200;
   }
 
-  int userLogin(String username, String password) {
-    if (users.any((user) =>
-        user.userAbout.username == username && user.password == password)) {
-      return 200;
+  Future<int> userLogin(String username, String password) async {
+    if (testing) {
+      if (users.any((user) =>
+          user.userAbout.username == username && user.password == password)) {
+        await Future.delayed(Duration(seconds: 1));
+        return 200;
+      } else {
+        await Future.delayed(Duration(seconds: 1));
+        return 400;
+      }
     } else {
-      return 400;
+      final url = Uri.parse('https://redditech.me/backend/users/login');
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      final token = response.headers['authorization'];
+      print(token);
+      if (response.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('token', token!);
+        return 200;
+      } else {
+        return 400;
+      }
     }
   }
 

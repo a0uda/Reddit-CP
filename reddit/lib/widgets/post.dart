@@ -5,7 +5,7 @@ import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
-import 'package:reddit/widgets/report.dart';
+import 'package:reddit/widgets/options.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/poll_widget.dart';
@@ -58,7 +58,7 @@ class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
-
+  bool issaved = false;
   bool upVote = false;
   bool downVote = false;
   CommunityController communityController =
@@ -117,9 +117,11 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    UserAbout ownerAbout = userController.getUserAbout(widget.name)!;
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
+    String username = userController.userAbout!.username;
+    var saved = postService.getSavePost(username);
+    issaved = saved.any((obj) => obj.id == widget.id);
 
     String userType;
 
@@ -226,7 +228,7 @@ class PostState extends State<Post> {
                     ),
                   ],
                 ),
-                trailing: const Options(),
+                trailing: Options(postId: widget.id, saved: issaved),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),

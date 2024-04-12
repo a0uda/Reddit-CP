@@ -1,9 +1,16 @@
 //import 'package:media_kit/ffi/ffi.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
+import 'package:reddit/Models/save.dart';
+import 'package:reddit/Models/trending_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import '../test_files/test_posts.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/user_service.dart';
+import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/report.dart';
+
 
 int counter = 0;
 bool testing = true;
@@ -58,12 +65,68 @@ class PostService {
       // add post to database
     }
   }
+ List<PostItem> fetchPosts() {
+    if (testing) {
 
-  List<PostItem> getPosts() {
-    return posts;
+      return posts;
+    } else {
+      return posts;
+    }
+  }
+  List<PostItem> getPosts(String username) {
+    if (testing) {
+      final userService = GetIt.instance.get<UserService>();
+      final List<FollowersFollowingItem>? following =
+          userService.getFollowers(username);
+      var usernames = following!.map((user) => user.username).toSet();
+      print(usernames);
+      var filteredPosts =
+          posts.where((post) => usernames.contains(post.username)).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
+  }
+   List<TrendingItem> getTrendingPosts() {
+    if (testing) {
+      return trendingPosts;
+    } else {
+      return trendingPosts;
+    }
+  }
+    List<PostItem> getMyPosts(String username) {
+    if (testing) {
+      var filteredPosts =
+          posts.where((post) => post.username==username).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
+  }
+   List<PostItem> getPostsById(int id) {
+    if (testing) {
+      var filteredPosts =
+          posts.where((post) => post.id==id).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
   }
 
-  List<PostItem> getCommunityPosts(String communityId) {
+ 
+
+
+  
+
+  List<PostItem> getPopularPosts() {
+    if (testing) {
+      return popularPosts;
+    } else {
+      return popularPosts;
+    }
+  }
+  
+  List<PostItem> getCommunityPosts(int communityId) {
     return posts
         .where((element) => element.communityId == communityId)
         .toList();
@@ -83,6 +146,47 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == id);
       post.downvotesCount++;
     } else {
+      // dislike post in database
+    }
+  }
+    void submitReport(String? id,String reason) {
+    if (testing) {
+      reportPosts.add(ReportPost(id:id ,reason:reason));
+      print(id);
+      print(reason);
+      print(reportPosts);
+      
+    } else {
+      // dislike post in database
+    }
+  }
+      void savePost(String? id,String username) {
+    if (testing) {
+      savedPosts.add(SaveItem(id:id ,username:username));
+    
+      
+    } else {
+      // dislike post in database
+    }
+  }
+       void unSavePost(String? id,String username) {
+    if (testing) {
+      savedPosts.removeWhere((post) => ((post.id==id)&&(post.username==username)));
+    } else {
+      // dislike post in database
+    }
+  }
+     List<PostItem> getSavePost(String username) {
+    if (testing) {
+            var filteredids =
+          savedPosts.where((post) => post.username==username).toList();
+            var ids = filteredids!.map((user) => user.id).toSet();
+            print(ids);
+                  var filteredPosts =
+          posts.where((post) => ids.contains(post.id)).toList();
+          return filteredPosts;      
+    } else {
+      return posts;
       // dislike post in database
     }
   }

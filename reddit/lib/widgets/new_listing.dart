@@ -1,32 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Models/post_item.dart';
+
 import 'package:reddit/widgets/post.dart';
+import 'package:get_it/get_it.dart';
+import '../Controllers/user_controller.dart';
+import 'package:reddit/widgets/blur_content.dart';
 
-import '../test_files/test_posts.dart';
+import 'package:reddit/Models/post_item.dart';
+import 'package:reddit/Services/post_service.dart';
 
-// class PostItems {
-//   final String name;
-//   final String profileImage;
-//   final String postContent;
-//   final int likes;
-//   final String comments;
-
-//   PostItems(this.name, this.profileImage, this.postContent, this.likes,
-//       this.comments);
-// }
-
-// final List<PostItems> posts = [
-//   PostItems(
-//       'Jennifer Lopez',
-//       'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
-//       'kasdmaklsd askdmlaksd skmlamdlkasd asdmklasm sdkamldklasm askdmlalksmd askldmklamsdlka askldmklasmdlk aksdmlkamsdlk klasmdklasmdkla skmdslamsdlkam asklmdklamsda jkasndklamskldamr',
-//       2,
-//       '3'),
-// ];
+final userController = GetIt.instance.get<UserController>();
+List<PostItem> posts=[];
 
 class NewListing extends StatefulWidget {
-  const NewListing({super.key});
+  final String type;
+  const NewListing({super.key, required this.type});
   @override
   State<NewListing> createState() => NewListingBuild();
 }
@@ -39,6 +28,22 @@ class NewListingBuild extends State<NewListing> {
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
+    String username = userController.userAbout!.username;
+    final postService = GetIt.instance.get<PostService>();
+    if(widget.type=="home")
+    {
+    posts = postService.getPosts(username);
+    }
+    else if(widget.type=="popular")
+    {
+      posts = postService.getPopularPosts();
+
+    }
+       else if(widget.type=="profile")
+    {
+      posts = postService.getMyPosts(username);
+
+    }
   }
 
   void HandleScrolling() {
@@ -61,6 +66,26 @@ class NewListingBuild extends State<NewListing> {
       itemCount: posts.length,
       controller: controller,
       itemBuilder: (context, index) {
+        if (posts[index].nsfwFlag == true) {
+          // TODO : NSFW , Spoiler
+          return buildBlur(
+              context: context,
+              child: Post(
+               // profileImageUrl: posts[index].profilePic!,
+                name: posts[index].username,
+          title: posts[index].title,
+          postContent: posts[index].description!,
+          date: posts[index].createdAt.toString(),
+          likes: posts[index].upvotesCount - posts[index].downvotesCount,
+          commentsCount: posts[index].commentsCount,
+          linkUrl: posts[index].linkUrl,
+          imageUrl: posts[index].images?[0].path,
+          videoUrl: posts[index].videos?[0].path,
+          poll: posts[index].poll,
+          id: posts[index].id,
+          communityName: posts[index].communityName,
+              ));
+        }
         return Post(
           // profileImageUrl: posts[index].profilePic!,
           name: posts[index].username,

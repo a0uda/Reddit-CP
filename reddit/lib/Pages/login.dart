@@ -6,6 +6,7 @@ import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 
@@ -44,16 +45,16 @@ class LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  void validateForm(BuildContext context) {
+  void validateForm(BuildContext context) async {
     final userService = GetIt.instance.get<UserService>();
-    int validationResult =
-        userService.userLogin(usernameController.text, passwordController.text);
+    int validationResult = await userService.userLogin(
+        usernameController.text, passwordController.text);
 
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       userController.getUser(usernameController.text);
-      // print('User logged in successfully!');
-      // print('User data: ${userController.userAbout?.email}');
+     
+      print('User data: ${userController.userAbout?.email}');
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
