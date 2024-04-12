@@ -40,6 +40,12 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => BannerPictureController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => FollowerFollowingController(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => EditProfileController(),
+      ),
     ],
     child: MyApp(),
   ));
