@@ -33,6 +33,15 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => SocialLinksController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => SavePost(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ProfilePictureController(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BannerPictureController(),
+      ),
     ],
     child: MyApp(),
   ));
