@@ -38,7 +38,6 @@ class ApprovedUsers extends StatefulWidget {
 class _ApprovedUsersState extends State<ApprovedUsers> {
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.of(context).size.width < 700) {
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -55,8 +54,5 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
         body:
             Container(color: Colors.grey[200], child: const ApprovedUserList()),
       );
-    } else {
-      return const ApprovedUserList();
-    }
   }
 }

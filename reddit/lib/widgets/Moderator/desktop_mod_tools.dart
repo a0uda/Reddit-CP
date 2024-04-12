@@ -67,7 +67,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
                     width: 1,
                   ),
                   //here the body of each mod tool can be changed by the setstate
-                  Expanded(child: modTools[modToolIndex])
+                  Expanded(child: desktopModTools[modToolIndex])
                 ],
               ),
             ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_list.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_ui.dart';
 
@@ -8,7 +10,7 @@ class MobileModTools extends StatelessWidget {
   Widget build(BuildContext context) {
     void changePage(selected) {
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => modTools[selected],
+        builder: (context) => ModResponsive(mobileLayout: mobileModTools[selected], desktopLayout: DesktopModTools(index: selected)),
       ));
     }
 
