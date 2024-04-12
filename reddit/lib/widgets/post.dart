@@ -54,7 +54,7 @@ class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
-bool issaved=false;
+  bool issaved = false;
   bool upVote = false;
   bool downVote = false;
   CommunityController communityController =
@@ -113,12 +113,11 @@ bool issaved=false;
 
   @override
   Widget build(BuildContext context) {
-    UserAbout ownerAbout = userController.getUserAbout(widget.name)!;
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
-  String username = userController.userAbout!.username;
-  var saved=postService.getSavePost( username);
-   issaved = saved.any((obj) => obj.id == widget.id);
+    String username = userController.userAbout!.username;
+    var saved = postService.getSavePost(username);
+    issaved = saved.any((obj) => obj.id == widget.id);
 
     String userType;
     return SizedBox(
@@ -185,34 +184,39 @@ bool issaved=false;
                     Row(
                       children: [
                         InkWell(
-                          onTap: () => {
+                          onTap: () {
                             userType = userController.userAbout!.username ==
                                     widget.name
                                 ? 'me'
-                                : 'other',
+                                : 'other';
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
-                                  userService.getUserAbout(widget.name),
-                                  userType,
-                                  null,
+                                builder: (context) => FutureBuilder<UserAbout?>(
+                                  future: userService.getUserAbout(widget.name),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return ProfileScreen(
+                                        snapshot.data,
+                                        userType,
+                                        null,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
-                            ),
+                            );
                           },
                           onHover: (hover) {
                             setState(() {
-                              isHovering = hover;
+                              // your hover logic here
                             });
                           },
-                          child: Text(
-                            widget.name,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w200,
-                                fontFamily: 'Arial'),
-                          ),
                         ),
                         const Padding(padding: EdgeInsets.all(0)),
                         Text(
@@ -225,7 +229,7 @@ bool issaved=false;
                     ),
                   ],
                 ),
-                trailing:  Options(postId:widget.id,saved:issaved),
+                trailing: Options(postId: widget.id, saved: issaved),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),

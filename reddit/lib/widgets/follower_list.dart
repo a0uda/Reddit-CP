@@ -92,9 +92,10 @@ class FollowerListState extends State<FollowerList> {
                     ),
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
                   var username = followersList![index].username.toString();
-                  UserAbout otherUserData = userService.getUserAbout(username)!;
+                  UserAbout? otherUserData =
+                      await userService.getUserAbout(username);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

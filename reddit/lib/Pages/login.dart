@@ -51,25 +51,26 @@ class LoginPageState extends State<LoginPage> {
         usernameController.text, passwordController.text);
 
     if (validationResult == 200) {
-      //final userController = GetIt.instance.get<UserController>();
-      //userController.getUser(usernameController.text);
       print('User logged in successfully!');
+      final userController = GetIt.instance.get<UserController>();
+      userController.getUser(usernameController.text);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? myToken = prefs.getString('token');
       print('Token: $myToken');
-      // print('User data: ${userController.userAbout?.email}');
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(
-      //     builder: (context) => const ResponsiveLayout(
-      //       mobileLayout: MobileLayout(
-      //         mobilePageMode: 0,
-      //       ),
-      //       desktopLayout: DesktopHomePage(
-      //         indexOfPage: 0,
-      //       ),
-      //     ),
-      //   ),
-      // );
+      await userController.getUserAbout(usernameController.text);
+      print('User data: ${userController.userAbout?.email}');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileLayout: MobileLayout(
+              mobilePageMode: 0,
+            ),
+            desktopLayout: DesktopHomePage(
+              indexOfPage: 0,
+            ),
+          ),
+        ),
+      );
     } else {
       // Display error message for unsuccessful login
       ScaffoldMessenger.of(context).showSnackBar(

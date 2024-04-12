@@ -1,4 +1,6 @@
 //import 'package:media_kit/ffi/ffi.dart';
+import 'dart:convert';
+
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
@@ -6,18 +8,19 @@ import 'package:reddit/Models/save.dart';
 import 'package:reddit/Models/trending_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/post_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../test_files/test_posts.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/report.dart';
-
+import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = true;
+bool testing = false;
 
 class PostService {
-  void addPost(
+  Future<int> addPost(
     String userId,
     String username,
     String title,
@@ -32,7 +35,8 @@ class PostService {
     bool ocFlag,
     bool spoilerFlag,
     bool nsfwFlag,
-  ) {
+    bool postInCommunityFlag,
+  ) async {
     if (testing) {
       posts.add(
         PostItem(
@@ -64,16 +68,63 @@ class PostService {
       );
     } else {
       // add post to database
-    }
-  }
- List<PostItem> fetchPosts() {
-    if (testing) {
+      final url = Uri.parse('https://redditech.me/backend/users/login');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
 
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({
+          "title": title,
+          "description": description,
+          "type": type,
+          "link_url": linkUrl,
+          "images": images
+              ?.map((image) => {
+                    "path": image.path,
+                    "caption": image.caption ?? "",
+                    "link": image.link
+                  })
+              .toList(),
+          "videos": videos
+              ?.map((video) => {
+                    "path": video.path,
+                    "caption": video.caption ?? "",
+                    "link": video.link
+                  })
+              .toList(),
+          "polls": poll != null
+              ? [
+                  {"options": poll.options}
+                ]
+              : [],
+          "polls_voting_length": poll != null ? poll.votes.length : 0,
+          "community_name": communityName,
+          "post_in_community_flag": postInCommunityFlag,
+          "oc_flag": ocFlag,
+          "spoiler_flag": spoilerFlag,
+          "nsfw_flag": nsfwFlag
+        }),
+      );
+      if (response.statusCode >= 400) {
+        return 400;
+      }
+    }
+    return 200;
+  }
+
+  List<PostItem> fetchPosts() {
+    if (testing) {
       return posts;
     } else {
       return posts;
     }
   }
+
   List<PostItem> getPosts(String username) {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
@@ -88,36 +139,33 @@ class PostService {
       return posts;
     }
   }
-   List<TrendingItem> getTrendingPosts() {
+
+  List<TrendingItem> getTrendingPosts() {
     if (testing) {
       return trendingPosts;
     } else {
       return trendingPosts;
     }
   }
-    List<PostItem> getMyPosts(String username) {
+
+  List<PostItem> getMyPosts(String username) {
     if (testing) {
       var filteredPosts =
-          posts.where((post) => post.username==username).toList();
-      return filteredPosts;
-    } else {
-      return posts;
-    }
-  }
-   List<PostItem> getPostsById(int id) {
-    if (testing) {
-      var filteredPosts =
-          posts.where((post) => post.id==id).toList();
+          posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
       return posts;
     }
   }
 
- 
-
-
-  
+  List<PostItem> getPostsById(int id) {
+    if (testing) {
+      var filteredPosts = posts.where((post) => post.id == id).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
+  }
 
   List<PostItem> getPopularPosts() {
     if (testing) {
@@ -126,7 +174,7 @@ class PostService {
       return popularPosts;
     }
   }
-  
+
   List<PostItem> getCommunityPosts(int communityId) {
     return posts
         .where((element) => element.communityId == communityId)
@@ -150,42 +198,43 @@ class PostService {
       // dislike post in database
     }
   }
-    void submitReport(String? id,String reason) {
+
+  void submitReport(String? id, String reason) {
     if (testing) {
-      reportPosts.add(ReportPost(id:id ,reason:reason));
+      reportPosts.add(ReportPost(id: id, reason: reason));
       print(id);
       print(reason);
       print(reportPosts);
-      
     } else {
       // dislike post in database
     }
   }
-      void savePost(String? id,String username) {
+
+  void savePost(String? id, String username) {
     if (testing) {
-      savedPosts.add(SaveItem(id:id ,username:username));
-    
-      
+      savedPosts.add(SaveItem(id: id, username: username));
     } else {
       // dislike post in database
     }
   }
-       void unSavePost(String? id,String username) {
+
+  void unSavePost(String? id, String username) {
     if (testing) {
-      savedPosts.removeWhere((post) => ((post.id==id)&&(post.username==username)));
+      savedPosts.removeWhere(
+          (post) => ((post.id == id) && (post.username == username)));
     } else {
       // dislike post in database
     }
   }
-     List<PostItem> getSavePost(String username) {
+
+  List<PostItem> getSavePost(String username) {
     if (testing) {
-            var filteredids =
-          savedPosts.where((post) => post.username==username).toList();
-            var ids = filteredids!.map((user) => user.id).toSet();
-            print(ids);
-                  var filteredPosts =
-          posts.where((post) => ids.contains(post.id)).toList();
-          return filteredPosts;      
+      var filteredids =
+          savedPosts.where((post) => post.username == username).toList();
+      var ids = filteredids!.map((user) => user.id).toSet();
+      print(ids);
+      var filteredPosts = posts.where((post) => ids.contains(post.id)).toList();
+      return filteredPosts;
     } else {
       return posts;
       // dislike post in database

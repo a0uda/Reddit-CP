@@ -7,21 +7,17 @@ import 'package:reddit/widgets/post.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:get_it/get_it.dart';
 
-
 import '../Controllers/user_controller.dart';
 
-
 final userController = GetIt.instance.get<UserController>();
-List<PostItem> posts=[];
+List<PostItem> posts = [];
+
 class HotListing extends StatefulWidget {
   final String type;
-  const HotListing({super.key,
-  required this.type});
+  const HotListing({super.key, required this.type});
   @override
   State<HotListing> createState() => HotListingBuild();
 }
-
-
 
 class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
@@ -30,23 +26,20 @@ class HotListingBuild extends State<HotListing> {
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
-     String username = userController.userAbout!.username;
     final postService = GetIt.instance.get<PostService>();
-    if(widget.type=="home")
-    {
-    posts = postService.getPosts(username);
-    }
-    else if(widget.type=="popular")
-    {
-      posts = postService.getPopularPosts();
-
-    }
-         else if(widget.type=="profile")
-    {
-      posts = postService.getMyPosts(username);
-      print(username);
-
-    }
+    Future.microtask(() async {
+      String username = (await userController.userAbout)!.username;
+      if (widget.type == "home") {
+        posts = postService.getPosts(username);
+      } else if (widget.type == "popular") {
+        posts = postService.getPopularPosts();
+      } else if (widget.type == "profile") {
+        posts = postService.getMyPosts(username);
+        print(username);
+      }
+      setState(
+          () {}); // Call setState to trigger a rebuild after data is fetched
+    });
   }
 
   void HandleScrolling() {
@@ -63,7 +56,6 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
- 
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,

@@ -14,13 +14,13 @@ class UserController {
   AccountSettings? accountSettings;
 
   void getUser(String username) async {
-    userAbout = userService.getUserAbout(username);
+    userAbout = await userService.getUserAbout(username);
     blockedUsers = userService.getBlockedUsers(username);
     accountSettings = userService.getAccountSettings(username);
   }
 
-  UserAbout? getUserAbout(String username) {
-    return userService.getUserAbout(username);
+  Future<UserAbout?> getUserAbout(String username) async {
+    return await userService.getUserAbout(username);
   }
 
   AccountSettings? getAccountSettings(String username) {

@@ -1,11 +1,9 @@
+import 'dart:convert';
+
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
-import 'package:reddit/Models/blocked_users_item.dart';
-import 'package:reddit/Models/profile_settings.dart';
-import 'package:reddit/Models/social_link_item.dart';
-import 'package:reddit/test_files/test_safety_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -32,15 +30,29 @@ class UserService {
     }
   }
 
-  UserAbout? getUserAbout(String Username) {
+  Future<UserAbout?> getUserAbout(String Username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == Username)
           .userAbout;
     } else {
       //to be fetched from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/about/admin');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+
+      print(jsonDecode(response.body));
+      return UserAbout.fromJson(jsonEncode(response.body));
     }
-    return null;
   }
 
   void addSocialLink(
