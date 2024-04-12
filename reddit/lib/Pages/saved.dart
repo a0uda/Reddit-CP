@@ -34,6 +34,7 @@ print(posts);
       ),
       body:Consumer<SavePost>(
       builder: (context, socialLinksController, child) {
+         posts=postService.getSavePost(username);
         return ListView.builder(
       itemCount: posts.length,
       itemBuilder: (context, index) {
