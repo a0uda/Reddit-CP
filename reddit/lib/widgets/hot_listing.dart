@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Models/post_item.dart';
-import 'package:reddit/test_files/test_posts.dart';
+
 import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:get_it/get_it.dart';
 
+
+import '../Controllers/user_controller.dart';
+
+
+final userController = GetIt.instance.get<UserController>();
+List<PostItem> posts=[];
 class HotListing extends StatefulWidget {
-  const HotListing({super.key});
+  final String type;
+  const HotListing({super.key,
+  required this.type});
   @override
   State<HotListing> createState() => HotListingBuild();
 }
+
+
 
 class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
@@ -19,10 +29,27 @@ class HotListingBuild extends State<HotListing> {
   @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(handleScrolling);
+    controller = ScrollController()..addListener(HandleScrolling);
+     String username = userController.userAbout!.username;
+    final postService = GetIt.instance.get<PostService>();
+    if(widget.type=="home")
+    {
+    posts = postService.getPosts(username);
+    }
+    else if(widget.type=="popular")
+    {
+      posts = postService.getPopularPosts();
+
+    }
+         else if(widget.type=="profile")
+    {
+      posts = postService.getMyPosts(username);
+      print(username);
+
+    }
   }
 
-  void handleScrolling() {
+  void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
@@ -36,10 +63,7 @@ class HotListingBuild extends State<HotListing> {
 
   @override
   Widget build(BuildContext context) {
-    final PostController postController = PostController();
-
-    postController.getPost();
-    List<PostItem> posts = postController.postItems!;
+ 
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,

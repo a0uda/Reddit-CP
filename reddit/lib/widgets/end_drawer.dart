@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/Pages/saved.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
@@ -48,6 +49,13 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("Saved"),
             onTap: () {
               //Navigate to Saved
+                          Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        Saved()),
+              );
+              
             },
           ),
           ListTile(

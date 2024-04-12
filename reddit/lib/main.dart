@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
@@ -25,6 +26,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => SocialLinksController(),
       ),
+         ChangeNotifierProvider(
+        create: (context) => SavePost(),
+      ),
     ],
     child: MyApp(),
   ));
@@ -47,7 +51,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: const Color.fromARGB(255, 224, 223, 223),
+              primary: Color.fromARGB(255, 224, 223, 223),
               secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
