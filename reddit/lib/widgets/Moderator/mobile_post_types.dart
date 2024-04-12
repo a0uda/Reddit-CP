@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class PostTypes extends StatefulWidget {
-  const PostTypes({super.key});
+class MobilePostTypes extends StatefulWidget {
+  const MobilePostTypes({super.key});
 
   @override
-  State<PostTypes> createState() => _PostTypesState();
+  State<MobilePostTypes> createState() => _MobilePostTypesState();
 }
 
-class _PostTypesState extends State<PostTypes> {
+class _MobilePostTypesState extends State<MobilePostTypes> {
   bool imageSwitchValue = true;
   bool videoSwitchValue = true;
   bool pollSwitchValue = true;
@@ -69,7 +69,8 @@ class _PostTypesState extends State<PostTypes> {
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
 
-    return Stack(
+    return Scaffold(
+      body: Stack(
         children: [
           Padding(
             padding: EdgeInsets.all(screenWidth * paddingPercentage),
@@ -267,7 +268,7 @@ class _PostTypesState extends State<PostTypes> {
                 : const SizedBox(),
           ),
         ],
-
+      ),
     );
   }
 }
