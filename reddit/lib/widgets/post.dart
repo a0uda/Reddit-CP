@@ -32,6 +32,7 @@ class Post extends StatefulWidget {
   final PollItem? poll;
   final String id;
   final String communityName;
+  final bool isLocked;
 
   Post({
     super.key,
@@ -48,6 +49,7 @@ class Post extends StatefulWidget {
     this.videoUrl,
     this.poll,
     required this.communityName,
+    required this.isLocked,
   });
 
   @override
@@ -235,12 +237,31 @@ class PostState extends State<Post> {
                           style: const TextStyle(
                               fontSize: 12,
                               color: Color.fromARGB(255, 117, 116, 115)),
-                        )
+                        ),
                       ],
                     ),
                   ],
                 ),
-                trailing: Options(postId: widget.id, saved: issaved),
+                trailing: SizedBox(
+                  width: 65,
+                  child: Row(
+                    children: [
+                      if (widget.isLocked == true)
+                        Icon(
+                          Icons.lock,
+                          color: Colors.amberAccent[700],
+                        ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Options(
+                          postId: widget.id,
+                          saved: issaved,
+                          islocked: widget.isLocked,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -391,38 +412,41 @@ class PostState extends State<Post> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 40.0,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CommentsWidget(
-                                    postId: widget.id), // pass the post ID here
-                              ),
-                            );
-                          },
-                          icon: Icon(Icons.messenger_outline,
-                              color: Theme.of(context).colorScheme.secondary),
-                          label: Text(
-                            widget.commentsCount.toString(),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary),
+                    if (widget.isLocked == false)
+                      SizedBox(
+                        height: 40.0,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            // Button background color
-                            padding: const EdgeInsets.all(6),
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CommentsWidget(
+                                      postId:
+                                          widget.id), // pass the post ID here
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.messenger_outline,
+                                color: Theme.of(context).colorScheme.secondary),
+                            label: Text(
+                              widget.commentsCount.toString(),
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              // Button background color
+                              padding: const EdgeInsets.all(6),
+                            ),
                           ),
                         ),
                       ),
-                    ),
                     ElevatedButton.icon(
                       onPressed: () {
                         //shareee

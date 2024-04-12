@@ -17,7 +17,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = false;
+bool testing = true;
 
 class PostService {
   Future<int> addPost(
@@ -110,37 +110,7 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-      print(json.encode({
-        "title": title,
-        "description": description,
-        "type": type,
-        "link_url": linkUrl,
-        "images": images
-            ?.map((image) => {
-                  "path": image.path,
-                  "caption": image.caption ?? "",
-                  "link": image.link
-                })
-            .toList(),
-        "videos": videos
-            ?.map((video) => {
-                  "path": video.path,
-                  "caption": video.caption ?? "",
-                  "link": video.link
-                })
-            .toList(),
-        "polls": poll != null
-            ? [
-                {"options": poll.options}
-              ]
-            : [],
-        "polls_voting_length": poll != null ? poll.votes.length : 0,
-        "community_name": communityName,
-        "post_in_community_flag": postInCommunityFlag,
-        "oc_flag": ocFlag,
-        "spoiler_flag": spoilerFlag,
-        "nsfw_flag": nsfwFlag
-      }));
+      print(response.statusCode);
       if (response.statusCode >= 400) {
         return 400;
       }
@@ -297,6 +267,15 @@ class PostService {
     } else {
       return null;
       //
+    }
+  }
+
+  void lockUnlockPost(String id) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == id);
+      post.lockedFlag = !post.lockedFlag;
+    } else {
+      // lock/unlock post in database
     }
   }
 }

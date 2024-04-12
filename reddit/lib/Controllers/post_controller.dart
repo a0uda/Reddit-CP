@@ -11,15 +11,21 @@ class PostController {
     postItems = postService.fetchPosts();
   }
 }
-class SavePost extends ChangeNotifier {
 
+class SavePost extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();
 
-  void unSavePost(String? id,String username) {
-    postService.unSavePost(id,username);
+  void unSavePost(String? id, String username) {
+    postService.unSavePost(id, username);
     notifyListeners();
   }
-
- 
 }
 
+class LockPost extends ChangeNotifier {
+  final postService = GetIt.instance.get<PostService>();
+
+  void lockPost(String? id) {
+    postService.lockUnlockPost(id!);
+    notifyListeners();
+  }
+}

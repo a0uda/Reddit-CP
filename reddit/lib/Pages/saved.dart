@@ -9,7 +9,6 @@ import 'package:reddit/widgets/post.dart';
 
 import 'package:reddit/widgets/blur_content.dart';
 
-
 class Saved extends StatefulWidget {
   const Saved({super.key});
 
@@ -26,53 +25,57 @@ class SavedScreen extends State<Saved> {
     final postService = GetIt.instance.get<PostService>();
     String username = userController.userAbout!.username;
     posts = postService.getSavePost(username);
-print(posts);
+    print(posts);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         title: const Text('Saved'),
       ),
-      body:Consumer<SavePost>(
-      builder: (context, socialLinksController, child) {
-         posts=postService.getSavePost(username);
+      body:
+          Consumer<SavePost>(builder: (context, socialLinksController, child) {
+        posts = postService.getSavePost(username);
         return ListView.builder(
-      itemCount: posts.length,
-      itemBuilder: (context, index) {
-        if (posts[index].nsfwFlag == true) {
-          // TODO : NSFW , Spoiler
-          return buildBlur(
-              context: context,
-              child: Post(
-               name: posts[index].username,
-                title: posts[index].title,
-                postContent: posts[index].description!,
-                date: posts[index].createdAt.toString(),
-                likes: posts[index].upvotesCount - posts[index].downvotesCount,
-                commentsCount: posts[index].commentsCount,
-                linkUrl: posts[index].linkUrl,
-                imageUrl: posts[index].images?[0].path,
-                videoUrl: posts[index].videos?[0].path,
-                poll: posts[index].poll,
-                id: posts[index].id,
-                communityName: posts[index].communityName,
-              ));
-        }
-        return Post(
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            if (posts[index].nsfwFlag == true) {
+              // TODO : NSFW , Spoiler
+              return buildBlur(
+                  context: context,
+                  child: Post(
+                    name: posts[index].username,
+                    title: posts[index].title,
+                    postContent: posts[index].description!,
+                    date: posts[index].createdAt.toString(),
+                    likes:
+                        posts[index].upvotesCount - posts[index].downvotesCount,
+                    commentsCount: posts[index].commentsCount,
+                    linkUrl: posts[index].linkUrl,
+                    imageUrl: posts[index].images?[0].path,
+                    videoUrl: posts[index].videos?[0].path,
+                    poll: posts[index].poll,
+                    id: posts[index].id,
+                    communityName: posts[index].communityName,
+                    isLocked: posts[index].lockedFlag,
+                  ));
+            }
+            return Post(
               name: posts[index].username,
-                title: posts[index].title,
-                postContent: posts[index].description!,
-                date: posts[index].createdAt.toString(),
-                likes: posts[index].upvotesCount - posts[index].downvotesCount,
-                commentsCount: posts[index].commentsCount,
-                linkUrl: posts[index].linkUrl,
-                imageUrl: posts[index].images?[0].path,
-                videoUrl: posts[index].videos?[0].path,
-                poll: posts[index].poll,
-                id: posts[index].id,
-                communityName: posts[index].communityName,
+              title: posts[index].title,
+              postContent: posts[index].description!,
+              date: posts[index].createdAt.toString(),
+              likes: posts[index].upvotesCount - posts[index].downvotesCount,
+              commentsCount: posts[index].commentsCount,
+              linkUrl: posts[index].linkUrl,
+              imageUrl: posts[index].images?[0].path,
+              videoUrl: posts[index].videos?[0].path,
+              poll: posts[index].poll,
+              id: posts[index].id,
+              communityName: posts[index].communityName,
+              isLocked: posts[index].lockedFlag,
+            );
+          },
         );
-      },
-    );}),
+      }),
     );
   }
 }
