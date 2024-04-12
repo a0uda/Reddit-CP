@@ -44,9 +44,9 @@ class LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  void validateForm(BuildContext context) {
+  void validateForm(BuildContext context)async  {
     final userService = GetIt.instance.get<UserService>();
-    int validationResult =
+    int validationResult = await
         userService.userLogin(usernameController.text, passwordController.text);
 
     if (validationResult == 200) {

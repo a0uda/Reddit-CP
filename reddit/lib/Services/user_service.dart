@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
@@ -7,6 +9,7 @@ import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
 import '../test_files/test_users.dart';
+import 'package:http/http.dart' as http;
 
 bool testing = true;
 
@@ -33,6 +36,9 @@ class UserService {
           .userAbout;
     } else {
       //to be fetched from database
+
+
+      
     }
     return null;
   }
@@ -175,6 +181,7 @@ class UserService {
     }
     return null;
   }
+
   void updateProfileSettings(
       String username,
       String displayName,
@@ -258,8 +265,9 @@ class UserService {
   void editSocialLink(
       String username, String id, String displayText, String customUrl) {
     if (testing) {
-      var socialLink =
-          users.firstWhere((element) => element.userAbout.username == username).userAbout
+      var socialLink = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
           .socialLinks!
           .firstWhere((element) => element.id == id);
       socialLink.displayText = displayText;
@@ -313,12 +321,32 @@ class UserService {
     return 200;
   }
 
-  int userLogin(String username, String password) {
-    if (users.any((user) =>
-        user.userAbout.username == username && user.password == password)) {
-      return 200;
-    } else {
-      return 400;
+  Future<int> userLogin (String username, String password) async {
+    if (testing) {
+      if (users.any((user) =>
+          user.userAbout.username == username && user.password == password)) {
+          await Future.delayed(Duration(seconds: 1));
+        return 200;
+      } else {
+              await Future.delayed(Duration(seconds: 1));
+        return 400;
+      }
+    } 
+    else {
+       final url = Uri.parse('https://redditech.me/backend/users/login'); 
+
+  final response = await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode({
+      'username': username,
+      'password': password,
+    }),
+  );
+
+final token= response.headers['authorization'];
+    
+return 200;
     }
   }
 
