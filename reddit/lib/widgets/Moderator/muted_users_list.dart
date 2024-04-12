@@ -1,79 +1,46 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Moderator/approved_users.dart';
+import 'package:reddit/widgets/Moderator/muted_users.dart';
 
-class ApprovedUserList extends StatefulWidget {
-  const ApprovedUserList({super.key});
+class MutedUsersList extends StatefulWidget {
+  const MutedUsersList({super.key});
 
   @override
-  State<ApprovedUserList> createState() => _ApprovedUserListState();
+  State<MutedUsersList> createState() => _MutedUsersListState();
 }
 
-class _ApprovedUserListState extends State<ApprovedUserList> {
+class _MutedUsersListState extends State<MutedUsersList> {
   List<Map<String, String>> foundUsers = [];
-  bool isDesktop = true;
 
   @override
   void initState() {
     super.initState();
-    foundUsers = List.from(approvedUsers);
-    // if (MediaQuery.of(context).size.width > 700) {
-    //   isDesktop = true;
-    // } else {
-    //   isDesktop = false;
-    // }
+    foundUsers = List.from(mutedUsers);
   }
 
   void searchUsers(String search) {
     setState(() {
-      foundUsers = approvedUsers.where((user) {
+      foundUsers = mutedUsers.where((user) {
         final name = user['username'].toString().toLowerCase();
         return name.contains(search.toLowerCase());
       }).toList();
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
-    // if (MediaQuery.of(context).size.width > 700) {
-    //   isDesktop = true;
-    // } else {
-    //   isDesktop = false;
-    // }
     return Container(
       color: Colors.grey[200],
       child: Column(
         children: [
-          isDesktop
-              ? Container(
-                color: Colors.white,
-                child: ListTile(
-                    title: const Text(
-                      "Approved Users",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                    ),
-                    trailing: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor:
-                              const Color.fromARGB(255, 24, 82, 189)),
-                      onPressed: () {}, // Approve user Badrrr ele hya add
-                      child: const Text(
-                        "Approve User",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )),
-              )
-              : const SizedBox(),
           TextField(
-            onChanged: searchUsers,
-            decoration: const InputDecoration(
-              prefixIcon: Icon(
-                Icons.search,
-                size: 20,
+                onChanged: searchUsers,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search , size: 20,),
+                  hintText: 'Search',
+                ),
               ),
-              hintText: 'Search',
-            ),
-          ),
           Expanded(
             child: ListView.builder(
               itemCount: foundUsers.length,
@@ -96,9 +63,8 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                           "u/${item["username"]!}",
                         ),
                         Text(
-                          item["jointime"]!,
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
+                          item["muteTime"]!,
+                          style: const TextStyle(color: Colors.grey, fontSize: 10),
                         )
                       ],
                     ),
@@ -114,6 +80,13 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                   shrinkWrap: true,
                                   children: [
                                     ListTile(
+                                      leading: const Icon(Icons.edit),
+                                      title: const Text("See details"),
+                                      onTap: () {
+                                        //navigate to profile of this user Badrr
+                                      },
+                                    ),
+                                    ListTile(
                                       leading: const Icon(Icons.person),
                                       title: const Text("View Profile"),
                                       onTap: () {
@@ -122,9 +95,9 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                     ),
                                     ListTile(
                                       leading: const Icon(Icons.do_disturb_alt),
-                                      title: const Text("Remove"),
+                                      title: const Text("Unmute"),
                                       onTap: () {
-                                        //remove user
+                                        //unban badrrr
                                       },
                                     ),
                                   ],

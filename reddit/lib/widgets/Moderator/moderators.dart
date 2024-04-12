@@ -1,45 +1,46 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
+import 'package:reddit/widgets/Moderator/moderators_list.dart';
 
-List<Map<String, String>> approvedUsers = [
+List<Map<String, String>> moderatorsList = [
   {
     "pictureUrl": "images/Greddit.png",
-    "username": "approved",
-    "jointime": "1 mo ago",
+    "username": "Moderators",
+    "modTime": "1 mo ago",
   },
   {
     "pictureUrl": "images/Greddit.png",
     "username": "Purple-7544",
-    "jointime": "1 mo ago"
+    "modTime": "1 mo ago"
   },
   {
     "pictureUrl": "images/Greddit.png",
     "username": "Purple-7544",
-    "jointime": "1 mo ago"
+    "modTime": "1 mo ago"
   },
   {
     "pictureUrl": "images/Greddit.png",
     "username": "Purple-7544",
-    "jointime": "1 mo ago"
+    "modTime": "1 mo ago"
   },
 ];
 
-class ApprovedUsers extends StatefulWidget {
-  const ApprovedUsers({super.key});
+class Moderators extends StatefulWidget {
+  const Moderators({super.key});
 
   @override
-  State<ApprovedUsers> createState() => _ApprovedUsersState();
+  State<Moderators> createState() => _ModeratorsState();
 }
 
-class _ApprovedUsersState extends State<ApprovedUsers> {
+class _ModeratorsState extends State<Moderators> {
   @override
   Widget build(BuildContext context) {
       return Scaffold(
         appBar: AppBar(
           elevation: 0,
           scrolledUnderElevation: 0,
-          title: const Center(child: Text("Approved Users")),
+          title: const Center(child: Text("Moderators")),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -49,7 +50,7 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
           ],
         ),
         body:
-            Container(color: Colors.grey[200], child: const ApprovedUserList()),
+            Container(color: Colors.grey[200], child: const ModeratorsList()),
       );
   }
 }

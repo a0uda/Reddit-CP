@@ -132,6 +132,19 @@ class ModToolsList extends StatelessWidget {
           },
         ),
         ListTile(
+          leading: const Icon(CupertinoIcons.speaker_slash),
+          title: Text(
+            'Muted Users',
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+          ),
+          trailing: isMobile
+              ? const Icon(Icons.arrow_forward_rounded)
+              : const SizedBox(),
+          onTap: () {
+            changePage(8);
+          },
+        ),
+        ListTile(
           leading: const Icon(Icons.queue),
           title: Text(
             'Queues',
@@ -141,7 +154,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(8);
+            changePage(9);
           },
         ),
       ],
