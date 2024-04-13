@@ -10,7 +10,7 @@ class CommunityController {
   List<Post>? communityList;
 
   void getCommunity(String communityName) async {
-    communityItem = communityService.getCommunityData(communityName); 
+    communityItem = communityService.getCommunityData(communityName);
   }
 
   void getCommunityPost(String communityName) async {

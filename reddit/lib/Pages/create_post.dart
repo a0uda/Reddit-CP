@@ -129,12 +129,12 @@ class _CreatePostState extends State<CreatePost> {
   String selectedCommunity = "Select Community";
   String communityDescription = "Select Community";
   var communityRules;
+  int selectedDays = 3;
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
     // ignore: unused_local_variable
     String question;
-    int selectedDays = 3;
     List<String> options = ['', ''];
     List<String> userCommunities = communityService.getCommunityNames();
     if (widget.currentCommunity != null) {
@@ -145,27 +145,23 @@ class _CreatePostState extends State<CreatePost> {
       selectedCommunity = widget.currentCommunity!;
     }
 
+    Future<int> response;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.orange[900],
-      ),
       home: Scaffold(
         backgroundColor: const Color.fromARGB(235, 255, 255, 255),
         appBar: AppBar(
-          elevation: 40,
           centerTitle: true,
           leading: IconButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              icon: const Icon(Icons.arrow_back_ios_rounded,
-                  color: Colors.white)),
+              icon:
+                  Icon(Icons.arrow_back_ios_rounded, color: Colors.blue[900])),
           actions: [
             IconButton(
-                onPressed: (() => {
-                      if (titleController.text.isEmpty ||
-                          selectedCommunity == "Select Community")
+                onPressed: (() async => {
+                      if (titleController.text.isEmpty)
                         {
                           print(selectedCommunity),
                           showDialog(
@@ -173,8 +169,8 @@ class _CreatePostState extends State<CreatePost> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Error'),
-                                  content: const Text(
-                                      'Choose a community and add a title to your post!'),
+                                  content:
+                                      const Text('Add a title to your post!'),
                                   actions: [
                                     TextButton(
                                         onPressed: () {
@@ -191,37 +187,26 @@ class _CreatePostState extends State<CreatePost> {
                         }
                       else
                         {
-                          postService.addPost(
+                          response = postService.addPost(
+                              userController.userAbout!.id,
                               userController.userAbout!.username,
                               titleController.text,
+                              bodyController.text,
                               'type',
-                              0,
-                              selectedCommunity,
-                              false,
-                              _selections[1],
-                              _selections[0],
-                              0,
-                              0,
-                              [],
-                              DateTime.now(),
-                              profilePic:
-                                  'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80',
-                              description: bodyController.text,
-                              linkUrl:
-                                  showLinkField ? URLController.text : null,
-                              images: imageSelected
+                              showLinkField ? URLController.text : null,
+                              imageSelected
                                   ? [
                                       ImageItem(
                                           path: _image!.path, link: imageUrl!)
                                     ]
                                   : null,
-                              videos: videoSelected
+                              videoSelected
                                   ? [
                                       VideoItem(
                                           path: _video!.path, link: 'linkUrl')
                                     ]
                                   : null,
-                              poll: pollSelected
+                              pollSelected
                                   ? PollItem(
                                       question: questionController.text,
                                       options: options,
@@ -229,28 +214,59 @@ class _CreatePostState extends State<CreatePost> {
                                       option1Votes: [],
                                       option2Votes: [],
                                     )
-                                  : null),
-                          Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                            builder: (context) => const ResponsiveLayout(
-                                mobileLayout: MobileLayout(
-                                  mobilePageMode: 0,
-                                ),
-                                desktopLayout: DesktopHomePage(
-                                  indexOfPage: 0,
-                                )),
-                          ))
+                                  : null,
+                              selectedCommunity,
+                              selectedCommunity,
+                              false,
+                              _selections[1],
+                              _selections[0],
+                              !(selectedCommunity == "Select Community")),
+                          if (await response == 400)
+                            {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Error'),
+                                      content: const Text(
+                                          'Error creating post, please try again later!'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text(
+                                              'OK',
+                                              style: TextStyle(
+                                                  color: Colors.deepOrange),
+                                            )),
+                                      ],
+                                    );
+                                  })
+                            }
+                          else
+                            {
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => const ResponsiveLayout(
+                                    mobileLayout: MobileLayout(
+                                      mobilePageMode: 0,
+                                    ),
+                                    desktopLayout: DesktopHomePage(
+                                      indexOfPage: 0,
+                                    )),
+                              ))
+                            }
                         }
                     }),
-                icon: const Icon(Icons.check, color: Colors.white)),
+                icon: Icon(Icons.check, color: Colors.blue[900])),
           ],
           title: const Text('Create Post'),
-          titleTextStyle: const TextStyle(
-            color: Colors.white,
+          titleTextStyle: TextStyle(
+            color: Colors.blue[900],
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-          backgroundColor: Colors.orange[900],
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -299,9 +315,9 @@ class _CreatePostState extends State<CreatePost> {
                                 print(selectedCommunity);
                               });
                             },
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_drop_down,
-                              color: Colors.deepOrange,
+                              color: Colors.blue[900],
                               size: 20,
                             ),
                           ),
@@ -332,10 +348,10 @@ class _CreatePostState extends State<CreatePost> {
                                 },
                               ),
                             },
-                            child: const Text(
+                            child: Text(
                               'RULES',
                               style: TextStyle(
-                                color: Colors.deepOrange,
+                                color: Colors.blue[900],
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -543,7 +559,7 @@ class _CreatePostState extends State<CreatePost> {
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(24),
-                        foregroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.blue[900],
                       ),
                       onPressed: () {
                         setState(() {
@@ -559,7 +575,7 @@ class _CreatePostState extends State<CreatePost> {
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(24),
-                        foregroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.blue[900],
                       ),
                       onPressed: _pickImage,
                       child: const Column(
@@ -572,7 +588,7 @@ class _CreatePostState extends State<CreatePost> {
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(24),
-                        foregroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.blue[900],
                       ),
                       onPressed: _pickVideo,
                       child: const Column(
@@ -586,7 +602,7 @@ class _CreatePostState extends State<CreatePost> {
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(24),
-                        foregroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.blue[900],
                       ),
                       onPressed: _pollPressed,
                       child: const Column(

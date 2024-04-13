@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/sign_up.dart';
 import 'package:reddit/Pages/forgot_password.dart';
 import 'package:reddit/Pages/forgot_username.dart';
@@ -6,6 +7,7 @@ import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 
@@ -44,16 +46,18 @@ class LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  void validateForm(BuildContext context) {
+  void validateForm(BuildContext context) async {
     final userService = GetIt.instance.get<UserService>();
-    int validationResult =
-        userService.userLogin(usernameController.text, passwordController.text);
+    int validationResult = await userService.userLogin(
+        usernameController.text, passwordController.text);
 
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       userController.getUser(usernameController.text);
-      // print('User logged in successfully!');
-      // print('User data: ${userController.userAbout?.email}');
+      UserAbout? userAbout =
+          await userController.getUserAbout(usernameController.text);
+          userController.userAbout=userAbout;
+        
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
@@ -68,6 +72,7 @@ class LoginPageState extends State<LoginPage> {
       );
     } else {
       // Display error message for unsuccessful login
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -89,8 +94,7 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (Theme.of(context).platform == TargetPlatform.android &&
-        MediaQuery.of(context).size.width < 600) {
+    if (Theme.of(context).platform == TargetPlatform.android) {
       double screenWidth = MediaQuery.of(context).size.width;
       double screenHeight = MediaQuery.of(context).size.height;
       marginAppBarTop = screenHeight * 0.0128;
@@ -365,16 +369,6 @@ class LoginPageState extends State<LoginPage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          size: appBarIconSize,
-          color: Colors.grey[700],
-        ),
-        onPressed: () {
-          // Handle arrow back button press
-        },
-      ),
       title: Image.asset(
         'images/reddit_orange.jpg',
         width: appBarTitleWidth,

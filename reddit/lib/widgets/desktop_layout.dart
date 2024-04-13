@@ -1,9 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/listing.dart';
 
+  final widgetsHomePage = [
+    const Center(child: Listing(type: "home",)),
+    const Center(child: Listing(type: "popular",)),
+    const Center(child: Text("All")),
+    const Center(child: Text("Lates"))
+  ];
 class DesktopHomePage extends StatefulWidget {
   final int indexOfPage;
   const DesktopHomePage({super.key, required this.indexOfPage});
@@ -38,9 +45,9 @@ class _DesktopHomePageState extends State<DesktopHomePage> {
               color: Theme.of(context).colorScheme.primary,
               width: 1,
             ),
-            const Expanded(
+             Expanded(
               flex: 4,
-              child: Listing(),
+              child: widgetsHomePage[widget.indexOfPage],
             ),
 
             // rest of the desktop home page

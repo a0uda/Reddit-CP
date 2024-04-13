@@ -9,9 +9,12 @@ class TabBarViews extends StatelessWidget {
   const TabBarViews(this.userData, {super.key});
   @override
   Widget build(BuildContext context) {
+    print(userData?.username);
     return TabBarView(
       children: [
-        const Center(child: TabBarPosts()),
+        TabBarPosts(
+          userData: userData,
+        ),
         TabBarComments(userData: userData),
         TabBarAbout(userData),
       ],

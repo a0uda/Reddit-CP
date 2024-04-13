@@ -1,45 +1,52 @@
 //import 'package:media_kit/ffi/ffi.dart';
+import 'dart:convert';
+
+import 'package:get/get.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
+import 'package:reddit/Models/save.dart';
+import 'package:reddit/Models/trending_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/post_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../test_files/test_posts.dart';
-
-
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/user_service.dart';
+import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/report.dart';
+import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class PostService {
-  void addPost(
-    // int id,
-    String username,
+  Future<int> addPost(
+    String? userId,
+    String? username,
     String title,
-    String type,
-    int communityId,
-    String communityName,
-    bool ocFlag,
-    bool spoilerFlag,
-    bool nsfwFlag,
-    int likes,
-    int comments,
-    List<String> commentsList,
-    DateTime date, {
-    String? profilePic,
     String? description,
+    String type,
     String? linkUrl,
     List<ImageItem>? images,
     List<VideoItem>? videos,
     PollItem? poll,
-  }) {
+    String communityId,
+    String communityName,
+    bool ocFlag,
+    bool spoilerFlag,
+    bool nsfwFlag,
+    bool postInCommunityFlag,
+  ) async {
     if (testing) {
       posts.add(
         PostItem(
-          id: posts.length + 1,
-          username: username,
-          profilePic: profilePic,
+          id: (posts.length + 1).toString(),
+          userId: userId!,
+          username: username!,
           title: title,
           description: description,
+          createdAt: DateTime.now(),
           type: type,
           linkUrl: linkUrl,
           images: images,
@@ -47,22 +54,147 @@ class PostService {
           poll: poll,
           communityId: communityId,
           communityName: communityName,
+          commentsCount: 0,
+          viewsCount: 0,
+          sharesCount: 0,
+          upvotesCount: 0,
+          downvotesCount: 0,
           ocFlag: ocFlag,
           spoilerFlag: spoilerFlag,
           nsfwFlag: nsfwFlag,
-          likes: likes,
-          comments: comments,
-          commentsList: commentsList,
-          date: date,
+          lockedFlag: false, // Assuming initial locked flag is false
+          allowrepliesFlag: true, // Assuming initial allow replies flag is true
+          setSuggestedSort: "None",
         ),
       );
+        print(posts);
     } else {
       // add post to database
+      final url = Uri.parse('https://redditech.me/backend/posts/new-post');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({
+          "title": title,
+          "description": description,
+          "type": type,
+          "link_url": linkUrl,
+          "images": images
+              ?.map((image) => {
+                    "path": image.path,
+                    "caption": image.caption ?? "",
+                    "link": image.link
+                  })
+              .toList(),
+          "videos": videos
+              ?.map((video) => {
+                    "path": video.path,
+                    "caption": video.caption ?? "",
+                    "link": video.link
+                  })
+              .toList(),
+          "polls": poll != null
+              ? [
+                  {"options": poll.options}
+                ]
+              : [],
+          "polls_voting_length": poll != null ? poll.votes.length : 0,
+          "community_name": communityName,
+          "post_in_community_flag": postInCommunityFlag,
+          "oc_flag": ocFlag,
+          "spoiler_flag": spoilerFlag,
+          "nsfw_flag": nsfwFlag
+        }),
+      );
+      print(response.statusCode);
+      if (response.statusCode >= 400) {
+        return 400;
+      }
+    }
+    return 200;
+  }
+
+  List<PostItem> fetchPosts() {
+    if (testing) {
+      return posts;
+    } else {
+      return posts;
     }
   }
 
-  List<PostItem> getPosts() {
-    return posts;
+  List<PostItem> getPosts(String username) {
+    if (testing) {
+      final userService = GetIt.instance.get<UserService>();
+      final List<FollowersFollowingItem>? following =
+          userService.getFollowers(username);
+      var usernames = following!.map((user) => user.username).toSet();
+      print(usernames);
+      var filteredPosts =
+          posts.where((post) => usernames.contains(post.username)).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
+  }
+
+  List<TrendingItem> getTrendingPosts() {
+    if (testing) {
+      return trendingPosts;
+    } else {
+      return trendingPosts;
+    }
+  }
+
+  List<PostItem> getMyPosts(String username)  {
+    if (testing) {
+      var filteredPosts =
+          posts.where((post) => post.username == username).toList();
+      return filteredPosts;
+    } else {
+//       final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+
+//      SharedPreferences prefs = await SharedPreferences.getInstance();
+//       String? token = prefs.getString('token');
+//   final response = await http.get(
+//         url,
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': token.toString()
+//         },
+//   );
+//       print(json.decode(response.body)['posts']);
+//       final List<dynamic> jsonlist=json.decode(response.body)['posts'];
+//       final List<PostItem> postsItem=jsonlist.map((jsonitem){
+// return PostItem.fromJson(jsonitem);
+//       }).toList();
+ 
+
+      // return postsItem;
+      return posts;
+    }
+  }
+
+  List<PostItem> getPostsById(int id) {
+    if (testing) {
+      var filteredPosts = posts.where((post) => post.id == id).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+    }
+  }
+
+  List<PostItem> getPopularPosts() {
+    if (testing) {
+      return popularPosts;
+    } else {
+      return popularPosts;
+    }
   }
 
   List<PostItem> getCommunityPosts(int communityId) {
@@ -71,25 +203,67 @@ class PostService {
         .toList();
   }
 
-  void upVote(int id) {
+  void upVote(String id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
-      post.likes++;
+      post.upvotesCount++;
     } else {
       // like post in database
     }
   }
 
-  void downVote(int id) {
+  void downVote(String id) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
-      post.likes--;
+      post.downvotesCount++;
     } else {
       // dislike post in database
     }
   }
 
-  void updatePoll(int id, int index, String username) {
+  void submitReport(String? id, String reason) {
+    if (testing) {
+      reportPosts.add(ReportPost(id: id, reason: reason));
+      print(id);
+      print(reason);
+      print(reportPosts);
+    } else {
+      // dislike post in database
+    }
+  }
+
+  void savePost(String? id, String username) {
+    if (testing) {
+      savedPosts.add(SaveItem(id: id, username: username));
+    } else {
+      // dislike post in database
+    }
+  }
+
+  void unSavePost(String? id, String username) {
+    if (testing) {
+      savedPosts.removeWhere(
+          (post) => ((post.id == id) && (post.username == username)));
+    } else {
+      // dislike post in database
+    }
+  }
+
+  List<PostItem> getSavePost(String username) {
+    if (testing) {
+      var filteredids =
+          savedPosts.where((post) => post.username == username).toList();
+      var ids = filteredids!.map((user) => user.id).toSet();
+      print(ids);
+      var filteredPosts = posts.where((post) => ids.contains(post.id)).toList();
+      return filteredPosts;
+    } else {
+      return posts;
+      // dislike post in database
+    }
+  }
+
+  void updatePoll(String id, int index, String username) {
     print('id is : $id');
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
@@ -107,8 +281,34 @@ class PostService {
       // update poll in database
     }
   }
-}
 
+  PostItem? getPostById(String postId) {
+    if (testing) {
+      return posts.firstWhere((element) => element.id == postId);
+    } else {
+      return null;
+      //
+    }
+  }
+
+  void lockUnlockPost(String id) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == id);
+      post.lockedFlag = !post.lockedFlag;
+    } else {
+      // lock/unlock post in database
+    }
+  }
+
+  bool isMyPost(String postId, String username) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == postId);
+      return post.username == username;
+    } else {
+      return false;
+    }
+  }
+}
 
 // '''
 // New_Post:

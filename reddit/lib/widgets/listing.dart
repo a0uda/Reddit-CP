@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 import 'package:reddit/widgets/top_listing.dart';
 import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/Rising_Listing.dart';
 import 'package:reddit/widgets/new_listing.dart';
+import 'package:reddit/widgets/trending_card.dart';
+
+import '../Models/trending_item.dart';
 
 class Listing extends StatefulWidget {
-  const Listing({super.key});
+  final String type;
+  final int? comId;
+
+  const Listing({super.key, required this.type,
+  this.comId});
   @override
   State<Listing> createState() => _Listing();
 }
 
+final postService = GetIt.instance.get<PostService>();
+List<TrendingItem> trends = postService.getTrendingPosts();
+
 class _Listing extends State<Listing> {
   String dropdownvalue = 'Hot';
-  String value2 = 'mohamed';
-  String value3 = 'ibrahim';
-  String value4 = 'mazen';
 
   // List of items in our dropdown menu
   var items = [
@@ -34,6 +44,30 @@ class _Listing extends State<Listing> {
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
+          (widget.type=="popular")?
+          Container(
+            child:Align(
+              alignment: Alignment.topCenter,
+              child:Text('Trending Today'))
+           ,):Container(),
+          
+        
+        
+          (widget.type == "popular") 
+              ? Container(
+                height:  MediaQuery.of(context).size.height * 0.2,
+ 
+                child:  ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: trends.length,
+                  itemBuilder: (context, index) {
+                    return TrendingPost(
+                      title: trends[index].title,
+                      imageUrl: trends[index].picture.path,
+                    );
+                  },
+                ),)
+              : Container(),
           ListTile(
             leading: Container(
               // width: 71,
@@ -51,8 +85,6 @@ class _Listing extends State<Listing> {
                       child: Text(items),
                     );
                   }).toList(),
-                  // After selecting the desired option,it will
-                  // change button value to selected value
                   onChanged: (String? newValue) {
                     setState(() {
                       dropdownvalue = newValue!;
@@ -63,24 +95,34 @@ class _Listing extends State<Listing> {
             ),
           ),
           if (dropdownvalue == 'Hot')
-            const Expanded(
-              child: HotListing(),
+            Expanded(
+              child: HotListing(
+                type: widget.type,
+              ),
             ),
           if (dropdownvalue == "Best")
-            const Expanded(
-              child: BestListing(),
+            Expanded(
+              child: BestListing(
+                type: widget.type,
+              ),
             ),
           if (dropdownvalue == "New")
-            const Expanded(
-              child: NewListing(),
+            Expanded(
+              child: NewListing(
+                type: widget.type,
+              ),
             ),
           if (dropdownvalue == "Top")
-            const Expanded(
-              child: TopListing(),
+            Expanded(
+              child: TopListing(
+                type: widget.type,
+              ),
             ),
           if (dropdownvalue == "Rising")
-            const Expanded(
-              child: RisingListing(),
+            Expanded(
+              child: RisingListing(
+                type: widget.type,
+              ),
             ),
         ],
       ),

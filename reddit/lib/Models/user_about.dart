@@ -1,19 +1,21 @@
+import 'package:reddit/Models/social_link_item.dart';
+
 class UserAbout {
-  final String? id;
-  final String? createdAt;
-  final String username;
-  final String? email;
-  final bool? verifiedEmailFlag;
-  final String? gmail;
-  final String? facebookEmail;
-  final String? displayName;
-  final String? about;
-  final List<SocialLlinkItem>? socialLinks;
-  final String? profilePicture;
-  final String? bannerPicture;
-  final String? country;
-  final String? gender;
-  final bool? connectedGoogle;
+  String? id;
+  String? createdAt;
+  String username;
+  String? email;
+  bool? verifiedEmailFlag;
+  String? gmail;
+  String? facebookEmail;
+  String? displayName;
+  String? about;
+  List<SocialLlinkItem>? socialLinks;
+  String? profilePicture;
+  String? bannerPicture;
+  String? country;
+  String? gender;
+  bool? connectedGoogle;
 
   UserAbout({
     this.id,
@@ -32,20 +34,31 @@ class UserAbout {
     this.gender,
     this.connectedGoogle,
   });
-}
-
-class SocialLlinkItem {
-  final String? id;
-  final String username;
-  final String displayText;
-  final String type;
-  final String customUrl;
-
-  SocialLlinkItem({
-    this.id,
-    required this.username,
-    required this.displayText,
-    required this.type,
-    required this.customUrl,
-  });
+  static UserAbout fromJson(jsonDecode) {
+    if (jsonDecode == null) {
+      return UserAbout(username: '');
+    }
+    return UserAbout(
+      id: jsonDecode['id'],
+      createdAt: jsonDecode['created_at'],
+      username: jsonDecode['username'],
+      email: jsonDecode['email'],
+      verifiedEmailFlag: jsonDecode['verified_email_flag'] == 'true',
+      gmail: jsonDecode['gmail'],
+      facebookEmail: jsonDecode['facebook_email'],
+      displayName: jsonDecode['display_name'],
+      about: jsonDecode['about'],
+      socialLinks: jsonDecode['social_links'] != null
+          ? List<SocialLlinkItem>.from(jsonDecode['social_links']
+              .map((x) => SocialLlinkItem.fromJson(x)))
+          : null,
+      profilePicture: jsonDecode['profile_picture'] == ""
+          ? 'images/Greddit.png'
+          : jsonDecode['profile_picture'],
+      bannerPicture: jsonDecode['banner_picture'],
+      country: jsonDecode['country'],
+      gender: jsonDecode['gender'],
+      connectedGoogle: jsonDecode['connected_google'],
+    );
+  }
 }

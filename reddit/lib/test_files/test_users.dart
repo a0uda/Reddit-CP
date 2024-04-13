@@ -1,19 +1,32 @@
+import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/safety_settings_item.dart';
+import 'package:reddit/Models/social_link_item.dart';
+import 'package:reddit/test_files/test_comments.dart';
+
 import '../Models/comments.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
+import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '0',
       createdAt: '5 March 2024',
       username: 'Purple-7544',
       email: 'rawan7544@gmail.com',
       verifiedEmailFlag: true,
+      gmail: null,
+      facebookEmail: null,
       displayName: 'Rawan Adel',
       about: 'I am a software engineer',
       profilePicture: 'images/pp.jpg',
+      bannerPicture: null,
+      country: 'Egypt',
       gender: 'Female',
       socialLinks: [
         SocialLlinkItem(
@@ -65,8 +78,8 @@ final List<UserItem> users = [
         email: 'rawan7544@gmail.com',
         verifiedEmailFlag: true,
         profileSettings: FollowersProfileSettings(
-          about: 'I am a software engineer',
-        ),
+            about: 'I am a software engineer',
+            bannerPicture: 'images/Greddit.png'),
       ),
       FollowersFollowingItem(
         id: '2',
@@ -108,9 +121,57 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments1,
+    comments: comments,
+    profileSettings: ProfileSettings(
+      displayName: 'Rawan Adel',
+      about: 'I am a software engineer',
+      contentVisibility: false,
+      activeCommunity: true,
+    ),
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+        MutedCommunity(
+          id: '1',
+          communityName: 'Dart',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
+    accountSettings: AccountSettings(
+      email: 'rawan7544@gmail.com',
+      verifiedEmailFlag: false,
+      country: 'Egypt',
+      gender: 'Female',
+      gmail: 'rawan7544@gmail.com',
+      connectedGoogle: true,
+    ),
+    activecommunities: [
+      communities[0],
+      communities[1],
+      communities[2],
+    ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '1',
       createdAt: '5 March 2024',
@@ -170,14 +231,53 @@ final List<UserItem> users = [
       ),
     ],
     comments: [],
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
+    profileSettings: ProfileSettings(
+      displayName: 'John',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
+    accountSettings: AccountSettings(
+      email: 'rawan7544@gmail.com',
+      verifiedEmailFlag: true,
+      country: 'Egypt',
+      gender: 'Male',
+      gmail: 'rawan7544@gmail.com',
+      connectedGoogle: true,
+    ),
+    activecommunities: [
+      communities[0],
+      communities[1],
+      communities[2],
+    ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '2',
       createdAt: '5 March 2024',
       username: 'jane123',
       gender: 'Female',
       email: 'rawan7544@gmail.com',
+      profilePicture: null,
+      bannerPicture: 'images/Greddit.png',
       verifiedEmailFlag: true,
       displayName: 'Jane',
       about: 'I am a software engineer',
@@ -221,9 +321,37 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments2,
+    comments: comments,
+    profileSettings: ProfileSettings(
+      displayName: 'Jane',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
+    safetySettings: SafetyAndPrivacySettings(
+      blockedUsers: [
+        BlockedUsersItem(
+          username: 'johndoe',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
+      ],
+      mutedCommunities: [
+        MutedCommunity(
+          id: '0',
+          communityName: 'Flutter',
+          profilePicture: 'images/Greddit.png',
+          mutedDate: '5 March 2024',
+        ),
+      ],
+    ),
+    activecommunities: [
+      communities[2],
+      communities[3],
+    ],
   ),
   UserItem(
+    savedCommentsIds: [],
     userAbout: UserAbout(
       id: '3',
       createdAt: '5 March 2024',
@@ -269,6 +397,18 @@ final List<UserItem> users = [
         ),
       ),
     ],
-    comments: comments3,
+    // comments: comments3,
+    profileSettings: ProfileSettings(
+      displayName: 'Mark',
+      about: 'I am a software engineer',
+      contentVisibility: true,
+      activeCommunity: true,
+    ),
+    activecommunities: [
+      communities[0],
+      communities[1],
+      communities[2],
+      communities[3],
+    ],
   ),
 ];

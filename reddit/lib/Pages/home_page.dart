@@ -30,7 +30,7 @@ class HomePageBuild extends State<HomePage> {
             ),
           const Expanded(
             flex: 4,
-            child: Listing(),
+            child: Listing(type: "home"),
           ),
         ],
       ),
