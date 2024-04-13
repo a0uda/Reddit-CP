@@ -5,6 +5,9 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Best_Listing.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/button_widgets.dart';
 import 'package:reddit/widgets/community_description.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
@@ -37,29 +40,26 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String buttonState = 'Join';
-  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
+  final CommunityController communityController =
+      GetIt.instance.get<CommunityController>();
 
-    List<Post> communityPost = []; 
+  List<Post> communityPost = [];
 
   @override
   void initState() {
     super.initState();
-  //  fetchCommunityPosts(); 
+    //  fetchCommunityPosts();
   }
   // Future<void> fetchCommunityPosts() async {
   //   for (String communityName in communityNames) {
   //     communityController.getCommunityPost(communityName);
   //     if (communityController.communityItem != null) {
   //         communityPost.add({
-            
+
   //         });
   //     }
   //   }
   // }
-
-
-
-
 
   void setButton() {
     setState(() {
@@ -202,15 +202,30 @@ class _CommunityPageState extends State<CommunityPage> {
                                   }),
                                 ButtonWidgets('Create a post',
                                     icon: const Icon(Icons.add), () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => CreatePost(
+                                  //       currentCommunity: widget.communityName,
+                                  //       communityName: widget.communityName,
+                                  //     ),
+                                  //   ),
+                                  // );
+                                  //To be implemented
+                                }),
+                                ButtonWidgets('Mod Tools', () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => CreatePost(
-                                        currentCommunity: widget.communityName,
+                                      builder: (context) => const ModResponsive(
+                                        mobileLayout: MobileModTools(),
+                                        desktopLayout: DesktopModTools(
+                                          index: 0,
+                                        ),
                                       ),
                                     ),
                                   );
-                                }),
+                                })
                               ],
                             ),
                           ],
@@ -223,33 +238,153 @@ class _CommunityPageState extends State<CommunityPage> {
                     height: 1,
                   ),
                   Container(
-                    margin: const EdgeInsets.all(20),
+                    margin: const EdgeInsets.all(10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Column(
                             children: [
-                              ListView.builder(itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            
-                          ],
-                        );
-                      },)
-
-                              
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: Post(
+                                  profileImageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  comments: "1",
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width > 700)
-                          Positioned(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              child: DescriptionWidget(
-                                communityDescription: widget.communityDescription,
-                                communityRules: widget.communityRule,
-                              ),
+                        if (MediaQuery.of(context).size.width > 850)
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: DescriptionWidget(
+                              communityDescription: widget.communityDescription,
+                              communityRules: widget.communityRule,
                             ),
                           ),
                       ],
@@ -264,6 +399,3 @@ class _CommunityPageState extends State<CommunityPage> {
     );
   }
 }
-
-
-

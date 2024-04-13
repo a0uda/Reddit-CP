@@ -37,21 +37,22 @@ class ModCommunityPage extends StatefulWidget {
 
 class _ModCommunityPageState extends State<ModCommunityPage> {
   String buttonState = 'Join';
-  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
+  final CommunityController communityController =
+      GetIt.instance.get<CommunityController>();
 
-    List<Post> communityPost = []; 
+  List<Post> communityPost = [];
 
   @override
   void initState() {
     super.initState();
-  //  fetchCommunityPosts(); 
+    //  fetchCommunityPosts();
   }
   // Future<void> fetchCommunityPosts() async {
   //   for (String communityName in communityNames) {
   //     communityController.getCommunityPost(communityName);
   //     if (communityController.communityItem != null) {
   //         communityPost.add({
-            
+
   //         });
   //     }
   //   }
@@ -219,33 +220,173 @@ class _ModCommunityPageState extends State<ModCommunityPage> {
                     height: 1,
                   ),
                   Container(
-                    margin: const EdgeInsets.all(20),
+                    margin: const EdgeInsets.all(10),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Column(
                             children: [
-                              ListView.builder(itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            
-                          ],
-                        );
-                      },)
-
-                              
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
+                              Post(
+                                profileImageUrl: "assets/images/profile.png",
+                                name: "John Doe",
+                                title: "Flutter is the best",
+                                postContent: "Flutter is the best",
+                                date: "2021-09-09",
+                                likes: 4,
+                                comments: "1",
+                                communityName: "r/FlutterDev",
+                              ),
                             ],
                           ),
                         ),
-                        if (MediaQuery.of(context).size.width > 700)
-                          Positioned(
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.25,
-                              child: DescriptionWidget(
-                                communityDescription: widget.communityDescription,
-                                communityRules: widget.communityRule,
-                              ),
+                        if (MediaQuery.of(context).size.width > 850)
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: DescriptionWidget(
+                              communityDescription: widget.communityDescription,
+                              communityRules: widget.communityRule,
                             ),
                           ),
                       ],
@@ -260,6 +401,3 @@ class _ModCommunityPageState extends State<ModCommunityPage> {
     );
   }
 }
-
-
-

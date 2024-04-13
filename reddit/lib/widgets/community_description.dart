@@ -63,7 +63,7 @@ class CommunityDescription extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  if (MediaQuery.of(context).size.width < 700)
+                  if (MediaQuery.of(context).size.width < 850)
                     Container(
                       margin: const EdgeInsets.only(top: 10, left: 0),
                       child: TextButton(
