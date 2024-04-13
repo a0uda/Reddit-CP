@@ -56,17 +56,19 @@ class _ModQueuesState extends State<ModQueues> {
               margin: EdgeInsets.symmetric(
                   horizontal: paddingPercentage * screenWidth, vertical: 8),
               child: ListView.builder(
-                itemCount: postsMohy.length,
+                itemCount: testPosts.length,
                 itemBuilder: (context, index) {
                   return Post(
-                      profileImageUrl: postsMohy[index].imageUrl,
-                      name: postsMohy[index].name,
-                      title: postsMohy[index].title,
-                      postContent: postsMohy[index].postContent,
-                      date: postsMohy[index].date,
-                      likes: postsMohy[index].likes,
-                      comments: postsMohy[index].comments,
-                      communityName: postsMohy[index].communityName);
+                      id: "$index",
+                      isLocked: false,
+                      imageUrl: testPosts[index].imageUrl,
+                      name: testPosts[index].name,
+                      title: testPosts[index].title,
+                      postContent: testPosts[index].postContent,
+                      date: testPosts[index].date,
+                      likes: testPosts[index].likes,
+                      commentsCount: testPosts[index].commentsCount,
+                      communityName: testPosts[index].communityName);
                 },
               ),
             ),

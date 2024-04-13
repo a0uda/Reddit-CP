@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/Pages/create_post.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -19,6 +20,8 @@ class MobileLayout extends StatefulWidget {
 }
 
 class _MobileLayoutState extends State<MobileLayout> {
+  final userController = GetIt.instance.get<UserController>();
+
   var selectedIndexPage = 0;
   void logoTapped() {
     setState(() {
@@ -28,7 +31,6 @@ class _MobileLayoutState extends State<MobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final UserController userController = GetIt.instance.get<UserController>();
     final bool userLoggedIn = userController.userAbout != null;
     // print('mobile layout: ${userController.userAbout?.username}');
     final drawers = [
@@ -61,8 +63,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         appBar: MobileAppBar(
           logoTapped: logoTapped,
         ),
-
-        endDrawer: userLoggedIn? EndDrawerReddit() :  Container(),
+        endDrawer: userLoggedIn ? EndDrawerReddit() : Container(),
         drawer: selectedDrawer,
         bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
@@ -129,9 +130,17 @@ class _MobileLayoutState extends State<MobileLayout> {
               }
             else
               {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const CreatePost(),
-                ))
+                if (userLoggedIn)
+                  {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CreatePost(),
+                    ))
+                  }
+                  else {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const LoginPage(),
+                    ))
+                  }
               }
           },
         ),

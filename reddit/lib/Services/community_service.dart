@@ -25,7 +25,7 @@ bool testing = const bool.fromEnvironment('testing');
 
   List<Post> getCommunityPosts(String communityName) {
     List<Post> communityPosts = [];
-    for (var post in postsMohy) {
+    for (var post in testPosts) {
       communityPosts.add(post);
     }
       return communityPosts;
