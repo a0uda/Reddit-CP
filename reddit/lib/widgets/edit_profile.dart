@@ -288,17 +288,13 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                           child: const CircleAvatar(
                             radius: 33,
                             backgroundColor: Color.fromARGB(22, 0, 0, 0),
-                            child: Positioned(
-                              bottom: 0,
-                              left: 0,
-                              child: Icon(
-                                FluentIcons.camera_add_20_regular,
-                                color: Colors.white,
-                                size: 25,
-                              ),
+                            child: Icon(
+                              FluentIcons.camera_add_20_regular,
+                              color: Colors.white,
+                              size: 25,
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
