@@ -158,7 +158,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
               Align(
                 alignment: Alignment.topLeft,
                 child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         if (userController.userAbout!.email ==
                             _emailController.text) {
@@ -166,24 +166,28 @@ class _UpdateEmailState extends State<UpdateEmail> {
                             const SnackBar(
                                 content: Text('Email already in use')),
                           );
-                        }
-                        bool changed = userController.changeEmail(
-                            userController.userAbout!.username,
-                            _emailController.text,
-                            _passwordController.text);
-                        if (changed) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Email updated')),
-                          );
-                          userController.changeEmail(
+                        } else {
+                          try {
+                            bool changed = await userController.changeEmail(
                               userController.userAbout!.username,
                               _emailController.text,
-                              _passwordController.text);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Email update failed')),
-                          );
+                              _passwordController.text,
+                            );
+                            if (changed) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Email updated')),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Email update failed')),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
                         }
                       }
                     },

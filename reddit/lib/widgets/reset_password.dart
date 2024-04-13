@@ -166,18 +166,28 @@ class _ResetPasswordState extends State<ResetPassword> {
               Align(
                 alignment: Alignment.topLeft,
                 child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        if (userController.changePassword(
-                            userController.userAbout!.username,
-                            _newPasswordController.text)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Password updated')),
+                        try {
+                          bool changed = await userController.changePassword(
+                            userController.userAbout!.username!,
+                            _passwordController.text,
+                            _newPasswordController.text,
+                            _confirmNewPasswordController.text,
                           );
-                        } else {
+                          if (changed) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Password updated')),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Password not updated')),
+                            );
+                          }
+                        } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Password not updated')),
+                            SnackBar(content: Text('Error: $e')),
                           );
                         }
                       }

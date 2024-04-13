@@ -17,7 +17,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = true;
+bool testing = false;
 
 class PostService {
   Future<int> addPost(
