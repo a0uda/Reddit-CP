@@ -507,18 +507,40 @@ else{
     }
   }
 
-  AccountSettings? getAccountSettings(String username) {
+  Future<AccountSettings>? getAccountSettings(String username) async {
     if (testing) {
       return users
-          .firstWhere((element) => element.userAbout.username == username)
-          .accountSettings;
+              .firstWhere((element) => element.userAbout.username == username)
+              .accountSettings ??
+          AccountSettings(
+            email: '',
+            verifiedEmailFlag: false,
+            country: '',
+            gender: '',
+            gmail: '',
+            connectedGoogle: false,
+          );
     } else {
       // get account settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/account-settings');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      return AccountSettings.fromJson(jsonDecode(response.body));
     }
-    return null;
   }
 
-  bool changeEmail(String username, String newEmail, String password) {
+  Future<bool> changeEmail(
+      String username, String newEmail, String password) async {
     if (testing) {
       if (availableEmail(newEmail) == 400) {
         return false;
@@ -540,21 +562,61 @@ else{
       return true;
     } else {
       // change email in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/change-email');
 
-
+      final response = await http.patch(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token!,
+          },
+          body: jsonEncode({
+            'new_email': newEmail,
+            'password': password,
+          }));
+      print(json.encode({
+        'new_email': newEmail,
+        'password': password,
+      }));
+      print(response.statusCode);
+      return response.statusCode == 200 ? true : false;
     }
     return false;
   }
 
-  bool changePassword(String username, String newPassword) {
+  Future<bool> changePassword(String username, String currentPassword,
+      String newPassword, String verifiedNewPassword) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .password = newPassword;
+      return true;
     } else {
-      // change password in database
+      var url = Uri.parse('http://redditech.me//backend/users/change-password');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      var response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'verified_new_password': verifiedNewPassword,
+        }),
+      );
+      print(
+        jsonEncode({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'verified_new_password': verifiedNewPassword,
+        }),
+      );
+      return response.isRedirect;
     }
-    return true;
   }
 
   void changeGender(String username, String gender) {

@@ -18,23 +18,25 @@ class UserController {
   void getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
     blockedUsers = userService.getBlockedUsers(username);
-    accountSettings = userService.getAccountSettings(username);
+    accountSettings = await userService.getAccountSettings(username);
   }
 
   Future<UserAbout>? getUserAbout(String username) {
     return userService.getUserAbout(username);
   }
 
-  AccountSettings? getAccountSettings(String username) {
+  Future<AccountSettings>? getAccountSettings(String username) {
     return userService.getAccountSettings(username);
   }
 
-  bool changeEmail(String username, String email, String password) {
+  Future<bool> changeEmail(String username, String email, String password) {
     return userService.changeEmail(username, email, password);
   }
 
-  bool changePassword(String username, String password) {
-    return userService.changePassword(username, password);
+  Future<bool> changePassword(String username, String currentPassword,
+      String newPassword, String verifiedNewPassword) {
+    return userService.changePassword(
+        username, currentPassword, newPassword, verifiedNewPassword);
   }
 
   void blockUser(UserAbout userData, String username) {

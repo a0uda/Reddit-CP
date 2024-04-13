@@ -299,6 +299,15 @@ class PostService {
       // lock/unlock post in database
     }
   }
+
+  bool isMyPost(String postId, String username) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == postId);
+      return post.username == username;
+    } else {
+      return false;
+    }
+  }
 }
 
 // '''
