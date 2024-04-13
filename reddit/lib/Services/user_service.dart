@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = false;
+bool testing = true;
 
 class UserService {
   final List<String> usedPasswords = [
@@ -44,7 +44,8 @@ class UserService {
       //to be fetched from database
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final url = Uri.parse('https://redditech.me/backend/users/about/$Username');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/about/$Username');
 
       final response = await http.get(
         url,
@@ -306,29 +307,24 @@ class UserService {
     }
     return null;
   }
-  Future<int> forgetPassword (String email,String username) async
-  {
-if (testing){
-return 200;
-}
-else{
-     final url = Uri.parse('https://redditech.me/backend/users/forget-password');
-        final response = await http.post(
+
+  Future<int> forgetPassword(String email, String username) async {
+    if (testing) {
+      return 200;
+    } else {
+      final url =
+          Uri.parse('https://redditech.me/backend/users/forget-password');
+      final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'username': username,
-          'email':email,
-        
+          'email': email,
         }),
       );
       print(response.body);
       return response.statusCode;
-
-
-
-}
-
+    }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,21 +371,18 @@ else{
       return 200;
     } else {
       final url = Uri.parse('https://redditech.me/backend/users/signup');
-        final response = await http.post(
+      final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'username': username,
-          'email':email,
-          'gender':gender,
+          'email': email,
+          'gender': gender,
           'password': password,
         }),
       );
       print(response.body);
       return response.statusCode;
-
-
-
     }
   }
 
@@ -398,12 +391,10 @@ else{
     if (testing) {
       if (users.any((user) =>
           user.userAbout.username == username && user.password == password)) {
-
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         return 200;
       } else {
-
         return 400;
       }
     } else {
