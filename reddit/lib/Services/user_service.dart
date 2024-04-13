@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = true;
+bool testing = false;
 
 class UserService {
   final List<String> usedPasswords = [
@@ -44,7 +44,7 @@ class UserService {
       //to be fetched from database
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final url = Uri.parse('https://redditech.me/backend/users/about/admin');
+      final url = Uri.parse('https://redditech.me/backend/users/about/$Username');
 
       final response = await http.get(
         url,
@@ -306,48 +306,91 @@ class UserService {
     }
     return null;
   }
+  Future<int> forgetPassword (String email,String username) async
+  {
+if (testing){
+return 200;
+}
+else{
+     final url = Uri.parse('https://redditech.me/backend/users/forget-password');
+        final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'email':email,
+        
+        }),
+      );
+      print(response.body);
+      return response.statusCode;
+
+
+
+}
+
+  }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  int userSignup(
-      String username, String password, String email, String gender) {
-    if (password.length < 8) {
-      return 400;
+  Future<int> userSignup(
+      String username, String password, String email, String gender) async {
+    if (testing) {
+      if (password.length < 8) {
+        return 400;
+      }
+
+      if (username == password) {
+        return 400;
+      }
+
+      if (!_isValidEmail(email)) {
+        return 400;
+      }
+
+      if (availableUsername(username) == 400) {
+        return 400;
+      }
+
+      if (availableEmail(email) == 400) {
+        return 400;
+      }
+
+      UserAbout newUserAbout = UserAbout(
+        username: username,
+        email: email,
+        verifiedEmailFlag: false,
+        gender: gender,
+      );
+
+      UserItem newUserItem = UserItem(
+        userAbout: newUserAbout,
+        password: password,
+        followers: [],
+        following: [],
+      );
+
+      users.add(newUserItem);
+      usedPasswords.add(password);
+
+      return 200;
+    } else {
+      final url = Uri.parse('https://redditech.me/backend/users/signup');
+        final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': username,
+          'email':email,
+          'gender':gender,
+          'password': password,
+        }),
+      );
+      print(response.body);
+      return response.statusCode;
+
+
+
     }
-
-    if (username == password) {
-      return 400;
-    }
-
-    if (!_isValidEmail(email)) {
-      return 400;
-    }
-
-    if (availableUsername(username) == 400) {
-      return 400;
-    }
-
-    if (availableEmail(email) == 400) {
-      return 400;
-    }
-
-    UserAbout newUserAbout = UserAbout(
-      username: username,
-      email: email,
-      verifiedEmailFlag: false,
-      gender: gender,
-    );
-
-    UserItem newUserItem = UserItem(
-      userAbout: newUserAbout,
-      password: password,
-      followers: [],
-      following: [],
-    );
-
-    users.add(newUserItem);
-    usedPasswords.add(password);
-
-    return 200;
   }
 
   Future<int> userLogin(String username, String password) async {
@@ -355,12 +398,12 @@ class UserService {
     if (testing) {
       if (users.any((user) =>
           user.userAbout.username == username && user.password == password)) {
-        await Future.delayed(const Duration(seconds: 1));
+
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         return 200;
       } else {
-        await Future.delayed(const Duration(seconds: 1));
+
         return 400;
       }
     } else {

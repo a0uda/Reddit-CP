@@ -11,7 +11,6 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
-List<PostItem> posts=[];
 class TopListing extends StatefulWidget {
   final String type;
   const TopListing({super.key,
@@ -25,7 +24,8 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-  final PostController postController = PostController();
+List<PostItem> posts=[];
+  
   // List of items in our dropdown menu
   @override
   void initState() {
@@ -63,8 +63,7 @@ class TopListingBuild extends State<TopListing> {
 
   @override
   Widget build(BuildContext context) {
-    postController.getPost();
-    List<PostItem> posts = postController.postItems!;
+    
     return ListView.builder(
       itemCount: posts.length,
       controller: controller,

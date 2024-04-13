@@ -131,6 +131,13 @@ class PostState extends State<Post> {
       child: InkWell(
         onTap: () => {
           // open this post TODO
+           Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentsDesktop(
+                                    postId: widget.id), // pass the post ID here
+                              ),
+                            ),
         },
         onHover: (value) {
           ishovering = value;

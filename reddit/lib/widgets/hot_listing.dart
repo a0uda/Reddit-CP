@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Controllers/post_controller.dart';
-import 'package:reddit/Models/post_item.dart';
 
-import 'package:reddit/widgets/blur_content.dart';
 import 'package:reddit/widgets/post.dart';
-import 'package:reddit/Services/post_service.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Controllers/user_controller.dart';
+import 'package:reddit/widgets/blur_content.dart';
+
+import 'package:reddit/Models/post_item.dart';
+import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
-List<PostItem> posts = [];
 
 class HotListing extends StatefulWidget {
   final String type;
@@ -24,14 +21,12 @@ class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override
+List<PostItem> posts = [];
+
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String username = prefs.getString("username")!;
     String username = userController.userAbout!.username;
-    print(username);
-
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
       posts = postService.getPosts(username);
@@ -48,7 +43,8 @@ class HotListingBuild extends State<HotListing> {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
-      print('LOAD MORE');
+   print('load more');
+
       // load more data here
 
       setState(() {});

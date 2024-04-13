@@ -37,14 +37,12 @@ class TabBarPostsState extends State<TabBarPosts> {
       editProfileController.getProfileSettings(userData!.username);
       showActiveCommunities =
           editProfileController.profileSettings!.activeCommunity;
-      return Container(
-        padding: const EdgeInsets.all(10),
-        color: Colors.white,
-        child: Column(
+      return  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //////////////////////////// Drop Down List for Listing post ////////////////////////////
+           
 
             (showActiveCommunities!)
                 ? Column(
@@ -166,11 +164,13 @@ class TabBarPostsState extends State<TabBarPosts> {
                     ],
                   )
                 : Container(),
+               Expanded(child:  Listing(type:"profile")),
+               //todo
 
             //////////////////////////// User Posts ////////////////////////////
           ],
-        ),
-      );
+        );
+      
     });
   }
 }

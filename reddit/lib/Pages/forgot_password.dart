@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -31,7 +33,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   double sizedBoxHeightBeforeResetButton = 100;
   double sizedBoxHeightBetweenTextFields = 20;
 
-  void validateForm() {
+  void validateForm()async {
+     final userService = GetIt.instance.get<UserService>();
     setState(() {
       emailError = '';
       usernameError = '';
@@ -45,6 +48,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
         usernameError = 'Username is required';
       }
       if (emailError.isEmpty && usernameError.isEmpty) {
+        userService.forgetPassword(emailController.text, usernameController.text);
+        
         //database call to check if email and username are valid
         // Navigator.push(
         //   context,

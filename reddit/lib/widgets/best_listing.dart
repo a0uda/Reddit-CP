@@ -9,7 +9,6 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
-List<PostItem> posts = [];
 
 class BestListing extends StatefulWidget {
   final String type;
@@ -19,6 +18,7 @@ class BestListing extends StatefulWidget {
 }
 
 class BestListingBuild extends State<BestListing> {
+List<PostItem> posts = [];
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override

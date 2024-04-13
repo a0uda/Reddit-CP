@@ -30,7 +30,7 @@ class SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  void validateForm(BuildContext context) {
+  void validateForm(BuildContext context) async {
     setState(() {
       emailError = '';
       usernameError = '';
@@ -64,7 +64,7 @@ class SignUpPageState extends State<SignUpPage> {
     });
 
     if (emailError.isEmpty && usernameError.isEmpty && passwordError.isEmpty) {
-      int statusCode = UserService().userSignup(
+      int statusCode = await UserService().userSignup(
         usernameController.text,
         passwordController.text,
         emailController.text,
