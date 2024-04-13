@@ -17,7 +17,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
   final List<String> usedPasswords = [

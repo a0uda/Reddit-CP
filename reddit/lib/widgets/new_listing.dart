@@ -30,7 +30,7 @@ List<PostItem> posts=[];
     controller = ScrollController()..addListener(HandleScrolling);
     fetchdata();
   }
-  void fetchdata()async{
+  void fetchdata(){
     String username = userController.userAbout!.username;
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
@@ -38,7 +38,7 @@ List<PostItem> posts=[];
     } else if (widget.type == "popular") {
       posts = postService.getPopularPosts();
     } else if (widget.type == "profile") {
-      posts = await postService.getMyPosts(username);
+      posts =  postService.getMyPosts(username);
       print(username);
     }
 

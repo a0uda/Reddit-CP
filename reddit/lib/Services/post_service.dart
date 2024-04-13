@@ -18,7 +18,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = false;
+bool testing = const bool.fromEnvironment('testing');
 
 class PostService {
   Future<int> addPost(
@@ -67,6 +67,7 @@ class PostService {
           setSuggestedSort: "None",
         ),
       );
+        print(posts);
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -181,31 +182,32 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getMyPosts(String username) async {
+  List<PostItem> getMyPosts(String username)  {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-      final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+//       final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
 
-     SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-  final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token.toString()
-        },
-  );
-      print(json.decode(response.body)['posts']);
-      final List<dynamic> jsonlist=json.decode(response.body)['posts'];
-      final List<PostItem> postsItem=jsonlist.map((jsonitem){
-return PostItem.fromJson(jsonitem);
-      }).toList();
+//      SharedPreferences prefs = await SharedPreferences.getInstance();
+//       String? token = prefs.getString('token');
+//   final response = await http.get(
+//         url,
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': token.toString()
+//         },
+//   );
+//       print(json.decode(response.body)['posts']);
+//       final List<dynamic> jsonlist=json.decode(response.body)['posts'];
+//       final List<PostItem> postsItem=jsonlist.map((jsonitem){
+// return PostItem.fromJson(jsonitem);
+//       }).toList();
  
 
-      return postsItem;
+      // return postsItem;
+      return posts;
     }
   }
 
