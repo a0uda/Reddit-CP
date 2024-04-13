@@ -21,6 +21,7 @@ class _ModQueuesState extends State<ModQueues> {
     double paddingPercentage = 0.1;
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: const Text(
           'Queues',
           style: TextStyle(

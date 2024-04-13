@@ -211,180 +211,176 @@ class _MobilePostTypesState extends State<MobilePostTypes> {
       ),
       body: Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.all(screenWidth * paddingPercentage),
-            // Column that contain the page consists of 4 ListTiles (Post type options, Image posts, video posts, Poll posts)
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Post Type Options
-                ListTile(
-                  title: const Text(
-                    'Post type options',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Post Type Options
+              ListTile(
+                title: const Text(
+                  'Post type options',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                   ),
-                  subtitle: const Text(
-                    'Choose the types of posts you allow in you community',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 137, 137, 137),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
+                ),
+                subtitle: const Text(
+                  'Choose the types of posts you allow in you community',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 137, 137, 137),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
                   ),
-                  trailing: SizedBox(
-                    width: 50,
-                    child: Row(children: [
-                      Text(
-                        textShown,
-                        style: const TextStyle(
+                ),
+                trailing: SizedBox(
+                  width: 50,
+                  child: Row(children: [
+                    Text(
+                      textShown,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 137, 137, 137),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    const Icon(Icons.keyboard_arrow_down_rounded)
+                  ]),
+                ),
+                onTap: () {
+                  setState(
+                    () {
+                      isOptionsTypeVisible = !isOptionsTypeVisible;
+                    },
+                  );
+                  // showBottomSheet(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return const OptionsWidget();
+                  //     });
+                },
+              ),
+              //Image Posts
+              isVideoImageVisible
+                  ? ListTile(
+                      title: const Text(
+                        'Image posts',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Allow images uploaded directly to Reddit as well as links to popular image hosting sites such as imgur',
+                        style: TextStyle(
                           color: Color.fromARGB(255, 137, 137, 137),
                           fontSize: 12,
                           fontWeight: FontWeight.w300,
                         ),
                       ),
-                      const Icon(Icons.keyboard_arrow_down_rounded)
-                    ]),
+                      trailing: Switch(
+                        value: imageSwitchValue,
+                        onChanged: (newValue) {
+                          setState(
+                            () {
+                              imageSwitchValue = !imageSwitchValue;
+                              isSaved = !isSaved;
+                            },
+                          );
+                        },
+                        activeTrackColor:
+                            const Color.fromARGB(255, 0, 110, 200),
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor:
+                            const Color.fromARGB(255, 242, 242, 242),
+                      ),
+                      onTap: () => setState(() {
+                        imageSwitchValue = !imageSwitchValue;
+                        isSaved = !isSaved;
+                      }),
+                    )
+                  : const SizedBox(),
+              //Video Posts
+              isVideoImageVisible
+                  ? ListTile(
+                      title: const Text(
+                        'Video posts',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Allow videos uploaded directly to Reddit',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 137, 137, 137),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      trailing: Switch(
+                        value: videoSwitchValue,
+                        onChanged: (newValue) {
+                          setState(
+                            () {
+                              videoSwitchValue = !videoSwitchValue;
+                              isSaved = !isSaved;
+                            },
+                          );
+                        },
+                        activeTrackColor:
+                            const Color.fromARGB(255, 0, 110, 200),
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor:
+                            const Color.fromARGB(255, 242, 242, 242),
+                      ),
+                      onTap: () => setState(() {
+                        videoSwitchValue = !videoSwitchValue;
+                        isSaved = !isSaved;
+                      }),
+                    )
+                  : const SizedBox(),
+              //Poll Posts
+              ListTile(
+                title: const Text(
+                  'Poll Posts',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                   ),
-                  onTap: () {
+                ),
+                subtitle: const Text(
+                  'Allow poll posts in your community',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 137, 137, 137),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                trailing: Switch(
+                  value: pollSwitchValue,
+                  onChanged: (newValue) {
                     setState(
                       () {
-                        isOptionsTypeVisible = !isOptionsTypeVisible;
+                        pollSwitchValue = !pollSwitchValue;
+                        isSaved = !isSaved;
                       },
                     );
-                    // showBottomSheet(
-                    //     context: context,
-                    //     builder: (BuildContext context) {
-                    //       return const OptionsWidget();
-                    //     });
                   },
+                  activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
+                  inactiveThumbColor: Colors.white,
+                  inactiveTrackColor:
+                      const Color.fromARGB(255, 242, 242, 242),
                 ),
-                //Image Posts
-                isVideoImageVisible
-                    ? ListTile(
-                        title: const Text(
-                          'Image posts',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        subtitle: const Text(
-                          'Allow images uploaded directly to Reddit as well as links to popular image hosting sites such as imgur',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 137, 137, 137),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        trailing: Switch(
-                          value: imageSwitchValue,
-                          onChanged: (newValue) {
-                            setState(
-                              () {
-                                imageSwitchValue = !imageSwitchValue;
-                                isSaved = !isSaved;
-                              },
-                            );
-                          },
-                          activeTrackColor:
-                              const Color.fromARGB(255, 0, 110, 200),
-                          inactiveThumbColor: Colors.white,
-                          inactiveTrackColor:
-                              const Color.fromARGB(255, 242, 242, 242),
-                        ),
-                        onTap: () => setState(() {
-                          imageSwitchValue = !imageSwitchValue;
-                          isSaved = !isSaved;
-                        }),
-                      )
-                    : const SizedBox(),
-                //Video Posts
-                isVideoImageVisible
-                    ? ListTile(
-                        title: const Text(
-                          'Video posts',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        subtitle: const Text(
-                          'Allow videos uploaded directly to Reddit',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 137, 137, 137),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        trailing: Switch(
-                          value: videoSwitchValue,
-                          onChanged: (newValue) {
-                            setState(
-                              () {
-                                videoSwitchValue = !videoSwitchValue;
-                                isSaved = !isSaved;
-                              },
-                            );
-                          },
-                          activeTrackColor:
-                              const Color.fromARGB(255, 0, 110, 200),
-                          inactiveThumbColor: Colors.white,
-                          inactiveTrackColor:
-                              const Color.fromARGB(255, 242, 242, 242),
-                        ),
-                        onTap: () => setState(() {
-                          videoSwitchValue = !videoSwitchValue;
-                          isSaved = !isSaved;
-                        }),
-                      )
-                    : const SizedBox(),
-                //Poll Posts
-                ListTile(
-                  title: const Text(
-                    'Poll Posts',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  subtitle: const Text(
-                    'Allow poll posts in your community',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 137, 137, 137),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  trailing: Switch(
-                    value: pollSwitchValue,
-                    onChanged: (newValue) {
-                      setState(
-                        () {
-                          pollSwitchValue = !pollSwitchValue;
-                          isSaved = !isSaved;
-                        },
-                      );
-                    },
-                    activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
-                    inactiveThumbColor: Colors.white,
-                    inactiveTrackColor:
-                        const Color.fromARGB(255, 242, 242, 242),
-                  ),
-                  onTap: () => setState(() {
-                    pollSwitchValue = !pollSwitchValue;
-                    isSaved = !isSaved;
-                  }),
-                ),
-              ],
-            ),
+                onTap: () => setState(() {
+                  pollSwitchValue = !pollSwitchValue;
+                  isSaved = !isSaved;
+                }),
+              ),
+            ],
           ),
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),

@@ -41,7 +41,7 @@ class _CommunityTypeState extends State<CommunityType> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Community Name',
+          'Community Type',
           style: TextStyle(
             fontSize: 17,
             color: Colors.black,
