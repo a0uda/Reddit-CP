@@ -156,7 +156,7 @@ final List<UserItem> users = [
     ),
     accountSettings: AccountSettings(
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: '?',
+      verifiedEmailFlag: false,
       country: 'Egypt',
       gender: 'Female',
       gmail: 'rawan7544@gmail.com',
@@ -253,7 +253,7 @@ final List<UserItem> users = [
     ),
     accountSettings: AccountSettings(
       email: 'rawan7544@gmail.com',
-      verifiedEmailFlag: '?',
+      verifiedEmailFlag: true,
       country: 'Egypt',
       gender: 'Male',
       gmail: 'rawan7544@gmail.com',

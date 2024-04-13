@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 
 class ConnectGoogleTile extends StatefulWidget {
@@ -12,6 +14,7 @@ class ConnectGoogleTile extends StatefulWidget {
 
 class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
   final UserController userController = GetIt.instance.get<UserController>();
+  // AccountSettings accountSettings = userController.getAccountSettings(userController.userAbout!.username!)
 
   @override
   Widget build(BuildContext context) {
