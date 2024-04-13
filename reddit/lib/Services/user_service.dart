@@ -45,7 +45,7 @@ class UserService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
-          Uri.parse('https://redditech.me/backend/users/about/$Username');
+          Uri.parse('https://redditech.me/backend/users/about/$username');
 
       final response = await http.get(
         url,
