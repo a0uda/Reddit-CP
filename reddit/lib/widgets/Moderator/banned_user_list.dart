@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:reddit/widgets/Moderator/banned_user.dart';
 
 class BannedUsersList extends StatefulWidget {
@@ -27,20 +28,58 @@ class _BannedUsersListState extends State<BannedUsersList> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Colors.grey[200],
       child: Column(
         children: [
+          (screenWidth > 700)
+              ? AppBar(
+                  title: const Text(
+                    'Banned Users',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  actions: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 42, 101, 210)),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AddBannedUser(),
+                              ),
+                            );
+                          }, // Ban user Badrrr ele hya add
+                          child: const Text(
+                            "Ban User",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    ])
+              : const SizedBox(),
           TextField(
-                onChanged: searchUsers,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search , size: 20,),
-                  hintText: 'Search',
-                ),
+            onChanged: searchUsers,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(
+                Icons.search,
+                size: 20,
               ),
+              hintText: 'Search',
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: foundUsers.length,
@@ -64,7 +103,8 @@ class _BannedUsersListState extends State<BannedUsersList> {
                         ),
                         Text(
                           item["banTime"]!,
-                          style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
                         )
                       ],
                     ),

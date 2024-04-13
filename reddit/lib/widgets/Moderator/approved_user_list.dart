@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_users.dart';
 
 class ApprovedUserList extends StatefulWidget {
@@ -10,17 +11,11 @@ class ApprovedUserList extends StatefulWidget {
 
 class _ApprovedUserListState extends State<ApprovedUserList> {
   List<Map<String, String>> foundUsers = [];
-  bool isDesktop = true;
 
   @override
   void initState() {
     super.initState();
     foundUsers = List.from(approvedUsers);
-    // if (MediaQuery.of(context).size.width > 700) {
-    //   isDesktop = true;
-    // } else {
-    //   isDesktop = false;
-    // }
   }
 
   void searchUsers(String search) {
@@ -34,35 +29,45 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
 
   @override
   Widget build(BuildContext context) {
-    // if (MediaQuery.of(context).size.width > 700) {
-    //   isDesktop = true;
-    // } else {
-    //   isDesktop = false;
-    // }
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Colors.grey[200],
       child: Column(
         children: [
-          isDesktop
-              ? Container(
-                color: Colors.white,
-                child: ListTile(
-                    title: const Text(
-                      "Approved Users",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          (screenWidth > 700)
+              ? AppBar(
+                  title: const Text(
+                    'Approved Users',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
-                    trailing: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor:
-                              const Color.fromARGB(255, 24, 82, 189)),
-                      onPressed: () {}, // Approve user Badrrr ele hya add
-                      child: const Text(
-                        "Approve User",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )),
-              )
+                  ),
+                  actions: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 42, 101, 210)),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AddApprovedUser(),
+                              ),
+                            );
+                          }, // Approve user Badrrr ele hya add
+                          child: const Text(
+                            "Approve User",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    ])
               : const SizedBox(),
           TextField(
             onChanged: searchUsers,

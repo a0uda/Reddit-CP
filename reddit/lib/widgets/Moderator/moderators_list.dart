@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_modderator.dart';
 import 'package:reddit/widgets/Moderator/moderators.dart';
 
 class ModeratorsList extends StatefulWidget {
@@ -34,10 +35,46 @@ class _ModeratorsListState extends State<ModeratorsList>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Colors.grey[200],
       child: Column(
         children: <Widget>[
+          (screenWidth > 700)
+              ? AppBar(
+                  title: const Text(
+                    'Moderators',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  actions: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 42, 101, 210)),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AddModerator(),
+                              ),
+                            );
+                          }, // add mod Badrrr ele hya add
+                          child: const Text(
+                            "Invite user as mod",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    ])
+              : const SizedBox(),
           TextField(
             onChanged: searchUsers,
             decoration: const InputDecoration(

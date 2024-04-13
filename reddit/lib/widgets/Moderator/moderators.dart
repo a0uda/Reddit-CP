@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_modderator.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/moderators_list.dart';
 
@@ -45,8 +46,14 @@ class _ModeratorsState extends State<Moderators> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: IconButton(
-                  onPressed: () {}, icon: const Icon(CupertinoIcons.add)),
-            ) //implement add in mock
+                  onPressed: () {
+                    Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddModerator(),
+                    ),
+                  );
+                  }, icon: const Icon(CupertinoIcons.add)),
+            ) //implement add in mock badrrrrr
           ],
         ),
         body:

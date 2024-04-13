@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_muted_user.dart';
 import 'package:reddit/widgets/Moderator/muted_users.dart';
 
 class MutedUsersList extends StatefulWidget {
@@ -27,20 +28,58 @@ class _MutedUsersListState extends State<MutedUsersList> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Colors.grey[200],
       child: Column(
         children: [
+          (screenWidth > 700)
+              ? AppBar(
+                  title: const Text(
+                    'Muted Users',
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  actions: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 42, 101, 210)),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AddMutedUser(),
+                              ),
+                            );
+                          }, // Ban user Badrrr ele hya add
+                          child: const Text(
+                            "Mute User",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    ])
+              : const SizedBox(),
           TextField(
-                onChanged: searchUsers,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search , size: 20,),
-                  hintText: 'Search',
-                ),
+            onChanged: searchUsers,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(
+                Icons.search,
+                size: 20,
               ),
+              hintText: 'Search',
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemCount: foundUsers.length,
@@ -64,7 +103,8 @@ class _MutedUsersListState extends State<MutedUsersList> {
                         ),
                         Text(
                           item["muteTime"]!,
-                          style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 10),
                         )
                       ],
                     ),

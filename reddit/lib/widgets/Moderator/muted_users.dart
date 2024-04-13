@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_muted_user.dart';
 import 'package:reddit/widgets/Moderator/banned_user_list.dart';
 import 'package:reddit/widgets/Moderator/muted_users_list.dart';
 
@@ -36,21 +37,27 @@ class MutedUsers extends StatefulWidget {
 class _MutedUsersState extends State<MutedUsers> {
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          title: const Center(child: Text("Muted Users")),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                  onPressed: () {}, icon: const Icon(CupertinoIcons.add)),
-            ) //Badrr navigate to mute user page
-          ],
-        ),
-        body:
-            Container(color: Colors.grey[200], child: const MutedUsersList()),
-      );
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Center(child: Text("Muted Users")),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddMutedUser(),
+                    ),
+                  );
+                },
+                icon: const Icon(CupertinoIcons.add)),
+          ) //Badrr navigate to mute user page
+        ],
+      ),
+      body: Container(color: Colors.grey[200], child: const MutedUsersList()),
+    );
   }
 }

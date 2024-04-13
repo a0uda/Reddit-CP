@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 
 List<Map<String, String>> approvedUsers = [
@@ -35,21 +36,27 @@ class ApprovedUsers extends StatefulWidget {
 class _ApprovedUsersState extends State<ApprovedUsers> {
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          title: const Center(child: Text("Approved Users")),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                  onPressed: () {}, icon: const Icon(CupertinoIcons.add)),
-            ) //implement add in mock
-          ],
-        ),
-        body:
-            Container(color: Colors.grey[200], child: const ApprovedUserList()),
-      );
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: const Center(child: Text("Approved Users")),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddApprovedUser(),
+                    ),
+                  );
+                },
+                icon: const Icon(CupertinoIcons.add)),
+          ) //implement add in mock badrrrr
+        ],
+      ),
+      body: Container(color: Colors.grey[200], child: const ApprovedUserList()),
+    );
   }
 }
