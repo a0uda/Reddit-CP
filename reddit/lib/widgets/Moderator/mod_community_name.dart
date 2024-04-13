@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ModDescription extends StatefulWidget {
-  const ModDescription({super.key});
+class ModCommName extends StatefulWidget {
+  const ModCommName({super.key});
 
   @override
-  State<ModDescription> createState() => _ModDescriptionState();
+  State<ModCommName> createState() => _ModCommNameState();
 }
 
-class _ModDescriptionState extends State<ModDescription> {
+class _ModCommNameState extends State<ModCommName> {
   TextEditingController inputController = TextEditingController();
-  int maxCounter = 500;
-  int remainingCharacters = 500;
+  int maxCounter = 90;
+  int remainingCharacters = 90;
   bool isSaved = false;
   bool doneSaved = true;
 
@@ -42,7 +42,7 @@ class _ModDescriptionState extends State<ModDescription> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Description',
+          'Community Name',
           style: TextStyle(
             fontSize: 17,
             color: Colors.black,
@@ -180,7 +180,7 @@ class _ModDescriptionState extends State<ModDescription> {
                 Align(
                   alignment: Alignment(0, 0),
                   child: Text(
-                    'Describe your community',
+                    'Change your community name',
                     style: TextStyle(
                       color: Color.fromARGB(255, 48, 129, 185),
                       fontSize: 12,

@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/test_files/test_posts_mohy.dart';
 import 'package:reddit/widgets/post.dart';
 
@@ -11,11 +11,38 @@ class ModQueues extends StatefulWidget {
 }
 
 class _ModQueuesState extends State<ModQueues> {
+  Color greyColor = const Color.fromARGB(255, 247, 247, 247);
+  bool isSaved = false;
+  bool doneSaved = true;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Queues',
+          style: TextStyle(
+            fontSize: 17,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: <Widget>[
+          IconButton(
+              onPressed: () {/*to re-fetch posts again*/},
+              icon: const Icon(Icons.refresh))
+        ],
+        leading: (screenWidth < 700)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                })
+            : null,
+      ),
+      backgroundColor: greyColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,8 +51,9 @@ class _ModQueuesState extends State<ModQueues> {
           Expanded(
             flex: 8,
             child: Container(
-              color: const Color.fromARGB(255, 247, 247, 247),
-              margin: const EdgeInsets.symmetric(horizontal: 8),
+              color: greyColor,
+              margin: EdgeInsets.symmetric(
+                  horizontal: paddingPercentage * screenWidth, vertical: 8),
               child: ListView.builder(
                 itemCount: postsMohy.length,
                 itemBuilder: (context, index) {
@@ -71,6 +99,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
   List<Map<String, dynamic>>? needReviewItems;
   List<Map<String, dynamic>>? postsCommentsItems;
   List<Map<String, dynamic>>? newestFirstItems;
+  List<Map<String, bool>>? communityNames; //to be fetched from the database
 
   void toggleBool(int index, int length, List<Map<String, dynamic>> itemList,
       void Function(String) updateDisplay) {
@@ -87,6 +116,14 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
       }
       Navigator.pop(context);
     });
+  }
+
+  void toggleCheckList(int index) {
+    if (communityNames != null) {
+      setState(() {
+        communityNames![index]['bool'] = !communityNames![index]['bool']!;
+      });
+    }
   }
 
   @override
@@ -199,55 +236,148 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
         'bool': false
       },
     ];
+    communityNames = [
+      {'badrbeyheb': true},
+      {'ModeratorSw': false},
+      {'Flutter testing': false},
+      {'benhebAbdullah': false}
+    ];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: [
-        Row(
-          children: [
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.reddit,
-                color: Colors.black,
+    return Container(
+      color: Colors.white,
+      padding: (widget.screenWidth <700)?EdgeInsets.only(left: widget.screenWidth * 0.03):EdgeInsets.only(left: widget.screenWidth * 0.02),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        margin:
+                            const EdgeInsets.only(left: 16, top: 16, right: 16),
+                        width: widget.screenWidth,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  child: const Text(
+                                    'Filter by community',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(Icons.close))
+                              ],
+                            ),
+                            const Divider(
+                              thickness: 1,
+                              color: Color.fromARGB(255, 213, 213, 213),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  child: const Text(
+                                    'All communities',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: communityNames!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final Map<String, dynamic> item =
+                                    communityNames![index];
+                                final String title = item.keys.first;
+                                final bool itemBool = item.values.first;
+                                return ListTile(
+                                  title: Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  trailing: Checkbox(
+                                      value: itemBool,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          toggleCheckList(index);
+                                        });
+                                      }),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(
+                  Icons.reddit,
+                  color: Colors.black,
+                ),
+                label: const Text(
+                  'badrbeyeb',
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: greyColor,
+                  side: BorderSide(color: greyColor),
+                ),
               ),
-              label: const Text(
-                'badrbeyeb',
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black),
+              OutlinedButtonClass(
+                buttonText: needReviewDisplay,
+                items: needReviewItems,
+                tileTitle: needReviewTitle,
+                screenWidth: widget.screenWidth,
               ),
-              style: OutlinedButton.styleFrom(
-                backgroundColor: greyColor,
-                side: BorderSide(color: greyColor),
+              OutlinedButtonClass(
+                buttonText: postsAndCommentsDisplay,
+                items: postsCommentsItems,
+                tileTitle: postsAndCommentsTitle,
+                screenWidth: widget.screenWidth,
               ),
-            ),
-            OutlinedButtonClass(
-              buttonText: needReviewDisplay,
-              items: needReviewItems,
-              tileTitle: needReviewTitle,
-              screenWidth: widget.screenWidth,
-            ),
-            OutlinedButtonClass(
-              buttonText: postsAndCommentsDisplay,
-              items: postsCommentsItems,
-              tileTitle: postsAndCommentsTitle,
-              screenWidth: widget.screenWidth,
-            ),
-            OutlinedButtonClass(
-              buttonText: newestFirstDisplay,
-              items: newestFirstItems,
-              tileTitle: newestFirstTitle,
-              screenWidth: widget.screenWidth,
-            ),
-          ],
-        ),
-      ],
+              OutlinedButtonClass(
+                buttonText: newestFirstDisplay,
+                items: newestFirstItems,
+                tileTitle: newestFirstTitle,
+                screenWidth: widget.screenWidth,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
