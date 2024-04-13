@@ -327,31 +327,25 @@ class UserService {
     }
   }
 
-
-    Future<int> forgetUsername (String email,) async
-  {
-if (testing){
-return 200;
-}
-else{
-     final url = Uri.parse('https://redditech.me/backend/users/forget-username');
-        final response = await http.post(
+  Future<int> forgetUsername(
+    String email,
+  ) async {
+    if (testing) {
+      return 200;
+    } else {
+      final url =
+          Uri.parse('https://redditech.me/backend/users/forget-username');
+      final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'email':email,
-        
+          'email': email,
         }),
       );
       print(response.body);
       return response.statusCode;
-
-
-
-}
-
+    }
   }
-
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Future<int> userSignup(

@@ -434,14 +434,13 @@ class PostState extends State<Post> {
                           ),
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommentsWidget(
-                                      postId:
-                                          widget.id), // pass the post ID here
-                                ),
-                              );
+                           Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentsDesktop(
+                                    postId: widget.id), // pass the post ID here
+                              ),
+                            );
                             },
                             icon: Icon(Icons.messenger_outline,
                                 color: Theme.of(context).colorScheme.secondary),
