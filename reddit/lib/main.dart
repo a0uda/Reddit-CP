@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/community_controller.dart';
-import 'package:reddit/Models/rules_item.dart';
-import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/community_service.dart';
-import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mod_community_page.dart';
-import 'package:reddit/widgets/Moderator/mod_responsive.dart';
-import 'package:reddit/widgets/Moderator/queues.dart';
-import 'package:reddit/widgets/community_page_test_.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -37,50 +29,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
-        iconTheme: const IconThemeData(color: Colors.black),
-        drawerTheme: const DrawerThemeData(backgroundColor: Colors.white),
-        canvasColor: Colors.white,
-        brightness: Brightness.light,
-        primaryColor: Colors.green,
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 82, 78, 78),
-            primary: const Color.fromARGB(255, 224, 223, 223),
-            secondary: const Color.fromARGB(255, 0, 0, 0),
-            background: const Color.fromARGB(255, 255, 255, 255)),
-        fontFamily: 'Arial',
-      ),
-       home: CommunityPage(
-        communityName: 'mohyModerator',
-        communityMembersNo: 1,
-        communityDescription: 'Bagrab ahot mod tools button',
-        communityProfilePicturePath: 'images/pp.jpg',
-        communityRule: rules,
-      )
-      );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.black),
+          drawerTheme: const DrawerThemeData(backgroundColor: Colors.white),
+          canvasColor: Colors.white,
+          brightness: Brightness.light,
+          primaryColor: Colors.green,
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 82, 78, 78),
+              primary: const Color.fromARGB(255, 224, 223, 223),
+              secondary: const Color.fromARGB(255, 0, 0, 0),
+              background: const Color.fromARGB(255, 255, 255, 255)),
+          fontFamily: 'Arial',
+        ),
+        home: const LoginPage());
   }
 }
-final rules = [
-  const RulesItem(
-    ruleTitle: "This is not a marketplace",
-    ruleDescription: "Buying, selling, trading, begging or wagering for coins, players, real money, accounts or digital items is not allowed. Posting anything related to coin buying or selling will result in a ban.",
-  ),
-  const RulesItem(
-    ruleTitle: "Don't be an rude",
-    ruleDescription: "Posts and comments consisting of racist, sexist or homophobic content will be removed, regardless of popularity or relevance. Pictures showing personal information or anything that could lead to doxxing or witch-hunting will not be allowed. Click-baits, shitposts and trolling will not be tolerated and will result in an immediate ban. Treat others how you would like to be treated.",
-  ),
-  const RulesItem(
-    ruleTitle: "Personal Attacks",
-    ruleDescription: "We are 100% in favor of critical and constructive posts and comments as long as they are not aimed towards a specific person. Any direct or indirect attack to members of the FIFA community are strictly prohibited.",
-  ),
-  const RulesItem(
-    ruleTitle: "We're not your free advertising or here to pay your bills",
-    ruleDescription: "Using the subreddit's subscriber base for financial gain is not allowed. Apps, websites, streams, youtube channels or any other external source to Reddit cannot be advertised. Giveaways promoting another medium (retweet to enter, subscribe to win, etc.) are not allowed. If you wish to advertise, you can do so through reddit. Read what Reddit considers to be acceptable self-promotion here.",
-  ),
-  const RulesItem(
-    ruleTitle: "Automatic Removal",
-    ruleDescription: "The following topics will be automatically removed by the moderation team due to user feedback, low effort and repetitiveness.",
-  ),
-];
