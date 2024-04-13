@@ -213,8 +213,8 @@ class Postoptions extends State<Options> {
                                     title: const Text("Unsave"),
                                     onTap: () => {
                                       //todo
-                                      postService.unSavePost(
-                                          widget.postId, username),
+                                                         postController.unSavePost(widget.postId, username),
+
                                       Navigator.of(context).pop(),
                                     },
                                   ),
