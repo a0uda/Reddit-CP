@@ -29,8 +29,7 @@ class ProfileHeader extends StatelessWidget {
                       try {
                         return AssetImage(userData.bannerPicture!);
                       } catch (e) {
-                        return const AssetImage(
-                            'images/Greddit.png');
+                        return const AssetImage('images/Greddit.png');
                       }
                     }(),
                     fit: BoxFit.cover,
@@ -49,12 +48,25 @@ class ProfileHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              padding: const EdgeInsets.only(top: 30, bottom: 20, left: 20),
-              icon: const Icon(Icons.arrow_back),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    padding:
+                        const EdgeInsets.only(top: 40, bottom: 20, left: 20),
+                    icon: const Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    iconSize: 30,
+                  ),
+                ],
+              ),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
