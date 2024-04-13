@@ -86,6 +86,8 @@ class SavedScreen extends State<Saved> {
                             poll: posts[index].poll,
                             id: posts[index].id,
                             communityName: posts[index].communityName,
+                            isLocked:posts[index].lockedFlag,
+                          
                           ));
                     }
                     return Post(
@@ -102,6 +104,7 @@ class SavedScreen extends State<Saved> {
                       poll: posts[index].poll,
                       id: posts[index].id,
                       communityName: posts[index].communityName,
+                      isLocked:posts[index].lockedFlag,
                     );
                   },
                 );

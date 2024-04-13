@@ -62,6 +62,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     poll: post!.poll,
                     id: post!.id,
                     communityName: post!.communityName,
+                    isLocked: post!.lockedFlag,
                   ),
                 ),
                 FutureBuilder<List<Comments>>(

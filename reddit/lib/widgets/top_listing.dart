@@ -6,21 +6,17 @@ import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
 import 'package:reddit/widgets/blur_content.dart';
-
+import 'package:provider/provider.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
 class TopListing extends StatefulWidget {
   final String type;
-  const TopListing({super.key,
-  required this.type});
+  const TopListing({super.key, required this.type});
   @override
   State<TopListing> createState() => TopListingBuild();
 }
-
-
-
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
@@ -61,47 +57,52 @@ List<PostItem> posts=[];
 
   @override
   Widget build(BuildContext context) {
-    
-    return ListView.builder(
-      itemCount: posts.length,
-      controller: controller,
-      itemBuilder: (context, index) {
-        if (posts[index].nsfwFlag == true) {
-          // TODO : NSFW , Spoiler
-          return buildBlur(
-              context: context,
-              child: Post(
-              //  profileImageUrl: posts[index].profilePic!,
-                name: posts[index].username,
-          title: posts[index].title,
-          postContent: posts[index].description!,
-          date: posts[index].createdAt.toString(),
-          likes: posts[index].upvotesCount - posts[index].downvotesCount,
-          commentsCount: posts[index].commentsCount,
-          linkUrl: posts[index].linkUrl,
-          imageUrl: posts[index].images?[0].path,
-          videoUrl: posts[index].videos?[0].path,
-          poll: posts[index].poll,
-          id: posts[index].id,
-          communityName: posts[index].communityName,
-              ));
-        }
-        return Post(
-          // profileImageUrl: posts[index].profilePic!,
-          name: posts[index].username,
-          title: posts[index].title,
-          postContent: posts[index].description!,
-          date: posts[index].createdAt.toString(),
-          likes: posts[index].upvotesCount - posts[index].downvotesCount,
-          commentsCount: posts[index].commentsCount,
-          linkUrl: posts[index].linkUrl,
-          imageUrl: posts[index].images?[0].path,
-          videoUrl: posts[index].videos?[0].path,
-          poll: posts[index].poll,
-          id: posts[index].id,
-          communityName: posts[index].communityName,
-        );
-      },
-    );
+    return Consumer<LockPost>(builder: (context, lockPost, child) {
+      return ListView.builder(
+        itemCount: posts.length,
+        controller: controller,
+        itemBuilder: (context, index) {
+          if (posts[index].nsfwFlag == true) {
+            // TODO : NSFW , Spoiler
+            return buildBlur(
+                context: context,
+                child: Post(
+                  //  profileImageUrl: posts[index].profilePic!,
+                  name: posts[index].username,
+                  title: posts[index].title,
+                  postContent: posts[index].description!,
+                  date: posts[index].createdAt.toString(),
+                  likes:
+                      posts[index].upvotesCount - posts[index].downvotesCount,
+                  commentsCount: posts[index].commentsCount,
+                  linkUrl: posts[index].linkUrl,
+                  imageUrl: posts[index].images?[0].path,
+                  videoUrl: posts[index].videos?[0].path,
+                  poll: posts[index].poll,
+                  id: posts[index].id,
+                  communityName: posts[index].communityName,
+                  isLocked: posts[index].lockedFlag,
+                ));
+          }
+
+          return Post(
+            // profileImageUrl: posts[index].profilePic!,
+            name: posts[index].username,
+            title: posts[index].title,
+            postContent: posts[index].description!,
+            date: posts[index].createdAt.toString(),
+            likes: posts[index].upvotesCount - posts[index].downvotesCount,
+            commentsCount: posts[index].commentsCount,
+            linkUrl: posts[index].linkUrl,
+            imageUrl: posts[index].images?[0].path,
+            videoUrl: posts[index].videos?[0].path,
+            poll: posts[index].poll,
+            id: posts[index].id,
+            communityName: posts[index].communityName,
+            isLocked: posts[index].lockedFlag,
+          );
+        },
+      );
+    });
   }
 }

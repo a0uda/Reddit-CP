@@ -9,9 +9,11 @@ import 'package:reddit/widgets/report_options.dart';
 class Options extends StatefulWidget {
   final String? postId;
   final bool saved;
-  const Options({
+  bool islocked;
+  Options({
     required this.postId,
     required this.saved,
+    required this.islocked,
     super.key,
   });
 
@@ -22,55 +24,52 @@ class Options extends StatefulWidget {
 final userController = GetIt.instance.get<UserController>();
 final postService = GetIt.instance.get<PostService>();
 
-
 class Postoptions extends State<Options> {
   @override
   Widget build(BuildContext context) {
-   var postController=context.read<SavePost>();
+    var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
+    var postLockController = context.read<LockPost>();
     return (!ismobile)
         ? PopupMenuButton<int>(
             icon: const Icon(Icons.more_horiz),
             itemBuilder: (context) => [
-              (!widget.saved)?PopupMenuItem(
-                value: 1,
-                onTap: () => {
-                  //save todo
-                  postService.savePost(widget.postId, username),
-                  
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.save),
-                    SizedBox(
-                      width: 10,
+              (!widget.saved)
+                  ? PopupMenuItem(
+                      value: 1,
+                      onTap: () => {
+                        //save todo
+                        postService.savePost(widget.postId, username),
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.save),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Save")
+                        ],
+                      ),
+                    )
+                  : PopupMenuItem(
+                      value: 1,
+                      onTap: () => {
+                        //save todo
+                        postController.unSavePost(widget.postId, username),
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.save),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text("Unsave")
+                        ],
+                      ),
                     ),
-                    Text("Save")
-                  ],
-                ),
-              ):PopupMenuItem(
-                value: 1,
-                onTap: () => {
-                  //save todo
-                  postController.unSavePost(widget.postId, username),
-                  
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.save),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text("Unsave")
-                  ],
-                ),
-              )
-              
-              
-              ,
               // PopupMenuItem 2
               const PopupMenuItem(
                 value: 2,
@@ -101,7 +100,7 @@ class Postoptions extends State<Options> {
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: Column(
                                 children: [
-                                  Text(
+                                  const Text(
                                       "Thanks for looking out for yourself and your fellow redditors by reporting things that break the rules. Let us know what's happening, and we'll look into it"),
                                   ReportOptions(
                                     postId: widget.postId,
@@ -122,6 +121,24 @@ class Postoptions extends State<Options> {
                       width: 10,
                     ),
                     Text("Report")
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 4,
+                onTap: () {
+                  postLockController.lockPost(widget.postId!);
+                  setState(
+                      () {}); // Call setState to rebuild the widget with new values
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                        widget.islocked ? Icons.lock_open : Icons.lock_outline),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(widget.islocked ? "Unlock Comments" : "Lock Comments")
                   ],
                 ),
               ),
@@ -176,29 +193,49 @@ class Postoptions extends State<Options> {
                                     })
                               },
                             ),
-                            (!widget.saved)?ListTile(
-                              leading: Icon(Icons.save),
-                              title: const Text("Save"),
-                              onTap: () => {
-                                //todo
-                                postService.savePost(widget.postId, username),
-                                Navigator.of(context).pop(),
-                              },
-                            ):ListTile(
-                              leading: Icon(Icons.save),
-                              title: const Text("Unsave"),
-                              onTap: () => {
-                                //todo
-                  postController.unSavePost(widget.postId, username),
-                                Navigator.of(context).pop(),
+                            (!widget.saved)
+                                ? ListTile(
+                                    leading: Icon(Icons.save),
+                                    title: const Text("Save"),
+                                    onTap: () => {
+                                      //todo
+                                      postService.savePost(
+                                          widget.postId, username),
+                                      Navigator.of(context).pop(),
+                                    },
+                                  )
+                                : ListTile(
+                                    leading: Icon(Icons.save),
+                                    title: const Text("Unsave"),
+                                    onTap: () => {
+                                      //todo
+                                      postService.unSavePost(
+                                          widget.postId, username),
+                                      Navigator.of(context).pop(),
+                                    },
+                                  ),
+                            ListTile(
+                              leading: Icon(widget.islocked
+                                  ? Icons.lock_open
+                                  : Icons.lock),
+                              title: Text(widget.islocked
+                                  ? "Unlock Comments"
+                                  : "Lock Comments"),
+                              onTap: () {
+                                setState(() {
+                                  postLockController.lockPost(widget.postId!);
+                                  widget.islocked = !widget.islocked;
+                                });
+                                Navigator.of(context).pop();
                               },
                             ),
+                            //
                           ],
                         ),
                       );
                     },
                   ),
                 },
-            icon: Icon(Icons.more_horiz));
+            icon: const Icon(Icons.more_horiz));
   }
 }
