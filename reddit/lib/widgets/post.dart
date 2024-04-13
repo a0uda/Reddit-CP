@@ -180,7 +180,9 @@ class PostState extends State<Post> {
                           });
                         },
                         child: Text(
-                          widget.communityName,
+                          (widget.communityName) == "Select Community"
+                              ? widget.name
+                              : widget.communityName,
                           style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -190,47 +192,50 @@ class PostState extends State<Post> {
                     ),
                     Row(
                       children: [
-                        InkWell(
-                          onTap: () => {
-                            userType = userController.userAbout!.username ==
-                                    widget.name
-                                ? 'me'
-                                : 'other',
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FutureBuilder<UserAbout?>(
-                                  future: userService.getUserAbout(widget.name),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      return ProfileScreen(
-                                        snapshot.data,
-                                        userType,
-                                      );
-                                    }
-                                  },
+                        if (widget.communityName != "Select Community")
+                          InkWell(
+                            onTap: () => {
+                              userType = userController.userAbout!.username ==
+                                      widget.name
+                                  ? 'me'
+                                  : 'other',
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FutureBuilder<UserAbout?>(
+                                    future:
+                                        userService.getUserAbout(widget.name),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else {
+                                        return ProfileScreen(
+                                          snapshot.data,
+                                          userType,
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
                               ),
+                            },
+                            onHover: (hover) {
+                              setState(() {
+                                isHovering = hover;
+                              });
+                            },
+                            child: Text(
+                              widget.name,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w200,
+                                  fontFamily: 'Arial'),
                             ),
-                          },
-                          onHover: (hover) {
-                            setState(() {
-                              isHovering = hover;
-                            });
-                          },
-                          child: Text(
-                            widget.name,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w200,
-                                fontFamily: 'Arial'),
                           ),
-                        ),
                         const Padding(padding: EdgeInsets.all(0)),
                         Text(
                           '  • ${widget.date.substring(0, 10)}',

@@ -161,8 +161,7 @@ class _CreatePostState extends State<CreatePost> {
           actions: [
             IconButton(
                 onPressed: (() async => {
-                      if (titleController.text.isEmpty ||
-                          selectedCommunity == "Select Community")
+                      if (titleController.text.isEmpty)
                         {
                           print(selectedCommunity),
                           showDialog(
@@ -170,8 +169,8 @@ class _CreatePostState extends State<CreatePost> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text('Error'),
-                                  content: const Text(
-                                      'Choose a community and add a title to your post!'),
+                                  content:
+                                      const Text('Add a title to your post!'),
                                   actions: [
                                     TextButton(
                                         onPressed: () {
