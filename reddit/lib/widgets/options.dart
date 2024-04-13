@@ -29,6 +29,7 @@ class Postoptions extends State<Options> {
   Widget build(BuildContext context) {
     var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
+    bool isMyPost = postService.isMyPost(widget.postId!, username);
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
@@ -92,10 +93,10 @@ class Postoptions extends State<Options> {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         scrollable: true,
-                        title: Text('Submit a report'),
+                        title: const Text('Submit a report'),
                         content: Builder(
                           builder: ((context) {
-                            return Container(
+                            return SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,
                               width: MediaQuery.of(context).size.width * 0.5,
                               child: Column(
@@ -124,24 +125,27 @@ class Postoptions extends State<Options> {
                   ],
                 ),
               ),
-              PopupMenuItem(
-                value: 4,
-                onTap: () {
-                  postLockController.lockPost(widget.postId!);
-                  setState(
-                      () {}); // Call setState to rebuild the widget with new values
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                        widget.islocked ? Icons.lock_open : Icons.lock_outline),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(widget.islocked ? "Unlock Comments" : "Lock Comments")
-                  ],
+              if (isMyPost)
+                PopupMenuItem(
+                  value: 4,
+                  onTap: () {
+                    postLockController.lockPost(widget.postId!);
+                    setState(
+                        () {}); // Call setState to rebuild the widget with new values
+                  },
+                  child: Row(
+                    children: [
+                      Icon(widget.islocked
+                          ? Icons.lock_open
+                          : Icons.lock_outline),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                          widget.islocked ? "Unlock Comments" : "Lock Comments")
+                    ],
+                  ),
                 ),
-              ),
             ],
             offset: const Offset(0, 25),
             color: Colors.white,
@@ -157,11 +161,11 @@ class Postoptions extends State<Options> {
                       return Container(
                         height: heigth * 0.3,
                         width: width,
-                        padding: EdgeInsets.all(16.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: ListView(
                           children: [
                             ListTile(
-                              leading: Icon(
+                              leading: const Icon(
                                 Icons.report,
                                 color: Colors.red,
                               ),
@@ -172,17 +176,17 @@ class Postoptions extends State<Options> {
                                     context: context,
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
-                                      return Container(
+                                      return SizedBox(
                                           height: heigth * 0.9,
                                           width: width,
                                           child: Column(children: [
-                                            ListTile(
+                                            const ListTile(
                                               leading: Text(
                                                 "Submit report",
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                             ),
-                                            ListTile(
+                                            const ListTile(
                                               leading: Text(
                                                   "Thanks for looking out for yourself"),
                                             ),
@@ -195,7 +199,7 @@ class Postoptions extends State<Options> {
                             ),
                             (!widget.saved)
                                 ? ListTile(
-                                    leading: Icon(Icons.save),
+                                    leading: const Icon(Icons.save),
                                     title: const Text("Save"),
                                     onTap: () => {
                                       //todo
@@ -205,7 +209,7 @@ class Postoptions extends State<Options> {
                                     },
                                   )
                                 : ListTile(
-                                    leading: Icon(Icons.save),
+                                    leading: const Icon(Icons.save),
                                     title: const Text("Unsave"),
                                     onTap: () => {
                                       //todo
@@ -214,21 +218,22 @@ class Postoptions extends State<Options> {
                                       Navigator.of(context).pop(),
                                     },
                                   ),
-                            ListTile(
-                              leading: Icon(widget.islocked
-                                  ? Icons.lock_open
-                                  : Icons.lock),
-                              title: Text(widget.islocked
-                                  ? "Unlock Comments"
-                                  : "Lock Comments"),
-                              onTap: () {
-                                setState(() {
-                                  postLockController.lockPost(widget.postId!);
-                                  widget.islocked = !widget.islocked;
-                                });
-                                Navigator.of(context).pop();
-                              },
-                            ),
+                            if (isMyPost)
+                              ListTile(
+                                leading: Icon(widget.islocked
+                                    ? Icons.lock_open
+                                    : Icons.lock),
+                                title: Text(widget.islocked
+                                    ? "Unlock Comments"
+                                    : "Lock Comments"),
+                                onTap: () {
+                                  setState(() {
+                                    postLockController.lockPost(widget.postId!);
+                                    widget.islocked = !widget.islocked;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
                             //
                           ],
                         ),

@@ -17,7 +17,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = false;
+bool testing = true;
 
 class PostService {
   Future<int> addPost(
@@ -276,6 +276,15 @@ class PostService {
       post.lockedFlag = !post.lockedFlag;
     } else {
       // lock/unlock post in database
+    }
+  }
+
+  bool isMyPost(String postId, String username) {
+    if (testing) {
+      final post = posts.firstWhere((element) => element.id == postId);
+      return post.username == username;
+    } else {
+      return false;
     }
   }
 }
