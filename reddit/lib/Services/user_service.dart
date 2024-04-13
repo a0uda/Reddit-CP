@@ -331,6 +331,32 @@ else{
 
   }
 
+
+    Future<int> forgetUsername (String email,) async
+  {
+if (testing){
+return 200;
+}
+else{
+     final url = Uri.parse('https://redditech.me/backend/users/forget-username');
+        final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email':email,
+        
+        }),
+      );
+      print(response.body);
+      return response.statusCode;
+
+
+
+}
+
+  }
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Future<int> userSignup(
       String username, String password, String email, String gender) async {
@@ -523,6 +549,8 @@ else{
       return true;
     } else {
       // change email in database
+
+
     }
     return false;
   }

@@ -56,7 +56,8 @@ class LoginPageState extends State<LoginPage> {
       userController.getUser(usernameController.text);
       UserAbout? userAbout =
           await userController.getUserAbout(usernameController.text);
-      print('User data: ${userAbout?.email}');
+          userController.userAbout=userAbout;
+        
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(

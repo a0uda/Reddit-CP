@@ -35,7 +35,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   void validateForm()async {
      final userService = GetIt.instance.get<UserService>();
-    setState(() {
+    setState(()  {
       emailError = '';
       usernameError = '';
       if (emailController.text.isEmpty) {
@@ -47,18 +47,27 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
       if (usernameController.text.isEmpty) {
         usernameError = 'Username is required';
       }
-      if (emailError.isEmpty && usernameError.isEmpty) {
-        userService.forgetPassword(emailController.text, usernameController.text);
-        
-        //database call to check if email and username are valid
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const ResetPassword(),
-        //   ),
-        // );
-      }
+    
     });
+      if (emailError.isEmpty && usernameError.isEmpty) {
+       int response= await userService.forgetPassword(emailController.text, usernameController.text);
+       if(response==200)
+       {
+             ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Email will be send to you',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        
+
+      }
+      }
   }
 
   @override

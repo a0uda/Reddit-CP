@@ -27,11 +27,13 @@ class TabBarPostsState extends State<TabBarPosts> {
   void initState() {
     super.initState();
     userData = widget.userData;
+    print(userData?.username);
     activeCommunities = userService.getActiveCommunities(userData!.username);
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Consumer<EditProfileController>(
         builder: (context, editProfileController, child) {
       editProfileController.getProfileSettings(userData!.username);

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class ForgotUsernamePage extends StatefulWidget {
   const ForgotUsernamePage({super.key});
@@ -28,7 +30,9 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
   double sizedBoxHeightHeader = 30;
   double sizedBoxHeightBeforeResetButton = 140;
 
-  void validateForm() {
+  void validateForm() async {
+    final userService = GetIt.instance.get<UserService>();
+
     setState(() {
       emailError = '';
 
@@ -38,10 +42,23 @@ class ForgotUsernamePageState extends State<ForgotUsernamePage> {
           .hasMatch(emailController.text)) {
         emailError = 'Please enter a valid email address';
       }
-      if (emailError.isEmpty) {
-        //database
-      }
     });
+    if (emailError.isEmpty) {
+      int response = await userService.forgetUsername(emailController.text);
+      if (response == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Email will be send to you',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   @override

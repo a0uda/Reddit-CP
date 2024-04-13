@@ -63,6 +63,30 @@ class PostItem {
     this.moderatorDetails,
     this.userDetails,
   });
+
+  factory PostItem.fromJson(Map<String, dynamic> json) {
+    return PostItem(
+      ///todo
+        id: json['_id'],
+        userId: json['user_id'],
+        username: 'ahmed',
+        title: json['title'],
+        createdAt: json['created_at'],
+        type: json['text'],
+        communityId: json['community_id'],
+        communityName: 'ahmed',
+        commentsCount: json['comments_count'],
+        viewsCount: json['views_count'],
+        sharesCount: json['shares_count'],
+        upvotesCount: json['upvotes_count'],
+        downvotesCount: json['downvotes_count'],
+        ocFlag: json['oc_flag'],
+        spoilerFlag: json['spoiler_flag'],
+        nsfwFlag: json['nsfw_flag'],
+        lockedFlag: json['locked_flag'],
+        allowrepliesFlag: json['allowreplies_flag'],
+        setSuggestedSort: json['set_suggeested_sort']);
+  }
 }
 
 class UserDetails {

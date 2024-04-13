@@ -31,23 +31,21 @@ List<PostItem> posts=[];
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
-     String username = userController.userAbout!.username;
-    final postService = GetIt.instance.get<PostService>();
-    if(widget.type=="home")
-    {
-    posts = postService.getPosts(username);
-    }
-    else if(widget.type=="popular")
-    {
-      posts = postService.getPopularPosts();
-
-    }
-         else if(widget.type=="profile")
-    {
-      posts = postService.getMyPosts(username);
-
-    }
+   fetchdata();
   }
+  void fetchdata()async{
+    String username = userController.userAbout!.username;
+    final postService = GetIt.instance.get<PostService>();
+    if (widget.type == "home") {
+      posts = postService.getPosts(username);
+    } else if (widget.type == "popular") {
+      posts = postService.getPopularPosts();
+    } else if (widget.type == "profile") {
+      posts = await postService.getMyPosts(username);
+      print(username);
+    }
+
+}
 
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {

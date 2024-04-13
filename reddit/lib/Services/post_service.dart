@@ -1,6 +1,7 @@
 //import 'package:media_kit/ffi/ffi.dart';
 import 'dart:convert';
 
+import 'package:get/get.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
@@ -17,7 +18,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = true;
+bool testing = false;
 
 class PostService {
   Future<int> addPost(
@@ -68,7 +69,7 @@ class PostService {
       );
     } else {
       // add post to database
-      final url = Uri.parse('https://redditech.me/backend/users/login');
+      final url = Uri.parse('https://redditech.me/backend/posts/new-post');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
 
@@ -141,6 +142,7 @@ class PostService {
         "spoiler_flag": spoilerFlag,
         "nsfw_flag": nsfwFlag
       }));
+      print(response.statusCode);
       if (response.statusCode >= 400) {
         return 400;
       }
@@ -179,13 +181,31 @@ class PostService {
     }
   }
 
-  List<PostItem> getMyPosts(String username) {
+  Future<List<PostItem>> getMyPosts(String username) async {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-      return posts;
+      final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+  final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+  );
+      print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist=json.decode(response.body)['posts'];
+      final List<PostItem> postsItem=jsonlist.map((jsonitem){
+return PostItem.fromJson(jsonitem);
+      }).toList();
+ 
+
+      return postsItem;
     }
   }
 

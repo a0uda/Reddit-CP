@@ -12,6 +12,7 @@ import 'package:reddit/Pages/settings_screen.dart';
 class EndDrawerReddit extends StatelessWidget {
   EndDrawerReddit({super.key});
   final userController = GetIt.instance.get<UserController>();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
