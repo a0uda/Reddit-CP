@@ -5,6 +5,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,7 +31,7 @@ class _CommentState extends State<Comment> {
   Color? downVoteColor;
 
   final UserController userController = GetIt.instance.get<UserController>();
-
+  final UserService userService = GetIt.instance.get<UserService>();
   final CommentsService commentService = GetIt.instance.get<CommentsService>();
   late SharedPreferences prefs;
   late String username;
@@ -112,8 +113,7 @@ class _CommentState extends State<Comment> {
               child: Row(
                 children: [
                   FutureBuilder<UserAbout>(
-                    future:
-                        userController.getUserAbout(widget.comment.username!),
+                    future: userService.getUserAbout(widget.comment.username!),
                     builder: (BuildContext context,
                         AsyncSnapshot<UserAbout> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {

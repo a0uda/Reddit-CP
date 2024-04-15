@@ -46,18 +46,15 @@ class LoginPageState extends State<LoginPage> {
 
   bool _isPasswordVisible = false;
 
-  void validateForm(BuildContext context) async {
+  Future<void> validateForm(BuildContext context) async {
     final userService = GetIt.instance.get<UserService>();
     int validationResult = await userService.userLogin(
         usernameController.text, passwordController.text);
 
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
-      userController.getUser(usernameController.text);
-      UserAbout? userAbout =
-          await userController.getUserAbout(usernameController.text);
-          userController.userAbout=userAbout;
-        
+      await userController.getUser(usernameController.text);
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const ResponsiveLayout(
@@ -340,8 +337,8 @@ class LoginPageState extends State<LoginPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            validateForm(context);
+                          onPressed: () async {
+                            await validateForm(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepOrange[400],

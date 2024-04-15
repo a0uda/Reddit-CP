@@ -16,15 +16,15 @@ class UserController {
   List<BlockedUsersItem>? blockedUsers;
   AccountSettings? accountSettings;
 
-  void getUser(String username) async {
+  Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    blockedUsers = userService.getBlockedUsers(username);
+    blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
   }
 
-  Future<UserAbout>? getUserAbout(String username) {
-    return userService.getUserAbout(username);
-  }
+  // Future<UserAbout>? getUserAbout(String username) async {
+  //   return userService.getUserAbout(username);
+  // }
 
   Future<AccountSettings>? getAccountSettings(String username) {
     return userService.getAccountSettings(username);
