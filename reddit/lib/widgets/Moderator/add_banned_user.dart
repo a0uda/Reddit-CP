@@ -76,171 +76,182 @@ class _AddBannedUserState extends State<AddBannedUser> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Username"),
-              const SizedBox(
-                height: 8,
-              ),
-              Container(
-                color: Colors.grey[200],
-                child: TextFormField(
-                  cursorColor: Colors.blue,
-                  controller: userNameController,
-                  onChanged: (value) => {
-                    validateForm(),
-                  },
-                  decoration: const InputDecoration(
-                      isDense: true,
-                      border: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(top: 10, bottom: 10, left: 8),
-                      prefix: Text(
-                        "u/",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      hintText: "username"),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Username"),
+                const SizedBox(
+                  height: 8,
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text("Reason for ban"),
-              const SizedBox(
-                height: 8,
-              ),
-              GestureDetector(
-                onTap: () => {
-                  showModalBottomSheet(
-                    backgroundColor: Colors.white,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return ModalForRules(
-                        banReason: banReasonController,
-                        validate: validateForm,
-                      );
-                    },
-                  ),
-                },
-                child: Container(
+                Container(
                   color: Colors.grey[200],
-                  child: TextField(
-                    style: const TextStyle(color: Colors.black),
-                    controller: banReasonController,
-                    enabled: false,
-                    decoration: InputDecoration(
+                  child: TextFormField(
+                    cursorColor: Colors.blue,
+                    controller: userNameController,
+                    onChanged: (value) => {
+                      validateForm(),
+                    },
+                    decoration: const InputDecoration(
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: "Pick a reason",
                         contentPadding:
-                            const EdgeInsets.only(top: 10, bottom: 10, left: 8),
-                        suffixIcon: Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          color: Colors.grey[700],
-                        )),
+                            EdgeInsets.only(top: 10, bottom: 10, left: 8),
+                        prefix: Text(
+                          "u/",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        hintText: "username",
+                        hintStyle: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.normal)),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text("Mod note"),
-              const SizedBox(
-                height: 8,
-              ),
-              Container(
-                color: Colors.grey[200],
-                child: TextFormField(
-                  cursorColor: Colors.blue,
-                  controller: modNoteController,
-                  decoration: const InputDecoration(
-                      isDense: true,
-                      hintText: "Only mods will see this",
-                      border: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(top: 10, bottom: 10, left: 8)),
+                const SizedBox(
+                  height: 15,
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text("How long?"),
-              const SizedBox(
-                height: 8,
-              ),
-              Row(
-                children: [
-                  Container(
-                    width: 100,
-                    color: Colors.grey[200],
-                    child: TextFormField(
-                      cursorColor: Colors.blue,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter
-                            .digitsOnly // Allow only digits
-                      ],
-                      controller: banPeriodController,
-                      onChanged: (value) => {
-                        setState(() {
-                          if (value == "") {
-                            isChecked = true;
-                          } else {
-                            isChecked = false;
-                          }
-                        }),
-                        validateForm()
+                const Text("Reason for ban"),
+                const SizedBox(
+                  height: 8,
+                ),
+                GestureDetector(
+                  onTap: () => {
+                    showModalBottomSheet(
+                      backgroundColor: Colors.white,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return ModalForRules(
+                          banReason: banReasonController,
+                          validate: validateForm,
+                        );
                       },
-                      decoration: const InputDecoration(
+                    ),
+                  },
+                  child: Container(
+                    color: Colors.grey[200],
+                    child: TextField(
+                      style: const TextStyle(color: Colors.black),
+                      controller: banReasonController,
+                      enabled: false,
+                      decoration: InputDecoration(
                           isDense: true,
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(top: 10, bottom: 10, left: 8)),
+                          hintText: "Pick a reason",
+                          hintStyle: const TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.normal),
+                          contentPadding: const EdgeInsets.only(
+                              top: 10, bottom: 10, left: 8),
+                          suffixIcon: Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: Colors.grey[700],
+                          )),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10, right: 25),
-                    child: Text("Days"),
-                  ),
-                  Checkbox(
-                    value: isChecked,
-                    activeColor: const Color.fromARGB(255, 23, 105, 165),
-                    onChanged: (value) => {
-                      setState(() {
-                        isChecked = value!;
-                      }),
-                      if (value == false) {validateForm()}
-                    },
-                  ),
-                  const Text("Permanent")
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              const Text("Note to include in ban message"),
-              const SizedBox(
-                height: 8,
-              ),
-            Container(
-                color: Colors.grey[200],
-                height: 100,
-                child: TextFormField(
-                  cursorColor: Colors.blue,
-                  controller: noteController,
-                  decoration: const InputDecoration(
-                      isDense: true,
-                      hintText: "The user will recieve this note in a message",
-                      border: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.only(top: 10, bottom: 10, left: 8)),
                 ),
-              ),
-            ],
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text("Mod note"),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  color: Colors.grey[200],
+                  child: TextFormField(
+                    cursorColor: Colors.blue,
+                    controller: modNoteController,
+                    decoration: const InputDecoration(
+                        isDense: true,
+                        hintText: "Only mods will see this",
+                        hintStyle: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.normal),
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.only(top: 10, bottom: 10, left: 8)),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text("How long?"),
+                const SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      color: Colors.grey[200],
+                      child: TextFormField(
+                        cursorColor: Colors.blue,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter
+                              .digitsOnly // Allow only digits
+                        ],
+                        controller: banPeriodController,
+                        onChanged: (value) => {
+                          setState(() {
+                            if (value == "") {
+                              isChecked = true;
+                            } else {
+                              isChecked = false;
+                            }
+                          }),
+                          validateForm()
+                        },
+                        decoration: const InputDecoration(
+                            isDense: true,
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.only(top: 10, bottom: 10, left: 8)),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10, right: 25),
+                      child: Text("Days"),
+                    ),
+                    Checkbox(
+                      value: isChecked,
+                      activeColor: const Color.fromARGB(255, 23, 105, 165),
+                      onChanged: (value) => {
+                        setState(() {
+                          isChecked = value!;
+                        }),
+                        if (value == false) {validateForm()}
+                      },
+                    ),
+                    const Text("Permanent")
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text("Note to include in ban message"),
+                const SizedBox(
+                  height: 8,
+                ),
+                Container(
+                  color: Colors.grey[200],
+                  height: 100,
+                  child: TextFormField(
+                    cursorColor: Colors.blue,
+                    controller: noteController,
+                    decoration: const InputDecoration(
+                        isDense: true,
+                        hintStyle: TextStyle(
+                            color: Colors.grey, fontWeight: FontWeight.normal),
+                        hintText:
+                            "The user will recieve this note in a message",
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.only(top: 10, bottom: 10, left: 8)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

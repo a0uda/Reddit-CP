@@ -121,6 +121,11 @@ class _EditRulePageState extends State<EditRulePage> {
                   border: InputBorder.none,
                   hintText: "Rule description",
                 ),
+                onChanged: (value) => {
+                  setState(() {
+                    saveButtonEnable = true;
+                  }),
+                },
               ),
               const Text(
                 "Report Reason ",
@@ -135,6 +140,11 @@ class _EditRulePageState extends State<EditRulePage> {
                   border: InputBorder.none,
                   hintText: "Report reason text",
                 ),
+                onChanged: (value) => {
+                  setState(() {
+                    saveButtonEnable = true;
+                  }),
+                },
               ),
               const Text(
                 "Report reason applies to:",
@@ -148,6 +158,7 @@ class _EditRulePageState extends State<EditRulePage> {
                 onChanged: (value) {
                   setState(() {
                     selectedOption = value!;
+                    saveButtonEnable = true;
                   });
                 },
               ),
@@ -159,6 +170,7 @@ class _EditRulePageState extends State<EditRulePage> {
                 onChanged: (value) {
                   setState(() {
                     selectedOption = value!;
+                    saveButtonEnable = true;
                   });
                 },
               ),
@@ -170,6 +182,7 @@ class _EditRulePageState extends State<EditRulePage> {
                 onChanged: (value) {
                   setState(() {
                     selectedOption = value!;
+                    saveButtonEnable = true;
                   });
                 },
               ),
