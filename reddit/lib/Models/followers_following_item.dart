@@ -21,18 +21,16 @@ class FollowersFollowingItem {
     this.profilePicture,
   });
 
-    factory FollowersFollowingItem.fromJson(Map<String, dynamic> json) {
+  factory FollowersFollowingItem.fromJson(Map<String, dynamic> json) {
     return FollowersFollowingItem(
-      id: json['_id'],
-      createdAt: json['created_at'],
-      email: json['email'],
-      username: json['username'],
-      displayName: json['display_name'],
-      about: json['about'],
-      profilePicture: json['profile_picture'],
-      bannerPicture: json['banner_picture'],
-      gender: json['gender']
-    );
+        id: json['_id'],
+        createdAt: json['created_at'],
+        email: json['email'],
+        username: json['username'],
+        displayName: json['display_name'],
+        about: json['about'],
+        profilePicture: json['profile_picture'],
+        bannerPicture: json['banner_picture'],
+        gender: json['gender']);
+  }
 }
-}
-

@@ -16,10 +16,18 @@ class TabBarComments extends StatelessWidget {
       future: userService.getcomments(userData!.username),
       builder: (BuildContext context, AsyncSnapshot<List<Comments>?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Display a loading spinner while waiting
+          return Container(
+            color: Colors.white,
+            child: const SizedBox(
+              height: 30,
+              width: 30,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
         } else if (snapshot.hasError) {
-          return Text(
-              'Error: ${snapshot.error}'); // Display error message if any
+          return Text('Error: ${snapshot.error}');
         } else {
           List<Comments> comments = snapshot.data!;
           return comments.isEmpty

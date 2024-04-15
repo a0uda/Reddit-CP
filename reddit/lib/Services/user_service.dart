@@ -90,7 +90,30 @@ class UserService {
             customUrl: customUrl,
           ));
     } else {
-      // add social link to database
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .add(SocialLlinkItem(
+            id: (int.parse(users
+                        .firstWhere(
+                            (element) => element.userAbout.username == username)
+                        .userAbout
+                        .socialLinks![users
+                                .firstWhere((element) =>
+                                    element.userAbout.username == username)
+                                .userAbout
+                                .socialLinks!
+                                .length -
+                            1]
+                        .id) +
+                    1)
+                .toString(),
+            username: displayText,
+            displayText: displayText,
+            type: type,
+            customUrl: customUrl,
+          ));
     }
   }
 
@@ -170,7 +193,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      return jsonDecode(response.body);
+      print(jsonDecode(response.body)['followers-count']);
+      return jsonDecode(response.body)['followers-count'];
     }
   }
 
@@ -192,7 +216,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body);
+      List<dynamic> body = jsonDecode(response.body)['users'];
+      print(body);
       return Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
@@ -218,7 +243,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      return jsonDecode(response.body);
+      print(jsonDecode(response.body)['following-count']);
+      return jsonDecode(response.body)['following-count'];
     }
   }
 
@@ -240,7 +266,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body);
+      List<dynamic> body = jsonDecode(response.body)['users'];
+      print(body);
       return Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
@@ -265,32 +292,48 @@ class UserService {
         },
       );
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body);
+      List<dynamic> body = jsonDecode(response.body)['comments'];
+      print(body);
       return Future.wait(
           body.map((dynamic item) async => Comments.fromJson(item)));
     }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ProfileSettings? getProfileSettings(String username) {
+  Future<ProfileSettings?> getProfileSettings(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .profileSettings;
     } else {
-      // get profile settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/profile-settings');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      print("In settiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiings");
+      print(jsonDecode(response.body)['settings']['profile_settings']);
+      return ProfileSettings.fromJson(
+          jsonDecode(response.body)['settings']['profile_settings']);
     }
-    return null;
   }
 
-  void updateProfileSettings(
+  Future<void> updateProfileSettings(
       String username,
       String displayName,
       String about,
       bool? nsfwFlag,
       bool? allowFollowers,
       bool contentVisibility,
-      bool activeCommunity) {
+      bool activeCommunity) async {
     if (testing) {
       var user =
           users.firstWhere((element) => element.userAbout.username == username);
@@ -303,55 +346,129 @@ class UserService {
       user.profileSettings?.contentVisibility = contentVisibility;
       user.profileSettings?.activeCommunity = activeCommunity;
     } else {
-      // update profile settings in database
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-profile-settings');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'profile_settings': {
+            'display_name': displayName,
+            'about': about,
+            'nsfw_flag': nsfwFlag,
+            'allow_followers': allowFollowers,
+            'content_visibility': contentVisibility,
+            'active_communities_visibility': activeCommunity,
+          }
+        }),
+      );
+      print("in update profile settings");
+      print(response.body);
     }
   }
 
-  void addBannerPicture(String username, String bannerPicture) {
+  Future<void> addBannerPicture(String username, String bannerPicture) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .bannerPicture = bannerPicture;
     } else {
-      // add banner picture to database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-banner-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'banner_picture': bannerPicture,
+        }),
+      );
+      print("in add banner picture");
+      print(bannerPicture);
+      print(response.body);
     }
   }
 
-  void addProfilePicture(String username, String profilePicture) {
+  Future<void> addProfilePicture(String username, String profilePicture) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .profilePicture = profilePicture;
     } else {
-      // add profile picture to database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-profile-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'profile_picture': profilePicture,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  void removeBannerPicture(String username) {
+  Future<void> removeBannerPicture(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .bannerPicture = null;
     } else {
-      // remove banner picture from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/delete-banner-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.body);
     }
   }
 
-  void removeProfilePicture(String username) {
+  Future<void> removeProfilePicture(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .profilePicture = null;
     } else {
-      // remove profile picture from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/delete-profile-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.body);
     }
   }
 
-  void deleteSocialLink(String username, String id) {
+  Future<void> deleteSocialLink(String username, String id) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -359,12 +476,16 @@ class UserService {
           .socialLinks!
           .removeWhere((element) => element.id == id);
     } else {
-      // delete social link from database
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .removeWhere((element) => element.id == id);
     }
   }
 
-  void editSocialLink(
-      String username, String id, String displayText, String customUrl) {
+  Future<void> editSocialLink(
+      String username, String id, String displayText, String customUrl) async {
     if (testing) {
       var socialLink = users
           .firstWhere((element) => element.userAbout.username == username)
@@ -375,20 +496,29 @@ class UserService {
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
     } else {
-      // edit social link in database
+      var socialLink = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .firstWhere((element) => element.id == id);
+      socialLink.displayText = displayText;
+      socialLink.username = displayText;
+      socialLink.customUrl = customUrl;
     }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<CommunityItem>? getActiveCommunities(String username) {
+  Future<List<CommunityItem>?> getActiveCommunities(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .activecommunities!;
     } else {
-      // get active communities from database
+      //todo: get active communities from database
+      return users
+          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
+          .activecommunities!;
     }
-    return null;
   }
 
   Future<int> forgetPassword(String email, String username) async {
@@ -660,7 +790,6 @@ class UserService {
       print(response.statusCode);
       return response.statusCode == 200 ? true : false;
     }
-    return false;
   }
 
   Future<bool> changePassword(String username, String currentPassword,

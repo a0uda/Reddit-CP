@@ -22,4 +22,20 @@ class ProfileSettings {
     this.contentVisibility = true,
     this.activeCommunity = true,
   });
+  static ProfileSettings fromJson(jsonDecode) {
+    return ProfileSettings(
+      displayName: jsonDecode['display_name'],
+      about: jsonDecode['about'],
+      socialLinks: jsonDecode['social_links'] != null
+          ? List<SocialLlinkItem>.from(jsonDecode['social_links']
+              .map((x) => SocialLlinkItem.fromJson(x)))
+          : null,
+      profilePicture: jsonDecode['profile_picture'],
+      bannerPicture: jsonDecode['banner_picture'],
+      nsfwFlag: jsonDecode['nsfw_flag'],
+      allowFollowers: jsonDecode['allow_followers'],
+      contentVisibility: jsonDecode['content_visibility'],
+      activeCommunity: jsonDecode['active_communities_visibility'],
+    );
+  }
 }

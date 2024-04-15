@@ -9,7 +9,7 @@ import '../Models/user_about.dart';
 
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
-  final UserAbout userData;
+  UserAbout userData;
   final String userType;
 
   ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
@@ -21,7 +21,11 @@ class ProfileHeaderLeftSide extends StatelessWidget {
       future: userService.getFollowersCount(userData.username),
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Display a loading spinner while waiting
+          return const SizedBox(
+            width: 0,
+            height: 0,
+            child: CircularProgressIndicator(),
+          );
         } else if (snapshot.hasError) {
           return Text(
               'Error: ${snapshot.error}'); // Display error message if any
@@ -33,47 +37,51 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Consumer<ProfilePictureController>(
-                    builder: (context, profilepicturecontroller, child) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: userData.profilePicture == null
-                            ? const CircleAvatar(
-                                radius: 50,
-                                backgroundImage:
-                                    AssetImage('images/Greddit.png'),
-                              )
-                            : File(userData.profilePicture!).existsSync()
-                                ? CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage: FileImage(
-                                        File(userData.profilePicture!)),
-                                  )
-                                : CircleAvatar(
+                Column(
+                  children: [
+                    Consumer<ProfilePictureController>(
+                        builder: (context, profilepicturecontroller, child) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: userData.profilePicture == null
+                                ? const CircleAvatar(
                                     radius: 50,
                                     backgroundImage:
-                                        AssetImage(userData.profilePicture!),
-                                  ),
-                      ),
-                    ],
-                  );
-                }),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        userData.displayName ?? userData.username,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
+                                        AssetImage('images/Greddit.png'),
+                                  )
+                                : File(userData.profilePicture!).existsSync()
+                                    ? CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: FileImage(
+                                            File(userData.profilePicture!)),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: AssetImage(
+                                            userData.profilePicture!),
+                                      ),
+                          ),
+                        ],
+                      );
+                    }),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                            userData.displayName ?? userData.username,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -116,12 +124,19 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 20, bottom: 10),
-                      child: Text(
-                        'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
+                      child: Consumer<EditProfileController>(
+                        builder: (context, editProfileController, child) {
+                          var userController =
+                              GetIt.instance.get<UserController>();
+                          userData = userController.userAbout!;
+                          return Text(
+                            'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],

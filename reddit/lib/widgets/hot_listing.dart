@@ -67,10 +67,19 @@ class HotListingBuild extends State<HotListing> {
           future: fetchdata(),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator(); // Display a loading spinner while waiting
+              return Container(
+                color: Colors.white,
+                child: const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              );
             } else if (snapshot.hasError) {
               return Text(
-                  'Error: ${snapshot.error}'); // Display error message if any
+                  'Error: ${snapshot.error}');
             } else {
               return ListView.builder(
                 itemCount: posts.length,

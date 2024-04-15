@@ -18,7 +18,6 @@ class FollowerListState extends State<FollowerList> {
   final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<List<FollowersFollowingItem>>>(
@@ -29,7 +28,17 @@ class FollowerListState extends State<FollowerList> {
       builder: (BuildContext context,
           AsyncSnapshot<List<List<FollowersFollowingItem>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Display a loading spinner while waiting
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: const SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                color:  Color.fromARGB(255, 102, 102, 102),
+              ),
+            ),
+          ); // Display a loading spinner while waiting
         } else if (snapshot.hasError) {
           return Text(
               'Error: ${snapshot.error}'); // Display error message if any

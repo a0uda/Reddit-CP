@@ -67,7 +67,7 @@ class PostService {
           setSuggestedSort: "None",
         ),
       );
-        print(posts);
+      print(posts);
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -131,8 +131,8 @@ class PostService {
   Future<List<PostItem>> getPosts(String username) async {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
-      final List<FollowersFollowingItem> following = await
-          userService.getFollowers(username);
+      final List<FollowersFollowingItem> following =
+          await userService.getFollowers(username);
       var usernames = following.map((user) => user.username).toSet();
       print(usernames);
       var filteredPosts =
@@ -157,26 +157,22 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-      final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/posts/$username');
 
-     SharedPreferences prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-  final response = await http.get(
+      final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString()
         },
-  );
-      print(json.decode(response.body)['posts']);
-      final List<dynamic> jsonlist=json.decode(response.body)['posts'];
-      final List<PostItem> postsItem=jsonlist.map((jsonitem){
-return PostItem.fromJson(jsonitem);
-      }).toList();
- 
-    
-      return postsItem;
-      //return posts;
+      );
+      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      print(jsonlist);
+      return Future.wait(
+          jsonlist.map((dynamic item) async => PostItem.fromJson(item)));
     }
   }
 

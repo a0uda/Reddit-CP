@@ -34,6 +34,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   late String? _profileImagePath;
   late bool activeCommunity;
   late bool contentVisibility;
+  bool _dataFetched = false;
 
   @override
   void initState() {
@@ -45,11 +46,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     remainingNameCharacters = 30 - nameController.text.length;
     remainingAboutCharacters = 200 - aboutController.text.length;
     userData = userController.userAbout;
-    profileSettings = userService.getProfileSettings(userData!.username);
     _bannerimagepath = userData!.bannerPicture;
     _profileImagePath = userData!.profilePicture;
-    activeCommunity = profileSettings!.activeCommunity;
-    contentVisibility = profileSettings!.contentVisibility;
   }
 
   @override
@@ -97,7 +95,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 Navigator.pop(context);
               },
             ),
-            if (selectedImagePath != null)
+            if (selectedImagePath != null && selectedImagePath!.isNotEmpty)
               ListTile(
                 onTap: () {
                   setState(() {
@@ -146,9 +144,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  saveProfile() {
+  saveProfile() async {
     var editProfileController = context.read<EditProfileController>();
-    editProfileController.editProfile(
+    await editProfileController.editProfile(
       nameController.text,
       aboutController.text,
       true,
@@ -159,21 +157,52 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
     var bannerPictureController = context.read<BannerPictureController>();
     if (_bannerimagepath == null) {
-      bannerPictureController.removeBannerPicture();
+      await bannerPictureController.removeBannerPicture();
     } else {
-      bannerPictureController.changeBannerPicture(_bannerimagepath!);
+      await bannerPictureController.changeBannerPicture(_bannerimagepath!);
     }
     var profilePictureController = context.read<ProfilePictureController>();
     if (_profileImagePath == null) {
-      profilePictureController.removeProfilePicture();
+      await profilePictureController.removeProfilePicture();
     } else {
-      profilePictureController.changeProfilePicture(_profileImagePath!);
+      await profilePictureController.changeProfilePicture(_profileImagePath!);
     }
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_dataFetched) {
+      return FutureBuilder(
+        future: userService.getProfileSettings(userData!.username),
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.white,
+              child: const SizedBox(
+                height: 50,
+                width: 50,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            contentVisibility = snapshot.data.contentVisibility;
+            activeCommunity = snapshot.data.activeCommunity;
+            _dataFetched = true; 
+            return _buildEditProfileScreen();
+          }
+        },
+      );
+    } else {
+      return _buildEditProfileScreen();
+    }
+  }
+
+  Widget _buildEditProfileScreen() {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -181,7 +210,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         centerTitle: false,
         actions: [
           TextButton(
-            onPressed: () => saveProfile(),
+            onPressed: () async {
+              await saveProfile();
+            },
             child: const Text(
               'Save',
               style: TextStyle(color: Colors.black),
@@ -211,7 +242,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          _bannerimagepath != null
+                          _bannerimagepath != null &&
+                                  _bannerimagepath!.isNotEmpty
                               ? File(_bannerimagepath!).existsSync()
                                   ? Image.file(
                                       File(_bannerimagepath!),
