@@ -6,6 +6,8 @@ import 'package:reddit/widgets/Moderator/banned_user_list.dart';
 import 'package:reddit/widgets/Moderator/community_type.dart';
 import 'package:reddit/widgets/Moderator/description.dart';
 import 'package:reddit/widgets/Moderator/mobile_post_types.dart';
+import 'package:reddit/widgets/Moderator/mod_rules.dart';
+import 'package:reddit/widgets/Moderator/mod_rules_list.dart';
 import 'package:reddit/widgets/Moderator/moderators.dart';
 import 'package:reddit/widgets/Moderator/moderators_list.dart';
 import 'package:reddit/widgets/Moderator/muted_users.dart';
@@ -28,7 +30,8 @@ var desktopModTools = [
   const ApprovedUserList(),
   const BannedUsersList(),
   const MutedUsersList(),
-  const ModQueues()
+  const ModQueues(),
+  const ModRulesList(isEditMode: false,),
 ];
 
 var mobileModTools = [
@@ -41,5 +44,6 @@ var mobileModTools = [
   const ApprovedUsers(),
   const BannedUsers(),
   const MutedUsers(),
-  const ModQueues()
+  const ModQueues(),
+  const ModRules(),
 ];

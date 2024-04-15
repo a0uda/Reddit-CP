@@ -10,6 +10,9 @@ import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -79,6 +82,6 @@ class MyApp extends StatelessWidget {
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
         ),
-        home: const LoginPage());
+        home: const ModResponsive(mobileLayout:  MobileModTools(), desktopLayout: DesktopModTools(index: 0)));
   }
 }

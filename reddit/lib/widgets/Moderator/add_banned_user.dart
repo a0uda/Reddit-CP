@@ -4,14 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 List<String> rules = [
-  "aloooooooo",
-  "alo",
-  "aloo",
-  "aloooooooo",
-  "aloooooooo",
-  "alo",
-  "aloo",
-  "aloooooooo"
+  "Rule1",
+  "Rule1",
+  "Rule1",
+  "Rule1",
+  "Rule1",
 ];
 
 class AddBannedUser extends StatefulWidget {
