@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -148,13 +149,21 @@ class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  followUser(String username) {
-    userService.followUser(username, userController.userAbout!.username);
+  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
+    return userService.getFollowers(username);
+  }
+
+  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
+    return userService.getFollowing(username);
+  }
+
+  Future<void> followUser(String username) async {
+    await userService.followUser(username, userController.userAbout!.username);
     notifyListeners();
   }
 
-  void unfollowUser(String username) {
-    userService.unfollowUser(username, userController.userAbout!.username);
+  Future<void> unfollowUser(String username) async {
+    await userService.unfollowUser(username, userController.userAbout!.username);
     notifyListeners();
   }
 }

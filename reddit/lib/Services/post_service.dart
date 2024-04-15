@@ -128,12 +128,12 @@ class PostService {
     }
   }
 
-  List<PostItem> getPosts(String username) {
+  Future<List<PostItem>> getPosts(String username) async {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
-      final List<FollowersFollowingItem>? following =
+      final List<FollowersFollowingItem> following = await
           userService.getFollowers(username);
-      var usernames = following!.map((user) => user.username).toSet();
+      var usernames = following.map((user) => user.username).toSet();
       print(usernames);
       var filteredPosts =
           posts.where((post) => usernames.contains(post.username)).toList();

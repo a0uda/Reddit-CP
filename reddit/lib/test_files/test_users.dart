@@ -4,8 +4,6 @@ import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/test_files/test_comments.dart';
-
-import '../Models/comments.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -62,13 +60,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'johndoe',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'John',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
-        country: 'Egypt',
         gender: 'Male',
       ),
       FollowersFollowingItem(
@@ -76,22 +67,13 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-            about: 'I am a software engineer',
-            bannerPicture: 'images/Greddit.png'),
+
       ),
       FollowersFollowingItem(
         id: '2',
         createdAt: '5 March 2024',
         username: 'Mark_45',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Mark',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
       ),
     ],
     following: [
@@ -100,13 +82,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'johndoe',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'John',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
-        country: 'Egypt',
         gender: 'Male',
       ),
       FollowersFollowingItem(
@@ -114,11 +89,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
       ),
     ],
     comments: comments,
@@ -208,12 +178,7 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
+        about: 'I am john',
       ),
     ],
     following: [
@@ -222,12 +187,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
       ),
     ],
     comments: [],
@@ -299,12 +258,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawn7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
       ),
     ],
     following: [
@@ -313,12 +266,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawn7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
       ),
     ],
     comments: comments,
@@ -389,12 +336,10 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'Purple-7544',
         email: 'rawan7544@gmail.com',
-        verifiedEmailFlag: true,
-        profileSettings: FollowersProfileSettings(
-          displayName: 'Rawan Adel',
-          about: 'I am a software engineer',
-          profilePicture: 'images/pp.jpg',
-        ),
+        displayName: 'Rawan Adel',
+        bannerPicture: 'images/Greddit.png',
+        profilePicture: 'images/pp.jpg',
+        gender: 'Female',
       ),
     ],
     // comments: comments3,

@@ -24,39 +24,38 @@ class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   @override
-List<PostItem> posts = [];
+  List<PostItem> posts = [];
 
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
-    fetchdata();
-
+    // fetchdata();
   }
 
-void fetchdata(){
+  Future<void> fetchdata() async {
     String username = userController.userAbout!.username;
     print(username);
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
-      posts = postService.getPosts(username);
+      posts = await postService.getPosts(username);
     } else if (widget.type == "popular") {
-      posts = postService.getPopularPosts();
+      posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
-      posts =  postService.getMyPosts(username);
+      posts = await postService.getMyPosts(username);
       print(username);
     }
+  }
 
-}
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
-   print('load more');
+      print('load more');
 
       // load more data here
 
-      setState(() {});
+      // setState(() {});
     }
   }
 
@@ -64,15 +63,42 @@ void fetchdata(){
   Widget build(BuildContext context) {
     return Consumer<LockPost>(
       builder: (context, lockPost, child) {
-        return ListView.builder(
-          itemCount: posts.length,
-          controller: controller,
-          itemBuilder: (context, index) {
-            if (posts[index].nsfwFlag == true) {
-              // TODO : NSFW , Spoiler
-              return buildBlur(
-                  context: context,
-                  child: Post(
+        return FutureBuilder<void>(
+          future: fetchdata(),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator(); // Display a loading spinner while waiting
+            } else if (snapshot.hasError) {
+              return Text(
+                  'Error: ${snapshot.error}'); // Display error message if any
+            } else {
+              return ListView.builder(
+                itemCount: posts.length,
+                controller: controller,
+                itemBuilder: (context, index) {
+                  if (posts[index].nsfwFlag == true) {
+                    // TODO : NSFW , Spoiler
+                    return buildBlur(
+                        context: context,
+                        child: Post(
+                          // profileImageUrl: posts[index].profilePic!,
+                          name: posts[index].username,
+                          title: posts[index].title,
+                          postContent: posts[index].description!,
+                          date: posts[index].createdAt.toString(),
+                          likes: posts[index].upvotesCount -
+                              posts[index].downvotesCount,
+                          commentsCount: posts[index].commentsCount,
+                          linkUrl: posts[index].linkUrl,
+                          imageUrl: posts[index].images?[0].path,
+                          videoUrl: posts[index].videos?[0].path,
+                          poll: posts[index].poll,
+                          id: posts[index].id,
+                          communityName: posts[index].communityName,
+                          isLocked: posts[index].lockedFlag,
+                        ));
+                  }
+                  return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
                     title: posts[index].title,
@@ -88,24 +114,10 @@ void fetchdata(){
                     id: posts[index].id,
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
-                  ));
+                  );
+                },
+              );
             }
-            return Post(
-              // profileImageUrl: posts[index].profilePic!,
-              name: posts[index].username,
-              title: posts[index].title,
-              postContent: posts[index].description!,
-              date: posts[index].createdAt.toString(),
-              likes: posts[index].upvotesCount - posts[index].downvotesCount,
-              commentsCount: posts[index].commentsCount,
-              linkUrl: posts[index].linkUrl,
-              imageUrl: posts[index].images?[0].path,
-              videoUrl: posts[index].videos?[0].path,
-              poll: posts[index].poll,
-              id: posts[index].id,
-              communityName: posts[index].communityName,
-              isLocked: posts[index].lockedFlag,
-            );
           },
         );
       },

@@ -30,120 +30,80 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   final UserController userController = GetIt.I.get<UserController>();
   final UserService userService = GetIt.I.get<UserService>();
 
+  List<FollowersFollowingItem>? followingList;
+
+  void loadFollowingList() async {
+    followingList =
+        await userService.getFollowing(userController.userAbout!.username);
+  }
+
   @override
   Widget build(BuildContext context) {
     var followerFollowingController =
         context.read<FollowerFollowingController>();
-    userService.getFollowers(userController.userAbout!.username);
-    final List<FollowersFollowingItem>? followingList =
-        userService.getFollowing(userController.userAbout!.username);
 
-    return SizedBox(
-      width: (1 / 3) * MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          //mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
-              child: IconButton(
-                icon: const Icon(Icons.share, color: Colors.white, size: 40),
-                onPressed: () async {
-                  const link =
-                      'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
-                  await Share.share('Check out this profile on Reddit: $link');
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
-              child: TextButton(
-                onPressed: () {
-                  if (userType == 'me') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EditProfileScreen()),
-                    );
-                  } else {
-                    setState(
-                      () {
-                        if (followingList!
-                            .where((element) =>
-                                element.username == userData.username)
-                            .isEmpty) {
-                          followerFollowingController
-                              .followUser(userData.username);
-                        } else {
-                          followerFollowingController
-                              .unfollowUser(userData.username);
-                        }
+    return FutureBuilder<List<FollowersFollowingItem>>(
+      future: userService.getFollowing(userController.userAbout!.username),
+      builder: (BuildContext context,
+          AsyncSnapshot<List<FollowersFollowingItem>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Display a loading spinner while waiting
+        } else if (snapshot.hasError) {
+          return Text(
+              'Error: ${snapshot.error}'); // Display error message if any
+        } else {
+          List<FollowersFollowingItem>? followingList = snapshot.data!;
+          return SizedBox(
+            width: (1 / 3) * MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 20),
+                    child: IconButton(
+                      icon: const Icon(Icons.share,
+                          color: Colors.white, size: 40),
+                      onPressed: () async {
+                        const link =
+                            'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
+                        await Share.share(
+                            'Check out this profile on Reddit: $link');
                       },
-                    );
-                  }
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(
-                      0, 68, 70, 71), // example background color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    side: const BorderSide(
-                      color: Colors.white,
-                      width: 1,
                     ),
                   ),
-                ),
-                child: userType == 'me'
-                    ? const Text(
-                        'Edit',
-                        style: TextStyle(color: Colors.white),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: (followingList!
-                                .where((element) =>
-                                    element.username == userData.username)
-                                .isNotEmpty)
-                            ? [
-                                const Icon(
-                                  Icons.check,
-                                  color: Colors.white,
-                                ),
-                                const Flexible(
-                                  child: Text(
-                                    'Following',
-                                    style: TextStyle(color: Colors.white),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ]
-                            : [
-                                const Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                                const Flexible(
-                                  child: Text(
-                                    'Follow',
-                                    style: TextStyle(color: Colors.white),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                      ),
-              ),
-            ),
-            userType != 'me'
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 5),
-                    child: IconButton(
-                      icon: const Icon(Icons.message,
-                          color: Colors.white, size: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 20),
+                    child: TextButton(
+                      onPressed: () async {
+                        if (userType == 'me') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const EditProfileScreen()),
+                          );
+                        } else {
+                          setState(
+                            () {
+                              if (followingList
+                                  .where((element) =>
+                                      element.username == userData.username)
+                                  .isEmpty) {
+                                followerFollowingController
+                                    .followUser(userData.username);
+                              } else {
+                                followerFollowingController
+                                    .unfollowUser(userData.username);
+                              }
+                            },
+                          );
+                        }
+                      },
                       style: TextButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(0, 68, 70, 71),
+                        backgroundColor: const Color.fromARGB(
+                            0, 68, 70, 71), // example background color
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                           side: const BorderSide(
@@ -152,13 +112,74 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      child: userType == 'me'
+                          ? const Text(
+                              'Edit',
+                              style: TextStyle(color: Colors.white),
+                            )
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: (followingList
+                                      .where((element) =>
+                                          element.username == userData.username)
+                                      .isNotEmpty)
+                                  ? [
+                                      const Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                      const Flexible(
+                                        child: Text(
+                                          'Following',
+                                          style: TextStyle(color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ]
+                                  : [
+                                      const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                      const Flexible(
+                                        child: Text(
+                                          'Follow',
+                                          style: TextStyle(color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                            ),
                     ),
-                  )
-                : Container(),
-          ],
-        ),
-      ),
+                  ),
+                  userType != 'me'
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 20, left: 5),
+                          child: IconButton(
+                            icon: const Icon(Icons.message,
+                                color: Colors.white, size: 30),
+                            style: TextButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(0, 68, 70, 71),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                side: const BorderSide(
+                                  color: Colors.white,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            onPressed: () {},
+                          ),
+                        )
+                      : Container(),
+                ],
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 }

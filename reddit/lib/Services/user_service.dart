@@ -8,6 +8,7 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/widgets/comment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/user_item.dart';
@@ -41,7 +42,6 @@ class UserService {
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout;
     } else {
-      //to be fetched from database
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
@@ -61,8 +61,8 @@ class UserService {
     }
   }
 
-  void addSocialLink(
-      String username, String displayText, String type, String customUrl) {
+  Future<void> addSocialLink(String username, String displayText, String type,
+      String customUrl) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -93,7 +93,7 @@ class UserService {
     }
   }
 
-  void followUser(String username, String follower) {
+  Future<void> followUser(String username, String follower) async {
     if (testing) {
       //add myself to the user being followed followers list
       users
@@ -110,11 +110,20 @@ class UserService {
             username: username,
           ));
     } else {
-      // follow user in database
+      final url =
+          Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'other_username': username,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  void unfollowUser(String username, String follower) {
+  Future<void> unfollowUser(String username, String follower) async {
     if (testing) {
       //remove myself from the user being followed followers list
       users
@@ -127,65 +136,138 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
-      // unfollow user in database
+      final url =
+          Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'other_username': username,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  int? getFollowersCount(String username) {
+  Future<int> getFollowersCount(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!
           .length;
     } else {
-      // get followers count from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/followers-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      return jsonDecode(response.body);
     }
-    return null;
   }
 
-  List<FollowersFollowingItem>? getFollowers(String username) {
+  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
     } else {
-      // get followers from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/followers');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body);
+      return Future.wait(body
+          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
-    return null;
   }
 
-  int? getFollowingCount(String username) {
+  Future<int> getFollowingCount(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .following!
           .length;
     } else {
-      // get following count from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/following-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      return jsonDecode(response.body);
     }
-    return null;
   }
 
-  List<FollowersFollowingItem>? getFollowing(String username) {
+  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
     } else {
-      // get following from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/following');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body);
+      return Future.wait(body
+          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
-    return null;
   }
 
-  List<Comments>? getcomments(String username) {
+  Future<List<Comments>?> getcomments(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .comments!;
     } else {
-      // get comments from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/comments/$username');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body);
+      return Future.wait(
+          body.map((dynamic item) async => Comments.fromJson(item)));
     }
-    return null;
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
