@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'follower_list.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
 import '../Models/user_about.dart';
+
 
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
@@ -43,6 +45,8 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         builder: (context, profilepicturecontroller, child) {
                       return Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(left: 20),
@@ -101,7 +105,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                              padding: const EdgeInsets.only(top: 27),
+                              padding: const EdgeInsets.only(top: 26),
                               onPressed: () {
                                 Navigator.push(
                                   context,

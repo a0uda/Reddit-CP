@@ -48,6 +48,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     userData = userController.userAbout;
     _bannerimagepath = userData!.bannerPicture;
     _profileImagePath = userData!.profilePicture;
+    fetchData();
   }
 
   @override
@@ -55,6 +56,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
     nameController.dispose();
     aboutController.dispose();
+  }
+
+  fetchData() async {
+    ProfileSettings? profileSettings =
+        await userService.getProfileSettings(userData!.username);
+    contentVisibility = profileSettings!.contentVisibility;
+    activeCommunity = profileSettings.activeCommunity;
+    setState(() {
+      _dataFetched = true;
+    });
   }
 
   selectBannerProfile(bool isBanner) async {
@@ -157,49 +168,30 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
     var bannerPictureController = context.read<BannerPictureController>();
     if (_bannerimagepath == null) {
-      await bannerPictureController.removeBannerPicture();
+      bannerPictureController.removeBannerPicture();
     } else {
-      await bannerPictureController.changeBannerPicture(_bannerimagepath!);
+      bannerPictureController.changeBannerPicture(_bannerimagepath!);
     }
     var profilePictureController = context.read<ProfilePictureController>();
     if (_profileImagePath == null) {
-      await profilePictureController.removeProfilePicture();
+      profilePictureController.removeProfilePicture();
     } else {
-      await profilePictureController.changeProfilePicture(_profileImagePath!);
+      profilePictureController.changeProfilePicture(_profileImagePath!);
     }
     Navigator.pop(context);
   }
 
-  @override
   Widget build(BuildContext context) {
-    if (!_dataFetched) {
-      return FutureBuilder(
-        future: userService.getProfileSettings(userData!.username),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              color: Colors.white,
-              child: const SizedBox(
-                height: 50,
-                width: 50,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            contentVisibility = snapshot.data.contentVisibility;
-            activeCommunity = snapshot.data.activeCommunity;
-            _dataFetched = true; 
-            return _buildEditProfileScreen();
-          }
-        },
-      );
-    } else {
-      return _buildEditProfileScreen();
-    }
+    return _dataFetched ? _buildEditProfileScreen() : _buildLoading();
+  }
+
+  Widget _buildLoading() {
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
   Widget _buildEditProfileScreen() {
