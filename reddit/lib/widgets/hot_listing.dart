@@ -102,7 +102,7 @@ class HotListingBuild extends State<HotListing> {
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
                     title: posts[index].title,
-                    postContent: posts[index].description!,
+                    postContent: posts[index].description,
                     date: posts[index].createdAt.toString(),
                     likes:
                         posts[index].upvotesCount - posts[index].downvotesCount,

@@ -14,9 +14,10 @@ import '../Models/trending_item.dart';
 class Listing extends StatefulWidget {
   final String type;
   final int? comId;
+    final String? username;
 
   const Listing({super.key, required this.type,
-  this.comId});
+  this.comId,this.username});
   @override
   State<Listing> createState() => _Listing();
 }
