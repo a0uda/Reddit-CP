@@ -57,6 +57,7 @@ class UserService {
       print(response.statusCode);
 
       print(jsonDecode(response.body));
+      print(jsonDecode(response.body)['about']['username']);
       return UserAbout.fromJson(jsonDecode(response.body));
     }
   }
@@ -611,7 +612,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      return AccountSettings.fromJson(jsonDecode(response.body));
+      print(response.body);
+      return AccountSettings.fromJson(jsonDecode(response.body)['settings']);
     }
   }
 

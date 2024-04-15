@@ -151,32 +151,32 @@ class PostService {
     }
   }
 
-  List<PostItem> getMyPosts(String username)  {
+  Future<List<PostItem>> getMyPosts(String username) async {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-//       final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+      final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
 
-//      SharedPreferences prefs = await SharedPreferences.getInstance();
-//       String? token = prefs.getString('token');
-//   final response = await http.get(
-//         url,
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': token.toString()
-//         },
-//   );
-//       print(json.decode(response.body)['posts']);
-//       final List<dynamic> jsonlist=json.decode(response.body)['posts'];
-//       final List<PostItem> postsItem=jsonlist.map((jsonitem){
-// return PostItem.fromJson(jsonitem);
-//       }).toList();
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+  final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+  );
+      print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist=json.decode(response.body)['posts'];
+      final List<PostItem> postsItem=jsonlist.map((jsonitem){
+return PostItem.fromJson(jsonitem);
+      }).toList();
  
-
-      // return postsItem;
-      return posts;
+    
+      return postsItem;
+      //return posts;
     }
   }
 
