@@ -83,7 +83,7 @@ class PostService {
         body: json.encode({
           "title": title,
           "description": description,
-          "type": type,
+          "type": "text",
           "link_url": linkUrl,
           "images": images
               ?.map((image) => {
@@ -105,14 +105,46 @@ class PostService {
                 ]
               : [],
           "polls_voting_length": poll != null ? poll.votes.length : 0,
-          "community_name": communityName,
+          "community_name": "",
           "post_in_community_flag": postInCommunityFlag,
-          "oc_flag": ocFlag,
-          "spoiler_flag": spoilerFlag,
-          "nsfw_flag": nsfwFlag
+          // "oc_flag": ocFlag,
+          // "spoiler_flag": spoilerFlag,
+          // "nsfw_flag": nsfwFlag
         }),
       );
       print(response.statusCode);
+
+      print(json.encode({
+        "title": title,
+        "description": description,
+        "type": type,
+        "link_url": linkUrl,
+        "images": images
+            ?.map((image) => {
+                  "path": image.path,
+                  "caption": image.caption ?? "",
+                  "link": image.link
+                })
+            .toList(),
+        "videos": videos
+            ?.map((video) => {
+                  "path": video.path,
+                  "caption": video.caption ?? "",
+                  "link": video.link
+                })
+            .toList(),
+        "polls": poll != null
+            ? [
+                {"options": poll.options}
+              ]
+            : [],
+        "polls_voting_length": poll != null ? poll.votes.length : 0,
+        "community_name": communityName,
+        "post_in_community_flag": postInCommunityFlag,
+        // "oc_flag": ocFlag,
+        // "spoiler_flag": spoilerFlag,
+        // "nsfw_flag": nsfwFlag
+      }));
       if (response.statusCode >= 400) {
         return 400;
       }
@@ -128,7 +160,7 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getPosts(String username) async {
+  Future<List<PostItem>> getPosts(String username, String sortingType) async {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
       final List<FollowersFollowingItem> following =
@@ -139,7 +171,35 @@ class PostService {
           posts.where((post) => usernames.contains(post.username)).toList();
       return filteredPosts;
     } else {
-      return posts;
+      var url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+      if (sortingType == "best") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+      } else if (sortingType == "hot") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/hot');
+      } else if (sortingType == "new") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/new');
+      } else if (sortingType == "top") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/top');
+      } else if (sortingType == "random") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/random');
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+      print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+        return PostItem.fromJson(jsonitem);
+      }).toList();
+
+      return postsItem;
     }
   }
 
@@ -157,6 +217,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
+      print(username);
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -169,10 +230,15 @@ class PostService {
           'Authorization': token.toString()
         },
       );
+      print(json.decode(response.body)['posts']);
       final List<dynamic> jsonlist = json.decode(response.body)['posts'];
-      print(jsonlist);
-      return Future.wait(
-          jsonlist.map((dynamic item) async => PostItem.fromJson(item)));
+      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+        return PostItem.fromJson(jsonitem);
+      }).toList();
+
+      print(postsItem);
+      return postsItem;
+      //return posts;
     }
   }
 

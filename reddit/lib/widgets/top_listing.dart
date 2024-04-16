@@ -35,7 +35,7 @@ class TopListingBuild extends State<TopListing> {
     String username = userController.userAbout!.username;
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
-      posts = await postService.getPosts(username);
+      posts = await postService.getPosts(username,"top");
     } else if (widget.type == "popular") {
       posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
@@ -88,7 +88,7 @@ class TopListingBuild extends State<TopListing> {
                         //  profileImageUrl: posts[index].profilePic!,
                         name: posts[index].username,
                         title: posts[index].title,
-                        postContent: posts[index].description!,
+                        postContent: posts[index].description,
                         date: posts[index].createdAt.toString(),
                         likes: posts[index].upvotesCount -
                             posts[index].downvotesCount,
@@ -107,7 +107,7 @@ class TopListingBuild extends State<TopListing> {
                   // profileImageUrl: posts[index].profilePic!,
                   name: posts[index].username,
                   title: posts[index].title,
-                  postContent: posts[index].description!,
+                  postContent: posts[index].description,
                   date: posts[index].createdAt.toString(),
                   likes:
                       posts[index].upvotesCount - posts[index].downvotesCount,
