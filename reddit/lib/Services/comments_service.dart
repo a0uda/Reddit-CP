@@ -4,7 +4,7 @@ import 'package:reddit/Models/comments.dart';
 import 'package:reddit/test_files/test_comments.dart';
 
 import '../test_files/test_posts.dart';
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class CommentsService {
   Future<List<Comments>> getCommentByPostId(String postId) async {

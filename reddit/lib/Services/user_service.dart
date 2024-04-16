@@ -1,16 +1,12 @@
 import 'dart:convert';
-
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
-
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
-import 'package:reddit/widgets/comment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -18,7 +14,7 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
   final List<String> usedPasswords = [
