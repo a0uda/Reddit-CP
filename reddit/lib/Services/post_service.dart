@@ -344,12 +344,28 @@ class PostService {
     }
   }
 
-  PostItem? getPostById(String postId) {
+  Future<PostItem?> getPostById(String postId) async {
     if (testing) {
       return posts.firstWhere((element) => element.id == postId);
     } else {
-      return null;
-      //
+      final url =
+          Uri.parse('https://redditech.me/backend/posts/get-post?id=$postId');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      );
+      print('post');
+      print(response.body);
+      print(json.decode(response.body)['post']);
+
+      if (response.statusCode == 200) {
+        return PostItem.fromJson(json.decode(response.body)['post']);
+      } else {
+        throw Exception('Failed to load post');
+      }
     }
   }
 

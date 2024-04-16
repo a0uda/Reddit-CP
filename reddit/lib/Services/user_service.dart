@@ -20,13 +20,6 @@ import 'package:http/http.dart' as http;
 bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
-  final List<String> usedPasswords = [
-    'rawan1234',
-    'john1234',
-    'jane1234',
-    'mark1234',
-  ];
-
   void addUser() {
     if (testing) {
       //to be implemented
@@ -598,7 +591,6 @@ class UserService {
       );
 
       users.add(newUserItem);
-      usedPasswords.add(password);
 
       return 200;
     } else {
