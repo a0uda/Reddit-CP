@@ -47,8 +47,8 @@ class CommentsService {
     }
   }
 
-  int addComment(String postId, String commentDescription, String username,
-      String userId) {
+  Future<int> addComment(String postId, String commentDescription,
+      String username, String userId) async {
     if (testing) {
       comments.add(Comments(
         id: comments.length.toString(),
@@ -63,8 +63,30 @@ class CommentsService {
       final post = posts.firstWhere((element) => element.id == postId);
       post.commentsCount++;
       return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/comments/new-comment');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'id': postId,
+          'description': commentDescription,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        return 400;
+      }
     }
-    return 400;
   }
 
   void upVoteComment(String commentId) {

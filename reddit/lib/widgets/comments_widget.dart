@@ -57,7 +57,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                   child: Post(
                     name: post!.username,
                     title: post!.title,
-                    postContent: post!.description!,
+                    postContent: post!.description ?? '',
                     date: post!.createdAt.toString(),
                     likes: post!.upvotesCount - post!.downvotesCount,
                     commentsCount: post!.commentsCount,
@@ -103,8 +103,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     filled: true,
                     fillColor: Colors.grey[200],
                   ),
-                  onSubmitted: (String value) {
-                    int status = commentService.addComment(
+                  onSubmitted: (String value) async {
+                    int status = await commentService.addComment(
                         widget.postId,
                         value,
                         userController.userAbout!.username,
@@ -118,8 +118,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
               ),
               IconButton(
                 icon: const Icon(Icons.send),
-                onPressed: () {
-                  int status = commentService.addComment(
+                onPressed: () async {
+                  int status = await commentService.addComment(
                       widget.postId,
                       commentController.text,
                       userController.userAbout!.username,
