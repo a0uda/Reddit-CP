@@ -853,13 +853,20 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'account_settings': {
-            'gender': gender,
-            'country': country,
+          "account_settings": {
+            "country": country,
+            "gender": gender,
           },
         }),
       );
       print('ana fe change gender');
+      print(token);
+      print(jsonEncode({
+        'account_settings': {
+          'gender': gender,
+          'country': country,
+        },
+      }));
       print(response.statusCode);
       print(response.body);
       if (response.isRedirect) {
