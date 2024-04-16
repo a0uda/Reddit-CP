@@ -83,8 +83,6 @@ class MyApp extends StatelessWidget {
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
         ),
-        home: const ModResponsive(
-            mobileLayout: MobileModTools(),
-            desktopLayout: DesktopModTools(index: 0)));
+        home: const LoginPage());
   }
 }
