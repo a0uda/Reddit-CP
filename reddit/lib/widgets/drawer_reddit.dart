@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
-import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/drawer_tile.dart';
 import 'package:reddit/widgets/mobile_layout.dart';

@@ -235,3 +235,16 @@ class SaveComment extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class ChangeEmail extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<bool> changeEmail(
+      String username, String email, String password) async {
+    Future<bool> result = userService.changeEmail(username, email, password);
+    userController.getUserAbout(username);
+    notifyListeners();
+    return result;
+  }
+}

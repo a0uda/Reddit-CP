@@ -99,10 +99,10 @@ class Report extends State<ReportOptions> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Submit a report'),
+                              title: const Text('Submit a report'),
                               content: Builder(
                                 builder: ((context) {
-                                  return Container(
+                                  return SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.7,
                                     width:
@@ -129,10 +129,10 @@ class Report extends State<ReportOptions> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Submit a report'),
+                              title: const Text('Submit a report'),
                               content: Builder(
                                 builder: ((context) {
-                                  return Container(
+                                  return SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.7,
                                     width:
@@ -144,10 +144,10 @@ class Report extends State<ReportOptions> {
                                           color: Colors.blue,
                                           size: 30.0,
                                         ),
-                                        const Text('Thanks for your report'),
-                                        const Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: const Text(
+                                        Text('Thanks for your report'),
+                                        Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
                                               'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
                                         )
                                       ],
@@ -172,11 +172,11 @@ class Report extends State<ReportOptions> {
                           context: context,
                           isScrollControlled: true,
                           builder: (BuildContext context) {
-                            return Container(
+                            return SizedBox(
                                 height: heigth * 0.9,
                                 width: width,
                                 child: Column(children: [
-                                  ListTile(
+                                  const ListTile(
                                     leading: Text(
                                       "Submit report",
                                       style: TextStyle(fontSize: 20),
@@ -195,7 +195,7 @@ class Report extends State<ReportOptions> {
                           context: context,
                           isScrollControlled: true,
                           builder: (BuildContext context) {
-                            return Container(
+                            return SizedBox(
                               height: heigth * 0.5,
                               width: width,
                               child: const Column(
@@ -205,10 +205,10 @@ class Report extends State<ReportOptions> {
                                     color: Colors.blue,
                                     size: 30.0,
                                   ),
-                                  const Text('Thanks for your report'),
-                                  const Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: const Text(
+                                  Text('Thanks for your report'),
+                                  Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Text(
                                         'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
                                   )
                                 ],

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'follower_list.dart';
@@ -133,7 +132,10 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20, bottom: 10),
+                      padding: EdgeInsets.only(
+                        left: 20, 
+                        bottom: userData.about != null ? 10 : 0, // replace defaultValue with your desired default
+                      ),
                       child: Consumer<EditProfileController>(
                         builder: (context, editProfileController, child) {
                           var userController =

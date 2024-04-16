@@ -1,20 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:get_it/get_it.dart';
-import 'package:reddit/Controllers/community_controller.dart';
-import 'package:reddit/Pages/description_widget.dart';
-import 'package:reddit/widgets/Best_Listing.dart';
-import 'package:reddit/widgets/button_widgets.dart';
-import 'package:reddit/widgets/community_description.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
-import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
-import 'package:reddit/Pages/create_post.dart';
-import 'package:reddit/widgets/post.dart';
 
 class CommunityPageTest extends StatefulWidget {
   const CommunityPageTest(
@@ -145,7 +134,7 @@ class _CommunityPageTestBarState extends State<CommunityPageTestBar> {
             ),
             trailing: OutlineButtonWidget('Join', () {}),
           ),
-          Text(
+          const Text(
             'ay kalam',
             style: TextStyle(
               color: Colors.black,

@@ -3,17 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 
 import 'package:reddit/Controllers/post_controller.dart';
-import 'package:reddit/Models/user_about.dart';
-import 'package:reddit/Pages/community_page.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
-import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mod_responsive.dart';
-import 'package:reddit/widgets/Moderator/test_badr.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -55,9 +49,12 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => LockPost(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ChangeEmail(),
       )
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -78,7 +75,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: Color.fromARGB(255, 224, 223, 223),
+              primary: const Color.fromARGB(255, 224, 223, 223),
               secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
