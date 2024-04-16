@@ -8,7 +8,6 @@ import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
 import '../Models/user_about.dart';
 
-
 class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   UserAbout userData;
@@ -71,21 +70,28 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         ],
                       );
                     }),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: Text(
-                            userData.displayName ?? userData.username,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
+                    Consumer<EditProfileController>(
+                      builder: (context, editProfileController, child) {
+                        var userController =
+                            GetIt.instance.get<UserController>();
+                        userData = userController.userAbout!;
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Text(
+                                userData.displayName ?? userData.username,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -134,7 +140,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                               GetIt.instance.get<UserController>();
                           userData = userController.userAbout!;
                           return Text(
-                            'u/${userData.username} - ${userData.createdAt}\n${userData.about}',
+                            'u/${userData.username} - ${userData.createdAt}${userData.about != null ? '\n${userData.about}' : ''}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,

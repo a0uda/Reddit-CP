@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:reddit/Models/social_link_item.dart';
 
 class UserAbout {
@@ -41,7 +42,7 @@ class UserAbout {
     print(jsonDecode['username']);
     return UserAbout(
       id: jsonDecode['about']['id'],
-      createdAt: jsonDecode['about']['created_at'],
+      createdAt:  DateFormat('d MMMM yyyy').format(DateTime.parse(jsonDecode['about']['created_at'])).toString(),
       username: jsonDecode['about']['username'],
       email: jsonDecode['about']['email'],
       verifiedEmailFlag: jsonDecode['about']['verified_email_flag'] == 'true',
