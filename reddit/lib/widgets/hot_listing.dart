@@ -37,7 +37,7 @@ class HotListingBuild extends State<HotListing> {
     print(username);
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
-      posts = await postService.getPosts(username);
+      posts = await postService.getPosts(username,"hot");
     } else if (widget.type == "popular") {
       posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
@@ -84,7 +84,7 @@ class HotListingBuild extends State<HotListing> {
                           // profileImageUrl: posts[index].profilePic!,
                           name: posts[index].username,
                           title: posts[index].title,
-                          postContent: posts[index].description!,
+                          postContent: posts[index].description,
                           date: posts[index].createdAt.toString(),
                           likes: posts[index].upvotesCount -
                               posts[index].downvotesCount,

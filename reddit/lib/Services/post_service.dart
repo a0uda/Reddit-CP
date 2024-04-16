@@ -160,7 +160,7 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getPosts(String username) async {
+  Future<List<PostItem>> getPosts(String username,String sortingType) async {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
       final List<FollowersFollowingItem> following = await
@@ -171,7 +171,50 @@ class PostService {
           posts.where((post) => usernames.contains(post.username)).toList();
       return filteredPosts;
     } else {
-      return posts;
+        var url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+      if(sortingType=="best")
+      {
+           url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+
+      }else if(sortingType=="hot")
+      {
+   url = Uri.parse('https://redditech.me/backend/listing/posts/hot');
+      }
+      else if(sortingType=="new")
+      {
+         url = Uri.parse('https://redditech.me/backend/listing/posts/new');
+      }
+      else if(sortingType=="top")
+      {
+         url = Uri.parse('https://redditech.me/backend/listing/posts/top');
+
+      }
+      else if(sortingType=="random")
+      {
+                 url = Uri.parse('https://redditech.me/backend/listing/posts/random');
+
+      }
+
+   
+
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+  final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+  );
+      print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist=json.decode(response.body)['posts'];
+      final List<PostItem> postsItem=jsonlist.map((jsonitem){
+return PostItem.fromJson(jsonitem);
+      }).toList();
+ 
+  
+      return postsItem;
+
     }
   }
 

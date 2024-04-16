@@ -34,7 +34,7 @@ class _Listing extends State<Listing> {
     'Best',
     'New',
     'Top',
-    'Rising',
+    'Random',
   ];
 
   // List of items in our dropdown menu
@@ -119,7 +119,7 @@ class _Listing extends State<Listing> {
                 type: widget.type,
               ),
             ),
-          if (dropdownvalue == "Rising")
+          if (dropdownvalue == "Random")
             Expanded(
               child: RisingListing(
                 type: widget.type,

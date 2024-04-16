@@ -5,7 +5,7 @@ import 'package:reddit/widgets/listing.dart';
 class MobileHomePage extends StatelessWidget {
   final int widgetIndex;
   final widgetsHomePage = [
-    const Center(child: Listing(type: "profile",)),
+    const Center(child: Listing(type: "home",)),
     const Center(child: Listing(type: "popular",)),
     const Center(child: Text("All")),
     const Center(child: Text("Lates"))
