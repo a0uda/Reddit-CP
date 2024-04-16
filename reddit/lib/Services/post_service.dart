@@ -1,8 +1,6 @@
 //import 'package:media_kit/ffi/ffi.dart';
 import 'dart:convert';
 
-import 'package:get/get.dart';
-import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/save.dart';
@@ -107,9 +105,9 @@ class PostService {
           "polls_voting_length": poll != null ? poll.votes.length : 0,
           "community_name": "",
           "post_in_community_flag": postInCommunityFlag,
-          // "oc_flag": ocFlag,
-          // "spoiler_flag": spoilerFlag,
-          // "nsfw_flag": nsfwFlag
+          "oc_flag": ocFlag,
+          "spoiler_flag": spoilerFlag,
+          "nsfw_flag": nsfwFlag
         }),
       );
       print(response.statusCode);
@@ -315,7 +313,7 @@ class PostService {
     if (testing) {
       var filteredids =
           savedPosts.where((post) => post.username == username).toList();
-      var ids = filteredids!.map((user) => user.id).toSet();
+      var ids = filteredids.map((user) => user.id).toSet();
       print(ids);
       var filteredPosts = posts.where((post) => ids.contains(post.id)).toList();
       return filteredPosts;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/sign_up.dart';
 import 'package:reddit/Pages/forgot_password.dart';
 import 'package:reddit/Pages/forgot_username.dart';
@@ -7,7 +6,6 @@ import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 

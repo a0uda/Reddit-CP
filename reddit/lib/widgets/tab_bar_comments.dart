@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:reddit/test_files/test_comments.dart';
 import '../Services/user_service.dart';
 import '../Models/user_about.dart';
 import '../Models/comments.dart';

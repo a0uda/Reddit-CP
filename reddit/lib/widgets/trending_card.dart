@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:reddit/Models/trending_item.dart';
-import 'package:reddit/Services/post_service.dart';
 
 //for merging
 class TrendingPost extends StatefulWidget {
@@ -29,6 +26,14 @@ class TrendState extends State<TrendingPost> {
         },
         child: Card(
           child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: NetworkImage(widget.imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Text(
@@ -36,14 +41,6 @@ class TrendState extends State<TrendingPost> {
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold),
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: NetworkImage(widget.imageUrl!),
-                fit: BoxFit.cover,
               ),
             ),
           ),

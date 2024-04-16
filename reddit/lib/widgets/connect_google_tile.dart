@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Models/account_settings_item.dart';
-import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 
 class ConnectGoogleTile extends StatefulWidget {
@@ -39,10 +37,10 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
             isConnected = !isConnected;
             if (isConnected) {
               userController
-                  .connectToGoogle(userController.userAbout!.username!);
+                  .connectToGoogle(userController.userAbout!.username);
             } else {
               userController
-                  .disconnectFromGoogle(userController.userAbout!.username!);
+                  .disconnectFromGoogle(userController.userAbout!.username);
             }
           });
         },

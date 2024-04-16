@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/hot_listing.dart';
@@ -47,7 +46,7 @@ class _Listing extends State<Listing> {
         children: [
           (widget.type=="popular")?
           Container(
-            child:Align(
+            child:const Align(
               alignment: Alignment.topCenter,
               child:Text('Trending Today'))
            ,):Container(),
@@ -55,7 +54,7 @@ class _Listing extends State<Listing> {
         
         
           (widget.type == "popular") 
-              ? Container(
+              ? SizedBox(
                 height:  MediaQuery.of(context).size.height * 0.2,
  
                 child:  ListView.builder(

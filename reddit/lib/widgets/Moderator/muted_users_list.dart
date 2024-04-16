@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
 import 'package:reddit/widgets/Moderator/muted_users.dart';

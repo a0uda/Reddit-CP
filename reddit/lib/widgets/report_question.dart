@@ -25,15 +25,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Harassment')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Who is the harassment towards?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('you'),
+                title: const Text('you'),
                 value: 'you',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -43,7 +43,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -57,15 +57,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Threating violence')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Who is the threat towards?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('you'),
+                title: const Text('you'),
                 value: 'you',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -75,7 +75,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -89,15 +89,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Minor abuse or sexualization')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'What type of minor abuse or sexualization is this?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('Sexual or suggestive content'),
+                title: const Text('Sexual or suggestive content'),
                 value: 'sexual or suggestive content',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -107,7 +107,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Predatory or inappropriate behavior'),
+                title: const Text('Predatory or inappropriate behavior'),
                 value: 'Predatory or inappropriate behavior',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -117,7 +117,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text(
+                title: const Text(
                     'Content involving physical or emotional abuse or neglect'),
                 value:
                     'Content involving physical or emotional abuse or neglect',
@@ -133,15 +133,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'sharing personal information')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Whose personal information is it?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('you'),
+                title: const Text('you'),
                 value: 'you',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -151,7 +151,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -165,15 +165,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Spam')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'What type of spam is it?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('Link farming'),
+                title: const Text('Link farming'),
                 value: 'link farming',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -183,7 +183,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Unsolocited messaging'),
+                title: const Text('Unsolocited messaging'),
                 value: 'Unsolocited messaging',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -193,7 +193,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Excessive posts or comments in a community'),
+                title: const Text('Excessive posts or comments in a community'),
                 value: 'Excessive posts or comments in a community',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -203,7 +203,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Posting harmful links (malware)'),
+                title: const Text('Posting harmful links (malware)'),
                 value: 'Posting harmful links (malware)',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -213,7 +213,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Harmful bots'),
+                title: const Text('Harmful bots'),
                 value: 'harmful bots',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -223,7 +223,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Others'),
+                title: const Text('Others'),
                 value: 'Others',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -237,15 +237,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Copyright')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Whose copyright is it?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('yours or an individual or entity you represent'),
+                title: const Text('yours or an individual or entity you represent'),
                 value: 'yours or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -255,7 +255,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -269,15 +269,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Non-consensual intimate media')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Who is the non-consensual intimate media of?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('you'),
+                title: const Text('you'),
                 value: 'you',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -287,7 +287,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -301,15 +301,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Impersonation')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Who is being impersonated?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('you or an individual or entity you represent'),
+                title: const Text('you or an individual or entity you represent'),
                 value: 'you or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -319,7 +319,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -333,15 +333,15 @@ class QuestionScreen extends State<Question> {
         if (widget.type == 'Trademark violation')
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Text(
                   'Whose trademark is it?',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
               RadioListTile<String>(
-                title: Text('yours or an individual or entity you represent'),
+                title: const Text('yours or an individual or entity you represent'),
                 value: 'yours or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -351,7 +351,7 @@ class QuestionScreen extends State<Question> {
                 },
               ),
               RadioListTile<String>(
-                title: Text('Someone else'),
+                title: const Text('Someone else'),
                 value: 'someone else',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -378,10 +378,10 @@ class QuestionScreen extends State<Question> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       scrollable: true,
-                      title: Text('Submit a report'),
+                      title: const Text('Submit a report'),
                       content: Builder(
                         builder: ((context) {
-                          return Container(
+                          return SizedBox(
                             height: MediaQuery.of(context).size.height * 0.7,
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: const Column(
@@ -393,10 +393,10 @@ class QuestionScreen extends State<Question> {
                                       .blue, 
                                   size: 30.0, 
                                 ),
-                                const Text('Thanks for your report'),
-                                const Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: const Text(
+                                Text('Thanks for your report'),
+                                Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Text(
                                       'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
                                 )
                               ],
@@ -416,7 +416,7 @@ class QuestionScreen extends State<Question> {
                           context: context,
                           isScrollControlled: true,
                           builder: (BuildContext context) {
-                            return Container(
+                            return SizedBox(
                               height: heigth * 0.5,
                               width: width,
                               child: const Column(
@@ -426,10 +426,10 @@ class QuestionScreen extends State<Question> {
                                     color: Colors.blue,
                                     size: 30.0,
                                   ),
-                                  const Text('Thanks for your report'),
-                                  const Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: const Text(
+                                  Text('Thanks for your report'),
+                                  Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Text(
                                         'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
                                   )
                                 ],
@@ -441,7 +441,6 @@ class QuestionScreen extends State<Question> {
               }
 
           },
-          child: Text('submit'),
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
               if (selectedAnswer == "") {
@@ -451,6 +450,7 @@ class QuestionScreen extends State<Question> {
               }
             }),
           ),
+          child: const Text('submit'),
         )
       ],
     );
