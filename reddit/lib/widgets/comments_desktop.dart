@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/comments_widget.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';

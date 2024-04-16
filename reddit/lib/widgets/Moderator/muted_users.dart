@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
-import 'package:reddit/widgets/Moderator/banned_user_list.dart';
 import 'package:reddit/widgets/Moderator/muted_users_list.dart';
 
 List<Map<String, String>> mutedUsers = [
