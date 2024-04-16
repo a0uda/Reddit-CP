@@ -11,7 +11,7 @@ import 'package:reddit/widgets/post.dart';
 class CommentsWidget extends StatefulWidget {
   final String postId;
 
-  const CommentsWidget({super.key, required this.postId});
+  const CommentsWidget({Key? key, required this.postId}) : super(key: key);
 
   @override
   State<CommentsWidget> createState() => CommentsWidgetState();
@@ -19,7 +19,7 @@ class CommentsWidget extends StatefulWidget {
 
 class CommentsWidgetState extends State<CommentsWidget> {
   PostService postService = GetIt.instance.get<PostService>();
-  late Future<List<Comments>> commentsFuture;
+  List<Comments>? comments;
   PostItem? post;
   final TextEditingController commentController = TextEditingController();
 
@@ -32,15 +32,20 @@ class CommentsWidgetState extends State<CommentsWidget> {
   @override
   void initState() {
     super.initState();
-    commentsFuture = CommentsService().getCommentByPostId(widget.postId);
+    loadComments();
   }
 
   final CommentsService commentService = GetIt.instance.get<CommentsService>();
 
+  Future<void> loadComments() async {
+    comments = await CommentsService().getCommentByPostId(widget.postId);
+    post = await postService.getPostById(widget.postId);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
-    post = postService.getPostById(widget.postId);
 
     return Scaffold(
       body: post == null
@@ -65,27 +70,16 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     isLocked: post!.lockedFlag,
                   ),
                 ),
-                FutureBuilder<List<Comments>>(
-                  future: commentsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final comments = snapshot.data;
-                      return Expanded(
-                        child: ListView.builder(
-                          itemCount: comments?.length,
-                          itemBuilder: (context, index) {
-                            final comment = comments![index];
-                            return Comment(comment: comment, isSaved: false);
-                          },
-                        ),
-                      );
-                    }
-                  },
-                ),
+                if (comments != null && comments!.isNotEmpty)
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: comments?.length,
+                      itemBuilder: (context, index) {
+                        final comment = comments![index];
+                        return Comment(comment: comment, isSaved: false);
+                      },
+                    ),
+                  ),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 70),
                 ),
@@ -116,10 +110,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                         userController.userAbout!.username,
                         userController.userAbout?.id ?? '');
                     if (status == 200) {
-                      setState(() {
-                        commentsFuture =
-                            commentService.getCommentByPostId(widget.postId);
-                      });
+                      loadComments();
                       commentController.clear();
                     }
                   },
@@ -134,10 +125,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       userController.userAbout!.username,
                       userController.userAbout?.id ?? '');
                   if (status == 200) {
-                    setState(() {
-                      commentsFuture =
-                          commentService.getCommentByPostId(widget.postId);
-                    });
+                    loadComments();
                     commentController.clear();
                   }
                 },
