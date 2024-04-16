@@ -164,7 +164,7 @@ class PostService {
       final List<FollowersFollowingItem> following =
           await userService.getFollowers(username);
       var usernames = following.map((user) => user.username).toSet();
-      print(usernames);
+      // print(usernames);
       var filteredPosts =
           posts.where((post) => usernames.contains(post.username)).toList();
       return filteredPosts;
@@ -191,7 +191,7 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      print(json.decode(response.body)['posts']);
+      // print(json.decode(response.body)['posts']);
       final List<dynamic> jsonlist = json.decode(response.body)['posts'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
