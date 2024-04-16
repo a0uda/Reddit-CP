@@ -49,6 +49,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => LockPost(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ChangeEmail(),
       )
     ],
     child: const MyApp(),

@@ -24,7 +24,7 @@ class UserController {
   }
 
   Future<void>? getUserAbout(String username) async {
-    userAbout= await userService.getUserAbout(username);
+    userAbout = await userService.getUserAbout(username);
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
@@ -233,5 +233,18 @@ class SaveComment extends ChangeNotifier {
   void unsaveComment(String username, String commentId) {
     userService.unsaveComment(username, commentId);
     notifyListeners();
+  }
+}
+
+class ChangeEmail extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<bool> changeEmail(
+      String username, String email, String password) async {
+    Future<bool> result = userService.changeEmail(username, email, password);
+    userController.getUserAbout(username);
+    notifyListeners();
+    return result;
   }
 }

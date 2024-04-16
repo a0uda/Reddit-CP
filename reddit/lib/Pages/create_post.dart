@@ -317,7 +317,7 @@ class _CreatePostState extends State<CreatePost> {
                               );
                               setState(() {
                                 if (result != null) selectedCommunity = result;
-                                print(selectedCommunity);
+                                // print(selectedCommunity);
                               });
                             },
                             icon: Icon(

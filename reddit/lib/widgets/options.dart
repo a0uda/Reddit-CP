@@ -130,8 +130,7 @@ class Postoptions extends State<Options> {
                   value: 4,
                   onTap: () {
                     postLockController.lockPost(widget.postId!);
-                    setState(
-                        () {}); // Call setState to rebuild the widget with new values
+                    setState(() {});
                   },
                   child: Row(
                     children: [
@@ -213,7 +212,8 @@ class Postoptions extends State<Options> {
                                     title: const Text("Unsave"),
                                     onTap: () => {
                                       //todo
-                                                         postController.unSavePost(widget.postId, username),
+                                      postController.unSavePost(
+                                          widget.postId, username),
 
                                       Navigator.of(context).pop(),
                                     },
