@@ -157,6 +157,19 @@ class ModToolsList extends StatelessWidget {
             changePage(9);
           },
         ),
+         ListTile(
+          leading: const Icon(Icons.rule),
+          title: Text(
+            'Rules',
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+          ),
+          trailing: isMobile
+              ? const Icon(Icons.arrow_forward_rounded)
+              : const SizedBox(),
+          onTap: () {
+            changePage(10);
+          },
+        ),
       ],
     );
   }

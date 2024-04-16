@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/test_files/test_posts_mohy.dart';
+import 'package:reddit/widgets/Moderator/post_mod_queue.dart';
+import 'package:reddit/widgets/Moderator/test_badr.dart';
 import 'package:reddit/widgets/post.dart';
 
 class ModQueues extends StatefulWidget {
@@ -43,7 +45,6 @@ class _ModQueuesState extends State<ModQueues> {
                 })
             : null,
       ),
-      backgroundColor: greyColor,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,26 +52,14 @@ class _ModQueuesState extends State<ModQueues> {
           Expanded(flex: 1, child: ModQueuesBar(screenWidth: screenWidth)),
           Expanded(
             flex: 8,
-            child: Container(
-              color: greyColor,
-              margin: EdgeInsets.symmetric(
-                  horizontal: paddingPercentage * screenWidth, vertical: 8),
-              child: ListView.builder(
-                itemCount: testPosts.length,
-                itemBuilder: (context, index) {
-                  return Post(
-                      id: "$index",
-                      isLocked: false,
-                      imageUrl: testPosts[index].imageUrl,
-                      name: testPosts[index].name,
-                      title: testPosts[index].title,
-                      postContent: testPosts[index].postContent,
-                      date: testPosts[index].date,
-                      likes: testPosts[index].likes,
-                      commentsCount: testPosts[index].commentsCount,
-                      communityName: testPosts[index].communityName);
-                },
-              ),
+            child: ListView.builder(
+              itemCount: modQueueTestPosts.length,
+              itemBuilder: (context, index) {
+                final item = modQueueTestPosts[index];
+                return PostModQueue(
+                  post: item,
+                );
+              },
             ),
           ),
         ],
@@ -252,7 +241,9 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: (widget.screenWidth <700)?EdgeInsets.only(left: widget.screenWidth * 0.03):EdgeInsets.only(left: widget.screenWidth * 0.02),
+      padding: (widget.screenWidth < 700)
+          ? EdgeInsets.only(left: widget.screenWidth * 0.03)
+          : EdgeInsets.only(left: widget.screenWidth * 0.02),
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
