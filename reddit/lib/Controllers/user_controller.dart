@@ -24,7 +24,7 @@ class UserController {
   }
 
   Future<void>? getUserAbout(String username) async {
-    userAbout= await userService.getUserAbout(username);
+    userAbout = await userService.getUserAbout(username);
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
@@ -51,8 +51,8 @@ class UserController {
     blockedUsers = userService.getBlockedUsers(userData.username);
   }
 
-  void changeGender(String username, String gender) {
-    userService.changeGender(username, gender);
+  Future<bool> changeGender(String username, String gender) {
+    return userService.changeGender(username, gender);
   }
 
   void changeCountry(String username, String country) {

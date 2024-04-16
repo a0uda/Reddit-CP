@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -822,7 +825,7 @@ class UserService {
     }
   }
 
-  void changeGender(String username, String gender) {
+  Future<bool> changeGender(String username, String gender) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -832,8 +835,40 @@ class UserService {
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .gender = gender;
+      return true;
     } else {
-      // change gender in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final UserController userController =
+          GetIt.instance.get<UserController>();
+      String country = userController.userAbout?.country ?? '';
+
+      final url = Uri.parse(
+          'http://redditech.me/backend/users/change-account-settings');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'account_settings': {
+            'gender': gender,
+            'country': country,
+          },
+        }),
+      );
+      print('ana fe change gender');
+      print(response.statusCode);
+      print(response.body);
+      if (response.isRedirect) {
+        print('successfull');
+      } else {
+        print('failed');
+      }
+
+      return response.isRedirect;
     }
   }
 
@@ -919,5 +954,25 @@ class UserService {
     }
 
     return [];
+  }
+
+  Future<NotificationsSettingsItem>? getNotificationsSettings(
+      String username) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/notification-settings');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    return NotificationsSettingsItem.fromJson(
+        jsonDecode(response.body)['settings']);
   }
 }
