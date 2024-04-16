@@ -11,6 +11,7 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
+
 class TopListing extends StatefulWidget {
   final String type;
   const TopListing({super.key, required this.type});
@@ -20,28 +21,28 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-List<PostItem> posts=[];
-  
+  List<PostItem> posts = [];
+
   // List of items in our dropdown menu
   @override
   void initState() {
     super.initState();
     controller = ScrollController()..addListener(HandleScrolling);
-   fetchdata();
+    //  fetchdata();
   }
-  void fetchdata(){
+
+  Future<void> fetchdata() async {
     String username = userController.userAbout!.username;
     final postService = GetIt.instance.get<PostService>();
     if (widget.type == "home") {
-      posts = postService.getPosts(username);
+      posts = await postService.getPosts(username,"top");
     } else if (widget.type == "popular") {
-      posts = postService.getPopularPosts();
+      posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
-      posts =  postService.getMyPosts(username);
+      posts = await postService.getMyPosts(username);
       print(username);
     }
-
-}
+  }
 
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
@@ -57,20 +58,56 @@ List<PostItem> posts=[];
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LockPost>(builder: (context, lockPost, child) {
-      return ListView.builder(
-        itemCount: posts.length,
-        controller: controller,
-        itemBuilder: (context, index) {
-          if (posts[index].nsfwFlag == true) {
-            // TODO : NSFW , Spoiler
-            return buildBlur(
-                context: context,
-                child: Post(
-                  //  profileImageUrl: posts[index].profilePic!,
+    return FutureBuilder<void>(
+      future: fetchdata(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            color: Colors.white,
+            child: const SizedBox(
+              height: 20,
+              width: 20,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return Consumer<LockPost>(builder: (context, lockPost, child) {
+            return ListView.builder(
+              itemCount: posts.length,
+              controller: controller,
+              itemBuilder: (context, index) {
+                if (posts[index].nsfwFlag == true) {
+                  // TODO : NSFW , Spoiler
+                  return buildBlur(
+                      context: context,
+                      child: Post(
+                        //  profileImageUrl: posts[index].profilePic!,
+                        name: posts[index].username,
+                        title: posts[index].title,
+                        postContent: posts[index].description,
+                        date: posts[index].createdAt.toString(),
+                        likes: posts[index].upvotesCount -
+                            posts[index].downvotesCount,
+                        commentsCount: posts[index].commentsCount,
+                        linkUrl: posts[index].linkUrl,
+                        imageUrl: posts[index].images?[0].path,
+                        videoUrl: posts[index].videos?[0].path,
+                        poll: posts[index].poll,
+                        id: posts[index].id,
+                        communityName: posts[index].communityName,
+                        isLocked: posts[index].lockedFlag,
+                      ));
+                }
+
+                return Post(
+                  // profileImageUrl: posts[index].profilePic!,
                   name: posts[index].username,
                   title: posts[index].title,
-                  postContent: posts[index].description!,
+                  postContent: posts[index].description,
                   date: posts[index].createdAt.toString(),
                   likes:
                       posts[index].upvotesCount - posts[index].downvotesCount,
@@ -82,27 +119,12 @@ List<PostItem> posts=[];
                   id: posts[index].id,
                   communityName: posts[index].communityName,
                   isLocked: posts[index].lockedFlag,
-                ));
-          }
-
-          return Post(
-            // profileImageUrl: posts[index].profilePic!,
-            name: posts[index].username,
-            title: posts[index].title,
-            postContent: posts[index].description!,
-            date: posts[index].createdAt.toString(),
-            likes: posts[index].upvotesCount - posts[index].downvotesCount,
-            commentsCount: posts[index].commentsCount,
-            linkUrl: posts[index].linkUrl,
-            imageUrl: posts[index].images?[0].path,
-            videoUrl: posts[index].videos?[0].path,
-            poll: posts[index].poll,
-            id: posts[index].id,
-            communityName: posts[index].communityName,
-            isLocked: posts[index].lockedFlag,
-          );
-        },
-      );
-    });
+                );
+              },
+            );
+          });
+        }
+      },
+    );
   }
 }
