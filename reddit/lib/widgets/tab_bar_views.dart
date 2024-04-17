@@ -13,6 +13,7 @@ class TabBarViews extends StatelessWidget {
       children: [
         TabBarPosts(
           userData: userData,
+          
         ),
         TabBarComments(userData: userData),
         TabBarAbout(userData),

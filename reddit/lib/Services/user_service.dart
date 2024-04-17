@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -17,13 +20,6 @@ import 'package:http/http.dart' as http;
 bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
-  final List<String> usedPasswords = [
-    'rawan1234',
-    'john1234',
-    'jane1234',
-    'mark1234',
-  ];
-
   void addUser() {
     if (testing) {
       //to be implemented
@@ -51,9 +47,9 @@ class UserService {
         },
       );
       print(response.statusCode);
-
       print(jsonDecode(response.body));
       print(jsonDecode(response.body)['about']['username']);
+      print(jsonDecode(response.body)['about']['profile_picture']);
       return UserAbout.fromJson(jsonDecode(response.body));
     }
   }
@@ -595,7 +591,6 @@ class UserService {
       );
 
       users.add(newUserItem);
-      usedPasswords.add(password);
 
       return 200;
     } else {
@@ -665,19 +660,39 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<BlockedUsersItem> getBlockedUsers(String username) {
+  Future<List<BlockedUsersItem>> getBlockedUsers(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .safetySettings!
           .blockedUsers;
     } else {
-      // get safety settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/blocked-users');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('get block success');
+        var data = jsonDecode(response.body);
+        Map<String, dynamic> blockedUsersJson = data['blocked_users'];
+        return Future.wait(blockedUsersJson.values
+            .map((json) => BlockedUsersItem.fromJson(json))
+            .toList());
+      } else {
+        throw Exception('Failed to load blocked users');
+      }
     }
-    return [];
   }
 
-  void blockUser(String username, String blockedUsername) {
+  Future<void> blockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -694,11 +709,31 @@ class UserService {
             blockedDate: DateTime.now().toString(),
           ));
     } else {
-      // block user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('block success');
+      } else {
+        throw Exception('Failed to block user.');
+      }
     }
   }
 
-  void unblockUser(String username, String blockedUsername) {
+  Future<void> unblockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -706,7 +741,27 @@ class UserService {
           .blockedUsers
           .removeWhere((element) => element.username == blockedUsername);
     } else {
-      // unblock user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('User unblocked successfully.');
+      } else {
+        throw Exception('Failed to unblock user.');
+      }
     }
   }
 
@@ -826,7 +881,7 @@ class UserService {
     }
   }
 
-  void changeGender(String username, String gender) {
+  Future<bool> changeGender(String username, String gender) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -836,8 +891,47 @@ class UserService {
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .gender = gender;
+      return true;
     } else {
-      // change gender in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final UserController userController =
+          GetIt.instance.get<UserController>();
+      String country = userController.userAbout?.country ?? '';
+
+      final url = Uri.parse(
+          'http://redditech.me/backend/users/change-account-settings');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "account_settings": {
+            "country": country,
+            "gender": gender,
+          },
+        }),
+      );
+      print('ana fe change gender');
+      print(token);
+      print(jsonEncode({
+        'account_settings': {
+          'gender': gender,
+          'country': country,
+        },
+      }));
+      print(response.statusCode);
+      print(response.body);
+      if (response.isRedirect) {
+        print('successfull');
+      } else {
+        print('failed');
+      }
+
+      return response.isRedirect;
     }
   }
 
@@ -923,5 +1017,25 @@ class UserService {
     }
 
     return [];
+  }
+
+  Future<NotificationsSettingsItem>? getNotificationsSettings(
+      String username) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/notification-settings');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    return NotificationsSettingsItem.fromJson(
+        jsonDecode(response.body)['settings']);
   }
 }

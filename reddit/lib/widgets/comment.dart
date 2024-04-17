@@ -119,8 +119,10 @@ class _CommentState extends State<Comment> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
+                        print("el sora");
                         return Text('Error: ${snapshot.error}');
                       } else {
+                        print(snapshot.data!.profilePicture!);
                         return CircleAvatar(
                           radius: 15,
                           backgroundImage:

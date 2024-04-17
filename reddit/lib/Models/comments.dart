@@ -52,8 +52,10 @@ class Comments {
       userId: json['user_id'],
       username: json['username'],
       parentId: json['parent_id'],
-      repliesCommentsIds: json['replies_comments_ids'],
-      createdAt: json['created_at'],
+      repliesCommentsIds: (json['replies_comments_ids'] as List<dynamic>)
+          .map((item) => item.toString())
+          .toList(),
+      createdAt: json['created_at'].substring(0, 10),
       editedAt: json['edited_at'],
       deletedAt: json['deleted_at'],
       description: json['description'],

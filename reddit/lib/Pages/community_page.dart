@@ -5,8 +5,8 @@ import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
-import 'package:reddit/widgets/button_widgets.dart';
-import 'package:reddit/widgets/community_description.dart';
+import 'package:reddit/widgets/Community/button_widgets.dart';
+import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -212,10 +212,11 @@ class _CommunityPageState extends State<CommunityPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const ModResponsive(
-                                        mobileLayout: MobileModTools(),
+                                      builder: (context) => ModResponsive(
+                                        mobileLayout: MobileModTools(communityName: widget.communityName,),
                                         desktopLayout: DesktopModTools(
                                           index: 0,
+                                          communityName: widget.communityName,
                                         ),
                                       ),
                                     ),

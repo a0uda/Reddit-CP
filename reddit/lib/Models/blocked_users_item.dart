@@ -10,4 +10,13 @@ class BlockedUsersItem {
     required this.profilePicture,
     required this.blockedDate,
   });
+
+  static Future<BlockedUsersItem> fromJson(json) {
+    return Future.value(BlockedUsersItem(
+      id: json['id'],
+      username: json['username'],
+      profilePicture: json['profile_picture'],
+      blockedDate: json['blocked_date'],
+    ));
+  }
 }
