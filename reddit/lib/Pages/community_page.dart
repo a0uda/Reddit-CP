@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
-import 'package:reddit/widgets/Best_Listing.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
@@ -14,7 +12,6 @@ import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
-import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/widgets/post.dart';
 
 class CommunityPage extends StatefulWidget {
@@ -245,7 +242,7 @@ class _CommunityPageState extends State<CommunityPage> {
                         Expanded(
                           child: Column(
                             children: [
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -260,7 +257,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -275,7 +272,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -290,7 +287,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -305,7 +302,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -320,7 +317,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -335,7 +332,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -350,7 +347,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -365,7 +362,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
@@ -380,7 +377,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                   communityName: "r/FlutterDev",
                                 ),
                               ),
-                              Container(
+                              SizedBox(
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,

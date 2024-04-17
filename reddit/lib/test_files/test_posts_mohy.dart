@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:reddit/widgets/post.dart';
 
 final List<Post> testPosts = [

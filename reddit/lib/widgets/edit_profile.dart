@@ -34,6 +34,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   late String? _profileImagePath;
   late bool activeCommunity;
   late bool contentVisibility;
+  bool _dataFetched = false;
 
   @override
   void initState() {
@@ -45,11 +46,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     remainingNameCharacters = 30 - nameController.text.length;
     remainingAboutCharacters = 200 - aboutController.text.length;
     userData = userController.userAbout;
-    profileSettings = userService.getProfileSettings(userData!.username);
     _bannerimagepath = userData!.bannerPicture;
     _profileImagePath = userData!.profilePicture;
-    activeCommunity = profileSettings!.activeCommunity;
-    contentVisibility = profileSettings!.contentVisibility;
+    fetchData();
   }
 
   @override
@@ -57,6 +56,16 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
     nameController.dispose();
     aboutController.dispose();
+  }
+
+  fetchData() async {
+    ProfileSettings? profileSettings =
+        await userService.getProfileSettings(userData!.username);
+    contentVisibility = profileSettings!.contentVisibility;
+    activeCommunity = profileSettings.activeCommunity;
+    setState(() {
+      _dataFetched = true;
+    });
   }
 
   selectBannerProfile(bool isBanner) async {
@@ -97,7 +106,7 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                 Navigator.pop(context);
               },
             ),
-            if (selectedImagePath != null)
+            if (selectedImagePath != null && selectedImagePath!.isNotEmpty)
               ListTile(
                 onTap: () {
                   setState(() {
@@ -146,9 +155,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  saveProfile() {
+  saveProfile() async {
     var editProfileController = context.read<EditProfileController>();
-    editProfileController.editProfile(
+    await editProfileController.editProfile(
       nameController.text,
       aboutController.text,
       true,
@@ -172,8 +181,20 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     Navigator.pop(context);
   }
 
-  @override
   Widget build(BuildContext context) {
+    return _dataFetched ? _buildEditProfileScreen() : _buildLoading();
+  }
+
+  Widget _buildLoading() {
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget _buildEditProfileScreen() {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -181,7 +202,9 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         centerTitle: false,
         actions: [
           TextButton(
-            onPressed: () => saveProfile(),
+            onPressed: () async {
+              await saveProfile();
+            },
             child: const Text(
               'Save',
               style: TextStyle(color: Colors.black),
@@ -211,7 +234,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          _bannerimagepath != null
+                          _bannerimagepath != null &&
+                                  _bannerimagepath!.isNotEmpty
                               ? File(_bannerimagepath!).existsSync()
                                   ? Image.file(
                                       File(_bannerimagepath!),

@@ -1,15 +1,15 @@
 import 'dart:convert';
-
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
-
+import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
+import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -17,16 +17,9 @@ import '../Models/comments.dart';
 import '../test_files/test_users.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
-  final List<String> usedPasswords = [
-    'rawan1234',
-    'john1234',
-    'jane1234',
-    'mark1234',
-  ];
-
   void addUser() {
     if (testing) {
       //to be implemented
@@ -41,7 +34,6 @@ class UserService {
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout;
     } else {
-      //to be fetched from database
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
@@ -55,14 +47,15 @@ class UserService {
         },
       );
       print(response.statusCode);
-
       print(jsonDecode(response.body));
+      print(jsonDecode(response.body)['about']['username']);
+      print(jsonDecode(response.body)['about']['profile_picture']);
       return UserAbout.fromJson(jsonDecode(response.body));
     }
   }
 
-  void addSocialLink(
-      String username, String displayText, String type, String customUrl) {
+  Future<void> addSocialLink(String username, String displayText, String type,
+      String customUrl) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -89,11 +82,34 @@ class UserService {
             customUrl: customUrl,
           ));
     } else {
-      // add social link to database
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .add(SocialLlinkItem(
+            id: (int.parse(users
+                        .firstWhere(
+                            (element) => element.userAbout.username == username)
+                        .userAbout
+                        .socialLinks![users
+                                .firstWhere((element) =>
+                                    element.userAbout.username == username)
+                                .userAbout
+                                .socialLinks!
+                                .length -
+                            1]
+                        .id) +
+                    1)
+                .toString(),
+            username: displayText,
+            displayText: displayText,
+            type: type,
+            customUrl: customUrl,
+          ));
     }
   }
 
-  void followUser(String username, String follower) {
+  Future<void> followUser(String username, String follower) async {
     if (testing) {
       //add myself to the user being followed followers list
       users
@@ -110,11 +126,20 @@ class UserService {
             username: username,
           ));
     } else {
-      // follow user in database
+      final url =
+          Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'other_username': username,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  void unfollowUser(String username, String follower) {
+  Future<void> unfollowUser(String username, String follower) async {
     if (testing) {
       //remove myself from the user being followed followers list
       users
@@ -127,87 +152,180 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
-      // unfollow user in database
+      final url =
+          Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'other_username': username,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  int? getFollowersCount(String username) {
+  Future<int> getFollowersCount(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!
           .length;
     } else {
-      // get followers count from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/followers-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      print(jsonDecode(response.body)['followers-count']);
+      return jsonDecode(response.body)['followers-count'];
     }
-    return null;
   }
 
-  List<FollowersFollowingItem>? getFollowers(String username) {
+  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
     } else {
-      // get followers from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/followers');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['users'];
+      print(body);
+      return Future.wait(body
+          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
-    return null;
   }
 
-  int? getFollowingCount(String username) {
+  Future<int> getFollowingCount(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .following!
           .length;
     } else {
-      // get following count from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/following-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      print(jsonDecode(response.body)['following-count']);
+      return jsonDecode(response.body)['following-count'];
     }
-    return null;
   }
 
-  List<FollowersFollowingItem>? getFollowing(String username) {
+  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
     } else {
-      // get following from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/following');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['users'];
+      print(body);
+      return Future.wait(body
+          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }
-    return null;
   }
 
-  List<Comments>? getcomments(String username) {
+  Future<List<Comments>?> getcomments(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .comments!;
     } else {
-      // get comments from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/comments/$username');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['comments'];
+      print(body);
+      return Future.wait(
+          body.map((dynamic item) async => Comments.fromJson(item)));
     }
-    return null;
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ProfileSettings? getProfileSettings(String username) {
+  Future<ProfileSettings?> getProfileSettings(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .profileSettings;
     } else {
-      // get profile settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/profile-settings');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.statusCode);
+      print("In settiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiings");
+      print(jsonDecode(response.body)['settings']['profile_settings']);
+      return ProfileSettings.fromJson(
+          jsonDecode(response.body)['settings']['profile_settings']);
     }
-    return null;
   }
 
-  void updateProfileSettings(
+  Future<void> updateProfileSettings(
       String username,
       String displayName,
       String about,
       bool? nsfwFlag,
       bool? allowFollowers,
       bool contentVisibility,
-      bool activeCommunity) {
+      bool activeCommunity) async {
     if (testing) {
       var user =
           users.firstWhere((element) => element.userAbout.username == username);
@@ -220,55 +338,129 @@ class UserService {
       user.profileSettings?.contentVisibility = contentVisibility;
       user.profileSettings?.activeCommunity = activeCommunity;
     } else {
-      // update profile settings in database
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-profile-settings');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'profile_settings': {
+            'display_name': displayName,
+            'about': about,
+            'nsfw_flag': nsfwFlag,
+            'allow_followers': allowFollowers,
+            'content_visibility': contentVisibility,
+            'active_communities_visibility': activeCommunity,
+          }
+        }),
+      );
+      print("in update profile settings");
+      print(response.body);
     }
   }
 
-  void addBannerPicture(String username, String bannerPicture) {
+  Future<void> addBannerPicture(String username, String bannerPicture) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .bannerPicture = bannerPicture;
     } else {
-      // add banner picture to database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-banner-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'banner_picture': bannerPicture,
+        }),
+      );
+      print("in add banner picture");
+      print(bannerPicture);
+      print(response.body);
     }
   }
 
-  void addProfilePicture(String username, String profilePicture) {
+  Future<void> addProfilePicture(String username, String profilePicture) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .profilePicture = profilePicture;
     } else {
-      // add profile picture to database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-profile-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'profile_picture': profilePicture,
+        }),
+      );
+      print(response.body);
     }
   }
 
-  void removeBannerPicture(String username) {
+  Future<void> removeBannerPicture(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .bannerPicture = null;
     } else {
-      // remove banner picture from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/delete-banner-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.body);
     }
   }
 
-  void removeProfilePicture(String username) {
+  Future<void> removeProfilePicture(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .profilePicture = null;
     } else {
-      // remove profile picture from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/delete-profile-picture');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print(response.body);
     }
   }
 
-  void deleteSocialLink(String username, String id) {
+  Future<void> deleteSocialLink(String username, String id) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -276,12 +468,16 @@ class UserService {
           .socialLinks!
           .removeWhere((element) => element.id == id);
     } else {
-      // delete social link from database
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .removeWhere((element) => element.id == id);
     }
   }
 
-  void editSocialLink(
-      String username, String id, String displayText, String customUrl) {
+  Future<void> editSocialLink(
+      String username, String id, String displayText, String customUrl) async {
     if (testing) {
       var socialLink = users
           .firstWhere((element) => element.userAbout.username == username)
@@ -292,20 +488,29 @@ class UserService {
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
     } else {
-      // edit social link in database
+      var socialLink = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .firstWhere((element) => element.id == id);
+      socialLink.displayText = displayText;
+      socialLink.username = displayText;
+      socialLink.customUrl = customUrl;
     }
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<CommunityItem>? getActiveCommunities(String username) {
+  Future<List<CommunityItem>?> getActiveCommunities(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .activecommunities!;
     } else {
-      // get active communities from database
+      //todo: get active communities from database
+      return users
+          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
+          .activecommunities!;
     }
-    return null;
   }
 
   Future<int> forgetPassword(String email, String username) async {
@@ -386,7 +591,6 @@ class UserService {
       );
 
       users.add(newUserItem);
-      usedPasswords.add(password);
 
       return 200;
     } else {
@@ -456,19 +660,39 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<BlockedUsersItem> getBlockedUsers(String username) {
+  Future<List<BlockedUsersItem>> getBlockedUsers(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .safetySettings!
           .blockedUsers;
     } else {
-      // get safety settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/blocked-users');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('get block success');
+        var data = jsonDecode(response.body);
+        Map<String, dynamic> blockedUsersJson = data['blocked_users'];
+        return Future.wait(blockedUsersJson.values
+            .map((json) => BlockedUsersItem.fromJson(json))
+            .toList());
+      } else {
+        throw Exception('Failed to load blocked users');
+      }
     }
-    return [];
   }
 
-  void blockUser(String username, String blockedUsername) {
+  Future<void> blockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -485,11 +709,31 @@ class UserService {
             blockedDate: DateTime.now().toString(),
           ));
     } else {
-      // block user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('block success');
+      } else {
+        throw Exception('Failed to block user.');
+      }
     }
   }
 
-  void unblockUser(String username, String blockedUsername) {
+  Future<void> unblockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -497,7 +741,27 @@ class UserService {
           .blockedUsers
           .removeWhere((element) => element.username == blockedUsername);
     } else {
-      // unblock user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('User unblocked successfully.');
+      } else {
+        throw Exception('Failed to unblock user.');
+      }
     }
   }
 
@@ -529,7 +793,8 @@ class UserService {
         },
       );
       print(response.statusCode);
-      return AccountSettings.fromJson(jsonDecode(response.body));
+      print(response.body);
+      return AccountSettings.fromJson(jsonDecode(response.body)['settings']);
     }
   }
 
@@ -573,10 +838,11 @@ class UserService {
         'new_email': newEmail,
         'password': password,
       }));
+
+      print("in change email");
       print(response.statusCode);
       return response.statusCode == 200 ? true : false;
     }
-    return false;
   }
 
   Future<bool> changePassword(String username, String currentPassword,
@@ -594,7 +860,7 @@ class UserService {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": token!,
         },
         body: jsonEncode({
           'current_password': currentPassword,
@@ -602,6 +868,8 @@ class UserService {
           'verified_new_password': verifiedNewPassword,
         }),
       );
+      print(token);
+      print(response.statusCode);
       print(
         jsonEncode({
           'current_password': currentPassword,
@@ -613,7 +881,7 @@ class UserService {
     }
   }
 
-  void changeGender(String username, String gender) {
+  Future<bool> changeGender(String username, String gender) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -623,8 +891,47 @@ class UserService {
           .firstWhere((element) => element.userAbout.username == username)
           .userAbout
           .gender = gender;
+      return true;
     } else {
-      // change gender in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final UserController userController =
+          GetIt.instance.get<UserController>();
+      String country = userController.userAbout?.country ?? '';
+
+      final url = Uri.parse(
+          'http://redditech.me/backend/users/change-account-settings');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "account_settings": {
+            "country": country,
+            "gender": gender,
+          },
+        }),
+      );
+      print('ana fe change gender');
+      print(token);
+      print(jsonEncode({
+        'account_settings': {
+          'gender': gender,
+          'country': country,
+        },
+      }));
+      print(response.statusCode);
+      print(response.body);
+      if (response.isRedirect) {
+        print('successfull');
+      } else {
+        print('failed');
+      }
+
+      return response.isRedirect;
     }
   }
 
@@ -710,5 +1017,25 @@ class UserService {
     }
 
     return [];
+  }
+
+  Future<NotificationsSettingsItem>? getNotificationsSettings(
+      String username) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/notification-settings');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    return NotificationsSettingsItem.fromJson(
+        jsonDecode(response.body)['settings']);
   }
 }

@@ -28,26 +28,38 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
       {required this.userData, required this.userType});
 
   final UserController userController = GetIt.I.get<UserController>();
-  final UserService userService = GetIt.I.get<UserService>();
 
-  @override
-  Widget build(BuildContext context) {
+  List<FollowersFollowingItem>? followingList;
+  bool _dataFetched = false;
+
+  void loadFollowingList() async {
+    final userService = GetIt.I.get<UserService>();
+    followingList =
+        await userService.getFollowing(userController.userAbout!.username);
+    setState(() {
+      _dataFetched = true;
+    });
+  }
+
+  Widget _buildLoading() {
+    return Container(
+      color: Colors.transparent,
+    );
+  }
+
+  Widget _buildProfileHeaderRightSide() {
     var followerFollowingController =
         context.read<FollowerFollowingController>();
-    userService.getFollowers(userController.userAbout!.username);
-    final List<FollowersFollowingItem>? followingList =
-        userService.getFollowing(userController.userAbout!.username);
-
     return SizedBox(
       width: (1 / 3) * MediaQuery.of(context).size.width,
       child: Padding(
         padding: const EdgeInsets.only(right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
-          //mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20),
+              padding: const EdgeInsets.only(left: 20),
               child: IconButton(
                 icon: const Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
@@ -60,7 +72,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
             Padding(
               padding: const EdgeInsets.only(top: 20, left: 20),
               child: TextButton(
-                onPressed: () {
+                onPressed: () async {
                   if (userType == 'me') {
                     Navigator.push(
                       context,
@@ -69,16 +81,20 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                     );
                   } else {
                     setState(
-                      () {
+                      () async {
                         if (followingList!
                             .where((element) =>
                                 element.username == userData.username)
                             .isEmpty) {
-                          followerFollowingController
-                              .followUser(userData.username);
+                          setState(() {
+                            followerFollowingController
+                                .followUser(userData.username);
+                          });
                         } else {
-                          followerFollowingController
-                              .unfollowUser(userData.username);
+                          setState(() {
+                            followerFollowingController
+                                .unfollowUser(userData.username);
+                          });
                         }
                       },
                     );
@@ -160,5 +176,13 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_dataFetched) {
+      loadFollowingList();
+    }
+    return _dataFetched ? _buildProfileHeaderRightSide() : _buildLoading();
   }
 }

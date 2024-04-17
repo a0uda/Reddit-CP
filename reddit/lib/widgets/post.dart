@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Models/comments.dart';
-import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
@@ -14,9 +11,7 @@ import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
-import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
-import 'package:reddit/widgets/comments_widget.dart';
 
 //for merging
 class Post extends StatefulWidget {
@@ -70,22 +65,23 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  // bool isMyPost = postService.isMyPost(widget.postId!, username);
 
   void incrementCounter() {
     setState(() {
       if (upVote == false) {
-        postService.upVote(widget.id!);
+        postService.upVote(widget.id);
         upVoteColor = Colors.blue;
         downVoteColor = Colors.black;
         if (downVote == true) {
-          postService.upVote(widget.id!);
+          postService.upVote(widget.id);
           downVoteColor = Colors.black;
           widget.likes++;
           downVote = false;
         }
         widget.likes++;
       } else {
-        postService.downVote(widget.id!);
+        postService.downVote(widget.id);
         upVoteColor = Colors.black;
         widget.likes--;
       }
@@ -97,18 +93,18 @@ class PostState extends State<Post> {
   void decrementCounter() {
     setState(() {
       if (downVote == false) {
-        postService.downVote(widget.id!);
+        postService.downVote(widget.id);
         downVoteColor = Colors.red;
         upVoteColor = Colors.black;
         if (upVote == true) {
-          postService.downVote(widget.id!);
+          postService.downVote(widget.id);
           upVoteColor = Colors.black;
           widget.likes--;
           upVote = false;
         }
         widget.likes--;
       } else {
-        postService.upVote(widget.id!);
+        postService.upVote(widget.id);
         downVoteColor = Colors.black;
         widget.likes++;
       }
@@ -122,9 +118,11 @@ class PostState extends State<Post> {
   Widget build(BuildContext context) {
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
-    String username = userController.userAbout!.username;
-    var saved = postService.getSavePost(username);
-    issaved = saved.any((obj) => obj.id == widget.id);
+    if (userController.userAbout != null) {
+      String username = userController.userAbout!.username;
+      var saved = postService.getSavePost(username);
+      issaved = saved.any((obj) => obj.id == widget.id);
+    }
 
     String userType;
 
@@ -133,13 +131,13 @@ class PostState extends State<Post> {
       child: InkWell(
         onTap: () => {
           // open this post TODO
-           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CommentsDesktop(
-                                    postId: widget.id), // pass the post ID here
-                              ),
-                            ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  CommentsDesktop(postId: widget.id), // pass the post ID here
+            ),
+          ),
         },
         onHover: (value) {
           ishovering = value;
@@ -156,7 +154,7 @@ class PostState extends State<Post> {
               ListTile(
                 leading: CircleAvatar(
                   radius: 15,
-                  backgroundImage: AssetImage('images/reddit-logo.png'!),
+                  backgroundImage: AssetImage('images/reddit-logo.png'),
                 ),
                 title: Column(
                   children: [
@@ -266,11 +264,14 @@ class PostState extends State<Post> {
                         ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Options(
-                          postId: widget.id,
-                          saved: issaved,
-                          islocked: widget.isLocked,
-                        ),
+                        child: (userController.userAbout != null)
+                            ? Options(
+                                postId: widget.id,
+                                saved: issaved,
+                                islocked: widget.isLocked,
+                                isMyPost: true, //To be changed
+                              )
+                            : Container(),
                       ),
                     ],
                   ),
@@ -434,13 +435,14 @@ class PostState extends State<Post> {
                           ),
                           child: ElevatedButton.icon(
                             onPressed: () {
-                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CommentsDesktop(
-                                    postId: widget.id), // pass the post ID here
-                              ),
-                            );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CommentsDesktop(
+                                      postId:
+                                          widget.id), // pass the post ID here
+                                ),
+                              );
                             },
                             icon: Icon(Icons.messenger_outline,
                                 color: Theme.of(context).colorScheme.secondary),

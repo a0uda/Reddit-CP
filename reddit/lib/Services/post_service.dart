@@ -1,8 +1,6 @@
 //import 'package:media_kit/ffi/ffi.dart';
 import 'dart:convert';
 
-import 'package:get/get.dart';
-import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/save.dart';
@@ -18,7 +16,7 @@ import 'package:reddit/Models/report.dart';
 import 'package:http/http.dart' as http;
 
 int counter = 0;
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
 class PostService {
   Future<int> addPost(
@@ -67,7 +65,7 @@ class PostService {
           setSuggestedSort: "None",
         ),
       );
-        print(posts);
+      print(posts);
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -83,7 +81,7 @@ class PostService {
         body: json.encode({
           "title": title,
           "description": description,
-          "type": type,
+          "type": "text",
           "link_url": linkUrl,
           "images": images
               ?.map((image) => {
@@ -105,7 +103,7 @@ class PostService {
                 ]
               : [],
           "polls_voting_length": poll != null ? poll.votes.length : 0,
-          "community_name": communityName,
+          "community_name": "",
           "post_in_community_flag": postInCommunityFlag,
           "oc_flag": ocFlag,
           "spoiler_flag": spoilerFlag,
@@ -113,6 +111,38 @@ class PostService {
         }),
       );
       print(response.statusCode);
+
+      print(json.encode({
+        "title": title,
+        "description": description,
+        "type": type,
+        "link_url": linkUrl,
+        "images": images
+            ?.map((image) => {
+                  "path": image.path,
+                  "caption": image.caption ?? "",
+                  "link": image.link
+                })
+            .toList(),
+        "videos": videos
+            ?.map((video) => {
+                  "path": video.path,
+                  "caption": video.caption ?? "",
+                  "link": video.link
+                })
+            .toList(),
+        "polls": poll != null
+            ? [
+                {"options": poll.options}
+              ]
+            : [],
+        "polls_voting_length": poll != null ? poll.votes.length : 0,
+        "community_name": communityName,
+        "post_in_community_flag": postInCommunityFlag,
+        // "oc_flag": ocFlag,
+        // "spoiler_flag": spoilerFlag,
+        // "nsfw_flag": nsfwFlag
+      }));
       if (response.statusCode >= 400) {
         return 400;
       }
@@ -128,18 +158,46 @@ class PostService {
     }
   }
 
-  List<PostItem> getPosts(String username) {
+  Future<List<PostItem>> getPosts(String username, String sortingType) async {
     if (testing) {
       final userService = GetIt.instance.get<UserService>();
-      final List<FollowersFollowingItem>? following =
-          userService.getFollowers(username);
-      var usernames = following!.map((user) => user.username).toSet();
-      print(usernames);
+      final List<FollowersFollowingItem> following =
+          await userService.getFollowers(username);
+      var usernames = following.map((user) => user.username).toSet();
+      // print(usernames);
       var filteredPosts =
           posts.where((post) => usernames.contains(post.username)).toList();
       return filteredPosts;
     } else {
-      return posts;
+      var url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+      if (sortingType == "best") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/best');
+      } else if (sortingType == "hot") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/hot');
+      } else if (sortingType == "new") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/new');
+      } else if (sortingType == "top") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/top');
+      } else if (sortingType == "random") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/random');
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+      // print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+        return PostItem.fromJson(jsonitem);
+      }).toList();
+
+      return postsItem;
     }
   }
 
@@ -151,32 +209,34 @@ class PostService {
     }
   }
 
-  List<PostItem> getMyPosts(String username)  {
+  Future<List<PostItem>> getMyPosts(String username) async {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-//       final url = Uri.parse('https://redditech.me/backend/users/posts/$username');
+      print(username);
+      final url =
+          Uri.parse('https://redditech.me/backend/users/posts/$username');
 
-//      SharedPreferences prefs = await SharedPreferences.getInstance();
-//       String? token = prefs.getString('token');
-//   final response = await http.get(
-//         url,
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': token.toString()
-//         },
-//   );
-//       print(json.decode(response.body)['posts']);
-//       final List<dynamic> jsonlist=json.decode(response.body)['posts'];
-//       final List<PostItem> postsItem=jsonlist.map((jsonitem){
-// return PostItem.fromJson(jsonitem);
-//       }).toList();
- 
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+      print(json.decode(response.body)['posts']);
+      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+        return PostItem.fromJson(jsonitem);
+      }).toList();
 
-      // return postsItem;
-      return posts;
+      print(postsItem);
+      return postsItem;
+      //return posts;
     }
   }
 
@@ -253,7 +313,7 @@ class PostService {
     if (testing) {
       var filteredids =
           savedPosts.where((post) => post.username == username).toList();
-      var ids = filteredids!.map((user) => user.id).toSet();
+      var ids = filteredids.map((user) => user.id).toSet();
       print(ids);
       var filteredPosts = posts.where((post) => ids.contains(post.id)).toList();
       return filteredPosts;
@@ -282,21 +342,49 @@ class PostService {
     }
   }
 
-  PostItem? getPostById(String postId) {
+  Future<PostItem?> getPostById(String postId) async {
     if (testing) {
       return posts.firstWhere((element) => element.id == postId);
     } else {
-      return null;
-      //
+      final url =
+          Uri.parse('https://redditech.me/backend/posts/get-post?id=$postId');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      );
+      print('post');
+      print(response.body);
+      print(json.decode(response.body)['post']);
+
+      if (response.statusCode == 200) {
+        return PostItem.fromJson(json.decode(response.body)['post']);
+      } else {
+        throw Exception('Failed to load post');
+      }
     }
   }
 
-  void lockUnlockPost(String id) {
+  Future<void> lockUnlockPost(String id) async {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
       post.lockedFlag = !post.lockedFlag;
     } else {
       // lock/unlock post in database
+      final url = Uri.parse(
+          'https://redditech.me/backend/posts-or-comments/lock-unlock');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.patch(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+        body: json.encode({"is_post": true, "id": id}),
+      );
+      print('lock');
+      print(response.statusCode);
     }
   }
 
@@ -305,10 +393,13 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == postId);
       return post.username == username;
     } else {
+      // final post = await getPostById(postId);
+      // return post!.username == username;
       return false;
     }
   }
 }
+
 
 // '''
 // New_Post:

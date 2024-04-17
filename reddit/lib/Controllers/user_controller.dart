@@ -3,10 +3,12 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/test_files/test_users.dart';
 
 class UserController {
   final userService = GetIt.instance.get<UserService>();
@@ -15,14 +17,14 @@ class UserController {
   List<BlockedUsersItem>? blockedUsers;
   AccountSettings? accountSettings;
 
-  void getUser(String username) async {
+  Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    blockedUsers = userService.getBlockedUsers(username);
+    blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
   }
 
-  Future<UserAbout>? getUserAbout(String username) {
-    return userService.getUserAbout(username);
+  Future<void>? getUserAbout(String username) async {
+    userAbout = await userService.getUserAbout(username);
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
@@ -39,18 +41,18 @@ class UserController {
         username, currentPassword, newPassword, verifiedNewPassword);
   }
 
-  void blockUser(UserAbout userData, String username) {
-    userService.blockUser(userData.username, username);
-    blockedUsers = userService.getBlockedUsers(userData.username);
+  Future<void> blockUser(UserAbout userData, String username) async {
+    await userService.blockUser(userData.username, username);
+    blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
-  void unblockUser(UserAbout userData, String username) {
-    userService.unblockUser(userData.username, username);
-    blockedUsers = userService.getBlockedUsers(userData.username);
+  Future<void> unblockUser(UserAbout userData, String username) async {
+    await userService.unblockUser(userData.username, username);
+    blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
-  void changeGender(String username, String gender) {
-    userService.changeGender(username, gender);
+  Future<bool> changeGender(String username, String gender) {
+    return userService.changeGender(username, gender);
   }
 
   void changeCountry(String username, String country) {
@@ -77,34 +79,58 @@ class UserController {
 class SocialLinksController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
   final UserController userController = GetIt.instance.get<UserController>();
-  List<SocialLlinkItem>? socialLinks;
+  List<SocialLlinkItem>? socialLinks = [];
+  bool testing = const bool.fromEnvironment('testing');
 
-  void getSocialLinks(String username) async {
-    socialLinks = (await (userService.getUserAbout(username)))!.socialLinks;
-    notifyListeners();
+  Future<void> getSocialLinks(String username) async {
+    if (testing == false) {
+      //todo: to be changed wen databse function is implemented
+      socialLinks = users
+          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
+          .userAbout
+          .socialLinks;
+    } else {
+      socialLinks = (await (userService.getUserAbout(username)))!.socialLinks;
+    }
   }
 
-  void removeSocialLink(String username, SocialLlinkItem socialLink) {
-    userService.deleteSocialLink(username, socialLink.id);
-    userController.getUser(username);
-    socialLinks!.remove(socialLink);
-    notifyListeners();
+  Future<void> removeSocialLink(
+      String username, SocialLlinkItem socialLink) async {
+    if (testing == false) {
+      await userService.deleteSocialLink('Purple-7544', socialLink.id);
+      socialLinks!.remove(socialLink);
+      notifyListeners();
+    } else {
+      await userService.deleteSocialLink(username, socialLink.id);
+      socialLinks!.remove(socialLink);
+      notifyListeners();
+    }
   }
 
-  void addSocialLink(
-      String username, String displayName, String type, String link) {
-    userService.addSocialLink(username, displayName, type, link);
-    userController.getUser(username);
-    socialLinks = userController.userAbout!.socialLinks;
-    notifyListeners();
+  Future<void> addSocialLink(
+      String username, String displayName, String type, String link) async {
+    if (testing == false) {
+      await userService.addSocialLink('Purple-7544', displayName, type, link);
+      await getSocialLinks(username);
+      notifyListeners();
+    } else {
+      await userService.addSocialLink(username, displayName, type, link);
+      await getSocialLinks(username);
+      notifyListeners();
+    }
   }
 
-  void editSocialLink(
-      String username, String id, String displayName, String link) {
-    userService.editSocialLink(username, id, displayName, link);
-    userController.getUser(username);
-    socialLinks = userController.userAbout!.socialLinks;
-    notifyListeners();
+  Future<void> editSocialLink(
+      String username, String id, String displayName, String link) async {
+    if (testing == false) {
+      await userService.editSocialLink('Purple-7544', id, displayName, link);
+      await getSocialLinks(username);
+      notifyListeners();
+    } else {
+      await userService.editSocialLink(username, id, displayName, link);
+      await getSocialLinks(username);
+      notifyListeners();
+    }
   }
 }
 
@@ -112,16 +138,16 @@ class BannerPictureController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  void changeBannerPicture(String bannerPicture) {
-    userService.addBannerPicture(
+  Future<void> changeBannerPicture(String bannerPicture) async {
+    await userService.addBannerPicture(
         userController.userAbout!.username, bannerPicture);
-    userController.getUser(userController.userAbout!.username);
+    await userController.getUserAbout(userController.userAbout!.username);
     notifyListeners();
   }
 
-  void removeBannerPicture() {
-    userService.removeBannerPicture(userController.userAbout!.username);
-    userController.getUser(userController.userAbout!.username);
+  Future<void> removeBannerPicture() async {
+    await userService.removeBannerPicture(userController.userAbout!.username);
+    await userController.getUserAbout(userController.userAbout!.username);
     notifyListeners();
   }
 }
@@ -130,16 +156,16 @@ class ProfilePictureController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  void changeProfilePicture(String profilePicture) {
-    userService.addProfilePicture(
+  Future<void> changeProfilePicture(String profilePicture) async {
+    await userService.addProfilePicture(
         userController.userAbout!.username, profilePicture);
-    userController.getUser(userController.userAbout!.username);
+    await userController.getUserAbout(userController.userAbout!.username);
     notifyListeners();
   }
 
-  void removeProfilePicture() {
-    userService.removeProfilePicture(userController.userAbout!.username);
-    userController.getUser(userController.userAbout!.username);
+  Future<void> removeProfilePicture() async {
+    await userService.removeProfilePicture(userController.userAbout!.username);
+    await userController.getUserAbout(userController.userAbout!.username);
     notifyListeners();
   }
 }
@@ -148,13 +174,22 @@ class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  followUser(String username) {
-    userService.followUser(username, userController.userAbout!.username);
+  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
+    return userService.getFollowers(username);
+  }
+
+  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
+    return userService.getFollowing(username);
+  }
+
+  Future<void> followUser(String username) async {
+    await userService.followUser(username, userController.userAbout!.username);
     notifyListeners();
   }
 
-  void unfollowUser(String username) {
-    userService.unfollowUser(username, userController.userAbout!.username);
+  Future<void> unfollowUser(String username) async {
+    await userService.unfollowUser(
+        username, userController.userAbout!.username);
     notifyListeners();
   }
 }
@@ -164,12 +199,17 @@ class EditProfileController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
   ProfileSettings? profileSettings;
 
-  void getProfileSettings(String username) {
-    profileSettings = userService.getProfileSettings(username);
+  Future<void> getProfileSettings(String username) async {
+    profileSettings = await userService.getProfileSettings(username);
   }
 
-  void editProfile(String displayName, String about, bool? nsfw,
-      bool? allowFollowers, bool contentVisibility, bool activeCommunity) {
+  Future<void> editProfile(
+      String displayName,
+      String about,
+      bool? nsfw,
+      bool? allowFollowers,
+      bool contentVisibility,
+      bool activeCommunity) async {
     userService.updateProfileSettings(
         userController.userAbout!.username,
         displayName,
@@ -178,9 +218,7 @@ class EditProfileController extends ChangeNotifier {
         allowFollowers,
         contentVisibility,
         activeCommunity);
-    userController.getUser(userController.userAbout!.username);
-    profileSettings =
-        userService.getProfileSettings(userController.userAbout!.username);
+    await userController.getUserAbout(userController.userAbout!.username);
     notifyListeners();
   }
 }
@@ -192,5 +230,18 @@ class SaveComment extends ChangeNotifier {
   void unsaveComment(String username, String commentId) {
     userService.unsaveComment(username, commentId);
     notifyListeners();
+  }
+}
+
+class ChangeEmail extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<bool> changeEmail(
+      String username, String email, String password) async {
+    Future<bool> result = userService.changeEmail(username, email, password);
+    userController.getUserAbout(username);
+    notifyListeners();
+    return result;
   }
 }

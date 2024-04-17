@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:reddit/Models/profile_settings.dart';
 
 import 'package:reddit/widgets/listing.dart';
 
@@ -11,6 +13,7 @@ import 'package:reddit/Services/user_service.dart';
 
 class TabBarPosts extends StatefulWidget {
   final UserAbout? userData;
+
   const TabBarPosts({super.key, this.userData});
 
   @override
@@ -27,13 +30,10 @@ class TabBarPostsState extends State<TabBarPosts> {
   void initState() {
     super.initState();
     userData = widget.userData;
-    print(userData?.username);
-    activeCommunities = userService.getActiveCommunities(userData!.username);
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Consumer<EditProfileController>(
         builder: (context, editProfileController, child) {
       editProfileController.getProfileSettings(userData!.username);

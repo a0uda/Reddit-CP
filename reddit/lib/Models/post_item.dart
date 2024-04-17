@@ -17,7 +17,7 @@ class PostItem {
   final List<ImageItem>? images;
   final List<VideoItem>? videos;
   PollItem? poll;
-  final String communityId;
+  final String? communityId;
   final String communityName;
   int commentsCount;
   final int viewsCount;
@@ -29,7 +29,7 @@ class PostItem {
   final bool nsfwFlag;
   bool lockedFlag;
   bool allowrepliesFlag;
-  final String setSuggestedSort;
+  final String? setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;
 
@@ -47,7 +47,7 @@ class PostItem {
     this.images,
     this.videos,
     this.poll,
-    required this.communityId,
+    this.communityId,
     required this.communityName,
     required this.commentsCount,
     required this.viewsCount,
@@ -59,22 +59,24 @@ class PostItem {
     required this.nsfwFlag,
     required this.lockedFlag,
     required this.allowrepliesFlag,
-    required this.setSuggestedSort,
+    this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
     return PostItem(
-      ///todo
+
+        ///todo
         id: json['_id'],
         userId: json['user_id'],
+        description: json['descrption'],
         username: 'ahmed',
         title: json['title'],
-        createdAt: json['created_at'],
-        type: json['text'],
+        createdAt: DateTime.parse(json['created_at']),
+        type: json['type'],
         communityId: json['community_id'],
-        communityName: 'ahmed',
+        communityName: json['community_name'],
         commentsCount: json['comments_count'],
         viewsCount: json['views_count'],
         sharesCount: json['shares_count'],

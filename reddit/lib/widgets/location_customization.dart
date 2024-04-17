@@ -38,7 +38,7 @@ class _LocationCustomizationState extends State<LocationCustomization> {
 
   @override
   Widget build(BuildContext context) {
-    String selectedLocation = userController.userAbout!.country!;
+    String selectedLocation = userController.userAbout?.country ?? '';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Location'),

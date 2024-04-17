@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Community/community_description.dart';
@@ -66,6 +65,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         videoSelected = false;
         pollSelected = false;
+        type = 'image';
       });
 
       //TODO: FIREBASE
@@ -85,6 +85,7 @@ class _CreatePostState extends State<CreatePost> {
       showLinkField = false;
       imageSelected = false;
       videoSelected = false;
+      type = 'poll';
     });
   }
 
@@ -109,6 +110,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         imageSelected = false;
         pollSelected = false;
+        type = 'video';
       });
 
       _videoPlayerController = VideoPlayerController.file(File(_video!.path))
@@ -125,9 +127,10 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
-
+  String type = 'type';
   String selectedCommunity = "Select Community";
   String communityDescription = "Select Community";
+
   var communityRules;
   int selectedDays = 3;
   @override
@@ -192,7 +195,7 @@ class _CreatePostState extends State<CreatePost> {
                               userController.userAbout!.username,
                               titleController.text,
                               bodyController.text,
-                              'type',
+                              type,
                               showLinkField ? URLController.text : null,
                               imageSelected
                                   ? [
@@ -215,12 +218,15 @@ class _CreatePostState extends State<CreatePost> {
                                       option2Votes: [],
                                     )
                                   : null,
-                              selectedCommunity,
+                              selectedCommunity == "Select Community"
+                                  ? ''
+                                  : selectedCommunity,
                               selectedCommunity,
                               false,
                               _selections[1],
                               _selections[0],
                               !(selectedCommunity == "Select Community")),
+                          print(_selections),
                           if (await response == 400)
                             {
                               showDialog(
@@ -312,7 +318,7 @@ class _CreatePostState extends State<CreatePost> {
                               );
                               setState(() {
                                 if (result != null) selectedCommunity = result;
-                                print(selectedCommunity);
+                                // print(selectedCommunity);
                               });
                             },
                             icon: Icon(
@@ -564,6 +570,7 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () {
                         setState(() {
                           showLinkField = true;
+                          type = 'link';
                           if (imageSelected) {
                             setState(() => imageSelected = false);
                           }

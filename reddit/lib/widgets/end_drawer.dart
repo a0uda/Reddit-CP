@@ -71,7 +71,7 @@ class EndDrawerReddit extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        Saved()),
+                        const Saved()),
               );
               
             },

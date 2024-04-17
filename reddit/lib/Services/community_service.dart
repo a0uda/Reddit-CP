@@ -4,7 +4,7 @@ import 'package:reddit/widgets/post.dart';
 import '../test_files/test_communities.dart';
 
 class CommunityService {
-bool testing = true;
+bool testing = const bool.fromEnvironment('testing');
 
   CommunityItem? getCommunityData(String communityName) {
     for (var community in communities) {

@@ -10,7 +10,8 @@ void main() {
   setUp(() {
     GetIt.instance.registerLazySingleton<PostService>(() => PostService());
     GetIt.instance.registerLazySingleton<UserService>(() => UserService());
-    GetIt.instance.registerLazySingleton<UserController>(() => UserController());
+    GetIt.instance
+        .registerLazySingleton<UserController>(() => UserController());
   });
   tearDown(() {
     GetIt.instance.unregister<PostService>();

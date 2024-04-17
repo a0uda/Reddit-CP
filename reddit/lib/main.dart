@@ -68,9 +68,12 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => LockPost(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ChangeEmail(),
       )
     ],
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -91,7 +94,7 @@ class MyApp extends StatelessWidget {
           primaryColor: Colors.green,
           colorScheme: ColorScheme.fromSeed(
               seedColor: const Color.fromARGB(255, 82, 78, 78),
-              primary: Color.fromARGB(255, 224, 223, 223),
+              primary: const Color.fromARGB(255, 224, 223, 223),
               secondary: const Color.fromARGB(255, 0, 0, 0),
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',

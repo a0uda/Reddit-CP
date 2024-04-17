@@ -10,10 +10,12 @@ class Options extends StatefulWidget {
   final String? postId;
   final bool saved;
   bool islocked;
+  final bool isMyPost;
   Options({
     required this.postId,
     required this.saved,
     required this.islocked,
+    required this.isMyPost,
     super.key,
   });
 
@@ -213,7 +215,8 @@ class Postoptions extends State<Options> {
                                     title: const Text("Unsave"),
                                     onTap: () => {
                                       //todo
-                                                         postController.unSavePost(widget.postId, username),
+                                      postController.unSavePost(
+                                          widget.postId, username),
 
                                       Navigator.of(context).pop(),
                                     },

@@ -16,34 +16,36 @@ class ProfileHeader extends StatelessWidget {
     return Consumer<BannerPictureController>(
         builder: (context, bannerpicturecontroller, child) {
       return Container(
-        decoration: userData.bannerPicture != null
-            ? (File(userData.bannerPicture!).existsSync())
-                ? BoxDecoration(
-                    image: DecorationImage(
-                    image: FileImage(File(userData.bannerPicture!)),
-                    fit: BoxFit.cover,
-                  ))
-                : BoxDecoration(
-                    image: DecorationImage(
-                    image: () {
-                      try {
-                        return AssetImage(userData.bannerPicture!);
-                      } catch (e) {
-                        return const AssetImage('images/Greddit.png');
-                      }
-                    }(),
-                    fit: BoxFit.cover,
-                  ))
-            : const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black,
-                    Color.fromARGB(255, 28, 83, 165),
-                  ],
-                ),
-              ),
+        width: MediaQuery.of(context).size.width,
+        decoration:
+            userData.bannerPicture != null && userData.bannerPicture!.isNotEmpty
+                ? (File(userData.bannerPicture!).existsSync())
+                    ? BoxDecoration(
+                        image: DecorationImage(
+                        image: FileImage(File(userData.bannerPicture!)),
+                        fit: BoxFit.cover,
+                      ))
+                    : BoxDecoration(
+                        image: DecorationImage(
+                        image: () {
+                          try {
+                            return AssetImage(userData.bannerPicture!);
+                          } catch (e) {
+                            return const AssetImage('images/Greddit.png');
+                          }
+                        }(),
+                        fit: BoxFit.cover,
+                      ))
+                : const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black,
+                        Color.fromARGB(255, 28, 83, 165),
+                      ],
+                    ),
+                  ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,

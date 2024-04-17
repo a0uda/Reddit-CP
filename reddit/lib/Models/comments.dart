@@ -18,6 +18,8 @@ class Comments {
   bool? lockedFlag;
   bool? showCommentFlag;
   ModeratorDetails? moderatorDetails;
+  bool? spoilerFlag;
+  bool? commentInCommunityFlag;
 
   Comments({
     this.id,
@@ -39,7 +41,46 @@ class Comments {
     this.lockedFlag,
     this.showCommentFlag,
     this.moderatorDetails,
+    this.spoilerFlag,
+    this.commentInCommunityFlag,
   });
+
+  factory Comments.fromJson(Map<String, dynamic> json) {
+    return Comments(
+      id: json['_id'],
+      postId: json['post_id'],
+      userId: json['user_id'],
+      username: json['username'],
+      parentId: json['parent_id'],
+      repliesCommentsIds: (json['replies_comments_ids'] as List<dynamic>)
+          .map((item) => item.toString())
+          .toList(),
+      createdAt: json['created_at'].substring(0, 10),
+      editedAt: json['edited_at'],
+      deletedAt: json['deleted_at'],
+      description: json['description'],
+      upvotesCount: json['upvotes_count'],
+      downvotesCount: json['downvotes_count'],
+      allowrepliesFlag: json['allowreplies_flag'],
+      spamFlag: json['spam_flag'],
+      lockedFlag: json['locked_flag'],
+      showCommentFlag: json['show_comment_flag'],
+      spoilerFlag: json['spoiler_flag'],
+      commentInCommunityFlag: json['comment_in_community_flag'],
+      moderatorDetails: json['moderator_details'] != null
+          ? ModeratorDetails(
+              approvedBy: json['moderator_details']['approved_by'],
+              approvedDate: json['moderator_details']['approved_date'],
+              removedBy: json['moderator_details']['removed_by'],
+              removedDate: json['moderator_details']['removed_date'],
+              spammedBy: json['moderator_details']['spammed_by'],
+              spammedType: json['moderator_details']['spammed_type'],
+              removedFlag: json['moderator_details']['removed_flag'],
+              spammedFlag: json['moderator_details']['spammed_flag'],
+            )
+          : null,
+    );
+  }
 }
 
 class ModeratorDetails {
@@ -49,6 +90,9 @@ class ModeratorDetails {
   String? removedDate;
   String? spammedBy;
   String? spammedType;
+  bool? removedFlag;
+  bool? spammedFlag;
+  bool? approvedFlag;
 
   ModeratorDetails({
     this.approvedBy,
@@ -57,5 +101,8 @@ class ModeratorDetails {
     this.removedDate,
     this.spammedBy,
     this.spammedType,
+    this.removedFlag,
+    this.spammedFlag,
+    this.approvedFlag,
   });
 }
