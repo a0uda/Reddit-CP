@@ -45,7 +45,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            userController.userAbout!.username!,
+                            userController.userAbout!.username,
                             style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -170,7 +170,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       if (_formKey.currentState!.validate()) {
                         try {
                           bool changed = await userController.changePassword(
-                            userController.userAbout!.username!,
+                            userController.userAbout!.username,
                             _passwordController.text,
                             _newPasswordController.text,
                             _confirmNewPasswordController.text,

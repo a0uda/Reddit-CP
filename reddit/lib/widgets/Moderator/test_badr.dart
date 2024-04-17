@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/post_mod_queue.dart';
 

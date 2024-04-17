@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/Models/profile_settings.dart';
 
 import 'package:reddit/widgets/listing.dart';
 

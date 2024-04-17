@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/forgot_password.dart';
 
@@ -18,6 +19,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
+    var changeEmail = context.read<ChangeEmail>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Update Email'),
@@ -168,11 +170,10 @@ class _UpdateEmailState extends State<UpdateEmail> {
                           );
                         } else {
                           try {
-                            bool changed = await userController.changeEmail(
-                              userController.userAbout!.username,
-                              _emailController.text,
-                              _passwordController.text,
-                            );
+                            final changed = await changeEmail.changeEmail(
+                                userController.userAbout!.username,
+                                _emailController.text,
+                                _passwordController.text);
                             if (changed) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Email updated')),

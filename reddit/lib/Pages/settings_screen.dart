@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_settings_screen_ex/flutter_settings_screen_ex.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/widgets/country_tile.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
@@ -41,11 +42,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontSize: 12.0,
                   color: Colors.grey[700]),
               children: <Widget>[
-                buildUpdateEmail(userController.userAbout!.email!, context),
+                Consumer<ChangeEmail>(
+                  builder: (context, changeEmail, child) {
+                    return buildUpdateEmail(
+                        userController.userAbout!.email!, context);
+                  },
+                ),
                 buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
                 const GenderTile(),
-                CountryTile(),
+                const CountryTile(),
               ],
             ),
             SettingsGroup(

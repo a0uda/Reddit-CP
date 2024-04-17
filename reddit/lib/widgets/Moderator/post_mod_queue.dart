@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
-import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:reddit/widgets/Moderator/test_badr.dart';
 
 // ignore: must_be_immutable

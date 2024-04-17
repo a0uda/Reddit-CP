@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:reddit/Models/image_item.dart';
 class TrendingItem {
   String title;

@@ -783,6 +783,8 @@ class UserService {
         'new_email': newEmail,
         'password': password,
       }));
+
+      print("in change email");
       print(response.statusCode);
       return response.statusCode == 200 ? true : false;
     }
@@ -803,7 +805,7 @@ class UserService {
         url,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": token!,
         },
         body: jsonEncode({
           'current_password': currentPassword,
@@ -811,6 +813,8 @@ class UserService {
           'verified_new_password': verifiedNewPassword,
         }),
       );
+      print(token);
+      print(response.statusCode);
       print(
         jsonEncode({
           'current_password': currentPassword,

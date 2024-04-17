@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:reddit/widgets/Moderator/banned_user.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_modderator.dart';
-import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/moderators_list.dart';
 
 List<Map<String, String>> moderatorsList = [
