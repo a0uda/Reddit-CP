@@ -31,7 +31,7 @@ class Postoptions extends State<Options> {
   Widget build(BuildContext context) {
     var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
-    bool isMyPost = widget.isMyPost;
+    bool isMyPost = postService.isMyPost(widget.postId!, username);
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
