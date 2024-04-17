@@ -203,10 +203,54 @@ class ModeratorMockService {
         (community) => community.general.communityName == communityName);
     return {
       "postTypes": foundCommunity.postTypes,
-      "allowImages":
-          foundCommunity.allow_image_uploads_and_links_to_image_hosting_sites,
+      "allowImages": foundCommunity.allowImage,
       "allowPolls": foundCommunity.allowPolls,
       "allowVideo": foundCommunity.allowVideos,
     };
   }
+}
+
+void postGeneralSettings(
+    {required GeneralSettings settings, required String communityName}) {
+  communities
+      .firstWhere(
+          (community) => community.general.communityName == communityName)
+      .general
+      .updateAllGeneralSettings(
+          communityID: settings.communityID,
+          communityName: settings.communityName,
+          communityDescription: settings.communityDescription,
+          communityType: settings.communityType,
+          nsfwFlag: settings.nsfwFlag);
+}
+
+void setPostTypeAndOptions({
+  required bool allowImages,
+  required bool allowVideos,
+  required bool allowPolls,
+  required String communityName,
+  required String postTypes,
+}) {
+  var community = communities.firstWhere(
+    (community) => community.general.communityName == communityName,
+  );
+  community.updatePostTypes(
+    communityName: communityName,
+    postTypes: postTypes,
+  );
+
+  community.updateAllowImage(
+    communityName: communityName,
+    allowImage: allowImages,
+  );
+
+  community.updateAllowPools(
+    communityName: communityName,
+    allowPolls: allowPolls,
+  );
+
+  community.updateAllowVideo(
+    communityName: communityName,
+    allowVideos: allowVideos,
+  );
 }

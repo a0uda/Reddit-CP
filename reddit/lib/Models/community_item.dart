@@ -14,7 +14,7 @@ class CommunityItem {
     required this.postTypes,
     required this.allowPolls,
     required this.allowVideos,
-    required this.allow_image_uploads_and_links_to_image_hosting_sites,
+    required this.allowImage,
     this.communityCoverPicturePath,
   });
 
@@ -28,23 +28,56 @@ class CommunityItem {
   final List<Map<String, dynamic>> mutedUsers;
   final List<Map<String, dynamic>> moderators;
   final List<Map<String, dynamic>> editableModerators;
-  final String postTypes;
-  final bool allow_image_uploads_and_links_to_image_hosting_sites;
-  final bool allowPolls;
-  final bool allowVideos;
+  String postTypes;
+  bool allowImage;
+  bool allowPolls;
+  bool allowVideos;
+
+  void updatePostTypes(
+      {required String communityName, required String postTypes}) {
+    this.postTypes = postTypes;
+  }
+
+  void updateAllowImage(
+      {required String communityName, required bool allowImage}) {
+    this.allowImage = allowImage;
+  }
+
+  void updateAllowPools(
+      {required String communityName, required bool allowPolls}) {
+    this.allowPolls = allowPolls;
+  }
+
+  void updateAllowVideo(
+      {required String communityName, required bool allowVideos}) {
+    this.allowVideos = allowVideos;
+  }
 }
 
 class GeneralSettings {
-  const GeneralSettings(
+  GeneralSettings(
       {required this.communityID,
       required this.communityName,
       required this.communityDescription,
       required this.communityType,
       required this.nsfwFlag});
 
-  final String communityID;
-  final String communityName;
-  final String communityDescription;
-  final String communityType;
-  final bool nsfwFlag;
+  String communityID;
+  String communityName;
+  String communityDescription;
+  String communityType;
+  bool nsfwFlag;
+
+  void updateAllGeneralSettings(
+      {required String communityID,
+      required String communityName,
+      required String communityDescription,
+      required String communityType,
+      required bool nsfwFlag}) {
+    this.communityID = communityID;
+    this.communityName = communityName;
+    this.communityDescription = communityDescription;
+    this.communityType = communityType;
+    this.nsfwFlag = nsfwFlag;
+  }
 }
