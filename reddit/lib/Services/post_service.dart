@@ -388,13 +388,14 @@ class PostService {
     }
   }
 
-  Future<bool> isMyPost(String postId, String username) async {
+  bool isMyPost(String postId, String username) {
     if (testing) {
       final post = posts.firstWhere((element) => element.id == postId);
       return post.username == username;
     } else {
-      final post = await getPostById(postId);
-      return post!.username == username;
+      // final post = await getPostById(postId);
+      // return post!.username == username;
+      return false;
     }
   }
 }
