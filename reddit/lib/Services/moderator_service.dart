@@ -22,7 +22,7 @@ class ModeratorMockService {
       required String communityName,
       required String ruleTitle,
       required String appliesTo,
-      required String reportReason,
+      String? reportReason,
       String? ruleDescription}) {
     communities
         .firstWhere(
@@ -33,7 +33,7 @@ class ModeratorMockService {
             id: id,
             ruleTitle: ruleTitle,
             appliesTo: appliesTo,
-            reportReason: reportReason,
+            reportReason: reportReason ?? "",
             ruleDescription: ruleDescription ?? "",
           ),
         );
@@ -88,6 +88,14 @@ class ModeratorMockService {
         "_id": "6618844ad57c873637b5cf2"
       },
     );
+  }
+
+  void removeApprovedUsers(String username, String communityName) {
+    communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .approvedUsers
+        .removeWhere((user) => user["username"] == username);
   }
 
   List<Map<String, dynamic>> getBannedUsers(String communityName) {

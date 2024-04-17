@@ -215,10 +215,11 @@ class _CommunityPageState extends State<CommunityPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const ModResponsive(
-                                        mobileLayout: MobileModTools(),
+                                      builder: (context) => ModResponsive(
+                                        mobileLayout: MobileModTools(communityName: widget.communityName,),
                                         desktopLayout: DesktopModTools(
                                           index: 0,
+                                          communityName: widget.communityName,
                                         ),
                                       ),
                                     ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_list.dart';
 import 'package:reddit/widgets/Moderator/mod_tools_ui.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
@@ -8,19 +10,24 @@ import 'package:reddit/widgets/responsive_layout.dart';
 
 class DesktopModTools extends StatefulWidget {
   final int index;
-  const DesktopModTools({super.key, required this.index});
+  final String communityName;
+  const DesktopModTools(
+      {super.key, required this.index, required this.communityName});
 
   @override
   State<DesktopModTools> createState() => _DesktopModToolsState();
 }
 
 class _DesktopModToolsState extends State<DesktopModTools> {
-  late int modToolIndex ;
+  late int modToolIndex;
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   @override
   void initState() {
     super.initState();
     modToolIndex = widget.index;
+    moderatorController.getCommunity(widget.communityName);
   }
 
   void changePage(selected) {
