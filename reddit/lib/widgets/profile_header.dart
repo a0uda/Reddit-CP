@@ -16,6 +16,7 @@ class ProfileHeader extends StatelessWidget {
     return Consumer<BannerPictureController>(
         builder: (context, bannerpicturecontroller, child) {
       return Container(
+        width: MediaQuery.of(context).size.width,
         decoration:
             userData.bannerPicture != null && userData.bannerPicture!.isNotEmpty
                 ? (File(userData.bannerPicture!).existsSync())
