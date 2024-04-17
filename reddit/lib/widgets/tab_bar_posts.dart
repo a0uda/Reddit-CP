@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:reddit/Models/profile_settings.dart';
 
 import 'package:reddit/widgets/listing.dart';
@@ -12,6 +13,7 @@ import 'package:reddit/Services/user_service.dart';
 
 class TabBarPosts extends StatefulWidget {
   final UserAbout? userData;
+  
   const TabBarPosts({super.key, this.userData});
 
   @override
@@ -23,11 +25,13 @@ class TabBarPostsState extends State<TabBarPosts> {
   bool? showActiveCommunities;
   List<CommunityItem>? activeCommunities = [];
   UserAbout? userData;
+  
 
   @override
   void initState() {
     super.initState();
     userData = widget.userData;
+    
   }
 
   @override
@@ -212,8 +216,8 @@ class TabBarPostsState extends State<TabBarPosts> {
                       ],
                     ),
                   ),
-                  const SliverFillRemaining(
-                    child: Listing(type: "profile"),
+                   SliverFillRemaining(
+                    child: Listing(type: "profile",userData:userData ,),
                   ),
                 ],
               );

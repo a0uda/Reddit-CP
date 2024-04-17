@@ -8,16 +8,16 @@ import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/Rising_Listing.dart';
 import 'package:reddit/widgets/new_listing.dart';
 import 'package:reddit/widgets/trending_card.dart';
-
+import 'package:reddit/Models/user_about.dart';
 import '../Models/trending_item.dart';
 
 class Listing extends StatefulWidget {
   final String type;
   final int? comId;
-    final String? username;
+  final UserAbout? userData;
 
   const Listing({super.key, required this.type,
-  this.comId,this.username});
+  this.comId, this.userData});
   @override
   State<Listing> createState() => _Listing();
 }
@@ -99,30 +99,35 @@ class _Listing extends State<Listing> {
             Expanded(
               child: HotListing(
                 type: widget.type,
+                userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "Best")
             Expanded(
               child: BestListing(
                 type: widget.type,
+                    userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "New")
             Expanded(
               child: NewListing(
                 type: widget.type,
+                    userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "Top")
             Expanded(
               child: TopListing(
                 type: widget.type,
+                userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "Random")
             Expanded(
               child: RisingListing(
                 type: widget.type,
+                 userData: widget.userData,
               ),
             ),
         ],

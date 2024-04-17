@@ -9,13 +9,15 @@ import '../Controllers/user_controller.dart';
 import 'package:reddit/widgets/blur_content.dart';
 
 import 'package:reddit/Models/post_item.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/post_service.dart';
 
 final userController = GetIt.instance.get<UserController>();
 
 class HotListing extends StatefulWidget {
   final String type;
-  const HotListing({super.key, required this.type});
+  final UserAbout? userData;
+  const HotListing({super.key, required this.type, this.userData});
   @override
   State<HotListing> createState() => HotListingBuild();
 }
@@ -23,29 +25,41 @@ class HotListing extends StatefulWidget {
 class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
-  @override
   List<PostItem> posts = [];
-
-  void initState() {
-    super.initState();
-    controller = ScrollController()..addListener(HandleScrolling);
-    // fetchdata();
-  }
-
+   late Future<void> _dataFuture;
   Future<void> fetchdata() async {
-    String username = userController.userAbout!.username;
-    print(username);
     final postService = GetIt.instance.get<PostService>();
+    List<PostItem> post = [];
     if (widget.type == "home") {
-      posts = await postService.getPosts(username,"hot");
+      if (userController.userAbout != null) {
+        String user = userController.userAbout!.username;
+
+        post = await postService.getPosts(user, "hot");
+      } else {
+        posts = postService.fetchPosts();
+      }
     } else if (widget.type == "popular") {
       posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
+      final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
       print(username);
     }
+  // Remove objects from list1 if their IDs match any in list2
+  post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
+   
+   
+    setState(() {
+      posts.addAll(post);
+    });
+   
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = fetchdata(); // Replace with your actual data fetching logic
+  }
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
@@ -59,28 +73,30 @@ class HotListingBuild extends State<HotListing> {
     }
   }
 
+ 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LockPost>(
-      builder: (context, lockPost, child) {
-        return FutureBuilder<void>(
-          future: fetchdata(),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                color: Colors.white,
-                child: const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text(
-                  'Error: ${snapshot.error}');
-            } else {
+    return FutureBuilder<void>(
+      future: _dataFuture,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            color: Colors.white,
+            child: const SizedBox(
+              height: 20,
+              width: 20,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text(
+              'Error: ${snapshot.error}'); // Display error message if any
+        } else {
+          return Consumer<LockPost>(
+            builder: (context, lockPost, child) {
+              fetchdata();
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
@@ -126,9 +142,9 @@ class HotListingBuild extends State<HotListing> {
                   );
                 },
               );
-            }
-          },
-        );
+            },
+          );
+        }
       },
     );
   }
