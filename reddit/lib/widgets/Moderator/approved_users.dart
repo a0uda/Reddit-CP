@@ -3,28 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 
-List<Map<String, String>> approvedUsers = [
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "approved",
-    "jointime": "1 mo ago",
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "jointime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "jointime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "jointime": "1 mo ago"
-  },
-];
+// List<Map<String, String>> approvedUsers = [
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "approved",
+//     "jointime": "1 mo ago",
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "jointime": "1 mo ago"
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "jointime": "1 mo ago"
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "jointime": "1 mo ago"
+//   },
+// ];
+
 
 class ApprovedUsers extends StatefulWidget {
   const ApprovedUsers({super.key});

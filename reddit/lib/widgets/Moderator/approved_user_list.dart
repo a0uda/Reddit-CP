@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_users.dart';
 
@@ -10,17 +12,19 @@ class ApprovedUserList extends StatefulWidget {
 }
 
 class _ApprovedUserListState extends State<ApprovedUserList> {
-  List<Map<String, String>> foundUsers = [];
+  List<Map<String, dynamic>> foundUsers = [];
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   @override
   void initState() {
     super.initState();
-    foundUsers = List.from(approvedUsers);
+    foundUsers = List.from(moderatorController.approvedUsers);
   }
 
   void searchUsers(String search) {
     setState(() {
-      foundUsers = approvedUsers.where((user) {
+      foundUsers = moderatorController.approvedUsers.where((user) {
         final name = user['username'].toString().toLowerCase();
         return name.contains(search.toLowerCase());
       }).toList();
@@ -91,7 +95,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                   child: ListTile(
                     tileColor: Colors.white,
                     leading: CircleAvatar(
-                      backgroundImage: AssetImage(item["pictureUrl"]!),
+                      backgroundImage: AssetImage(item["profile_picture"]!),
                       radius: 15,
                     ),
                     title: Column(
@@ -101,7 +105,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                           "u/${item["username"]!}",
                         ),
                         Text(
-                          item["jointime"]!,
+                          item["approved_at"]!,
                           style:
                               const TextStyle(color: Colors.grey, fontSize: 10),
                         )
@@ -129,7 +133,14 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                       leading: const Icon(Icons.do_disturb_alt),
                                       title: const Text("Remove"),
                                       onTap: () {
-                                        //remove user
+                                        moderatorController.removeApprovedUsers(
+                                            item["username"],
+                                            moderatorController.communityName);
+                                        setState(() {
+                                          foundUsers =
+                                              moderatorController.approvedUsers;
+                                        });
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                   ],

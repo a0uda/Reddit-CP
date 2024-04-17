@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Models/rules_item.dart';
 
 class DescriptionWidget extends StatelessWidget {
   const DescriptionWidget(
@@ -113,7 +114,7 @@ class DescriptionWidget extends StatelessWidget {
 class RuleTile extends StatefulWidget {
   const RuleTile({super.key, required this.rule, required this.index});
 
-  final rule;
+  final RulesItem rule;
   final int index;
 
   @override
@@ -145,7 +146,9 @@ class RuleTileState extends State<RuleTile> {
                 ),
                 IconButton(
                   icon: Icon(
-                    isExpanded ?  Icons.keyboard_arrow_up_rounded: Icons.keyboard_arrow_down_rounded,
+                    isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
                     color: Colors.black,
                   ),
                   onPressed: () {
@@ -170,7 +173,7 @@ class RuleTileState extends State<RuleTile> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  widget.rule.ruleDescription,
+                  widget.rule.ruleDescription?? "",
                   style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 14,
@@ -190,4 +193,3 @@ class RuleTileState extends State<RuleTile> {
     );
   }
 }
-

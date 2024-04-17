@@ -1,13 +1,26 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/community_page.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
+import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
+import 'package:reddit/widgets/Moderator/queues.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -20,10 +33,16 @@ void main() async {
   // await Firebase.initializeApp(); //TODO : FIREBASE
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
+
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
+
   GetIt.instance.registerSingleton<CommunityService>(CommunityService());
   GetIt.instance.registerSingleton<CommunityController>(CommunityController());
+
+  GetIt.instance.registerSingleton<ModeratorMockService>(ModeratorMockService());
+  GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(

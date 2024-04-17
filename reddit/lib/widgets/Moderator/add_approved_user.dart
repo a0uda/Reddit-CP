@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class AddApprovedUser extends StatefulWidget {
   const AddApprovedUser({super.key});
@@ -11,6 +13,9 @@ class AddApprovedUser extends StatefulWidget {
 class _AddApprovedUserState extends State<AddApprovedUser> {
   bool addButtonEnable = false;
   TextEditingController userNameController = TextEditingController();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +39,10 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
                 onPressed: addButtonEnable
                     ? () {
                         //ADD IN MOCK badrrrr
+                        moderatorController.addApprovedUsers(
+                            userNameController.text,
+                            moderatorController.communityName);
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(

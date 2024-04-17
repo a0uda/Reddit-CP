@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -142,7 +143,7 @@ class _CreatePostState extends State<CreatePost> {
     if (widget.currentCommunity != null) {
       communityController.getCommunity(widget.currentCommunity!);
       communityDescription =
-          communityController.communityItem!.communityDescription;
+          communityController.communityItem!.general.communityDescription;
       communityRules = communityController.communityItem!.communityRules;
       selectedCommunity = widget.currentCommunity!;
     }
@@ -334,7 +335,7 @@ class _CreatePostState extends State<CreatePost> {
                                 communityController
                                     .getCommunity(selectedCommunity);
                                 communityDescription = communityController
-                                    .communityItem!.communityDescription;
+                                    .communityItem!.general.communityDescription;
                                 communityRules = communityController
                                     .communityItem!.communityRules;
                               }),

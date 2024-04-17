@@ -36,9 +36,9 @@ class _DrawerRedditState extends State<DrawerReddit> {
           communities.add({
             'name': communityName,
             'communityPage': CommunityPage(
-              communityDescription: communityController.communityItem!.communityDescription,
+              communityDescription: communityController.communityItem!.general.communityDescription,
               communityMembersNo: communityController.communityItem!.communityMembersNo,
-              communityName: communityController.communityItem!.communityName,
+              communityName: communityController.communityItem!.general.communityName,
               communityProfilePicturePath: communityController.communityItem!.communityProfilePicturePath,
               communityRule: communityController.communityItem!.communityRules,
             ),

@@ -170,7 +170,7 @@ class PostState extends State<Post> {
                               builder: (context) => (CommunityPage(
                                     communityName: widget.communityName,
                                     communityDescription: communityController
-                                        .communityItem!.communityDescription,
+                                        .communityItem!.general.communityDescription,
                                     communityRule: communityController
                                         .communityItem!.communityRules,
                                     communityMembersNo: communityController
