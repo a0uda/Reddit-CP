@@ -23,6 +23,7 @@ class BestListingBuild extends State<BestListing> {
   List<PostItem> posts = [];
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
+  bool? isMyPost;
   @override
   void initState() {
     super.initState();

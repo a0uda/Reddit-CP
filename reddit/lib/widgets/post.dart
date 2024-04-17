@@ -65,6 +65,7 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  // bool isMyPost = postService.isMyPost(widget.postId!, username);
 
   void incrementCounter() {
     setState(() {
@@ -265,6 +266,7 @@ class PostState extends State<Post> {
                           postId: widget.id,
                           saved: issaved,
                           islocked: widget.isLocked,
+                          isMyPost: true, //To be changed
                         ),
                       ),
                     ],
