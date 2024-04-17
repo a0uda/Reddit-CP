@@ -102,7 +102,7 @@ class AddSocialLinkFormState extends State<AddSocialLinkForm> {
                               );
                             } else {
                               socialLinksController.addSocialLink(
-                                usernameController.text,
+                                userController.userAbout!.username,
                                 usernameController.text,
                                 socialLink,
                                 linkController.text,

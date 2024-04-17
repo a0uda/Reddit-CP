@@ -102,7 +102,6 @@ class SocialLinksController extends ChangeNotifier {
       notifyListeners();
     } else {
       await userService.deleteSocialLink(username, socialLink.id);
-      await userController.getUserAbout(username);
       socialLinks!.remove(socialLink);
       notifyListeners();
     }
@@ -116,8 +115,7 @@ class SocialLinksController extends ChangeNotifier {
       notifyListeners();
     } else {
       await userService.addSocialLink(username, displayName, type, link);
-      await userController.getUserAbout(username);
-      socialLinks = userController.userAbout!.socialLinks;
+      await getSocialLinks(username);
       notifyListeners();
     }
   }
@@ -130,8 +128,7 @@ class SocialLinksController extends ChangeNotifier {
       notifyListeners();
     } else {
       await userService.editSocialLink(username, id, displayName, link);
-      await userController.getUserAbout(username);
-      socialLinks = userController.userAbout!.socialLinks;
+      await getSocialLinks(username);
       notifyListeners();
     }
   }
