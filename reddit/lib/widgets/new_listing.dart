@@ -9,38 +9,53 @@ import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
 
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/Models/user_about.dart';
 
 final userController = GetIt.instance.get<UserController>();
 
 class NewListing extends StatefulWidget {
   final String type;
-  const NewListing({super.key, required this.type});
+  final UserAbout? userData;
+  const NewListing({super.key, required this.type, this.userData});
   @override
   State<NewListing> createState() => NewListingBuild();
 }
 
 class NewListingBuild extends State<NewListing> {
   List<PostItem> posts = [];
-
+  late Future<void> _dataFuture;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
-  @override
-  void initState() {
-    super.initState();
-    controller = ScrollController()..addListener(HandleScrolling);
-    //fetchdata();
-  }
-
   Future<void> fetchdata() async {
-    String username = userController.userAbout!.username;
     final postService = GetIt.instance.get<PostService>();
+    List<PostItem> post = [];
     if (widget.type == "home") {
-      posts = await postService.getPosts(username, "new");
+      if (userController.userAbout != null) {
+        String user = userController.userAbout!.username;
+
+        post = await postService.getPosts(user, "hot");
+      } else {
+        posts = postService.fetchPosts();
+      }
     } else if (widget.type == "popular") {
       posts = await postService.getPopularPosts();
     } else if (widget.type == "profile") {
+      final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
+      print(username);
     }
+    // Remove objects from list1 if their IDs match any in list2
+    post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
+
+    setState(() {
+      posts.addAll(post);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = fetchdata(); // Replace with your actual data fetching logic
   }
 
   void HandleScrolling() {
@@ -51,14 +66,14 @@ class NewListingBuild extends State<NewListing> {
       print('LOAD MORE');
       // load more data here
 
-      setState(() {});
+      //setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
-      future: fetchdata(),
+      future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
@@ -76,6 +91,7 @@ class NewListingBuild extends State<NewListing> {
         } else {
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
+              fetchdata();
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,

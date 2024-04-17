@@ -118,9 +118,11 @@ class PostState extends State<Post> {
   Widget build(BuildContext context) {
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
-    String username = userController.userAbout!.username;
-    var saved = postService.getSavePost(username);
-    issaved = saved.any((obj) => obj.id == widget.id);
+    if (userController.userAbout != null) {
+      String username = userController.userAbout!.username;
+      var saved = postService.getSavePost(username);
+      issaved = saved.any((obj) => obj.id == widget.id);
+    }
 
     String userType;
 
@@ -262,12 +264,14 @@ class PostState extends State<Post> {
                         ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Options(
-                          postId: widget.id,
-                          saved: issaved,
-                          islocked: widget.isLocked,
-                          isMyPost: true, //To be changed
-                        ),
+                        child: (userController.userAbout != null)
+                            ? Options(
+                                postId: widget.id,
+                                saved: issaved,
+                                islocked: widget.isLocked,
+                                isMyPost: true, //To be changed
+                              )
+                            : Container(),
                       ),
                     ],
                   ),
