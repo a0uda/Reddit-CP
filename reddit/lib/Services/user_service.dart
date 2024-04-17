@@ -47,9 +47,9 @@ class UserService {
         },
       );
       print(response.statusCode);
-
       print(jsonDecode(response.body));
       print(jsonDecode(response.body)['about']['username']);
+      print(jsonDecode(response.body)['about']['profile_picture']);
       return UserAbout.fromJson(jsonDecode(response.body));
     }
   }

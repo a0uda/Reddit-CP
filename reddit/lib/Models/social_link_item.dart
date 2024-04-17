@@ -15,7 +15,7 @@ class SocialLlinkItem {
 
   static fromJson(x) {
     return SocialLlinkItem(
-      id: x['id'],
+      id: x['_id'],
       username: x['username'],
       displayText: x['display_text'],
       type: x['type'],
