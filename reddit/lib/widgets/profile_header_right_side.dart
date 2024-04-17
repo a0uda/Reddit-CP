@@ -28,82 +28,138 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
       {required this.userData, required this.userType});
 
   final UserController userController = GetIt.I.get<UserController>();
-  final UserService userService = GetIt.I.get<UserService>();
 
   List<FollowersFollowingItem>? followingList;
+  bool _dataFetched = false;
 
   void loadFollowingList() async {
+    final userService = GetIt.I.get<UserService>();
     followingList =
         await userService.getFollowing(userController.userAbout!.username);
+    setState(() {
+      _dataFetched = true;
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildLoading() {
+    return Container(
+      color: Colors.transparent,
+    );
+  }
+
+  Widget _buildProfileHeaderRightSide() {
     var followerFollowingController =
         context.read<FollowerFollowingController>();
-
-    return FutureBuilder<List<FollowersFollowingItem>>(
-      future: userService.getFollowing(userController.userAbout!.username),
-      builder: (BuildContext context,
-          AsyncSnapshot<List<FollowersFollowingItem>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Display a loading spinner while waiting
-        } else if (snapshot.hasError) {
-          return Text(
-              'Error: ${snapshot.error}'); // Display error message if any
-        } else {
-          List<FollowersFollowingItem>? followingList = snapshot.data!;
-          return SizedBox(
-            width: (1 / 3) * MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20),
-                    child: IconButton(
-                      icon: const Icon(Icons.share,
-                          color: Colors.white, size: 40),
-                      onPressed: () async {
-                        const link =
-                            'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
-                        await Share.share(
-                            'Check out this profile on Reddit: $link');
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20),
-                    child: TextButton(
-                      onPressed: () async {
-                        if (userType == 'me') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const EditProfileScreen()),
-                          );
+    return SizedBox(
+      width: (1 / 3) * MediaQuery.of(context).size.width,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: IconButton(
+                icon: const Icon(Icons.share, color: Colors.white, size: 40),
+                onPressed: () async {
+                  const link =
+                      'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
+                  await Share.share('Check out this profile on Reddit: $link');
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 20),
+              child: TextButton(
+                onPressed: () async {
+                  if (userType == 'me') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen()),
+                    );
+                  } else {
+                    setState(
+                      () async {
+                        if (followingList!
+                            .where((element) =>
+                                element.username == userData.username)
+                            .isEmpty) {
+                          setState(() {
+                            followerFollowingController
+                                .followUser(userData.username);
+                          });
                         } else {
-                          setState(
-                            () {
-                              if (followingList
-                                  .where((element) =>
-                                      element.username == userData.username)
-                                  .isEmpty) {
-                                followerFollowingController
-                                    .followUser(userData.username);
-                              } else {
-                                followerFollowingController
-                                    .unfollowUser(userData.username);
-                              }
-                            },
-                          );
+                          setState(() {
+                            followerFollowingController
+                                .unfollowUser(userData.username);
+                          });
                         }
                       },
+                    );
+                  }
+                },
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(
+                      0, 68, 70, 71), // example background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: const BorderSide(
+                      color: Colors.white,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: userType == 'me'
+                    ? const Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: (followingList!
+                                .where((element) =>
+                                    element.username == userData.username)
+                                .isNotEmpty)
+                            ? [
+                                const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                ),
+                                const Flexible(
+                                  child: Text(
+                                    'Following',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ]
+                            : [
+                                const Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                                const Flexible(
+                                  child: Text(
+                                    'Follow',
+                                    style: TextStyle(color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                      ),
+              ),
+            ),
+            userType != 'me'
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 5),
+                    child: IconButton(
+                      icon: const Icon(Icons.message,
+                          color: Colors.white, size: 30),
                       style: TextButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(
-                            0, 68, 70, 71), // example background color
+                        backgroundColor: const Color.fromARGB(0, 68, 70, 71),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                           side: const BorderSide(
@@ -112,74 +168,21 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                           ),
                         ),
                       ),
-                      child: userType == 'me'
-                          ? const Text(
-                              'Edit',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: (followingList
-                                      .where((element) =>
-                                          element.username == userData.username)
-                                      .isNotEmpty)
-                                  ? [
-                                      const Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                      ),
-                                      const Flexible(
-                                        child: Text(
-                                          'Following',
-                                          style: TextStyle(color: Colors.white),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ]
-                                  : [
-                                      const Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                      ),
-                                      const Flexible(
-                                        child: Text(
-                                          'Follow',
-                                          style: TextStyle(color: Colors.white),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                            ),
+                      onPressed: () {},
                     ),
-                  ),
-                  userType != 'me'
-                      ? Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 5),
-                          child: IconButton(
-                            icon: const Icon(Icons.message,
-                                color: Colors.white, size: 30),
-                            style: TextButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(0, 68, 70, 71),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                                side: const BorderSide(
-                                  color: Colors.white,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            onPressed: () {},
-                          ),
-                        )
-                      : Container(),
-                ],
-              ),
-            ),
-          );
-        }
-      },
+                  )
+                : Container(),
+          ],
+        ),
+      ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_dataFetched) {
+      loadFollowingList();
+    }
+    return _dataFetched ? _buildProfileHeaderRightSide() : _buildLoading();
   }
 }
