@@ -140,7 +140,7 @@ class _CreatePostState extends State<CreatePost> {
     if (widget.currentCommunity != null) {
       communityController.getCommunity(widget.currentCommunity!);
       communityDescription =
-          communityController.communityItem!.communityDescription;
+          communityController.communityItem!.general.communityDescription;
       communityRules = communityController.communityItem!.communityRules;
       selectedCommunity = widget.currentCommunity!;
     }
@@ -329,7 +329,7 @@ class _CreatePostState extends State<CreatePost> {
                                 communityController
                                     .getCommunity(selectedCommunity);
                                 communityDescription = communityController
-                                    .communityItem!.communityDescription;
+                                    .communityItem!.general.communityDescription;
                                 communityRules = communityController
                                     .communityItem!.communityRules;
                               }),

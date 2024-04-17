@@ -8,7 +8,7 @@ bool testing = true;
 
   CommunityItem? getCommunityData(String communityName) {
     for (var community in communities) {
-      if (community.communityName == communityName) {
+      if (community.general.communityName == communityName) {
         return community;
       }
     }
@@ -18,7 +18,7 @@ bool testing = true;
   List<String> getCommunityNames() {
     List<String> communityNames = [];
     for (var community in communities) {
-      communityNames.add(community.communityName);
+      communityNames.add(community.general.communityName);
     }
     return communityNames;
   }
