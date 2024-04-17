@@ -38,7 +38,7 @@ class PostItem {
     required this.userId,
     required this.username,
     required this.title,
-     this.description,
+    this.description,
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
@@ -59,20 +59,21 @@ class PostItem {
     required this.nsfwFlag,
     required this.lockedFlag,
     required this.allowrepliesFlag,
-     this.setSuggestedSort,
+    this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
     return PostItem(
-      ///todo
+
+        ///todo
         id: json['_id'],
         userId: json['user_id'],
         description: json['descrption'],
         username: 'ahmed',
         title: json['title'],
-        createdAt: DateTime.parse( json['created_at']),
+        createdAt: DateTime.parse(json['created_at']),
         type: json['type'],
         communityId: json['community_id'],
         communityName: json['community_name'],

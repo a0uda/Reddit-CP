@@ -15,7 +15,7 @@ class _GenderTileState extends State<GenderTile> {
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
     String gender = userController.userAbout!.gender!;
-    //TODO: Implement the logic to update the gender in the database
+
     return CustomSettingsTile(
       title: 'Gender',
       subtitle: userController.userAbout!.gender!,
@@ -54,47 +54,54 @@ class _GenderTileState extends State<GenderTile> {
                   activeColor: Colors.blue[900],
                   value: 'Male',
                   groupValue: gender,
-                  onChanged: (String? value) {
-                    setState(() {
-                      gender = value!;
-                      userController.changeGender(
-                          userController.userAbout!.username, gender);
-                      Navigator.pop(context);
-                    });
+                  onChanged: (String? value) async {
+                    gender = value!;
+                    bool changed = await userController.changeGender(
+                        userController.userAbout!.username, gender);
+                    if (changed) {
+                      setState(() {
+                        gender = value;
+                      });
+                    }
+                    Navigator.pop(context);
                   },
                 ),
               ),
               ListTile(
                 title: const Text('Female'),
                 leading: Radio(
-                  value: 'Female',
-                  activeColor: Colors.blue[900],
-                  groupValue: gender,
-                  onChanged: (String? value) {
-                    setState(() {
+                    value: 'Female',
+                    activeColor: Colors.blue[900],
+                    groupValue: gender,
+                    onChanged: (String? value) async {
                       gender = value!;
-                      userController.changeGender(
+                      bool changed = await userController.changeGender(
                           userController.userAbout!.username, gender);
+                      if (changed) {
+                        setState(() {
+                          gender = value;
+                        });
+                      }
                       Navigator.pop(context);
-                    });
-                  },
-                ),
+                    }),
               ),
               ListTile(
                 title: const Text('I prefer not to say'),
                 leading: Radio(
-                  value: 'I prefer not to say',
-                  activeColor: Colors.blue[900],
-                  groupValue: gender,
-                  onChanged: (String? value) {
-                    setState(() {
+                    value: 'I prefer not to say',
+                    activeColor: Colors.blue[900],
+                    groupValue: gender,
+                    onChanged: (String? value) async {
                       gender = value!;
-                      userController.changeGender(
+                      bool changed = await userController.changeGender(
                           userController.userAbout!.username, gender);
+                      if (changed) {
+                        setState(() {
+                          gender = value;
+                        });
+                      }
                       Navigator.pop(context);
-                    });
-                  },
-                ),
+                    }),
               ),
               const SizedBox(height: 20.0)
             ],

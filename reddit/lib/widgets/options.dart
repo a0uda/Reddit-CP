@@ -10,10 +10,12 @@ class Options extends StatefulWidget {
   final String? postId;
   final bool saved;
   bool islocked;
+  final bool isMyPost;
   Options({
     required this.postId,
     required this.saved,
     required this.islocked,
+    required this.isMyPost,
     super.key,
   });
 
@@ -29,7 +31,7 @@ class Postoptions extends State<Options> {
   Widget build(BuildContext context) {
     var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
-    bool isMyPost = postService.isMyPost(widget.postId!, username);
+    bool isMyPost = widget.isMyPost;
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
@@ -130,7 +132,8 @@ class Postoptions extends State<Options> {
                   value: 4,
                   onTap: () {
                     postLockController.lockPost(widget.postId!);
-                    setState(() {});
+                    setState(
+                        () {}); // Call setState to rebuild the widget with new values
                   },
                   child: Row(
                     children: [
