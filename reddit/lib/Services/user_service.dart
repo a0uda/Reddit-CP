@@ -660,19 +660,39 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  List<BlockedUsersItem> getBlockedUsers(String username) {
+  Future<List<BlockedUsersItem>> getBlockedUsers(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .safetySettings!
           .blockedUsers;
     } else {
-      // get safety settings from database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/blocked-users');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('get block success');
+        var data = jsonDecode(response.body);
+        Map<String, dynamic> blockedUsersJson = data['blocked_users'];
+        return Future.wait(blockedUsersJson.values
+            .map((json) => BlockedUsersItem.fromJson(json))
+            .toList());
+      } else {
+        throw Exception('Failed to load blocked users');
+      }
     }
-    return [];
   }
 
-  void blockUser(String username, String blockedUsername) {
+  Future<void> blockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -689,11 +709,31 @@ class UserService {
             blockedDate: DateTime.now().toString(),
           ));
     } else {
-      // block user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('block success');
+      } else {
+        throw Exception('Failed to block user.');
+      }
     }
   }
 
-  void unblockUser(String username, String blockedUsername) {
+  Future<void> unblockUser(String username, String blockedUsername) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -701,7 +741,27 @@ class UserService {
           .blockedUsers
           .removeWhere((element) => element.username == blockedUsername);
     } else {
-      // unblock user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/block-unblock-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'blocked_username': blockedUsername,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('User unblocked successfully.');
+      } else {
+        throw Exception('Failed to unblock user.');
+      }
     }
   }
 

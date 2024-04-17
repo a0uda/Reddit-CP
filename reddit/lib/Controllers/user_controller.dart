@@ -41,14 +41,14 @@ class UserController {
         username, currentPassword, newPassword, verifiedNewPassword);
   }
 
-  void blockUser(UserAbout userData, String username) {
-    userService.blockUser(userData.username, username);
-    blockedUsers = userService.getBlockedUsers(userData.username);
+  Future<void> blockUser(UserAbout userData, String username) async {
+    await userService.blockUser(userData.username, username);
+    blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
-  void unblockUser(UserAbout userData, String username) {
-    userService.unblockUser(userData.username, username);
-    blockedUsers = userService.getBlockedUsers(userData.username);
+  Future<void> unblockUser(UserAbout userData, String username) async {
+    await userService.unblockUser(userData.username, username);
+    blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
   Future<bool> changeGender(String username, String gender) {

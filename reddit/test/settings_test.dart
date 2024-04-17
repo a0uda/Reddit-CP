@@ -4,6 +4,8 @@ import 'package:reddit/pages/settings_screen.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:mockito/mockito.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/custom_settings_tile.dart';
+import 'package:reddit/widgets/update_email.dart';
 
 class MockUserController extends Mock implements UserController {}
 
@@ -26,17 +28,18 @@ void main() {
     // Wait for animations to complete
     await tester.pumpAndSettle();
 
-    // Scroll to the widget
-    await tester.scrollUntilVisible(find.text('Update email address'), 50.0);
-
-    // Tap the widget
-    await tester.tap(find.text('Update email address'));
-
-    // Wait for animations to complete
+    // Find the 'Update email address' tile by type and tap it
+    final updateEmailTileFinder = find.byWidgetPredicate(
+      (Widget widget) =>
+          widget is CustomSettingsTile &&
+          widget.title == 'Update email address',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(updateEmailTileFinder);
     await tester.pumpAndSettle();
 
     // Verify that the UpdateEmail screen is displayed
-    expect(find.text('Update Email'), findsOneWidget);
+    expect(find.byType(UpdateEmail), findsOneWidget);
   });
 
   testWidgets('SettingsScreen navigates to ResetPassword',
