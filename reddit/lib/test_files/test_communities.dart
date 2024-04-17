@@ -54,7 +54,7 @@ final communities = [
     postTypes: "Text Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: false,
-    allow_image_uploads_and_links_to_image_hosting_sites: false,
+    allowImage: false,
   ),
   CommunityItem(
     general: generalSettings[1],
@@ -70,7 +70,7 @@ final communities = [
     postTypes: "Any", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
-    allow_image_uploads_and_links_to_image_hosting_sites: true,
+    allowImage: true,
   ),
   CommunityItem(
     general: generalSettings[2],
@@ -86,7 +86,7 @@ final communities = [
     postTypes: "Links Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
-    allow_image_uploads_and_links_to_image_hosting_sites: false,
+    allowImage: false,
   ),
   CommunityItem(
     general: generalSettings[3],
@@ -102,7 +102,7 @@ final communities = [
     postTypes: "Links Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
-    allow_image_uploads_and_links_to_image_hosting_sites: false,
+    allowImage: false,
   ),
   CommunityItem(
     general: generalSettings[4],
@@ -118,7 +118,7 @@ final communities = [
     postTypes: "Links Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
-    allow_image_uploads_and_links_to_image_hosting_sites: false,
+    allowImage: false,
   ),
 ];
 
@@ -251,21 +251,21 @@ List<Map<String, dynamic>> editableModerators = [
 ];
 
 List<GeneralSettings> generalSettings = [
-  const GeneralSettings(
+  GeneralSettings(
     communityID: "1",
     communityName: 'Flutter Enthusiasts',
     communityDescription: 'A community for Flutter enthusiasts.',
     communityType: "Public",
     nsfwFlag: false,
   ),
-  const GeneralSettings(
+  GeneralSettings(
     communityID: "2",
     communityName: 'Cooking Masters',
     communityDescription: 'Join us to explore the art and science of cooking!',
     communityType: "Private",
     nsfwFlag: false,
   ),
-  const GeneralSettings(
+  GeneralSettings(
     communityID: "3",
     communityName: 'Fitness Warriors',
     communityDescription:
@@ -273,14 +273,14 @@ List<GeneralSettings> generalSettings = [
     communityType: "Restricted",
     nsfwFlag: false,
   ),
-  const GeneralSettings(
+  GeneralSettings(
     communityID: "4",
     communityName: 'Photography Passion',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
     nsfwFlag: false,
   ),
-  const GeneralSettings(
+  GeneralSettings(
     communityID: "5",
     communityName: 'Gaming Universe',
     communityDescription: 'Welcome to the ultimate gaming community!',
