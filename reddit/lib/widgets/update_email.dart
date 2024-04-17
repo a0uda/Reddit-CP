@@ -54,13 +54,18 @@ class _UpdateEmailState extends State<UpdateEmail> {
                         ),
                         Row(
                           children: [
-                            Text(
-                              userController.userAbout!.email!,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w200,
-                                  fontFamily: 'Arial'),
-                            ),
+                            // Consumer<ChangeEmail>(
+                            //   builder: (context, changeEmail, child) {
+                            //     return 
+                                Text(
+                                  userController.userAbout!.email!,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w200,
+                                      fontFamily: 'Arial')
+                                // ;
+                            //   },
+                             ),
                           ],
                         ),
                       ],

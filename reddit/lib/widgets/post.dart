@@ -170,7 +170,9 @@ class PostState extends State<Post> {
                               builder: (context) => (CommunityPage(
                                     communityName: widget.communityName,
                                     communityDescription: communityController
-                                        .communityItem!.general.communityDescription,
+                                        .communityItem!
+                                        .general
+                                        .communityDescription,
                                     communityRule: communityController
                                         .communityItem!.communityRules,
                                     communityMembersNo: communityController
@@ -254,7 +256,7 @@ class PostState extends State<Post> {
                   ],
                 ),
                 trailing: SizedBox(
-                  width: 65,
+                  width: 75,
                   child: Row(
                     children: [
                       if (widget.isLocked == true)

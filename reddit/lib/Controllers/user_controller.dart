@@ -19,6 +19,8 @@ class UserController {
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
+    print('geeeeeeeeeeeeeeeeeeeeet Useeeeeeeeeeeeeeeeeeeeeeeer');
+    print(userAbout);
     blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
   }
@@ -138,6 +140,7 @@ class BannerPictureController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
+
   Future<void> changeBannerPicture(String bannerPicture) async {
     await userService.addBannerPicture(
         userController.userAbout!.username, bannerPicture);
@@ -240,7 +243,7 @@ class ChangeEmail extends ChangeNotifier {
   Future<bool> changeEmail(
       String username, String email, String password) async {
     Future<bool> result = userService.changeEmail(username, email, password);
-    userController.getUserAbout(username);
+    await userController.getUserAbout(username);
     notifyListeners();
     return result;
   }

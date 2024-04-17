@@ -79,12 +79,12 @@ class RisingListingBuild extends State<RisingListing> {
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
+           return Container(
             color: Colors.white,
-            child: const SizedBox(
-              height: 20,
-              width: 20,
-              child: Center(
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
                 child: CircularProgressIndicator(),
               ),
             ),

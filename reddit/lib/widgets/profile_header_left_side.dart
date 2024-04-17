@@ -134,7 +134,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                         bottom: (userData.about != null &&
                                 userData.about!.isNotEmpty)
                             ? 10
-                            : 0,
+                            : 10,
                       ),
                       child: Consumer<EditProfileController>(
                         builder: (context, editProfileController, child) {

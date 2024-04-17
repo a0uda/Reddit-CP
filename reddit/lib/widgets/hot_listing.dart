@@ -80,10 +80,10 @@ class HotListingBuild extends State<HotListing> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
             color: Colors.white,
-            child: const SizedBox(
-              height: 20,
-              width: 20,
-              child: Center(
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
                 child: CircularProgressIndicator(),
               ),
             ),

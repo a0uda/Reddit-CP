@@ -123,11 +123,20 @@ class _CommentState extends State<Comment> {
                         return Text('Error: ${snapshot.error}');
                       } else {
                         print(snapshot.data!.profilePicture!);
-                        return CircleAvatar(
-                          radius: 15,
-                          backgroundImage:
-                              AssetImage(snapshot.data!.profilePicture!),
-                        );
+                        if (snapshot.data!.profilePicture == null ||
+                            snapshot.data!.profilePicture!.isEmpty) {
+                          return const CircleAvatar(
+                            radius: 15,
+                            backgroundImage:
+                                AssetImage('images/Greddit.png'),
+                          );
+                        } else {
+                          return CircleAvatar(
+                            radius: 15,
+                            backgroundImage:
+                                AssetImage(snapshot.data!.profilePicture!),
+                          );
+                        }
                       }
                     },
                   ),
