@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
@@ -35,15 +36,17 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String buttonState = 'Join';
-  final CommunityController communityController =
-      GetIt.instance.get<CommunityController>();
+  // final CommunityController communityController =
+  //     GetIt.instance.get<CommunityController>();
+  
+  final moderatorController = GetIt.instance.get<ModeratorController>();
 
   List<Post> communityPost = [];
 
   @override
   void initState() {
     super.initState();
-    //  fetchCommunityPosts();
+    moderatorController.communityName = widget.communityName;
   }
   // Future<void> fetchCommunityPosts() async {
   //   for (String communityName in communityNames) {
@@ -213,10 +216,10 @@ class _CommunityPageState extends State<CommunityPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ModResponsive(
-                                        mobileLayout: MobileModTools(communityName: widget.communityName,),
+                                        mobileLayout: MobileModTools(communityName: moderatorController.communityName,),
                                         desktopLayout: DesktopModTools(
                                           index: 0,
-                                          communityName: widget.communityName,
+                                          communityName: moderatorController.communityName,
                                         ),
                                       ),
                                     ),

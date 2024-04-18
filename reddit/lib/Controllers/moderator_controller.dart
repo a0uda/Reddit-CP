@@ -15,6 +15,7 @@ class ModeratorController {
   List<RulesItem> rules = [];
   GeneralSettings? generalSettings;
   Map<String, dynamic> postTypesAndOptions = {};
+  CommunityItem? communityItem;
 
   void getCommunity(String communityName) {
     this.communityName = communityName;
@@ -28,7 +29,6 @@ class ModeratorController {
     postTypesAndOptions =
         moderatorService.getPostTypesAndOptions(communityName);
   }
-
 
   void inviteModerator({
     required String communityName,
@@ -87,6 +87,22 @@ class ModeratorController {
     );
     rules = moderatorService.getRules(communityName);
   }
+
+  void setGeneralSettings({required String communityName, required GeneralSettings general}) {
+    moderatorService.postGeneralSettings(
+        communityName: communityName,
+        settings: GeneralSettings(
+            communityID: general.communityID,
+            communityName: general.communityName,
+            communityDescription: general.communityDescription,
+            communityType: general.communityType,
+            nsfwFlag: general.nsfwFlag));
+      generalSettings = moderatorService.getCommunityGeneralSettings(communityName);
+  }
+  GeneralSettings getGeneralSettings(String communityName) {
+     return moderatorService.getCommunityGeneralSettings(communityName);
+     
+  }
 }
 
 class ApprovedUserProvider extends ChangeNotifier {
@@ -143,18 +159,40 @@ class BannedUserProvider extends ChangeNotifier {
   }
 }
 
-
 class MutedUserProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   void addMutedUsers(String username, String communityName) {
     moderatorService.addMutedUsers(username, communityName);
-    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
+    moderatorController.mutedUsers =
+        moderatorService.getMutedUsers(communityName);
   }
 
-  void unMuteUser(String username, String communityName){
+  void unMuteUser(String username, String communityName) {
     moderatorService.unMuteUser(username, communityName);
-    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
+    moderatorController.mutedUsers =
+        moderatorService.getMutedUsers(communityName);
+  }
+}
+
+class ChangeGeneralSettingsProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void setGeneralSettings({required String communityName, required GeneralSettings general}) {
+
+    moderatorService.postGeneralSettings(
+        communityName: communityName,
+        settings: GeneralSettings(
+            communityID: general.communityID,
+            communityName: general.communityName,
+            communityDescription: general.communityDescription,
+            communityType: general.communityType,
+            nsfwFlag: general.nsfwFlag));
+    moderatorController.generalSettings =  moderatorService.getCommunityGeneralSettings(general.communityName);
+    moderatorController.communityName = general.communityName;
+
+            notifyListeners();
   }
 }
