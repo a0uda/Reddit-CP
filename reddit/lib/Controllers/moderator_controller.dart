@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
@@ -28,41 +29,6 @@ class ModeratorController {
         moderatorService.getPostTypesAndOptions(communityName);
   }
 
-  void addApprovedUsers(String username, String communityName) {
-    moderatorService.addApprovedUsers(username, communityName);
-    approvedUsers = moderatorService.getApprovedUsers(communityName);
-  }
-
-  void removeApprovedUsers(String username, String communityName) {
-    moderatorService.removeApprovedUsers(username, communityName);
-    approvedUsers = moderatorService.getApprovedUsers(communityName);
-  }
-
-  void addBannedUsers({
-    required String username,
-    required String communityName,
-    required bool permanentFlag,
-    required String reasonForBan,
-    String? bannedUntil,
-    String? noteForBanMessage,
-    String? modNote,
-  }) {
-    moderatorService.addBannedUsers(
-      username: username,
-      communityName: communityName,
-      permanentFlag: permanentFlag,
-      reasonForBan: reasonForBan,
-      bannedUntil: bannedUntil,
-      noteForBanMessage: noteForBanMessage,
-      modNote: modNote,
-    );
-    bannedUsers = moderatorService.getBannedUsers(communityName);
-  }
-
-  void addMutedUsers(String username, String communityName) {
-    moderatorService.addMutedUsers(username, communityName);
-    mutedUsers = moderatorService.getMutedUsers(communityName);
-  }
 
   void inviteModerator({
     required String communityName,
@@ -120,5 +86,75 @@ class ModeratorController {
       ruleDescription: ruleDescription ?? "",
     );
     rules = moderatorService.getRules(communityName);
+  }
+}
+
+class ApprovedUserProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void addApprovedUsers(String username, String communityName) {
+    moderatorService.addApprovedUsers(username, communityName);
+    moderatorController.approvedUsers =
+        moderatorService.getApprovedUsers(communityName);
+    notifyListeners();
+  }
+
+  void removeApprovedUsers(String username, String communityName) {
+    moderatorService.removeApprovedUsers(username, communityName);
+    moderatorController.approvedUsers =
+        moderatorService.getApprovedUsers(communityName);
+    notifyListeners();
+  }
+}
+
+class BannedUserProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void addBannedUsers({
+    required String username,
+    required String communityName,
+    required bool permanentFlag,
+    required String reasonForBan,
+    String? bannedUntil,
+    String? noteForBanMessage,
+    String? modNote,
+  }) {
+    moderatorService.addBannedUsers(
+      username: username,
+      communityName: communityName,
+      permanentFlag: permanentFlag,
+      reasonForBan: reasonForBan,
+      bannedUntil: bannedUntil,
+      noteForBanMessage: noteForBanMessage,
+      modNote: modNote,
+    );
+    moderatorController.bannedUsers =
+        moderatorService.getBannedUsers(communityName);
+    notifyListeners();
+  }
+
+  void unBanUsers(String username, String communityName) {
+    moderatorService.unBanUser(username, communityName);
+    moderatorController.bannedUsers =
+        moderatorService.getBannedUsers(communityName);
+    notifyListeners();
+  }
+}
+
+
+class MutedUserProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void addMutedUsers(String username, String communityName) {
+    moderatorService.addMutedUsers(username, communityName);
+    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
+  }
+
+  void unMuteUser(String username, String communityName){
+    moderatorService.unMuteUser(username, communityName);
+    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
   }
 }

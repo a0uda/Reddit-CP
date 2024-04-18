@@ -132,6 +132,14 @@ class ModeratorMockService {
     );
   }
 
+  void unBanUser(String username, String communityName) {
+    communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .bannedUsers
+        .removeWhere((user) => user["username"] == username);
+  }
+
   List<Map<String, dynamic>> getMutedUsers(String communityName) {
     List<Map<String, dynamic>> mutedUsers = communities
         .firstWhere(
@@ -153,6 +161,14 @@ class ModeratorMockService {
         "_id": "6618844ad57c873637b5cf2"
       },
     );
+  }
+
+  void unMuteUser(String username, String communityName) {
+    communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .mutedUsers
+        .removeWhere((user) => user["username"] == username);
   }
 
   List<Map<String, dynamic>> getModerators(String communityName) {

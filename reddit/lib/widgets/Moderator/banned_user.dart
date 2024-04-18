@@ -3,28 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:reddit/widgets/Moderator/banned_user_list.dart';
 
-List<Map<String, String>> bannedUsers = [
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Banned",
-    "banTime": "1 mo ago",
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "banTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "banTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "banTime": "1 mo ago"
-  },
-];
 
 class BannedUsers extends StatefulWidget {
   const BannedUsers({super.key});

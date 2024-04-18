@@ -46,6 +46,15 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
+        create: (context) => ApprovedUserProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => MutedUserProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BannedUserProvider(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => SocialLinksController(),
       ),
       ChangeNotifierProvider(

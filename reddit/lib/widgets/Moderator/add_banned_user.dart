@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 List<String> rules = [
   "Rule1",
@@ -18,6 +21,8 @@ class AddBannedUser extends StatefulWidget {
 }
 
 class _AddBannedUserState extends State<AddBannedUser> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   final formKey = GlobalKey<FormState>();
   bool addButtonEnable = false;
   bool isChecked = true;
@@ -41,6 +46,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
 
   @override
   Widget build(BuildContext context) {
+    var bannedUserProvider = context.read<BannedUserProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -61,7 +67,17 @@ class _AddBannedUserState extends State<AddBannedUser> {
             child: TextButton(
                 onPressed: addButtonEnable
                     ? () {
-                        //add to mock Badrrrrr
+                        //print(banPeriodController.text);
+                        bannedUserProvider.addBannedUsers(
+                          username: userNameController.text,
+                          communityName: moderatorController.communityName,
+                          permanentFlag: isChecked,
+                          reasonForBan: banReasonController.text,
+                          bannedUntil: banPeriodController.text,
+                          modNote: modNoteController.text,
+                          noteForBanMessage: noteController.text,
+                        );
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(
@@ -140,7 +156,8 @@ class _AddBannedUserState extends State<AddBannedUser> {
                           border: InputBorder.none,
                           hintText: "Pick a reason",
                           hintStyle: const TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.normal),
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal),
                           contentPadding: const EdgeInsets.only(
                               top: 10, bottom: 10, left: 8),
                           suffixIcon: Icon(
