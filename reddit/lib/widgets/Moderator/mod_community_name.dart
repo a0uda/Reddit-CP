@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 
 class ModCommName extends StatefulWidget {
-  const ModCommName({super.key});
+  const ModCommName({
+    super.key,
+  });
 
   @override
   State<ModCommName> createState() => _ModCommNameState();
@@ -10,15 +16,40 @@ class ModCommName extends StatefulWidget {
 
 class _ModCommNameState extends State<ModCommName> {
   TextEditingController inputController = TextEditingController();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  late final String communityDescription;
+  late final String communityID;
+  late final String communityType;
+  late String communityName;
+  late final bool communityFlag;
+
   int maxCounter = 90;
   int remainingCharacters = 90;
   bool isSaved = false;
   bool doneSaved = true;
+  String newCommunityName = '';
+  
 
   @override
   void initState() {
     super.initState();
     remainingCharacters = maxCounter;
+     communityName = moderatorController.communityName;
+    // communityName = moderatorController
+    //   .getGeneralSettings(widget.communityName)
+    //   .communityName;
+    communityDescription = moderatorController
+        .getGeneralSettings(communityName)
+        .communityDescription;
+    communityID = moderatorController
+        .getGeneralSettings(communityName)
+        .communityID;
+    communityType = moderatorController
+        .getGeneralSettings(communityName)
+        .communityType;
+    communityFlag =
+        moderatorController.getGeneralSettings(communityName).nsfwFlag;
   }
 
   void updateCharachterCounter() {
@@ -34,8 +65,10 @@ class _ModCommNameState extends State<ModCommName> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
 
@@ -52,6 +85,14 @@ class _ModCommNameState extends State<ModCommName> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
+                settingsProvider.setGeneralSettings(
+                    communityName: communityName,
+                    general: GeneralSettings(
+                        communityID: communityID,
+                        communityName: inputController.text,
+                        communityDescription: communityDescription,
+                        communityType: communityType,
+                        nsfwFlag: communityFlag));
               setState(() {
                 doneSaved = true;
               });
@@ -212,10 +253,10 @@ class _ModCommNameState extends State<ModCommName> {
                 setState(() {
                   if (maxCounter == remainingCharacters) {
                     isSaved = false;
-                    doneSaved=true;
+                    doneSaved = true;
                   } else {
                     isSaved = true;
-                    doneSaved=false;
+                    doneSaved = false;
                   }
                 });
               }),

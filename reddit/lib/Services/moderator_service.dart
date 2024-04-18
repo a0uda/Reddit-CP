@@ -230,49 +230,49 @@ class ModeratorMockService {
       "allowVideo": foundCommunity.allowVideos,
     };
   }
-}
 
-void postGeneralSettings(
-    {required GeneralSettings settings, required String communityName}) {
-  communities
-      .firstWhere(
-          (community) => community.general.communityName == communityName)
-      .general
-      .updateAllGeneralSettings(
-          communityID: settings.communityID,
-          communityName: settings.communityName,
-          communityDescription: settings.communityDescription,
-          communityType: settings.communityType,
-          nsfwFlag: settings.nsfwFlag);
-}
+  void postGeneralSettings(
+      {required GeneralSettings settings, required String communityName}) {
+    communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .general
+        .updateAllGeneralSettings(
+            communityID: settings.communityID,
+            communityName: settings.communityName,
+            communityDescription: settings.communityDescription,
+            communityType: settings.communityType,
+            nsfwFlag: settings.nsfwFlag);
+  }
 
-void setPostTypeAndOptions({
-  required bool allowImages,
-  required bool allowVideos,
-  required bool allowPolls,
-  required String communityName,
-  required String postTypes,
-}) {
-  var community = communities.firstWhere(
-    (community) => community.general.communityName == communityName,
-  );
-  community.updatePostTypes(
-    communityName: communityName,
-    postTypes: postTypes,
-  );
+  void setPostTypeAndOptions({
+    required bool allowImages,
+    required bool allowVideos,
+    required bool allowPolls,
+    required String communityName,
+    required String postTypes,
+  }) {
+    var community = communities.firstWhere(
+      (community) => community.general.communityName == communityName,
+    );
+    community.updatePostTypes(
+      communityName: communityName,
+      postTypes: postTypes,
+    );
 
-  community.updateAllowImage(
-    communityName: communityName,
-    allowImage: allowImages,
-  );
+    community.updateAllowImage(
+      communityName: communityName,
+      allowImage: allowImages,
+    );
 
-  community.updateAllowPools(
-    communityName: communityName,
-    allowPolls: allowPolls,
-  );
+    community.updateAllowPools(
+      communityName: communityName,
+      allowPolls: allowPolls,
+    );
 
-  community.updateAllowVideo(
-    communityName: communityName,
-    allowVideos: allowVideos,
-  );
+    community.updateAllowVideo(
+      communityName: communityName,
+      allowVideos: allowVideos,
+    );
+  }
 }

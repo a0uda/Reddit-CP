@@ -15,6 +15,7 @@ class ModeratorController {
   List<RulesItem> rules = [];
   GeneralSettings? generalSettings;
   Map<String, dynamic> postTypesAndOptions = {};
+  CommunityItem? communityItem;
 
   void getCommunity(String communityName) {
     this.communityName = communityName;
@@ -180,5 +181,26 @@ class RulesProvider extends ChangeNotifier {
     );
     moderatorController.rules = moderatorService.getRules(communityName);
     notifyListeners();
+  }
+}
+
+class ChangeGeneralSettingsProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void setGeneralSettings({required String communityName, required GeneralSettings general}) {
+
+    moderatorService.postGeneralSettings(
+        communityName: communityName,
+        settings: GeneralSettings(
+            communityID: general.communityID,
+            communityName: general.communityName,
+            communityDescription: general.communityDescription,
+            communityType: general.communityType,
+            nsfwFlag: general.nsfwFlag));
+    moderatorController.generalSettings =  moderatorService.getCommunityGeneralSettings(general.communityName);
+    moderatorController.communityName = general.communityName;
+
+            notifyListeners();
   }
 }

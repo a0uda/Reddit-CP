@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/drawer_tile.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -22,7 +24,7 @@ class DrawerReddit extends StatefulWidget {
 class _DrawerRedditState extends State<DrawerReddit> {
   bool userMod = true, isExpanded = false;
   final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
-  List<Map<String, dynamic>> communities = []; 
+  List<Map<String, dynamic>> communitiesDrawer = []; 
 
   @override
   void initState() {
@@ -30,11 +32,11 @@ class _DrawerRedditState extends State<DrawerReddit> {
     fetchCommunities(); 
   }
   Future<void> fetchCommunities() async {
-    for (String communityName in communityNames) {
-      communityController.getCommunity(communityName);
+    for (CommunityItem community in communities) {
+      communityController.getCommunity(community.general.communityName);
       if (communityController.communityItem != null) {
-          communities.add({
-            'name': communityName,
+          communitiesDrawer.add({
+            'name':  communityController.communityItem!.general.communityName,
             'communityPage': CommunityPage(
               communityDescription: communityController.communityItem!.general.communityDescription,
               communityMembersNo: communityController.communityItem!.communityMembersNo,
@@ -46,15 +48,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
       }
     }
   }
-
-
-  List<String> communityNames = [
-    'Flutter Enthusiasts',
-    'Cooking Masters',
-    'Fitness Warriors',
-    'Photography Passion',
-    'Gaming Universe',
-  ];
 
   var userModList = [];
   @override
@@ -223,7 +216,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                   endIndent: 30,
                 ),
                 
-                DrawerTile(tileTitle: "COMMUNITIES", lists: communities),
+                DrawerTile(tileTitle: "COMMUNITIES", lists: communitiesDrawer),
                 const Divider(
                   color: Colors.grey,
                   height: 30,
@@ -233,7 +226,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                 userMod
                     ? DrawerTile(
                         tileTitle: "MODERATION",
-                        lists: communities,
+                        lists: communitiesDrawer,
                       )
                     : const SizedBox()
               ],
@@ -243,13 +236,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
   }
 }
 
- List<String> communityNames = [
-    'Flutter Enthusiasts',
-    'Cooking Masters',
-    'Fitness Warriors',
-    'Photography Passion',
-    'Gaming Universe',
-  ];
 
 // List<Map<String, dynamic>> communites = [
 //   {

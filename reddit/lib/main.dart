@@ -40,7 +40,8 @@ void main() async {
   GetIt.instance.registerSingleton<CommunityService>(CommunityService());
   GetIt.instance.registerSingleton<CommunityController>(CommunityController());
 
-  GetIt.instance.registerSingleton<ModeratorMockService>(ModeratorMockService());
+  GetIt.instance
+      .registerSingleton<ModeratorMockService>(ModeratorMockService());
   GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
 
   runApp(MultiProvider(
@@ -86,6 +87,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => ChangeEmail(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ChangeGeneralSettingsProvider(),
       )
     ],
     child: const MyApp(),
