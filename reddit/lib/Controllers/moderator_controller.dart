@@ -29,6 +29,10 @@ class ModeratorController {
     postTypesAndOptions =
         moderatorService.getPostTypesAndOptions(communityName);
   }
+
+  GeneralSettings getGeneralSettings(String communityName) {
+    return moderatorService.getCommunityGeneralSettings(communityName);
+  }
 }
 
 class ApprovedUserProvider extends ChangeNotifier {
