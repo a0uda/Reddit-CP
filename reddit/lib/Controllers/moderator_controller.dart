@@ -188,8 +188,8 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  void setGeneralSettings({required String communityName, required GeneralSettings general}) {
-
+  void setGeneralSettings(
+      {required String communityName, required GeneralSettings general}) {
     moderatorService.postGeneralSettings(
         communityName: communityName,
         settings: GeneralSettings(
@@ -198,9 +198,10 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
             communityDescription: general.communityDescription,
             communityType: general.communityType,
             nsfwFlag: general.nsfwFlag));
-    moderatorController.generalSettings =  moderatorService.getCommunityGeneralSettings(general.communityName);
+    moderatorController.generalSettings =
+        moderatorService.getCommunityGeneralSettings(general.communityName);
     moderatorController.communityName = general.communityName;
 
-            notifyListeners();
+    notifyListeners();
   }
 }
