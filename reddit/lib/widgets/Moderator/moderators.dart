@@ -3,29 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_modderator.dart';
 import 'package:reddit/widgets/Moderator/moderators_list.dart';
 
-List<Map<String, String>> moderatorsList = [
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Moderators",
-    "modTime": "1 mo ago",
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "modTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "modTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "modTime": "1 mo ago"
-  },
-];
-
 class Moderators extends StatefulWidget {
   const Moderators({super.key});
 

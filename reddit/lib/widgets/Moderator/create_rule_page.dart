@@ -1,5 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class CreateRulePage extends StatefulWidget {
   const CreateRulePage({super.key});
@@ -9,6 +15,8 @@ class CreateRulePage extends StatefulWidget {
 }
 
 class _CreateRulePageState extends State<CreateRulePage> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   bool saveButtonEnable = false;
 
   TextEditingController titleController = TextEditingController();
@@ -18,6 +26,8 @@ class _CreateRulePageState extends State<CreateRulePage> {
 
   @override
   Widget build(BuildContext context) {
+    var rulesProvider = context.read<RulesProvider>();
+
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -47,6 +57,15 @@ class _CreateRulePageState extends State<CreateRulePage> {
                 onPressed: saveButtonEnable
                     ? () {
                         //save rule
+                        rulesProvider.createRules(
+                          id: Random().nextInt(100000).toString(),
+                          communityName: moderatorController.communityName,
+                          ruleTitle: titleController.text,
+                          appliesTo: selectedOption,
+                          reportReason: reportReasonController.text,
+                          ruleDescription: descritionController.text,
+                        );
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: const Text(

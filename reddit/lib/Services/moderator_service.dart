@@ -1,8 +1,6 @@
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/test_files/test_communities.dart';
-import 'package:reddit/test_files/test_posts_mohy.dart';
-import 'package:reddit/widgets/post.dart';
 
 class ModeratorMockService {
   bool testing = true;
@@ -156,7 +154,9 @@ class ModeratorMockService {
         .add(
       {
         "username": username,
-        "approved_at": "Now",
+        "mute_date": "Now",
+        "muted_by_username": "To be doneee",
+        "mute_reason": "to be donee", //badrrrrr
         "profile_picture": "images/Greddit.png",
         "_id": "6618844ad57c873637b5cf2"
       },
@@ -202,6 +202,14 @@ class ModeratorMockService {
         "moderator_since": "Now"
       },
     );
+  }
+
+  void removeAsMod(String username, String communityName) {
+    communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .moderators
+        .removeWhere((user) => user["username"] == username);
   }
 
   GeneralSettings getCommunityGeneralSettings(String communityName) {

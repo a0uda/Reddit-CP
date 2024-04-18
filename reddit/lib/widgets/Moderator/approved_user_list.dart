@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
-import 'package:reddit/widgets/Moderator/approved_users.dart';
 
 class ApprovedUserList extends StatefulWidget {
   const ApprovedUserList({super.key});
@@ -34,7 +33,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
 
   @override
   Widget build(BuildContext context) {
-    var approvedUserProvider =  context.read<ApprovedUserProvider>();
+    //var approvedUserProvider = context.read<ApprovedUserProvider>();
     double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<ApprovedUserProvider>(
         builder: (context, approvedUserProvider, child) {
@@ -44,6 +43,9 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
           children: [
             (screenWidth > 700)
                 ? AppBar(
+                    leading: const SizedBox(
+                      width: 0,
+                    ),
                     title: const Text(
                       'Approved Users',
                       style: TextStyle(

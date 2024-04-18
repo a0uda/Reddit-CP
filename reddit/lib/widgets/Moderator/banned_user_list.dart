@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 
 class BannedUsersList extends StatefulWidget {
@@ -47,7 +46,7 @@ class _BannedUsersListState extends State<BannedUsersList> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    var bannedUserProvider = context.read<BannedUserProvider>();
+    //var bannedUserProvider = context.read<BannedUserProvider>();
     return Consumer<BannedUserProvider>(
         builder: (context, bannedUserProvider, child) {
       return Container(
@@ -56,6 +55,9 @@ class _BannedUsersListState extends State<BannedUsersList> {
           children: [
             (screenWidth > 700)
                 ? AppBar(
+                    leading: const SizedBox(
+                      width: 0,
+                    ),
                     title: const Text(
                       'Banned Users',
                       style: TextStyle(

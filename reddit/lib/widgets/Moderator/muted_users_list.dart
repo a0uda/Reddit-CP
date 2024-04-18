@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
-import 'package:reddit/widgets/Moderator/muted_users.dart';
 
 class MutedUsersList extends StatefulWidget {
   const MutedUsersList({super.key});
@@ -35,7 +34,7 @@ class _MutedUsersListState extends State<MutedUsersList> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    var mutedUserProvider = context.read<MutedUserProvider>();
+    //var mutedUserProvider = context.read<MutedUserProvider>();
     return Consumer<MutedUserProvider>(
         builder: (context, mutedUserProvider, child) {
       return Container(
@@ -44,6 +43,7 @@ class _MutedUsersListState extends State<MutedUsersList> {
           children: [
             (screenWidth > 700)
                 ? AppBar(
+                    leading: const SizedBox(width: 0,),
                     title: const Text(
                       'Muted Users',
                       style: TextStyle(
@@ -92,16 +92,18 @@ class _MutedUsersListState extends State<MutedUsersList> {
                 itemCount: foundUsers.length,
                 itemBuilder: (BuildContext context, int index) {
                   final item = foundUsers[index];
+                  print("badrrrrrrrrrrrrrr");
+                  print(item);
                   return Card(
                     elevation: 0,
                     margin: const EdgeInsets.only(bottom: 1),
                     color: Colors.white,
                     child: ListTile(
                       tileColor: Colors.white,
-                      // leading: CircleAvatar(
-                      //   backgroundImage: AssetImage(item["profile_picture"]!),
-                      //   radius: 15,
-                      // ),
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(item["profile_picture"]!),
+                        radius: 15,
+                      ),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

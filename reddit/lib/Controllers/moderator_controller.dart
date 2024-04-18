@@ -28,65 +28,6 @@ class ModeratorController {
     postTypesAndOptions =
         moderatorService.getPostTypesAndOptions(communityName);
   }
-
-
-  void inviteModerator({
-    required String communityName,
-    required String username,
-    required bool everything,
-    required bool manageUsers,
-    required bool manageSettings,
-    required bool managePostsAndComments,
-  }) {
-    moderatorService.inviteModerator(
-        communityName: communityName,
-        username: username,
-        everything: everything,
-        manageUsers: manageUsers,
-        manageSettings: manageSettings,
-        managePostsAndComments: managePostsAndComments);
-    moderators = moderatorService.getModerators(communityName);
-  }
-
-  void createRules(
-      {required String id,
-      required String communityName,
-      required String ruleTitle,
-      required String appliesTo,
-      String? reportReason,
-      String? ruleDescription}) {
-    moderatorService.createRules(
-        id: id,
-        communityName: communityName,
-        ruleTitle: ruleTitle,
-        appliesTo: appliesTo,
-        reportReason: reportReason ?? "",
-        ruleDescription: ruleDescription ?? "");
-    rules = moderatorService.getRules(communityName);
-  }
-
-  void deleteRule(String communityName, String id) {
-    moderatorService.deleteRule(communityName, id);
-    rules = moderatorService.getRules(communityName);
-  }
-
-  void editRules(
-      {required String id,
-      required String communityName,
-      required String ruleTitle,
-      required String appliesTo,
-      String? reportReason,
-      String? ruleDescription}) {
-    moderatorService.editRules(
-      id: id,
-      communityName: communityName,
-      ruleTitle: ruleTitle,
-      appliesTo: appliesTo,
-      reportReason: reportReason ?? "",
-      ruleDescription: ruleDescription ?? "",
-    );
-    rules = moderatorService.getRules(communityName);
-  }
 }
 
 class ApprovedUserProvider extends ChangeNotifier {
@@ -143,18 +84,101 @@ class BannedUserProvider extends ChangeNotifier {
   }
 }
 
-
 class MutedUserProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   void addMutedUsers(String username, String communityName) {
     moderatorService.addMutedUsers(username, communityName);
-    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
+    moderatorController.mutedUsers =
+        moderatorService.getMutedUsers(communityName);
+    notifyListeners();
   }
 
-  void unMuteUser(String username, String communityName){
+  void unMuteUser(String username, String communityName) {
     moderatorService.unMuteUser(username, communityName);
-    moderatorController.mutedUsers = moderatorService.getMutedUsers(communityName);
+    moderatorController.mutedUsers =
+        moderatorService.getMutedUsers(communityName);
+    notifyListeners();
+  }
+}
+
+class ModeratorProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void inviteModerator({
+    required String communityName,
+    required String username,
+    required bool everything,
+    required bool manageUsers,
+    required bool manageSettings,
+    required bool managePostsAndComments,
+  }) {
+    moderatorService.inviteModerator(
+        communityName: communityName,
+        username: username,
+        everything: everything,
+        manageUsers: manageUsers,
+        manageSettings: manageSettings,
+        managePostsAndComments: managePostsAndComments);
+    moderatorController.moderators =
+        moderatorService.getModerators(communityName);
+    notifyListeners();
+  }
+
+  void removeAsMod(String username, String communityName) {
+    moderatorService.removeAsMod(username, communityName);
+    moderatorController.moderators =
+        moderatorService.getModerators(communityName);
+    notifyListeners();
+  }
+}
+
+class RulesProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  void createRules(
+      {required String id,
+      required String communityName,
+      required String ruleTitle,
+      required String appliesTo,
+      String? reportReason,
+      String? ruleDescription}) {
+    moderatorService.createRules(
+        id: id,
+        communityName: communityName,
+        ruleTitle: ruleTitle,
+        appliesTo: appliesTo,
+        reportReason: reportReason ?? "",
+        ruleDescription: ruleDescription ?? "");
+    moderatorController.rules = moderatorService.getRules(communityName);
+    notifyListeners();
+  }
+
+  void deleteRule(String communityName, String id) {
+    moderatorService.deleteRule(communityName, id);
+    moderatorController.rules = moderatorService.getRules(communityName);
+    notifyListeners();
+  }
+
+  void editRules(
+      {required String id,
+      required String communityName,
+      required String ruleTitle,
+      required String appliesTo,
+      String? reportReason,
+      String? ruleDescription}) {
+    moderatorService.editRules(
+      id: id,
+      communityName: communityName,
+      ruleTitle: ruleTitle,
+      appliesTo: appliesTo,
+      reportReason: reportReason ?? "",
+      ruleDescription: ruleDescription ?? "",
+    );
+    moderatorController.rules = moderatorService.getRules(communityName);
+    notifyListeners();
   }
 }

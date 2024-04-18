@@ -46,6 +46,12 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
+        create: (context) => RulesProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ModeratorProvider(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => ApprovedUserProvider(),
       ),
       ChangeNotifierProvider(
