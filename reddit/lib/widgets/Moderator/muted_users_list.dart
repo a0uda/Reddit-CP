@@ -129,13 +129,6 @@ class _MutedUsersListState extends State<MutedUsersList> {
                                     shrinkWrap: true,
                                     children: [
                                       ListTile(
-                                        leading: const Icon(Icons.edit),
-                                        title: const Text("See details"),
-                                        onTap: () {
-                                          //navigate to mute details of this user Badrr
-                                        },
-                                      ),
-                                      ListTile(
                                         leading: const Icon(Icons.person),
                                         title: const Text("View Profile"),
                                         onTap: () {

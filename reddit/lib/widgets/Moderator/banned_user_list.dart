@@ -77,7 +77,9 @@ class _BannedUsersListState extends State<BannedUsersList> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => const AddBannedUser(),
+                                  builder: (context) => AddBannedUser(
+                                    seeDetails: false,
+                                  ),
                                 ),
                               );
                             }, // Ban user Badrrr ele hya add
@@ -145,6 +147,23 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                         title: const Text("See details"),
                                         onTap: () {
                                           //navigate to banned details of this user Badrr
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AddBannedUser(
+                                                seeDetails: true,
+                                                username: item["username"],
+                                                banReason:
+                                                    item["reason_for_ban"],
+                                                modNote: item["mod_note"],
+                                                permanentFlag:
+                                                    item["permanent_flag"],
+                                                banNote: item[
+                                                    "note_for_ban_message"],
+                                                banPeriod: item["banned_until"],
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
                                       ListTile(

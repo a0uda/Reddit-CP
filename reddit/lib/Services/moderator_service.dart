@@ -130,6 +130,28 @@ class ModeratorMockService {
     );
   }
 
+  void updateBannedUser({
+    required String username,
+    required String communityName,
+    required bool permanentFlag,
+    required String reasonForBan,
+    String? bannedUntil,
+    String? noteForBanMessage,
+    String? modNote,
+  }) {
+    var user = communities
+        .firstWhere(
+            (community) => community.general.communityName == communityName)
+        .bannedUsers
+        .firstWhere((user) => user["username"] == username);
+    user["reason_for_ban"] = reasonForBan;
+    user["mod_note"] = modNote;
+    user["permanent_flag"] = permanentFlag;
+    user["banned_until"] = bannedUntil ?? ""; 
+    user["note_for_ban_message"] = noteForBanMessage ?? "";
+
+  }
+
   void unBanUser(String username, String communityName) {
     communities
         .firstWhere(

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/create_rule_page.dart';
 import 'package:reddit/widgets/Moderator/edit_rule_page.dart';
-import 'package:reddit/widgets/Moderator/mod_rules.dart';
 
 class ModRulesList extends StatefulWidget {
   final bool isEditMode;
@@ -36,6 +34,7 @@ class _ModRulesListState extends State<ModRulesList> {
         children: [
           (screenWidth > 700)
               ? AppBar(
+                  leading: const SizedBox(),
                   title: Text(
                     isEditing ? "EditRules" : 'Rules',
                     style: const TextStyle(
@@ -134,7 +133,8 @@ class _ModRulesListState extends State<ModRulesList> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => EditRulePage(
-                                    ruleTitle: item.ruleTitle!,
+                                    ruleTitle: item.ruleTitle,
+                                    id: item.id,
                                     ruleDescription: item.ruleDescription,
                                     appliesToOption: "posts",
                                   ),

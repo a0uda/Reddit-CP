@@ -50,6 +50,7 @@ class _ModeratorsListState extends State<ModeratorsList>
           children: <Widget>[
             (screenWidth > 700)
                 ? AppBar(
+                    leading: const SizedBox(),
                     title: const Text(
                       'Moderators',
                       style: TextStyle(

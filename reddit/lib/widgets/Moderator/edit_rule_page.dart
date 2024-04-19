@@ -1,15 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 // ignore: must_be_immutable
 class EditRulePage extends StatefulWidget {
   final String ruleTitle;
+  final String id;
   final String appliesToOption;
   String? ruleDescription;
   String? reportReason;
   EditRulePage(
       {super.key,
       required this.ruleTitle,
+      required this.id,
       required this.appliesToOption,
       this.reportReason,
       this.ruleDescription});
@@ -20,6 +26,7 @@ class EditRulePage extends StatefulWidget {
 
 class _EditRulePageState extends State<EditRulePage> {
   bool saveButtonEnable = false;
+  final moderatorController = GetIt.instance.get<ModeratorController>();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descritionController = TextEditingController();
@@ -39,6 +46,7 @@ class _EditRulePageState extends State<EditRulePage> {
 
   @override
   Widget build(BuildContext context) {
+    var rulesProvider = context.read<RulesProvider>();
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -68,6 +76,14 @@ class _EditRulePageState extends State<EditRulePage> {
                 onPressed: saveButtonEnable
                     ? () {
                         //save rule
+                        rulesProvider.editRules(
+                            id: widget.id,
+                            communityName: moderatorController.communityName,
+                            ruleTitle: titleController.text,
+                            appliesTo: selectedOption,
+                            reportReason: reportReasonController.text,
+                            ruleDescription: descritionController.text);
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: const Text(

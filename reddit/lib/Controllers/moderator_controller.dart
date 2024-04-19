@@ -81,6 +81,29 @@ class BannedUserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateBannedUser({
+    required String username,
+    required String communityName,
+    required bool permanentFlag,
+    required String reasonForBan,
+    String? bannedUntil,
+    String? noteForBanMessage,
+    String? modNote,
+  }) {
+    moderatorService.updateBannedUser(
+      username: username,
+      communityName: communityName,
+      permanentFlag: permanentFlag,
+      reasonForBan: reasonForBan,
+      bannedUntil: bannedUntil ?? "",
+      modNote: modNote ?? "",
+      noteForBanMessage: noteForBanMessage ?? "",
+    );
+    moderatorController.bannedUsers =
+        moderatorService.getBannedUsers(communityName);
+    notifyListeners();
+  }
+
   void unBanUsers(String username, String communityName) {
     moderatorService.unBanUser(username, communityName);
     moderatorController.bannedUsers =
