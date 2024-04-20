@@ -113,7 +113,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 child: Consumer<ProfilePictureController>(
                     builder: (context, profilepicturecontroller, child) {
                   return GestureDetector(
-                    child: userController.userAbout!.profilePicture == null
+                    child: userController.userAbout!.profilePicture == null || userController.userAbout!.profilePicture!.isEmpty
                         ? const CircleAvatar(
                             radius: 18,
                             backgroundImage: AssetImage('images/Greddit.png'),

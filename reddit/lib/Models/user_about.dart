@@ -39,8 +39,6 @@ class UserAbout {
     if (jsonDecode == null) {
       return UserAbout(username: '');
     }
-    print(jsonDecode['about']['username']);
-    print(jsonDecode['about']['profile_picture']);
     return UserAbout(
       id: jsonDecode['about']['id'],
       createdAt: DateFormat('d MMMM yyyy')

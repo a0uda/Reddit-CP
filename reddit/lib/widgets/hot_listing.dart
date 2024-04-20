@@ -43,7 +43,7 @@ class HotListingBuild extends State<HotListing> {
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
-      print(username);
+      //print(username);
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
@@ -64,7 +64,7 @@ class HotListingBuild extends State<HotListing> {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
-      print('load more');
+      //print('load more');
 
       // load more data here
 

@@ -20,10 +20,14 @@ class FollowerListState extends State<FollowerList> {
 
   @override
   Widget build(BuildContext context) {
+    var followerfollowingcontroller =
+        context.read<FollowerFollowingController>();
     return FutureBuilder<List<List<FollowersFollowingItem>>>(
       future: Future.wait([
-        userService.getFollowers(userController.userAbout!.username),
-        userService.getFollowing(userController.userAbout!.username)
+        followerfollowingcontroller
+            .getFollowers(userController.userAbout!.username),
+        followerfollowingcontroller
+            .getFollowing(userController.userAbout!.username),
       ]),
       builder: (BuildContext context,
           AsyncSnapshot<List<List<FollowersFollowingItem>>> snapshot) {
@@ -35,7 +39,7 @@ class FollowerListState extends State<FollowerList> {
               width: 30,
               height: 30,
               child: CircularProgressIndicator(
-                color:  Color.fromARGB(255, 102, 102, 102),
+                color: Color.fromARGB(255, 102, 102, 102),
               ),
             ),
           ); // Display a loading spinner while waiting
@@ -78,12 +82,8 @@ class FollowerListState extends State<FollowerList> {
                             await followerFollowingController
                                 .followUser(followers![index].username);
                           }
-                          following = await followerFollowingController
-                              .getFollowing(userController.userAbout!.username
-                                  .toString());
-                          followers = await followerFollowingController
-                              .getFollowers(userController.userAbout!.username
-                                  .toString());
+                          following = followerFollowingController.following;
+                          followers = followerFollowingController.followers;
                         },
                         child: Text(
                           (following!
