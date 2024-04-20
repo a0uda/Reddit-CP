@@ -20,8 +20,8 @@ class UserController {
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    blockedUsers = await userService.getBlockedUsers(username);
-    accountSettings = await userService.getAccountSettings(username);
+    //blockedUsers = await userService.getBlockedUsers(username);
+    //accountSettings = await userService.getAccountSettings(username);
   }
 
   Future<void>? getUserAbout(String username) async {
