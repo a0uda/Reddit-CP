@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -134,7 +136,7 @@ class _CommentState extends State<Comment> {
                           return CircleAvatar(
                             radius: 15,
                             backgroundImage:
-                                AssetImage(snapshot.data!.profilePicture!),
+                                FileImage(File(snapshot.data!.profilePicture!)),
                           );
                         }
                       }

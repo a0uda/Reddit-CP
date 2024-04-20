@@ -31,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: TabBarViews(userData),
+              child: TabBarViews(userData, userType),
             ),
           ],
         ),

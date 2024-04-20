@@ -65,7 +65,7 @@ class PostService {
           setSuggestedSort: "None",
         ),
       );
-      print(posts);
+      //print(posts);
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -110,42 +110,42 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-      print(response.statusCode);
+      //print(response.statusCode);
 
-      print(json.encode({
-        "title": title,
-        "description": description,
-        "type": type,
-        "link_url": linkUrl,
-        "images": images
-            ?.map((image) => {
-                  "path": image.path,
-                  "caption": image.caption ?? "",
-                  "link": image.link
-                })
-            .toList(),
-        "videos": videos
-            ?.map((video) => {
-                  "path": video.path,
-                  "caption": video.caption ?? "",
-                  "link": video.link
-                })
-            .toList(),
-        "polls": poll != null
-            ? [
-                {"options": poll.options}
-              ]
-            : [],
-        "polls_voting_length": poll != null ? poll.votes.length : 0,
-        "community_name": communityName,
-        "post_in_community_flag": postInCommunityFlag,
-        // "oc_flag": ocFlag,
-        // "spoiler_flag": spoilerFlag,
-        // "nsfw_flag": nsfwFlag
-      }));
-      if (response.statusCode >= 400) {
-        return 400;
-      }
+      // print(json.encode({
+      //   "title": title,
+      //   "description": description,
+      //   "type": type,
+      //   "link_url": linkUrl,
+      //   "images": images
+      //       ?.map((image) => {
+      //             "path": image.path,
+      //             "caption": image.caption ?? "",
+      //             "link": image.link
+      //           })
+      //       .toList(),
+      //   "videos": videos
+      //       ?.map((video) => {
+      //             "path": video.path,
+      //             "caption": video.caption ?? "",
+      //             "link": video.link
+      //           })
+      //       .toList(),
+      //   "polls": poll != null
+      //       ? [
+      //           {"options": poll.options}
+      //         ]
+      //       : [],
+      //   "polls_voting_length": poll != null ? poll.votes.length : 0,
+      //   "community_name": communityName,
+      //   "post_in_community_flag": postInCommunityFlag,
+      //   // "oc_flag": ocFlag,
+      //   // "spoiler_flag": spoilerFlag,
+      //   // "nsfw_flag": nsfwFlag
+      // }));
+      // if (response.statusCode >= 400) {
+      //   return 400;
+      // }
     }
     return 200;
   }
@@ -215,7 +215,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-      print(username);
+      //print(username);
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -228,13 +228,13 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      print(json.decode(response.body)['posts']);
+      //print(json.decode(response.body)['posts']);
       final List<dynamic> jsonlist = json.decode(response.body)['posts'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
 
-      print(postsItem);
+      //print(postsItem);
       return postsItem;
       //return posts;
     }
@@ -284,9 +284,9 @@ class PostService {
   void submitReport(String? id, String reason) {
     if (testing) {
       reportPosts.add(ReportPost(id: id, reason: reason));
-      print(id);
-      print(reason);
-      print(reportPosts);
+      //print(id);
+      //print(reason);
+      //print(reportPosts);
     } else {
       // dislike post in database
     }
@@ -314,7 +314,7 @@ class PostService {
       var filteredids =
           savedPosts.where((post) => post.username == username).toList();
       var ids = filteredids.map((user) => user.id).toSet();
-      print(ids);
+      //print(ids);
       var filteredPosts = posts.where((post) => ids.contains(post.id)).toList();
       return filteredPosts;
     } else {
@@ -324,11 +324,11 @@ class PostService {
   }
 
   void updatePoll(String id, int index, String username) {
-    print('id is : $id');
+    //print('id is : $id');
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
       if (post.poll == null) {
-        print('no poll found');
+        //print('no poll found');
         return;
       }
       post.poll!.votes[index]++;
@@ -355,9 +355,9 @@ class PostService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
-      print('post');
-      print(response.body);
-      print(json.decode(response.body)['post']);
+      //rint('post');
+      //print(response.body);
+      //print(json.decode(response.body)['post']);
 
       if (response.statusCode == 200) {
         return PostItem.fromJson(json.decode(response.body)['post']);
@@ -383,8 +383,8 @@ class PostService {
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
         body: json.encode({"is_post": true, "id": id}),
       );
-      print('lock');
-      print(response.statusCode);
+      //print('lock');
+      //print(response.statusCode);
     }
   }
 

@@ -6,17 +6,18 @@ import '../Models/user_about.dart';
 
 class TabBarViews extends StatelessWidget {
   final UserAbout? userData;
-  const TabBarViews(this.userData, {super.key});
+  final String? userType;
+  const TabBarViews(this.userData, this.userType,{super.key});
   @override
   Widget build(BuildContext context) {
     return TabBarView(
       children: [
         TabBarPosts(
           userData: userData,
-          
+          userType: userType,
         ),
         TabBarComments(userData: userData),
-        TabBarAbout(userData),
+        TabBarAbout(userData,userType),
       ],
     );
   }

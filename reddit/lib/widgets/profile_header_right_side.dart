@@ -33,9 +33,11 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   bool _dataFetched = false;
 
   void loadFollowingList() async {
-    final userService = GetIt.I.get<UserService>();
-    followingList =
-        await userService.getFollowing(userController.userAbout!.username);
+    if (userType != 'me') {
+      final userService = GetIt.I.get<UserService>();
+      followingList =
+          await userService.getFollowing(userController.userAbout!.username);
+    }
     setState(() {
       _dataFetched = true;
     });

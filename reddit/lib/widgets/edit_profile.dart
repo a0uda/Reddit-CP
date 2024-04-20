@@ -59,13 +59,14 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   fetchData() async {
-    ProfileSettings? profileSettings =
-        await userService.getProfileSettings(userData!.username);
-    contentVisibility = profileSettings!.contentVisibility;
-    activeCommunity = profileSettings.activeCommunity;
-    setState(() {
-      _dataFetched = true;
-    });
+    if (userController.profileSettings == null) {
+      await userController.getProfileSettings(userData!.username);
+    }
+      contentVisibility = userController.profileSettings!.contentVisibility;
+      activeCommunity = userController.profileSettings!.activeCommunity;
+      setState(() {
+        _dataFetched = true;
+      });
   }
 
   selectBannerProfile(bool isBanner) async {
