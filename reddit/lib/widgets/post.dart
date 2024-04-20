@@ -219,8 +219,13 @@ class PostState extends State<Post> {
                                           ConnectionState.waiting) {
                                         return const CircularProgressIndicator();
                                       } else if (snapshot.hasError) {
+                                        print(widget.name);
+                                        print(snapshot.data);
                                         return Text('Error: ${snapshot.error}');
                                       } else {
+
+                                        print(widget.name);
+                                        print(snapshot.data);
                                         return ProfileScreen(
                                           snapshot.data,
                                           userType,

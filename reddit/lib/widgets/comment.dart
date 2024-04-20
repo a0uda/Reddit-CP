@@ -124,13 +124,14 @@ class _CommentState extends State<Comment> {
                         print("el sora");
                         return Text('Error: ${snapshot.error}');
                       } else {
+                        print('in comment');
+                        print(snapshot.data!);
                         print(snapshot.data!.profilePicture!);
                         if (snapshot.data!.profilePicture == null ||
                             snapshot.data!.profilePicture!.isEmpty) {
                           return const CircleAvatar(
                             radius: 15,
-                            backgroundImage:
-                                AssetImage('images/Greddit.png'),
+                            backgroundImage: AssetImage('images/Greddit.png'),
                           );
                         } else {
                           return CircleAvatar(
