@@ -28,20 +28,29 @@ class SavedScreen extends State<Saved> {
     super.initState();
     initUser();
   }
+ Future<void> SavedPosts() async {
+ 
 
+   final UserController userController = GetIt.instance.get<UserController>();
+    final postService = GetIt.instance.get<PostService>();
+    String username = userController.userAbout!.username;
+    posts =await postService.getSavePost(username);
+  }
   Future<void> initUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+   final UserController userController = GetIt.instance.get<UserController>();
+    final postService = GetIt.instance.get<PostService>();
+    String username = userController.userAbout!.username;
     username2 = prefs.getString('username');
+    posts =await postService.getSavePost(username);
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserController userController = GetIt.instance.get<UserController>();
+ final UserController userController = GetIt.instance.get<UserController>();
     final postService = GetIt.instance.get<PostService>();
-
     String username = userController.userAbout!.username;
-    posts = postService.getSavePost(username);
 
     return DefaultTabController(
       length: 2,
@@ -62,9 +71,26 @@ class SavedScreen extends State<Saved> {
         ),
         body: TabBarView(
           children: [
-            Consumer<SavePost>(
+             FutureBuilder<void>(
+future:SavedPosts() ,
+  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+           return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+            return Consumer<SavePost>(
               builder: (context, socialLinksController, child) {
-                posts = postService.getSavePost(username);
+              
                 return ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
@@ -107,9 +133,9 @@ class SavedScreen extends State<Saved> {
                       isLocked:posts[index].lockedFlag,
                     );
                   },
-                );
-              },
-            ),
+             );});}}),
+              
+  
             Consumer<SaveComment>(
               builder: (context, socialLinksController, child) {
                 List<Comments>? comments =

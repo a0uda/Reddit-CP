@@ -23,6 +23,7 @@ class BestListing extends StatefulWidget {
 
 class BestListingBuild extends State<BestListing> {
   ScrollController controller = ScrollController();
+  int page=0;
   // List of items in our dropdown menu
   bool? isMyPost;
 
@@ -36,7 +37,8 @@ class BestListingBuild extends State<BestListing> {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
-        post = await postService.getPosts(user, "hot");
+        post = await postService.getPosts(user, "hot",page);
+             page=page+1;
       } else {
         posts = postService.fetchPosts();
       }
@@ -55,11 +57,6 @@ class BestListingBuild extends State<BestListing> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _dataFuture = fetchdata(); // Replace with your actual data fetching logic
-  }
 
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
@@ -71,6 +68,13 @@ class BestListingBuild extends State<BestListing> {
     }
   }
 
+  @override
+ void initState() {
+    super.initState();
+    _dataFuture = fetchdata(); 
+    controller.addListener(HandleScrolling);
+    
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -93,7 +97,7 @@ class BestListingBuild extends State<BestListing> {
         } else {
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-              fetchdata();
+              
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,

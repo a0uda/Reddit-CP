@@ -120,8 +120,8 @@ class PostState extends State<Post> {
     downVoteColor = downVote ? Colors.red : Colors.black;
     if (userController.userAbout != null) {
       String username = userController.userAbout!.username;
-      var saved = postService.getSavePost(username);
-      issaved = saved.any((obj) => obj.id == widget.id);
+      //todo saved posts 
+
     }
 
     String userType;
@@ -130,7 +130,7 @@ class PostState extends State<Post> {
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
         onTap: () => {
-          // open this post TODO
+          
           Navigator.push(
             context,
             MaterialPageRoute(

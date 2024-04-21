@@ -48,8 +48,7 @@ class UserService {
       );
       print(response.statusCode);
       print(jsonDecode(response.body));
-      print(jsonDecode(response.body)['about']['username']);
-      print(jsonDecode(response.body)['about']['profile_picture']);
+ 
       return UserAbout.fromJson(jsonDecode(response.body));
     }
   }
@@ -634,7 +633,7 @@ class UserService {
       );
 
       final token = response.headers['authorization'];
-      print(token);
+      print(response.body);
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token!);

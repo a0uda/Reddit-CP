@@ -40,28 +40,28 @@ class UserAbout {
       return UserAbout(username: '');
     }
     return UserAbout(
-      id: jsonDecode['about']['id'],
+      id: jsonDecode['content']['id'],
       createdAt: DateFormat('d MMMM yyyy')
-          .format(DateTime.parse(jsonDecode['about']['created_at']))
+          .format(DateTime.parse(jsonDecode['content']['created_at']))
           .toString(),
-      username: jsonDecode['about']['username'],
-      email: jsonDecode['about']['email'],
-      verifiedEmailFlag: jsonDecode['about']['verified_email_flag'] == 'true',
-      gmail: jsonDecode['about']['gmail'],
-      facebookEmail: jsonDecode['about']['facebook_email'],
-      displayName: jsonDecode['about']['display_name'],
-      about: jsonDecode['about']['about'],
-      socialLinks: jsonDecode['about']['social_links'] != null
-          ? List<SocialLlinkItem>.from(jsonDecode['about']['social_links']
+      username: jsonDecode['content']['username'],
+      email: jsonDecode['content']['email'],
+      verifiedEmailFlag: jsonDecode['content']['verified_email_flag'] == 'true',
+      gmail: jsonDecode['content']['gmail'],
+      facebookEmail: jsonDecode['content']['facebook_email'],
+      displayName: jsonDecode['content']['display_name'],
+      about: jsonDecode['content']['about'],
+      socialLinks: jsonDecode['content']['social_links'] != null
+          ? List<SocialLlinkItem>.from(jsonDecode['content']['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['about']['profile_picture'] == "")
+      profilePicture: (jsonDecode['content']['profile_picture'] == "")
           ? 'images/Greddit.png'
-          : jsonDecode['about']['profile_picture'],
-      bannerPicture: jsonDecode['about']['banner_picture'],
-      country: jsonDecode['about']['country'],
-      gender: jsonDecode['about']['gender'],
-      connectedGoogle: jsonDecode['about']['connected_google'],
+          : jsonDecode['content']['profile_picture'],
+      bannerPicture: jsonDecode['content']['banner_picture'],
+      country: jsonDecode['content']['country'],
+      gender: jsonDecode['content']['gender'],
+      connectedGoogle: jsonDecode['content']['connected_google'],
     );
   }
 }
