@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -8,13 +9,18 @@ import 'profile_header_right_side.dart';
 import 'profile_header_add_social_link.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final UserAbout userData;
+  UserAbout userData;
   final String userType;
-  const ProfileHeader(this.userData, this.userType, {super.key});
+  ProfileHeader(this.userData, this.userType, {super.key});
   @override
   Widget build(BuildContext context) {
     return Consumer<BannerPictureController>(
         builder: (context, bannerpicturecontroller, child) {
+          if (userType == 'me') {
+                            var userController =
+                                GetIt.instance.get<UserController>();
+                            userData = userController.userAbout!;
+                          }
       return Container(
         width: MediaQuery.of(context).size.width,
         decoration:

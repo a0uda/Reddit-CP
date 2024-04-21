@@ -166,7 +166,7 @@ class _CreatePostState extends State<CreatePost> {
                 onPressed: (() async => {
                       if (titleController.text.isEmpty)
                         {
-                          print(selectedCommunity),
+                          //print(selectedCommunity),
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -226,7 +226,7 @@ class _CreatePostState extends State<CreatePost> {
                               _selections[1],
                               _selections[0],
                               !(selectedCommunity == "Select Community")),
-                          print(_selections),
+                          //print(_selections),
                           if (await response == 400)
                             {
                               showDialog(

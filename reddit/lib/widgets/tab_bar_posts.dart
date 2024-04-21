@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 
 import 'package:reddit/widgets/listing.dart';
@@ -12,7 +13,8 @@ import 'package:reddit/Services/user_service.dart';
 
 class TabBarPosts extends StatefulWidget {
   final UserAbout? userData;
-  const TabBarPosts({super.key, this.userData});
+  late String? userType;
+  TabBarPosts({super.key, this.userData, this.userType});
 
   @override
   TabBarPostsState createState() => TabBarPostsState();
@@ -20,48 +22,50 @@ class TabBarPosts extends StatefulWidget {
 
 class TabBarPostsState extends State<TabBarPosts> {
   final userService = GetIt.instance.get<UserService>();
+  final UserController userController = GetIt.instance.get<UserController>();
   bool? showActiveCommunities;
   List<CommunityItem>? activeCommunities = [];
   UserAbout? userData;
+  String? userType;
 
   @override
   void initState() {
     super.initState();
     userData = widget.userData;
+    userType = widget.userType;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<EditProfileController>(
-        builder: (context, editProfileController, child) {
-      return FutureBuilder(
-          future: Future.wait([
-            editProfileController.getProfileSettings(userData!.username),
-            userService.getActiveCommunities(userData!.username)
-          ]),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              print('getting bool active communities tmm');
-              return Container(
-                color: Colors.white,
-                child: const SizedBox(
-                  height: 30,
-                  width: 30,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+    return FutureBuilder(
+        future: Future.wait([
+          userService.getProfileSettings(userData!.username),
+          userService.getActiveCommunities(userData!.username)
+        ]),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print('getting bool active communities tmm');
+            return Container(
+              color: Colors.white,
+              child: const SizedBox(
+                height: 30,
+                width: 30,
+                child: Center(
+                  child: CircularProgressIndicator(),
                 ),
-              );
-            } else if (snapshot.hasError) {
-              print('getting bool active communities msh tmm');
-              return Text('Error: ${snapshot.error}');
-            } else {
-              showActiveCommunities =
-                  editProfileController.profileSettings!.activeCommunity;
-              print(showActiveCommunities!);
-              activeCommunities = snapshot.data![1];
-              print(activeCommunities!);
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            showActiveCommunities = snapshot.data![0].activeCommunity;
+            activeCommunities = snapshot.data![1];
+            return Consumer<EditProfileController>(
+                builder: (context, editProfileController, child) {
+              if (userType == 'me' && userController.profileSettings != null) {
+                showActiveCommunities =
+                    userController.profileSettings!.activeCommunity;
+              }
               return CustomScrollView(
                 slivers: <Widget>[
                   SliverList(
@@ -212,13 +216,16 @@ class TabBarPostsState extends State<TabBarPosts> {
                       ],
                     ),
                   ),
-                   SliverFillRemaining(
-                    child: Listing(type: "profile",userData:userData,),
+                  SliverFillRemaining(
+                    child: Listing(
+                      type: "profile",
+                      userData: userData,
+                    ),
                   ),
                 ],
               );
-            }
-          });
-    });
+            });
+          }
+        });
   }
 }

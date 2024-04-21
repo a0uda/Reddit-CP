@@ -67,6 +67,7 @@ class Comments {
       showCommentFlag: json['show_comment_flag'],
       spoilerFlag: json['spoiler_flag'],
       commentInCommunityFlag: json['comment_in_community_flag'],
+      subredditName: json['community_name'],
       moderatorDetails: json['moderator_details'] != null
           ? ModeratorDetails(
               approvedBy: json['moderator_details']['approved_by'],

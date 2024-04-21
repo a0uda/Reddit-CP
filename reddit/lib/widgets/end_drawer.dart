@@ -23,7 +23,8 @@ class EndDrawerReddit extends StatelessWidget {
                 builder: (context, profilepicturecontroller, child) {
               return Column(
                 children: [
-                  userController.userAbout!.profilePicture == null
+                  userController.userAbout!.profilePicture == null ||
+                          userController.userAbout!.profilePicture == ''
                       ? const CircleAvatar(
                           radius: 40,
                           backgroundImage: AssetImage('images/Greddit.png'),
@@ -67,13 +68,10 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("Saved"),
             onTap: () {
               //Navigate to Saved
-                          Navigator.push(
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const Saved()),
+                MaterialPageRoute(builder: (context) => const Saved()),
               );
-              
             },
           ),
           ListTile(

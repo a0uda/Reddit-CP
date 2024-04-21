@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -122,19 +124,20 @@ class _CommentState extends State<Comment> {
                         print("el sora");
                         return Text('Error: ${snapshot.error}');
                       } else {
+                        print('in comment');
+                        print(snapshot.data!);
                         print(snapshot.data!.profilePicture!);
                         if (snapshot.data!.profilePicture == null ||
                             snapshot.data!.profilePicture!.isEmpty) {
                           return const CircleAvatar(
                             radius: 15,
-                            backgroundImage:
-                                AssetImage('images/Greddit.png'),
+                            backgroundImage: AssetImage('images/Greddit.png'),
                           );
                         } else {
                           return CircleAvatar(
                             radius: 15,
                             backgroundImage:
-                                AssetImage(snapshot.data!.profilePicture!),
+                                FileImage(File(snapshot.data!.profilePicture!)),
                           );
                         }
                       }

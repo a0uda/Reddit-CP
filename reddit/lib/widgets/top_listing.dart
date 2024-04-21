@@ -42,7 +42,7 @@ class TopListingBuild extends State<TopListing> {
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
-      print(username);
+      //print(username);
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
