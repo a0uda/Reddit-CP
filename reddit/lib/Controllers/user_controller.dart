@@ -4,6 +4,7 @@ import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -17,11 +18,19 @@ class UserController {
   List<BlockedUsersItem>? blockedUsers;
   AccountSettings? accountSettings;
   ProfileSettings? profileSettings;
+  NotificationsSettingsItem? notificationsSettings;
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
     //blockedUsers = await userService.getBlockedUsers(username);
-    //accountSettings = await userService.getAccountSettings(username);
+    accountSettings = await userService.getAccountSettings(username);
+    notificationsSettings =
+        await userService.getNotificationsSettings(username);
+  }
+
+  Future<NotificationsSettingsItem?> getNotificationsSettings(
+      String username) async {
+    return await userService.getNotificationsSettings(username);
   }
 
   Future<void>? getUserAbout(String username) async {
@@ -60,8 +69,8 @@ class UserController {
     return userService.changeGender(username, gender);
   }
 
-  void changeCountry(String username, String country) {
-    userService.changeCountry(username, country);
+  Future<void> changeCountry(String username, String country) {
+    return userService.changeCountry(username, country);
   }
 
   void connectToGoogle(String username) {
@@ -78,6 +87,12 @@ class UserController {
 
   List<Comments>? getSavedComments(String username) {
     return userService.getSavedComments(username);
+  }
+
+  Future<void> updateNotificationSettings() async {
+    await userService.updateNotificationSettings(
+        userAbout!.username, notificationsSettings!);
+    await userService.getNotificationsSettings(userAbout!.username);
   }
 }
 

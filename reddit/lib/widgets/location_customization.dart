@@ -35,10 +35,15 @@ List<String> locations = [
 
 class _LocationCustomizationState extends State<LocationCustomization> {
   final UserController userController = GetIt.instance.get<UserController>();
+  String? selectedLocation;
+  @override
+  void initState() {
+    super.initState();
+    selectedLocation = userController.userAbout?.country;
+  }
 
   @override
   Widget build(BuildContext context) {
-    String selectedLocation = userController.userAbout?.country ?? '';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Location'),
@@ -52,12 +57,12 @@ class _LocationCustomizationState extends State<LocationCustomization> {
               activeColor: Colors.blue[900],
               value: locations[index],
               groupValue: selectedLocation,
-              onChanged: (String? value) {
+              onChanged: (String? value) async {
                 setState(() {
                   selectedLocation = value!;
-                  userController.changeCountry(
-                      userController.userAbout!.username, value);
                 });
+                  await userController.changeCountry(
+                      userController.userAbout!.username, value!);
               },
             ),
           );

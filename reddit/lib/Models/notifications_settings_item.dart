@@ -26,7 +26,7 @@ class NotificationsSettingsItem {
   });
 
   static Future<NotificationsSettingsItem> fromJson(jsonD) {
-    var json = jsonD['notifications_settings'];
+    var json = jsonD;
     return Future.value(
       NotificationsSettingsItem(
         mentions: json['mentions'],

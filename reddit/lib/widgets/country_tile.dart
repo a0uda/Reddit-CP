@@ -18,7 +18,7 @@ class _CountryTileState extends State<CountryTile> {
   Widget build(BuildContext context) {
     return CustomSettingsTile(
       title: 'Location customization',
-      subtitle: userController.accountSettings!.country,
+      subtitle: userController.accountSettings!.country??'',
       leading: const Icon(Icons.location_on_outlined),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
       onTap: () async {

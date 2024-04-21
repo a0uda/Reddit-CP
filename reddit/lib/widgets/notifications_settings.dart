@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screen_ex/flutter_settings_screen_ex.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/custom_stateful_settings_tile.dart';
 
 class NotificationsSettings extends StatefulWidget {
@@ -10,6 +12,13 @@ class NotificationsSettings extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettings> {
+  final UserController userController = GetIt.instance.get<UserController>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,101 +85,140 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
   }
 }
 
+final UserController userController = GetIt.instance.get<UserController>();
+void handleNotificationSettingChange(String setting, bool value) {
+  print('Updating notification settings');
+  switch (setting) {
+    case 'Private messages':
+      userController.notificationsSettings!.privateMessages = value;
+      break;
+    case 'chat messages':
+      userController.notificationsSettings!.chatMessages = value;
+      break;
+    case 'Chat requests':
+      userController.notificationsSettings!.chatRequests = value;
+      break;
+    case 'Mentions of u/username':
+      userController.notificationsSettings!.mentions = value;
+      break;
+    case 'Comments on your posts':
+      userController.notificationsSettings!.comments = value;
+      break;
+    case 'Upvotes on your posts':
+      userController.notificationsSettings!.upvotesPosts = value;
+      break;
+    case 'Upvotes on your comments':
+      userController.notificationsSettings!.upvotesComments = value;
+      break;
+    case 'Replies to your comments':
+      userController.notificationsSettings!.replies = value;
+      break;
+    case 'New followers':
+      userController.notificationsSettings!.newFollowers = value;
+      break;
+    // Add cases for other notification settings
+  }
+  // Call the function to update settings on the server
+  userController.updateNotificationSettings();
+}
+
 Widget buildPrivateMessages() {
   return CustomStatefulSettingsTile(
-    title: 'Private messages',
-    leading: const Icon(Icons.mail_outline),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.privateMessages,
+      title: 'Private messages',
+      leading: const Icon(Icons.mail_outline),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildChatMessages() {
   return CustomStatefulSettingsTile(
-    title: 'Chat messages',
-    leading: const Icon(Icons.chat_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.privateMessages,
+      title: 'Chat messages',
+      leading: const Icon(Icons.chat_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildChatRequests() {
   return CustomStatefulSettingsTile(
+    switchValue: userController.notificationsSettings!.chatRequests,
     title: 'Chat requests',
     leading: const Icon(Icons.mark_unread_chat_alt_outlined),
     onTap: () {},
-    onChanged: (value) {},
+    onChanged: handleNotificationSettingChange,
   );
 }
 
 Widget buildMentions() {
   return CustomStatefulSettingsTile(
+    switchValue: userController.notificationsSettings!.mentions,
     title: 'Mentions of u/username',
     leading: const Icon(Icons.person_outlined),
     onTap: () {},
-    onChanged: (value) {},
+    onChanged: handleNotificationSettingChange,
   );
 }
 
 Widget buildComments() {
   return CustomStatefulSettingsTile(
-    title: 'Comments on your posts',
-    leading: const Icon(Icons.comment_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.comments,
+      title: 'Comments on your posts',
+      leading: const Icon(Icons.comment_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildUpVotes() {
   return CustomStatefulSettingsTile(
-    title: 'Upvotes on your posts',
-    leading: const Icon(Icons.keyboard_double_arrow_up_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.upvotesPosts,
+      title: 'Upvotes on your posts',
+      leading: const Icon(Icons.keyboard_double_arrow_up_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildUpVotesComments() {
   return CustomStatefulSettingsTile(
-    title: 'Upvotes on your comments',
-    leading: const Icon(Icons.keyboard_double_arrow_up_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.upvotesComments,
+      title: 'Upvotes on your comments',
+      leading: const Icon(Icons.keyboard_double_arrow_up_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildReplies() {
   return CustomStatefulSettingsTile(
-    title: 'Replies to your comments',
-    leading: const Icon(Icons.reply_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.replies,
+      title: 'Replies to your comments',
+      leading: const Icon(Icons.reply_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildNewFollowers() {
   return CustomStatefulSettingsTile(
-    title: 'New followers',
-    leading: const Icon(Icons.person_add_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: userController.notificationsSettings!.newFollowers,
+      title: 'New followers',
+      leading: const Icon(Icons.person_add_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildCakeDay() {
   return CustomStatefulSettingsTile(
-    title: 'Cake day',
-    leading: const Icon(Icons.cake_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: true,
+      title: 'Cake day',
+      leading: const Icon(Icons.cake_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }
 
 Widget buildModNotifications() {
   return CustomStatefulSettingsTile(
-    title: 'Mod notifications',
-    leading: const Icon(Icons.notifications_outlined),
-    onTap: () {},
-    onChanged: (value) {},
-  );
+      switchValue: true,
+      title: 'Mod notifications',
+      leading: const Icon(Icons.notifications_outlined),
+      onTap: () {},
+      onChanged: handleNotificationSettingChange);
 }

@@ -47,6 +47,9 @@ class UserService {
         },
       );
       print('in get user about');
+      print('username');
+      print(username);
+
       print(response.statusCode);
       print(jsonDecode(response.body));
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
@@ -791,7 +794,6 @@ class UserService {
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/account-settings');
-
       final response = await http.get(
         url,
         headers: {
@@ -799,9 +801,10 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get account settings');
       print(response.statusCode);
       print(response.body);
-      return AccountSettings.fromJson(jsonDecode(response.body)['settings']);
+      return AccountSettings.fromJson(jsonDecode(response.body)['content']);
     }
   }
 
@@ -942,7 +945,7 @@ class UserService {
     }
   }
 
-  void changeCountry(String username, String country) {
+  Future<void> changeCountry(String username, String country) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
@@ -955,6 +958,38 @@ class UserService {
           .country = country;
     } else {
       // change country in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final UserController userController =
+          GetIt.instance.get<UserController>();
+      String gender = userController.userAbout?.gender ?? '';
+
+      final url = Uri.parse(
+          'http://redditech.me/backend/users/change-account-settings');
+
+      var response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "account_settings": {
+            "country": country,
+            "gender": gender,
+          },
+        }),
+      );
+      print('ana fe change country');
+      print(response.statusCode);
+      print(
+        jsonEncode({
+          "account_settings": {
+            "country": country,
+            "gender": gender,
+          },
+        }),
+      );
     }
   }
 
@@ -1043,6 +1078,68 @@ class UserService {
     print(response.statusCode);
     print(response.body);
     return NotificationsSettingsItem.fromJson(
-        jsonDecode(response.body)['settings']);
+        jsonDecode(response.body)['content']);
+  }
+
+  Future<void> updateNotificationSettings(String username,
+      NotificationsSettingsItem notificationsSettingsItem) async {
+    if (testing) {
+      users
+          .firstWhere((element) => element.userAbout.username == username)
+          .notificationsSettings = notificationsSettingsItem;
+    } else {
+      // update notification settings in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-notification-settings');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'notification_settings': {
+            'mentions': notificationsSettingsItem.mentions,
+            'comments': notificationsSettingsItem.comments,
+            'upvotes_posts': notificationsSettingsItem.upvotesPosts,
+            'upvotes_comments': notificationsSettingsItem.upvotesComments,
+            'replies': notificationsSettingsItem.replies,
+            'new_followers': notificationsSettingsItem.newFollowers,
+            'invitations': notificationsSettingsItem.invitations,
+            'posts': notificationsSettingsItem.posts,
+            'private_messages': notificationsSettingsItem.privateMessages,
+            'chat_messages': notificationsSettingsItem.chatMessages,
+            'chat_requests': notificationsSettingsItem.chatRequests,
+          }
+        }),
+      );
+      print(
+        jsonEncode({
+          'notification_settings': {
+            'mentions': notificationsSettingsItem.mentions,
+            'comments': notificationsSettingsItem.comments,
+            'upvotes_posts': notificationsSettingsItem.upvotesPosts,
+            'upvotes_comments': notificationsSettingsItem.upvotesComments,
+            'replies': notificationsSettingsItem.replies,
+            'new_followers': notificationsSettingsItem.newFollowers,
+            'invitations': notificationsSettingsItem.invitations,
+            'posts': notificationsSettingsItem.posts,
+            'private_messages': notificationsSettingsItem.privateMessages,
+            'chat_messages': notificationsSettingsItem.chatMessages,
+            'chat_requests': notificationsSettingsItem.chatRequests,
+          }
+        }),
+      );
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('notification settings updated successfully');
+      } else {
+        print('failed to update notification settings');
+      }
+    }
   }
 }
