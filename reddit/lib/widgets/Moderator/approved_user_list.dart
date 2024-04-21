@@ -33,7 +33,6 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
 
   @override
   Widget build(BuildContext context) {
-    //var approvedUserProvider = context.read<ApprovedUserProvider>();
     double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<ApprovedUserProvider>(
         builder: (context, approvedUserProvider, child) {

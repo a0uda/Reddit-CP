@@ -17,9 +17,9 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   CommunityItem? communityItem;
 
-  void getCommunity(String communityName) {
+  Future<void> getCommunity(String communityName) async {
     this.communityName = communityName;
-    approvedUsers = moderatorService.getApprovedUsers(communityName);
+    approvedUsers = await moderatorService.getApprovedUsers(communityName);
     bannedUsers = moderatorService.getBannedUsers(communityName);
     mutedUsers = moderatorService.getMutedUsers(communityName);
     moderators = moderatorService.getModerators(communityName);
@@ -39,18 +39,24 @@ class ApprovedUserProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  void addApprovedUsers(String username, String communityName) {
+  Future<void> addApprovedUsers(String username, String communityName) async {
     moderatorService.addApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
-        moderatorService.getApprovedUsers(communityName);
+        await moderatorService.getApprovedUsers(communityName);
     notifyListeners();
   }
 
-  void removeApprovedUsers(String username, String communityName) {
+  Future<void> removeApprovedUsers(String username, String communityName) async {
     moderatorService.removeApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
-        moderatorService.getApprovedUsers(communityName);
+        await moderatorService.getApprovedUsers(communityName);
     notifyListeners();
+  }
+
+  Future<void> getApprovedUsers(String communityName) async{
+      moderatorController.approvedUsers =
+          await moderatorService.getApprovedUsers(communityName);
+      notifyListeners();
   }
 }
 
