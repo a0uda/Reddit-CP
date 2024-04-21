@@ -16,7 +16,7 @@ class AccountSettings {
   });
 
   static Future<AccountSettings> fromJson(jsonD) {
-    var json = jsonD['account_settings'];
+    var json = jsonD;
     return Future.value(AccountSettings(
       email: json['email'],
       verifiedEmailFlag: json['verified_email_flag'],
