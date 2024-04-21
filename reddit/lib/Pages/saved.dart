@@ -86,8 +86,7 @@ class SavedScreen extends State<Saved> {
                             poll: posts[index].poll,
                             id: posts[index].id,
                             communityName: posts[index].communityName,
-                            isLocked:posts[index].lockedFlag,
-                          
+                            isLocked: posts[index].lockedFlag,
                           ));
                     }
                     return Post(
@@ -104,7 +103,7 @@ class SavedScreen extends State<Saved> {
                       poll: posts[index].poll,
                       id: posts[index].id,
                       communityName: posts[index].communityName,
-                      isLocked:posts[index].lockedFlag,
+                      isLocked: posts[index].lockedFlag,
                     );
                   },
                 );
@@ -112,16 +111,26 @@ class SavedScreen extends State<Saved> {
             ),
             Consumer<SaveComment>(
               builder: (context, socialLinksController, child) {
-                List<Comments>? comments =
-                    userController.getSavedComments(username2!);
-                return ListView.builder(
-                  itemCount: comments?.length,
-                  itemBuilder: (context, index) {
-                    return Comment(
-                      comment: comments![index],
-                      isSaved: true,
-                      isComingFromSaved: true,
-                    );
+                return FutureBuilder<List<Comments>>(
+                  future: userController.getSavedComments(username2!),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Comments>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          return Comment(
+                            comment: snapshot.data![index],
+                            isSaved: true,
+                            isComingFromSaved: true,
+                          );
+                        },
+                      );
+                    }
                   },
                 );
               },

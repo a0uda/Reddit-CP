@@ -72,11 +72,11 @@ class UserController {
     userService.disconnectFromGoogle(username);
   }
 
-  void saveComment(String username, String commentId) {
+  Future<void> saveComment(String username, String commentId) async {
     userService.saveComment(username, commentId);
   }
 
-  List<Comments>? getSavedComments(String username) {
+  Future<List<Comments>>? getSavedComments(String username) async {
     return userService.getSavedComments(username);
   }
 }
@@ -251,7 +251,7 @@ class SaveComment extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  void unsaveComment(String username, String commentId) {
+  Future<void> unsaveComment(String username, String commentId) async {
     userService.unsaveComment(username, commentId);
     notifyListeners();
   }
