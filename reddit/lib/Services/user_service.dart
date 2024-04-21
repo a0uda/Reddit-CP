@@ -982,29 +982,70 @@ class UserService {
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  void saveComment(String username, String commentId) {
+  Future<void> saveComment(String username, String commentId) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .savedCommentsIds!
           .add(commentId);
     } else {
-      // save comment in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/save');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'is_post': false,
+          'id': commentId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print('Comment saved successfully.');
+      } else {
+        throw Exception('Failed to save comment.');
+      }
     }
   }
 
-  void unsaveComment(String username, String commentId) {
+  Future<void> unsaveComment(String username, String commentId) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .savedCommentsIds!
           .remove(commentId);
     } else {
-      // unsave comment in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/save');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'is_post': false,
+          'id': commentId,
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('Comment unsaved successfully.');
+      } else {
+        throw Exception('Failed to unsave comment.');
+      }
     }
   }
 
-  List<Comments> getSavedComments(String username) {
+  Future<List<Comments>> getSavedComments(String username) async {
     if (testing) {
       List<Comments> savedComments = [];
       final user =
@@ -1020,10 +1061,29 @@ class UserService {
 
       return savedComments;
     } else {
-      // Fetch saved comments from db
-    }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/saved-posts-and-comments');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('comments');
+      print(response.statusCode);
 
-    return [];
+      if (response.statusCode == 200) {
+        List<dynamic> body = jsonDecode(response.body)['comments'];
+        print(body);
+        return Future.wait(
+            body.map((dynamic item) async => Comments.fromJson(item)));
+      } else {
+        throw Exception('Failed to load comments.');
+      }
+    }
   }
 
   Future<NotificationsSettingsItem>? getNotificationsSettings(
