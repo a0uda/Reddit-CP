@@ -120,6 +120,8 @@ fetchdata();
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
+                    vote: posts[index].vote,
+
                     title: posts[index].title,
                     postContent: posts[index].description,
                     date: posts[index].createdAt.toString(),

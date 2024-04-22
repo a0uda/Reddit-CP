@@ -29,6 +29,7 @@ class Post extends StatefulWidget {
   final String id;
   final String communityName;
   final bool isLocked;
+  final int vote;
 
   Post({
     super.key,
@@ -46,6 +47,7 @@ class Post extends StatefulWidget {
     this.poll,
     required this.communityName,
     required this.isLocked,
+    required this.vote
   });
 
   @override

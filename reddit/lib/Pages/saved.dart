@@ -57,12 +57,28 @@ class SavedScreen extends State<Saved> {
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('Saved'),
+           titleTextStyle: TextStyle(
+        color: Color.fromARGB(255, 244, 87, 3),
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),   leading: GestureDetector(
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            size: 20,
+            color: Color.fromARGB(255, 244, 87, 3),
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous page
+          },
+        ),  ),
           bottom: TabBar(
             indicatorColor: Colors.deepOrange[400],
-            labelColor: Colors.black,
+            labelColor:  const Color.fromARGB(255, 0, 0, 0),
             unselectedLabelColor: Colors.grey,
-            dividerColor: Colors.transparent,
+            dividerColor: Color.fromARGB(255, 147, 142, 142),
             tabs: const [
               Tab(text: 'Posts'),
               Tab(text: 'Comments'),
@@ -99,6 +115,8 @@ future:SavedPosts() ,
                       return buildBlur(
                           context: context,
                           child: Post(
+                                              vote: posts[index].vote,
+
                             name: posts[index].username,
                             title: posts[index].title,
                             postContent: posts[index].description!,
@@ -116,6 +134,8 @@ future:SavedPosts() ,
                           ));
                     }
                     return Post(
+                                        vote: posts[index].vote,
+
                       name: posts[index].username,
                       title: posts[index].title,
                       postContent: posts[index].description!,

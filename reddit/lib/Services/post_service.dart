@@ -63,6 +63,7 @@ class PostService {
           lockedFlag: false, // Assuming initial locked flag is false
           allowrepliesFlag: true, // Assuming initial allow replies flag is true
           setSuggestedSort: "None",
+          vote: 0,
         ),
       );
       //print(posts);
@@ -226,7 +227,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-      //print(username);
+    print(username);
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -239,8 +240,8 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      //print(json.decode(response.body)['posts']);
-      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      print((response.body));
+      final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
@@ -496,7 +497,46 @@ class PostService {
       return false;
     }
   }
+
+  Future <List<PostItem>> getHistoryPost(String username) async{
+    if (testing) {
+      
+      return posts;
+    } else {
+      
+     {
+      final url =
+          Uri.parse('https://redditech.me/backend/users/history-posts');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      );
+  print(response.body);
+      if (response.statusCode == 200) {
+          final List<dynamic> jsonlist = json.decode(response.body)['content'];
+      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+        return PostItem.fromJson(jsonitem);
+      }).toList();
+
+      return postsItem;
+      } else {
+        throw Exception('Failed to load post');
+      }
+    }
+      // dislike post in database
+    }
+  }
+
+
+
+
+
 }
+
+
 
 
 // '''
