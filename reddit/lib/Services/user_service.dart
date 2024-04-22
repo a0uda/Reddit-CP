@@ -46,10 +46,10 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get user about');
       print(response.statusCode);
       print(jsonDecode(response.body));
- 
-      return UserAbout.fromJson(jsonDecode(response.body));
+      return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
 
@@ -183,9 +183,11 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get followers count');
       print(response.statusCode);
-      print(jsonDecode(response.body)['followers-count']);
-      return jsonDecode(response.body)['followers-count'];
+      print(response.body);
+      print(jsonDecode(response.body)['content']);
+      return jsonDecode(response.body)['content'];
     }
   }
 
@@ -206,8 +208,10 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get followers');
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body)['users'];
+      print(response.body);
+      List<dynamic> body = jsonDecode(response.body)['content'];
       print(body);
       return Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
@@ -233,9 +237,11 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get following count');
       print(response.statusCode);
-      print(jsonDecode(response.body)['following-count']);
-      return jsonDecode(response.body)['following-count'];
+      print(response.body);
+      print(jsonDecode(response.body)['content']);
+      return jsonDecode(response.body)['content'];
     }
   }
 
@@ -257,7 +263,7 @@ class UserService {
         },
       );
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body)['users'];
+      List<dynamic> body = jsonDecode(response.body)['content'];
       print(body);
       return Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
@@ -282,8 +288,10 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print('in get following user comments');
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body)['comments'];
+      print(response.body);
+      List<dynamic> body = jsonDecode(response.body)['content'];
       print(body);
       return Future.wait(
           body.map((dynamic item) async => Comments.fromJson(item)));
@@ -309,11 +317,11 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print("In get profile settings");
       print(response.statusCode);
-      print("In settiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiings");
-      print(jsonDecode(response.body)['settings']['profile_settings']);
-      return ProfileSettings.fromJson(
-          jsonDecode(response.body)['settings']['profile_settings']);
+      print(response.body);
+      print(jsonDecode(response.body)['content']);
+      return ProfileSettings.fromJson(jsonDecode(response.body)['content']);
     }
   }
 

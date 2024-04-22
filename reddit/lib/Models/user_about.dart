@@ -40,28 +40,26 @@ class UserAbout {
       return UserAbout(username: '');
     }
     return UserAbout(
-      id: jsonDecode['content']['id'],
+     id: jsonDecode['id'],
       createdAt: DateFormat('d MMMM yyyy')
-          .format(DateTime.parse(jsonDecode['content']['created_at']))
+          .format(DateTime.parse(jsonDecode['created_at']))
           .toString(),
-      username: jsonDecode['content']['username'],
-      email: jsonDecode['content']['email'],
-      verifiedEmailFlag: jsonDecode['content']['verified_email_flag'] == 'true',
-      gmail: jsonDecode['content']['gmail'],
-      facebookEmail: jsonDecode['content']['facebook_email'],
-      displayName: jsonDecode['content']['display_name'],
-      about: jsonDecode['content']['about'],
-      socialLinks: jsonDecode['content']['social_links'] != null
-          ? List<SocialLlinkItem>.from(jsonDecode['content']['social_links']
+      username: jsonDecode['username'],
+      email: jsonDecode['email'],
+      verifiedEmailFlag: jsonDecode['verified_email_flag'] == 'true',
+      gmail: jsonDecode['gmail'],
+      facebookEmail: jsonDecode['facebook_email'],
+      displayName: jsonDecode['display_name'],
+      about: jsonDecode['about'],
+      socialLinks: jsonDecode['social_links'] != null
+          ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['content']['profile_picture'] == "")
-          ? 'images/Greddit.png'
-          : jsonDecode['content']['profile_picture'],
-      bannerPicture: jsonDecode['content']['banner_picture'],
-      country: jsonDecode['content']['country'],
-      gender: jsonDecode['content']['gender'],
-      connectedGoogle: jsonDecode['content']['connected_google'],
+      profilePicture: (jsonDecode['profile_picture'] ),
+      bannerPicture: jsonDecode['banner_picture'],
+      country: jsonDecode['country'],
+      gender: jsonDecode['gender'],
+      connectedGoogle: jsonDecode['connected_google'],
     );
   }
 }
