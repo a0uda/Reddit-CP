@@ -16,6 +16,11 @@ class _MutedUsersListState extends State<MutedUsersList> {
       GetIt.instance.get<ModeratorController>();
   List<Map<String, dynamic>> foundUsers = [];
 
+  Future<void> fetchMutedUsers() async {
+    await moderatorController.getMutedUsers(moderatorController.communityName);
+    foundUsers = moderatorController.mutedUsers;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -43,7 +48,9 @@ class _MutedUsersListState extends State<MutedUsersList> {
           children: [
             (screenWidth > 700)
                 ? AppBar(
-                    leading: const SizedBox(width: 0,),
+                    leading: const SizedBox(
+                      width: 0,
+                    ),
                     title: const Text(
                       'Muted Users',
                       style: TextStyle(
@@ -87,82 +94,105 @@ class _MutedUsersListState extends State<MutedUsersList> {
                 hintText: 'Search',
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: foundUsers.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = foundUsers[index];
-                  print("badrrrrrrrrrrrrrr");
-                  print(item);
-                  return Card(
-                    elevation: 0,
-                    margin: const EdgeInsets.only(bottom: 1),
-                    color: Colors.white,
-                    child: ListTile(
-                      tileColor: Colors.white,
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(item["profile_picture"]!),
-                        radius: 15,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "u/${item["username"]!}",
-                          ),
-                          Text(
-                            item["mute_date"]!,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
-                          )
-                        ],
-                      ),
-                      trailing: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (context) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 20.0),
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      ListTile(
-                                        leading: const Icon(Icons.person),
-                                        title: const Text("View Profile"),
-                                        onTap: () {
-                                          //navigate to profile of this user Badrr
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading:
-                                            const Icon(Icons.do_disturb_alt),
-                                        title: const Text("Unmute"),
-                                        onTap: () {
-                                          //unmute badrrr
-                                          mutedUserProvider.unMuteUser(
-                                              item["username"],
-                                              moderatorController
-                                                  .communityName);
-                                          setState(() {
-                                            foundUsers =
-                                                moderatorController.mutedUsers;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
+            FutureBuilder<void>(
+              future: fetchMutedUsers(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return const Text('none');
+                  case ConnectionState.waiting:
+                    return const Center(child: Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircularProgressIndicator(),
+                    ),);
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: foundUsers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = foundUsers[index];
+                          return Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 1),
+                            color: Colors.white,
+                            child: ListTile(
+                              tileColor: Colors.white,
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage(item["profile_picture"]!),
+                                radius: 15,
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "u/${item["username"]!}",
                                   ),
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.more_horiz)),
-                    ),
-                  );
-                },
-              ),
+                                  Text(
+                                    item["mute_date"]!,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 10),
+                                  )
+                                ],
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20.0),
+                                          child: ListView(
+                                            shrinkWrap: true,
+                                            children: [
+                                              ListTile(
+                                                leading:
+                                                    const Icon(Icons.person),
+                                                title:
+                                                    const Text("View Profile"),
+                                                onTap: () {
+                                                  //navigate to profile of this user Badrr
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                    Icons.do_disturb_alt),
+                                                title: const Text("Unmute"),
+                                                onTap: () {
+                                                  //unmute badrrr
+                                                  mutedUserProvider.unMuteUser(
+                                                      item["username"],
+                                                      moderatorController
+                                                          .communityName);
+                                                  setState(() {
+                                                    foundUsers =
+                                                        moderatorController
+                                                            .mutedUsers;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.more_horiz)),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  default:
+                    return const Text('badr');
+                }
+              },
             ),
           ],
         ),

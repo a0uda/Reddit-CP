@@ -17,10 +17,9 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
       GetIt.instance.get<ModeratorController>();
 
   Future<void> fetchApprovedUsers() async {
-    await moderatorController.getCommunity(moderatorController.communityName);
-    setState(() {
-      foundUsers = moderatorController.approvedUsers;
-    });
+    await moderatorController
+        .getApprovedUser(moderatorController.communityName);
+    foundUsers = moderatorController.approvedUsers;
   }
 
   @override
@@ -102,7 +101,10 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                   case ConnectionState.none:
                     return const Text('none');
                   case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
+                    return const Center(child: Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircularProgressIndicator(),
+                    ),);
                   case ConnectionState.done:
                     if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');

@@ -22,6 +22,13 @@ class _ModeratorsListState extends State<ModeratorsList>
   bool editable = false;
   int currentIndex = 0;
 
+  Future<void> fetchModerators() async {
+    await moderatorController.getModerators(moderatorController.communityName);
+    foundUsers = moderatorController.moderators;
+    print("Badrrrrrrrr");
+    print(moderatorController.moderators);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -125,44 +132,66 @@ class _ModeratorsListState extends State<ModeratorsList>
                 ),
                 children: [
                   // Tab 1 content
-                  Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: foundUsers.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item = foundUsers[index];
-                            return Card(
-                              elevation: 0,
-                              margin: const EdgeInsets.only(bottom: 1),
-                              color: Colors.white,
-                              child: ListTile(
-                                tileColor: Colors.white,
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(item["profile_picture"]!),
-                                  radius: 15,
-                                ),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "u/${item["username"]!}",
-                                    ),
-                                    Text(
-                                      item["moderator_since"]!,
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 10),
-                                    )
-                                  ],
+                  FutureBuilder<void>(
+                    future: fetchModerators(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<void> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return const Text('none');
+                        case ConnectionState.waiting:
+                          return const Center(child: CircularProgressIndicator(),);
+                        case ConnectionState.done:
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+                          return Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: foundUsers.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final item = foundUsers[index];
+                                    return Card(
+                                      elevation: 0,
+                                      margin: const EdgeInsets.only(bottom: 1),
+                                      color: Colors.white,
+                                      child: ListTile(
+                                        tileColor: Colors.white,
+                                        leading: CircleAvatar(
+                                          backgroundImage: AssetImage(
+                                              item["profile_picture"]!),
+                                          radius: 15,
+                                        ),
+                                        title: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "u/${item["username"]!}",
+                                            ),
+                                            Text(
+                                              item["moderator_since"]!,
+                                              style: const TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 10),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                            ],
+                          );
+                        default:
+                          return const Text('badr');
+                      }
+                    },
                   ),
+
                   // Tab 2 content
                   Column(
                     children: [

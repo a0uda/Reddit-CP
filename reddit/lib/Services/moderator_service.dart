@@ -89,31 +89,29 @@ class ModeratorMockService {
         },
       );
       final List<dynamic> decodedData = json.decode(response.body);
-      final List<Map<String, dynamic>> approvedUsers = decodedData
-          .map((item) => {
-                "username": item["username"],
-                "approved_at": item["approved_at"],
-                "profile_picture": "images/Greddit.png",
-                "_id": item["_id"]
-              })
-          .toList();
+      final List<Map<String, dynamic>> approvedUsers =
+          List<Map<String, dynamic>>.from(decodedData);
       return approvedUsers; //badrrr
     }
   }
 
   void addApprovedUsers(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .approvedUsers
-        .add(
-      {
-        "username": username,
-        "approved_at": "Now",
-        "profile_picture": "images/Greddit.png",
-        "_id": "6618844ad57c873637b5cf2"
-      },
-    );
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .approvedUsers
+          .add(
+        {
+          "username": username,
+          "approved_at": "Now",
+          "profile_picture": "images/Greddit.png",
+          "_id": "6618844ad57c873637b5cf2"
+        },
+      );
+    } else {
+      //add
+    }
   }
 
   void removeApprovedUsers(String username, String communityName) {
@@ -124,12 +122,32 @@ class ModeratorMockService {
         .removeWhere((user) => user["username"] == username);
   }
 
-  List<Map<String, dynamic>> getBannedUsers(String communityName) {
-    List<Map<String, dynamic>> bannedUsers = communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .bannedUsers;
-    return bannedUsers;
+  Future<List<Map<String, dynamic>>> getBannedUsers(
+      String communityName) async {
+    if (testing) {
+      List<Map<String, dynamic>> bannedUsers = communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .bannedUsers;
+      return bannedUsers;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/about/banned/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final decodedData = json.decode(response.body);
+      final List<Map<String, dynamic>> bannedUsers =
+          List<Map<String, dynamic>>.from(decodedData);
+      return bannedUsers; //badrrr
+    }
   }
 
   void addBannedUsers({
@@ -189,12 +207,31 @@ class ModeratorMockService {
         .removeWhere((user) => user["username"] == username);
   }
 
-  List<Map<String, dynamic>> getMutedUsers(String communityName) {
-    List<Map<String, dynamic>> mutedUsers = communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .mutedUsers;
-    return mutedUsers;
+  Future<List<Map<String, dynamic>>> getMutedUsers(String communityName) async {
+    if (testing) {
+      List<Map<String, dynamic>> mutedUsers = communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .mutedUsers;
+      return mutedUsers;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/about/muted/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final decodedData = json.decode(response.body);
+      final List<Map<String, dynamic>> mutedUsers =
+          List<Map<String, dynamic>>.from(decodedData);
+      return mutedUsers; //badrrr
+    }
   }
 
   void addMutedUsers(String username, String communityName) {
@@ -222,12 +259,31 @@ class ModeratorMockService {
         .removeWhere((user) => user["username"] == username);
   }
 
-  List<Map<String, dynamic>> getModerators(String communityName) {
-    List<Map<String, dynamic>> moderators = communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .moderators;
-    return moderators;
+  Future<List<Map<String, dynamic>>> getModerators(String communityName) async {
+    if (testing) {
+      List<Map<String, dynamic>> moderators = communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .moderators;
+      return moderators;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/about/moderators/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final decodedData = json.decode(response.body);
+      final List<Map<String, dynamic>> moderators =
+          List<Map<String, dynamic>>.from(decodedData);
+      return moderators; //badrrr
+    }
   }
 
   void inviteModerator({

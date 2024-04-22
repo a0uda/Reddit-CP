@@ -260,14 +260,14 @@ List<GeneralSettings> generalSettings = [
   ),
   GeneralSettings(
     communityID: "2",
-    communityName: 'Cooking Masters',
+    communityName: 'Waters___Greenholt',
     communityDescription: 'Join us to explore the art and science of cooking!',
     communityType: "Private",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "3",
-    communityName: 'Fitness Warriors',
+    communityName: 'Conroy_Inc',
     communityDescription:
         'Get fit and stay healthy with the support of our community!',
     communityType: "Restricted",

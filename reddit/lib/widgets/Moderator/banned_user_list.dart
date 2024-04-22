@@ -16,10 +16,15 @@ class _BannedUsersListState extends State<BannedUsersList> {
       GetIt.instance.get<ModeratorController>();
   List<Map<String, dynamic>> foundUsers = [];
 
+  Future<void> fetchBannedUsers() async {
+    await moderatorController.getBannedUsers(moderatorController.communityName);
+    foundUsers = moderatorController.bannedUsers;
+  }
+
   @override
   void initState() {
     super.initState();
-    foundUsers = moderatorController.bannedUsers;
+    // foundUsers = moderatorController.bannedUsers;
   }
 
   void searchUsers(String search) {
@@ -31,22 +36,9 @@ class _BannedUsersListState extends State<BannedUsersList> {
     });
   }
 
-  // {
-  //   "username": "Emanuel.Gusikowski",
-  //   "banned_date": "2024-04-11T03:55:03.127Z",
-  //   "reason_for_ban": "rule",
-  //   "mod_note": "Cursus voluptate verbum comprehendo tam vobis uberrime.",
-  //   "permanent_flag": false,
-  //   "banned_until": "2024-07-30T12:43:29.146Z",
-  //   "note_for_ban_message":
-  //       "Acquiro victoria ocer pauper eaque umerus adsum exercitationem tribuo ars.",
-  //   "profile_picture": "images/Greddit.png",
-  //   "_id": "66186ace721cbd638232618a"
-  // }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    //var bannedUserProvider = context.read<BannedUserProvider>();
     return Consumer<BannedUserProvider>(
         builder: (context, bannedUserProvider, child) {
       return Container(
@@ -103,104 +95,133 @@ class _BannedUsersListState extends State<BannedUsersList> {
                 hintText: 'Search',
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: foundUsers.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = foundUsers[index];
-                  return Card(
-                    elevation: 0,
-                    margin: const EdgeInsets.only(bottom: 1),
-                    color: Colors.white,
-                    child: ListTile(
-                      tileColor: Colors.white,
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(item["profile_picture"]!),
-                        radius: 15,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "u/${item["username"]!}",
-                          ),
-                          Text(
-                            item["banned_date"]!,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
-                          )
-                        ],
-                      ),
-                      trailing: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (context) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 20.0),
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      ListTile(
-                                        leading: const Icon(Icons.edit),
-                                        title: const Text("See details"),
-                                        onTap: () {
-                                          //navigate to banned details of this user Badrr
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AddBannedUser(
-                                                seeDetails: true,
-                                                username: item["username"],
-                                                banReason:
-                                                    item["reason_for_ban"],
-                                                modNote: item["mod_note"],
-                                                permanentFlag:
-                                                    item["permanent_flag"],
-                                                banNote: item[
-                                                    "note_for_ban_message"],
-                                                banPeriod: item["banned_until"],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: const Icon(Icons.person),
-                                        title: const Text("View Profile"),
-                                        onTap: () {
-                                          //navigate to profile of this user Badrr
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading:
-                                            const Icon(Icons.do_disturb_alt),
-                                        title: const Text("Unban"),
-                                        onTap: () {
-                                          //unban badrrr
-                                          bannedUserProvider.unBanUsers(
-                                              item["username"],
-                                              moderatorController
-                                                  .communityName);
-                                          setState(() {
-                                            foundUsers =
-                                                moderatorController.bannedUsers;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
+            FutureBuilder<void>(
+              future: fetchBannedUsers(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return const Text('none');
+                  case ConnectionState.waiting:
+                    return const Center(child: Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircularProgressIndicator(),
+                    ),);
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: foundUsers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = foundUsers[index];
+                          return Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 1),
+                            color: Colors.white,
+                            child: ListTile(
+                              tileColor: Colors.white,
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage(item["profile_picture"]!),
+                                radius: 15,
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "u/${item["username"]!}",
                                   ),
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.more_horiz)),
-                    ),
-                  );
-                },
-              ),
+                                  Text(
+                                    item["banned_date"]!,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 10),
+                                  )
+                                ],
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20.0),
+                                          child: ListView(
+                                            shrinkWrap: true,
+                                            children: [
+                                              ListTile(
+                                                leading: const Icon(Icons.edit),
+                                                title:
+                                                    const Text("See details"),
+                                                onTap: () {
+                                                  //navigate to banned details of this user Badrr
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          AddBannedUser(
+                                                        seeDetails: true,
+                                                        username:
+                                                            item["username"],
+                                                        banReason: item[
+                                                            "reason_for_ban"],
+                                                        modNote:
+                                                            item["mod_note"],
+                                                        permanentFlag: item[
+                                                            "permanent_flag"],
+                                                        banNote: item[
+                                                            "note_for_ban_message"],
+                                                        banPeriod: item[
+                                                            "banned_until"],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading:
+                                                    const Icon(Icons.person),
+                                                title:
+                                                    const Text("View Profile"),
+                                                onTap: () {
+                                                  //navigate to profile of this user Badrr
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                    Icons.do_disturb_alt),
+                                                title: const Text("Unban"),
+                                                onTap: () {
+                                                  //unban badrrr
+                                                  bannedUserProvider.unBanUsers(
+                                                      item["username"],
+                                                      moderatorController
+                                                          .communityName);
+                                                  setState(() {
+                                                    foundUsers =
+                                                        moderatorController
+                                                            .bannedUsers;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.more_horiz)),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  default:
+                    return const Text('badr');
+                }
+              },
             ),
           ],
         ),
