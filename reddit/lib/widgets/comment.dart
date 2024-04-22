@@ -126,6 +126,8 @@ class _CommentState extends State<Comment> {
                       } else {
                         print('in comment');
                         print(snapshot.data!);
+                        print('username in comment');
+                        print(widget.comment.username!);
                         print(snapshot.data!.profilePicture!);
                         if (snapshot.data!.profilePicture == null ||
                             snapshot.data!.profilePicture!.isEmpty) {

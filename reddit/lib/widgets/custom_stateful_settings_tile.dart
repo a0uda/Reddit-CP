@@ -6,16 +6,18 @@ class CustomStatefulSettingsTile extends StatefulWidget {
   final String? subtitle;
   final Widget leading;
 
-  final Function(bool) onChanged;
+  final Function(String, bool)? onChanged;
   final VoidCallback onTap;
+  bool switchValue;
 
-  const CustomStatefulSettingsTile({
+  CustomStatefulSettingsTile({
     super.key,
     required this.title,
     this.subtitle,
     required this.leading,
-    required this.onChanged,
+    this.onChanged,
     required this.onTap,
+    required this.switchValue,
   });
 
   @override
@@ -25,7 +27,7 @@ class CustomStatefulSettingsTile extends StatefulWidget {
 
 class _CustomStatefulSettingsTileState
     extends State<CustomStatefulSettingsTile> {
-  bool _isSwitched = true;
+  // bool _isSwitched = true;
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +36,16 @@ class _CustomStatefulSettingsTileState
       subtitle: widget.subtitle,
       leading: widget.leading,
       trailing: Switch(
-          value: _isSwitched,
+          value: widget.switchValue,
           thumbColor: MaterialStateProperty.all(Colors.white),
           activeTrackColor: Colors.blue[900],
           inactiveTrackColor: Colors.grey[300],
           trackOutlineColor: MaterialStateProperty.all(Colors.grey[300]),
           onChanged: (value) {
             setState(() {
-              _isSwitched = value;
+              widget.switchValue = value;
             });
-            widget.onChanged(value);
+            widget.onChanged!(widget.title, value);
           }),
       onTap: widget.onTap,
     );
