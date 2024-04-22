@@ -70,29 +70,24 @@ class ModeratorMockService {
   Future<List<Map<String, dynamic>>> getApprovedUsers(
       String communityName) async {
     if (testing == true) {
-      print("ana leeh henaaaa");
-      print(testing);
       List<Map<String, dynamic>> approvedUsers = communities //badr
           .firstWhere(
               (community) => community.general.communityName == communityName)
           .approvedUsers;
       return approvedUsers;
     } else {
-      print("anaaa henaaa AMAKCNWICIE");
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token'); //badrr
       final url = Uri.parse(
-          'https://redditech.me/backend/users/communities');
+          'https://redditech.me/backend/communities/about/approved/$communityName');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI0MGY4MjgyZGM2ZDE0Yzc2NDc3MTgiLCJ1c2VybmFtZSI6ImhlYmFfMSIsInByb2ZpbGVfcGljdHVyZSI6IiIsImlhdCI6MTcxMzYzOTMxNywiZXhwIjoxNzEzNzI1NzE3fQ.Qx8LJNXMRkfnxDxMCI1Vp9QxlKuhfhs87R1IfRgpyOM",
+          'Authorization': token!,
         },
       );
-      print("alooooooo");
-      print(response.body);
       final List<dynamic> decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> approvedUsers = decodedData
           .map((item) => {
@@ -102,7 +97,7 @@ class ModeratorMockService {
                 "_id": item["_id"]
               })
           .toList();
-      return approvedUsers;
+      return approvedUsers; //badrrr
     }
   }
 

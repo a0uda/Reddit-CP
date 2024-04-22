@@ -16,6 +16,13 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
+  Future<void> fetchApprovedUsers() async {
+    await moderatorController.getCommunity(moderatorController.communityName);
+    setState(() {
+      foundUsers = moderatorController.approvedUsers;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -88,80 +95,102 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                 hintText: 'Search',
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: foundUsers.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final item = foundUsers[index];
-                  return Card(
-                    elevation: 0,
-                    margin: const EdgeInsets.only(bottom: 1),
-                    color: Colors.white,
-                    child: ListTile(
-                      tileColor: Colors.white,
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(item["profile_picture"]!),
-                        radius: 15,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "u/${item["username"]!}",
-                          ),
-                          Text(
-                            item["approved_at"]!,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
-                          )
-                        ],
-                      ),
-                      trailing: IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.white,
-                              context: context,
-                              builder: (context) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 20.0),
-                                  child: ListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      ListTile(
-                                        leading: const Icon(Icons.person),
-                                        title: const Text("View Profile"),
-                                        onTap: () {
-                                          //navigate to profile of this user Badrr
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading:
-                                            const Icon(Icons.do_disturb_alt),
-                                        title: const Text("Remove"),
-                                        onTap: () {
-                                          approvedUserProvider
-                                              .removeApprovedUsers(
-                                                  item["username"],
-                                                  moderatorController
-                                                      .communityName);
-                                          setState(() {
-                                            foundUsers = moderatorController
-                                                .approvedUsers;
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
+            FutureBuilder<void>(
+              future: fetchApprovedUsers(),
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.none:
+                    return const Text('none');
+                  case ConnectionState.waiting:
+                    return const CircularProgressIndicator();
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: foundUsers.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = foundUsers[index];
+                          return Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 1),
+                            color: Colors.white,
+                            child: ListTile(
+                              tileColor: Colors.white,
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    AssetImage(item["profile_picture"]!),
+                                radius: 15,
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "u/${item["username"]!}",
                                   ),
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.more_horiz)),
-                    ),
-                  );
-                },
-              ),
+                                  Text(
+                                    item["approved_at"]!,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 10),
+                                  )
+                                ],
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      backgroundColor: Colors.white,
+                                      context: context,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 20.0),
+                                          child: ListView(
+                                            shrinkWrap: true,
+                                            children: [
+                                              ListTile(
+                                                leading:
+                                                    const Icon(Icons.person),
+                                                title:
+                                                    const Text("View Profile"),
+                                                onTap: () {
+                                                  //navigate to profile of this user Badrr
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                    Icons.do_disturb_alt),
+                                                title: const Text("Remove"),
+                                                onTap: () {
+                                                  approvedUserProvider
+                                                      .removeApprovedUsers(
+                                                          item["username"],
+                                                          moderatorController
+                                                              .communityName);
+                                                  setState(() {
+                                                    foundUsers =
+                                                        moderatorController
+                                                            .approvedUsers;
+                                                  });
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.more_horiz)),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  default:
+                    return const Text('badr');
+                }
+              },
             ),
           ],
         ),

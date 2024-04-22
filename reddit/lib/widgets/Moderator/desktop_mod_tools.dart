@@ -24,9 +24,6 @@ class _DesktopModToolsState extends State<DesktopModTools> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
-  Future<void> fetchData() async {
-    await moderatorController.getCommunity(widget.communityName);
-  }
 
   @override
   void initState() {
@@ -59,19 +56,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
     var approvedUserProvider = context.read<ApprovedUserProvider>();
     return Scaffold(
       appBar: DesktopAppBar(logoTapped: logoTapped),
-      body: FutureBuilder<void>(
-        future: fetchData(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return const Text('none');
-            case ConnectionState.waiting:
-              return const CircularProgressIndicator();
-            case ConnectionState.done:
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              return Column(
+      body: Column(
                 children: [
                   const Divider(
                     height: 0.3,
@@ -96,12 +81,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
                     ),
                   ),
                 ],
-              );
-            default:
-              return const Text('badr');
-          }
-        },
-      ),
+              ),
     );
   }
 }
