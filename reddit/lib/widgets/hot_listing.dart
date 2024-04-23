@@ -103,6 +103,12 @@ fetchdata();
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
+                  var imageurl=null;
+                  if (posts[index].images != null ) {
+                    imageurl=  posts[index].images?[0].path;
+                  }
+
+
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
                     return CollapsePost(
@@ -129,12 +135,13 @@ fetchdata();
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl: posts[index].images?[0].path,
+                    imageUrl: imageurl,
                     videoUrl: posts[index].videos?[0].path,
                     poll: posts[index].poll,
                     id: posts[index].id,
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
+                    
                   );
                 },
               );

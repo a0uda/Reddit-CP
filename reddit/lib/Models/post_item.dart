@@ -2,6 +2,8 @@ import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/comments.dart';
+import 'dart:convert';
+
 
 class PostItem {
   final String id;
@@ -67,13 +69,17 @@ class PostItem {
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> jsonlist = json['images'];
+      final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
+        return ImageItem.fromJson(jsonitem);
+      }).toList();
     return PostItem(
 
         ///todo
         id: json['_id'],
         userId: json['user_id'],
-        description: json['descrption'],
-        username: 'ahmed',
+        description: json['description'],
+        username: (json['username']!=null)?(json['username']):'SHIKA',
         title: json['title'],
         createdAt: DateTime.parse(json['created_at']),
         type: json['type'],
@@ -90,7 +96,10 @@ class PostItem {
         lockedFlag: json['locked_flag'],
         allowrepliesFlag: json['allowreplies_flag'],
         setSuggestedSort: json['set_suggeested_sort'],
-        vote: 0);
+        vote: (json['vote']!=null)?(json['vote']):0,
+        images: (imagelist.isNotEmpty)? imagelist:null,
+        );
+
   }
 }
 

@@ -66,7 +66,7 @@ class PostService {
           vote: 0,
         ),
       );
-      //print(posts);
+      
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -111,8 +111,7 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-      //print(response.statusCode);
-
+  
       // print(json.encode({
       //   "title": title,
       //   "description": description,
@@ -175,7 +174,7 @@ class PostService {
         'pageSize':'10'
       };
     
-      print(queryparams.toString());
+  
       var url = Uri.parse('https://redditech.me/backend/listing/posts/best').replace(queryParameters:queryparams);
 
       if (sortingType == "best") {
@@ -188,8 +187,7 @@ class PostService {
        url = Uri.parse('https://redditech.me/backend/listing/posts/top').replace(queryParameters:queryparams);
       } else if (sortingType == "random") {
        url = Uri.parse('https://redditech.me/backend/listing/posts/random').replace(queryParameters:queryparams);
-       print(url);
-       print(page);
+  
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -203,13 +201,21 @@ class PostService {
         
         
       );
-      // print(json.decode(response.body)['posts']);
+      print(response.body);
+      if(response.statusCode==200)
+      {
       final List<dynamic> jsonlist = json.decode(response.body)['posts'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
 
       return postsItem;
+      }
+      else
+      {
+        List<PostItem> nullPost=[];
+        return nullPost;
+      }
     }
   }
 
@@ -227,7 +233,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-    print(username);
+   
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -240,13 +246,12 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      print((response.body));
+  
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
 
-      //print(postsItem);
       return postsItem;
       //return posts;
     }
@@ -280,7 +285,7 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == id);
       post.upvotesCount++;
     } else {
-      print(id);
+
         final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
 
@@ -310,7 +315,7 @@ class PostService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      print(id);
+    
       final response = await http.post(
         url,
         headers: {
@@ -319,7 +324,7 @@ class PostService {
         },
         body: json.encode({"id": id,"is_post":true,"vote":"-1"}),
       );
-      print(response.body);
+      print(response.statusCode);
 
       // dislike post in database
     }

@@ -13,73 +13,54 @@ import 'package:reddit/Models/user_about.dart';
 
 final userController = GetIt.instance.get<UserController>();
 
-class RisingListing extends StatefulWidget {
-  final String type;
+class ListingCertainUser extends StatefulWidget {
   final UserAbout? userData;
-
-  const RisingListing({super.key, required this.type, this.userData});
+  const ListingCertainUser({super.key, this.userData});
   @override
-  State<RisingListing> createState() => RisingListingBuild();
+  State<ListingCertainUser> createState() =>ListingCertainUserScreen();
 }
 
-class RisingListingBuild extends State<RisingListing> {
-  int page=0;
-  ScrollController controller = ScrollController();
+class ListingCertainUserScreen extends State<ListingCertainUser> {
   List<PostItem> posts = [];
+  int page=0;
   late Future<void> _dataFuture;
-  bool isloading=false;
-
+  ScrollController controller = ScrollController();
   // List of items in our dropdown menu
-
   Future<void> fetchdata() async {
-    isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    if (widget.type == "home") {
-      if (userController.userAbout != null) {
-        String user = userController.userAbout!.username;
-
-        post = await postService.getPosts(user, "random",page);
-        page=page+1;
-      } else {
-        posts = postService.fetchPosts();
-      }
-    } else if (widget.type == "popular") {
-      posts = await postService.getPopularPosts();
-    } else if (widget.type == "profile") {
+    
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
+      post = await postService.getMyPosts(username);
       print(username);
-    }
-    // Remove objects from list1 if their IDs match any in list2
-    post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
-    isloading=false;
+      // Remove objects from list1 if their IDs match any in list2
+    
+
     setState(() {
       posts.addAll(post);
     });
   }
 
-
   void HandleScrolling() {
-    if ((controller.position.maxScrollExtent) == controller.offset) {
+    if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
-      fetchdata();
+      
       print('LOAD MORE');
       // load more data here
 
-      // setState(() {});
+      //setState(() {});
     }
   }
-
   @override
-  void initState() {
+ void initState() {
     super.initState();
     _dataFuture = fetchdata(); 
     controller.addListener(HandleScrolling);
     
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -99,30 +80,13 @@ class RisingListingBuild extends State<RisingListing> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          if (isloading)
-          {
-      return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-          }
-          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
+            
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
-                      var imageurl=null;
-                  if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
-                  }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
                     return CollapsePost(
@@ -140,7 +104,7 @@ class RisingListingBuild extends State<RisingListing> {
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
-                     vote: posts[index].vote,
+                    vote: posts[index].vote,
 
                     title: posts[index].title,
                     postContent: posts[index].description,
@@ -149,7 +113,7 @@ class RisingListingBuild extends State<RisingListing> {
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl: imageurl,
+                    imageUrl: posts[index].images?[0].path,
                     videoUrl: posts[index].videos?[0].path,
                     poll: posts[index].poll,
                     id: posts[index].id,
@@ -160,7 +124,6 @@ class RisingListingBuild extends State<RisingListing> {
               );
             },
           );
-          }
         }
       },
     );
