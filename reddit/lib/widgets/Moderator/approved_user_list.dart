@@ -189,14 +189,13 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                                             item["username"],
                                                             moderatorController
                                                                 .communityName);
-                                                    usersFetched = false;
-                                                    // setState(() {
-                                                    //   foundUsers =
-                                                    //       moderatorController
-                                                    //           .approvedUsers;
-                                                    // });
+                                                    setState(() {
+                                                      usersFetched = true;
+                                                      foundUsers =
+                                                          moderatorController
+                                                              .mutedUsers;
+                                                    });
                                                     Navigator.of(context).pop();
-                                                    await fetchApprovedUsers();
                                                   },
                                                 ),
                                               ],

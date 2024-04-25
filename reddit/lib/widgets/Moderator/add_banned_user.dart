@@ -183,6 +183,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                         return ModalForRules(
                           banReason: banReasonController,
                           validate: validateForm,
+
                         );
                       },
                     ),
@@ -356,6 +357,42 @@ class ModalForRules extends StatelessWidget {
           endIndent: 20,
           indent: 20,
           height: 0.5,
+        ),
+        ListTile(
+          title: const Text("Spam"),
+          onTap: () {
+            banReason.text = "Spam";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
+        ),
+        ListTile(
+          title: const Text("Personal information"),
+          onTap: () {
+            banReason.text = "Personal information";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
+        ),
+        ListTile(
+          title: const Text("Threatening"),
+          onTap: () {
+            banReason.text = "Threatening";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
         ),
         Expanded(
           child: ListView.builder(

@@ -54,9 +54,9 @@ class _AddModeratorState extends State<AddModerator> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: inviteButtonEnable
-                    ? () {
+                    ? () async {
                         //Send invite IN MOCK badrrrr
-                        moderatorProvider.inviteModerator(
+                        await moderatorProvider.inviteModerator(
                             communityName: moderatorController.communityName,
                             username: userNameController.text,
                             everything: fullPermissions,

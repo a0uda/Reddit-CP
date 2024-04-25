@@ -220,14 +220,13 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                                             item["username"],
                                                             moderatorController
                                                                 .communityName);
-                                                    usersFetched = false;
-                                                    // setState(() {
-                                                    //   foundUsers =
-                                                    //       moderatorController
-                                                    //           .bannedUsers;
-                                                    // });
+                                                    setState(() {
+                                                    usersFetched = true;
+                                                      foundUsers =
+                                                          moderatorController
+                                                              .bannedUsers;
+                                                    });
                                                     Navigator.of(context).pop();
-                                                    await fetchBannedUsers();
                                                   },
                                                 ),
                                               ],

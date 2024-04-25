@@ -22,7 +22,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descritionController = TextEditingController();
   TextEditingController reportReasonController = TextEditingController();
-  String selectedOption = 'Post and comments';
+  String selectedOption = 'posts_and_comments';
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +55,10 @@ class _CreateRulePageState extends State<CreateRulePage> {
                     foregroundColor: Colors.white,
                     shadowColor: Colors.transparent),
                 onPressed: saveButtonEnable
-                    ? () {
+                    ? () async{
                         //save rule
-                        rulesProvider.createRules(
-                          id: Random().nextInt(100000).toString(),
+                        await rulesProvider.createRule(
+                          //id: Random().nextInt(100000).toString(),
                           communityName: moderatorController.communityName,
                           ruleTitle: titleController.text,
                           appliesTo: selectedOption,
@@ -141,7 +141,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text("Post and comments"),
-                value: 'Post and comments',
+                value: 'posts_and_comments',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -152,7 +152,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only comments'),
-                value: 'comments',
+                value: 'comments_only',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -163,7 +163,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only posts'),
-                value: 'posts', //Badrrr
+                value: 'posts_only', //Badrrr
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {

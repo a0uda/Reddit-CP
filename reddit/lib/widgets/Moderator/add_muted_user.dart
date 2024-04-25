@@ -38,9 +38,9 @@ class _AddMutedUserState extends State<AddMutedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
+                    ? () async{
                         //ADD IN MOCK Badrrrrrr
-                        mutedUserProvider.addMutedUsers(userNameController.text,
+                        await mutedUserProvider.addMutedUsers(userNameController.text,
                             moderatorController.communityName);
                         Navigator.of(context).pop();
                       }

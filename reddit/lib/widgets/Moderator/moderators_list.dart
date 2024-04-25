@@ -55,6 +55,7 @@ class _ModeratorsListState extends State<ModeratorsList>
 
   void searchUsers(String search) {
     setState(() {
+      userFetched = true;
       foundUsers = moderatorController.moderators.where((user) {
         final name = user['username'].toString().toLowerCase();
         return name.contains(search.toLowerCase());
@@ -72,13 +73,13 @@ class _ModeratorsListState extends State<ModeratorsList>
     //var moderatorProvider = context.read<ModeratorProvider>();
     return Consumer<ModeratorProvider>(
         builder: (context, moderatorProvider, child) {
-      return Container(
-        color: Colors.grey[200],
-        child: RefreshIndicator(
-          onRefresh: () async {
+      return RefreshIndicator(
+        onRefresh: () async {
             userFetched = false;
             await fetchModerators();
           },
+        child: Container(
+          color: Colors.grey[200],
           child: Column(
             children: <Widget>[
               (screenWidth > 700)
@@ -128,6 +129,7 @@ class _ModeratorsListState extends State<ModeratorsList>
                   hintText: 'Search',
                 ),
               ),
+              
               Container(
                 color: Colors.white,
                 child: TabBar(
@@ -223,7 +225,7 @@ class _ModeratorsListState extends State<ModeratorsList>
                         }
                       },
                     ),
-
+                  
                     // Tab 2 content
                     Column(
                       children: [
@@ -284,13 +286,26 @@ class _ModeratorsListState extends State<ModeratorsList>
                                                     leading: const Icon(
                                                         Icons.do_disturb_alt),
                                                     title: const Text("Remove"),
-                                                    onTap: () {
+                                                    onTap: () async {
                                                       //remove mod
-                                                      moderatorProvider
+                                                      await moderatorProvider
                                                           .removeAsMod(
                                                               item["username"],
                                                               moderatorController
                                                                   .communityName);
+                                                      setState(() {
+                                                        foundUsers =
+                                                            moderatorController
+                                                                .moderators;
+                                                        editableMods =
+                                                            moderatorController
+                                                                .moderators
+                                                                .sublist(
+                                                                    startIndex!);
+                                                        foundeditableUsers =
+                                                            editableMods;
+                                                        userFetched = true;
+                                                      });
                                                       Navigator.of(context)
                                                           .pop();
                                                     },

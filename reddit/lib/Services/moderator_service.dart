@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -43,8 +44,8 @@ class ModeratorMockService {
     }
   }
 
-  Future<void> createRules(
-      {required String id,
+  Future<void> createRule(
+      {String? id,
       required String communityName,
       required String ruleTitle,
       required String appliesTo,
@@ -64,8 +65,7 @@ class ModeratorMockService {
               ruleDescription: ruleDescription ?? "",
             ),
           );
-    }
-    else{
+    } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
@@ -78,43 +78,81 @@ class ModeratorMockService {
         },
         body: json.encode({
           'community_name': communityName,
-          // 'username': username,
+          'rule_title': ruleTitle,
+          'applies_to': appliesTo,
+          if (reportReason != null) 'report_reason': reportReason,
+          if (ruleDescription != null) 'full_description': ruleDescription,
         }),
       );
-  //     "community_name": "Bahringer___Dietrich",
-  // "rule_title": "unique title 1",
-  // "applies_to": "posts_and_comments",
-  // "report_reason":"dummy reason",
-  // "full_description":"this is a full description example"
     }
   }
 
-  void editRules(
+  Future<void> editRules(
       {required String id,
       required String communityName,
       required String ruleTitle,
       required String appliesTo,
       String? reportReason,
-      String? ruleDescription}) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .communityRules
-        .firstWhere((rule) => rule.id == id)
-        .updateAll(
-            appliesTo: appliesTo,
-            id: id,
-            ruleTitle: ruleTitle,
-            reportReason: reportReason ?? "",
-            ruleDescription: ruleDescription ?? "");
+      String? ruleDescription}) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .communityRules
+          .firstWhere((rule) => rule.id == id)
+          .updateAll(
+              appliesTo: appliesTo,
+              id: id,
+              ruleTitle: ruleTitle,
+              reportReason: reportReason ?? "",
+              ruleDescription: ruleDescription ?? "");
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/edit-rule');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'rule_id': id,
+          'community_name': communityName,
+          'rule_title': ruleTitle,
+          'applies_to': appliesTo,
+          if (reportReason != null) 'report_reason': reportReason,
+          if (ruleDescription != null) 'full_description': ruleDescription,
+        }),
+      );
+    }
   }
 
-  void deleteRule(String communityName, String id) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .communityRules
-        .removeWhere((rule) => rule.id == id);
+  Future<void> deleteRule(String communityName, String id) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .communityRules
+          .removeWhere((rule) => rule.id == id);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/delete-rule');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'rule_id': id,
+        }),
+      );
+    }
   }
 
   Future<List<Map<String, dynamic>>> getApprovedUsers(
@@ -202,7 +240,6 @@ class ModeratorMockService {
           'username': username,
         }),
       );
-      print(response.body);
     }
   }
 
@@ -284,12 +321,10 @@ class ModeratorMockService {
           if (bannedUntil != null) "banned_until": bannedUntil
         }),
       );
-      // print("ALOOOOOOOOOOOO");
-      // print(response.body);
     }
   }
 
-  void updateBannedUser({
+  Future<void> updateBannedUser({
     required String username,
     required String communityName,
     required bool permanentFlag,
@@ -297,17 +332,36 @@ class ModeratorMockService {
     String? bannedUntil,
     String? noteForBanMessage,
     String? modNote,
-  }) {
-    var user = communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .bannedUsers
-        .firstWhere((user) => user["username"] == username);
-    user["reason_for_ban"] = reasonForBan;
-    user["mod_note"] = modNote;
-    user["permanent_flag"] = permanentFlag;
-    user["banned_until"] = bannedUntil ?? "";
-    user["note_for_ban_message"] = noteForBanMessage ?? "";
+  }) async {
+    if (testing) {
+      var user = communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .bannedUsers
+          .firstWhere((user) => user["username"] == username);
+      user["reason_for_ban"] = reasonForBan;
+      user["mod_note"] = modNote;
+      user["permanent_flag"] = permanentFlag;
+      user["banned_until"] = bannedUntil ?? "";
+      user["note_for_ban_message"] = noteForBanMessage ?? "";
+    } else {
+      // SharedPreferences prefs = await SharedPreferences.getInstance(); //
+      // String? token = prefs.getString('token');
+      // final url =
+      //     Uri.parse('https://redditech.me/backend/communities/ban-user');
+      // final response = await http.post(
+      //   url,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': token!,
+      //   },
+      //   body: json.encode({
+      //     'community_name': communityName,
+      //     'username': username,
+      //     'action': "ban",
+      //   }),
+      // ); // to be doneee badrrrr
+    }
   }
 
   Future<void> unBanUser(String username, String communityName) async {
@@ -364,29 +418,67 @@ class ModeratorMockService {
     }
   }
 
-  void addMutedUsers(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .mutedUsers
-        .add(
-      {
-        "username": username,
-        "mute_date": "Now",
-        "muted_by_username": "To be doneee",
-        "mute_reason": "to be donee", //badrrrrr
-        "profile_picture": "images/Greddit.png",
-        "_id": "6618844ad57c873637b5cf2"
-      },
-    );
+  Future<void> addMutedUsers(String username, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .mutedUsers
+          .add(
+        {
+          "username": username,
+          "mute_date": "Now",
+          "muted_by_username": "To be doneee",
+          "mute_reason": "to be donee", //badrrrrr
+          "profile_picture": "images/Greddit.png",
+          "_id": "6618844ad57c873637b5cf2"
+        },
+      );
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/mute-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          'action': "mute",
+        }),
+      );
+    }
   }
 
-  void unMuteUser(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .mutedUsers
-        .removeWhere((user) => user["username"] == username);
+  Future<void> unMuteUser(String username, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .mutedUsers
+          .removeWhere((user) => user["username"] == username);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/mute-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          'action': "unmute",
+        }),
+      );
+    }
   }
 
   Future<List<Map<String, dynamic>>> getModerators(String communityName) async {
@@ -416,37 +508,80 @@ class ModeratorMockService {
     }
   }
 
-  void inviteModerator({
+  Future<void> inviteModerator({
     required String communityName,
     required String username,
     required bool everything,
     required bool manageUsers,
     required bool manageSettings,
     required bool managePostsAndComments,
-  }) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .moderators
-        .add(
-      {
-        "everything": everything,
-        "manage_users": manageUsers,
-        "manage_settings": manageSettings,
-        "manage_posts_and_comments": managePostsAndComments,
-        "username": username,
-        "profile_picture": "images/Greddit.png",
-        "moderator_since": "Now"
-      },
-    );
+  }) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .moderators
+          .add(
+        {
+          "everything": everything,
+          "manage_users": manageUsers,
+          "manage_settings": manageSettings,
+          "manage_posts_and_comments": managePostsAndComments,
+          "username": username,
+          "profile_picture": "images/Greddit.png",
+          "moderator_since": "Now"
+        },
+      );
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/add-moderator');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          'has_access': {
+            "everything": everything,
+            "manage_users": manageUsers,
+            "manage_settings": manageSettings,
+            "manage_posts_and_comments": managePostsAndComments,
+          },
+        }),
+      );
+    }
   }
 
-  void removeAsMod(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .moderators
-        .removeWhere((user) => user["username"] == username);
+  Future<void> removeAsMod(String username, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .moderators
+          .removeWhere((user) => user["username"] == username);
+    }
+    else{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/remove-moderator');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+        }),
+      );
+    }
   }
 
   GeneralSettings getCommunityGeneralSettings(String communityName) {

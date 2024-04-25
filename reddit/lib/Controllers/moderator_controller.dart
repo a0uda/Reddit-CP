@@ -68,7 +68,7 @@ class ApprovedUserProvider extends ChangeNotifier {
 
   Future<void> removeApprovedUsers(
       String username, String communityName) async {
-    moderatorService.removeApprovedUsers(username, communityName);
+    await moderatorService.removeApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
         await moderatorService.getApprovedUsers(communityName);
     notifyListeners();
@@ -117,7 +117,7 @@ class BannedUserProvider extends ChangeNotifier {
     String? noteForBanMessage,
     String? modNote,
   }) async {
-    moderatorService.updateBannedUser(
+    await moderatorService.updateBannedUser(
       username: username,
       communityName: communityName,
       permanentFlag: permanentFlag,
@@ -132,7 +132,7 @@ class BannedUserProvider extends ChangeNotifier {
   }
 
   Future<void> unBanUsers(String username, String communityName) async {
-    moderatorService.unBanUser(username, communityName);
+    await moderatorService.unBanUser(username, communityName);
     moderatorController.bannedUsers =
         await moderatorService.getBannedUsers(communityName);
     notifyListeners();
@@ -150,14 +150,14 @@ class MutedUserProvider extends ChangeNotifier {
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   Future<void> addMutedUsers(String username, String communityName) async {
-    moderatorService.addMutedUsers(username, communityName);
+    await moderatorService.addMutedUsers(username, communityName);
     moderatorController.mutedUsers =
         await moderatorService.getMutedUsers(communityName);
     notifyListeners();
   }
 
   Future<void> unMuteUser(String username, String communityName) async {
-    moderatorService.unMuteUser(username, communityName);
+    await moderatorService.unMuteUser(username, communityName);
     moderatorController.mutedUsers =
         await moderatorService.getMutedUsers(communityName);
     notifyListeners();
@@ -176,7 +176,7 @@ class ModeratorProvider extends ChangeNotifier {
     required bool manageSettings,
     required bool managePostsAndComments,
   }) async {
-    moderatorService.inviteModerator(
+    await moderatorService.inviteModerator(
         communityName: communityName,
         username: username,
         everything: everything,
@@ -189,7 +189,7 @@ class ModeratorProvider extends ChangeNotifier {
   }
 
   Future<void> removeAsMod(String username, String communityName) async {
-    moderatorService.removeAsMod(username, communityName);
+    await moderatorService.removeAsMod(username, communityName);
     moderatorController.moderators =
         await moderatorService.getModerators(communityName);
     notifyListeners();
@@ -200,14 +200,14 @@ class RulesProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  Future<void> createRules(
-      {required String id,
+  Future<void> createRule(
+      {String? id,
       required String communityName,
       required String ruleTitle,
       required String appliesTo,
       String? reportReason,
       String? ruleDescription}) async {
-    moderatorService.createRules(
+    await moderatorService.createRule(
         id: id,
         communityName: communityName,
         ruleTitle: ruleTitle,
@@ -219,7 +219,7 @@ class RulesProvider extends ChangeNotifier {
   }
 
   Future<void> deleteRule(String communityName, String id) async {
-    moderatorService.deleteRule(communityName, id);
+    await moderatorService.deleteRule(communityName, id);
     moderatorController.rules = await moderatorService.getRules(communityName);
     notifyListeners();
   }
@@ -231,7 +231,7 @@ class RulesProvider extends ChangeNotifier {
       required String appliesTo,
       String? reportReason,
       String? ruleDescription}) async {
-    moderatorService.editRules(
+    await moderatorService.editRules(
       id: id,
       communityName: communityName,
       ruleTitle: ruleTitle,

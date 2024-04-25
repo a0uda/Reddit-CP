@@ -41,6 +41,7 @@ class _EditRulePageState extends State<EditRulePage> {
         widget.ruleDescription != null ? widget.ruleDescription! : "";
     reportReasonController.text =
         widget.reportReason != null ? widget.reportReason! : "";
+
     selectedOption = widget.appliesToOption;
   }
 
@@ -59,7 +60,7 @@ class _EditRulePageState extends State<EditRulePage> {
         ),
         title: const Center(
           child: Text(
-            "Create a rule",
+            "Edit rule",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -74,9 +75,9 @@ class _EditRulePageState extends State<EditRulePage> {
                     foregroundColor: Colors.white,
                     shadowColor: Colors.transparent),
                 onPressed: saveButtonEnable
-                    ? () {
+                    ? () async {
                         //save rule
-                        rulesProvider.editRules(
+                        await rulesProvider.editRules(
                             id: widget.id,
                             communityName: moderatorController.communityName,
                             ruleTitle: titleController.text,
@@ -87,7 +88,7 @@ class _EditRulePageState extends State<EditRulePage> {
                       }
                     : null,
                 child: const Text(
-                  "Save",
+                  "Update",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ))
@@ -169,7 +170,7 @@ class _EditRulePageState extends State<EditRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text("Post and comments"),
-                value: 'Post and comments',
+                value: 'posts_and_comments',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -181,7 +182,7 @@ class _EditRulePageState extends State<EditRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only comments'),
-                value: 'comments',
+                value: 'comments_only',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -193,7 +194,7 @@ class _EditRulePageState extends State<EditRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only posts'),
-                value: 'posts', //Badrrr
+                value: 'posts_only', //Badrrr
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {

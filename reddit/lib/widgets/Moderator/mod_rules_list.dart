@@ -22,7 +22,9 @@ class _ModRulesListState extends State<ModRulesList> {
   Future<void> fetchRules() async {
     if (!rulesFetched) {
       await moderatorController.getRules(moderatorController.communityName);
-      rulesFetched = true;
+      setState(() {
+        rulesFetched = true;
+      });
     }
   }
 
@@ -152,11 +154,11 @@ class _ModRulesListState extends State<ModRulesList> {
                                 ),
                                 trailing: isEditing
                                     ? IconButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           //delete rule badrrr
-                                          rulesProvider.deleteRule(
+                                          await rulesProvider.deleteRule(
                                               moderatorController.communityName,
-                                              item.id);
+                                              item.id!);
                                         },
                                         icon: const Icon(
                                           Icons.delete_outline_outlined,
@@ -171,10 +173,11 @@ class _ModRulesListState extends State<ModRulesList> {
                                           MaterialPageRoute(
                                             builder: (context) => EditRulePage(
                                               ruleTitle: item.ruleTitle,
-                                              id: item.id,
+                                              id: item.id!,
                                               ruleDescription:
                                                   item.ruleDescription,
-                                              appliesToOption: "posts",
+                                              appliesToOption: item.appliesTo,
+                                              reportReason: item.reportReason,
                                             ),
                                           ),
                                         );
