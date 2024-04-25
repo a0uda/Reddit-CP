@@ -66,6 +66,20 @@ class _AddBannedUserState extends State<AddBannedUser> {
     }
   }
 
+  banUser() async {
+    var bannedUserProvider = context.read<BannedUserProvider>();
+    await bannedUserProvider.addBannedUsers(
+      username: userNameController.text,
+      communityName: moderatorController.communityName,
+      permanentFlag: permanentIsChecked,
+      reasonForBan: banReasonController.text,
+      bannedUntil: banPeriodController.text,
+      modNote: modNoteController.text,
+      noteForBanMessage: noteController.text,
+    );
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     var bannedUserProvider = context.read<BannedUserProvider>();
@@ -88,7 +102,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
+                    ? () async {
                         //print(banPeriodController.text);
                         if (widget.seeDetails) {
                           bannedUserProvider.updateBannedUser(
@@ -101,18 +115,10 @@ class _AddBannedUserState extends State<AddBannedUser> {
                             noteForBanMessage: noteController.text,
                           );
                           Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         } else {
-                          bannedUserProvider.addBannedUsers(
-                            username: userNameController.text,
-                            communityName: moderatorController.communityName,
-                            permanentFlag: permanentIsChecked,
-                            reasonForBan: banReasonController.text,
-                            bannedUntil: banPeriodController.text,
-                            modNote: modNoteController.text,
-                            noteForBanMessage: noteController.text,
-                          );
+                          await banUser();
                         }
-                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(

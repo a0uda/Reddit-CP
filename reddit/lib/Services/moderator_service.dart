@@ -9,34 +9,84 @@ import 'package:http/http.dart' as http;
 bool testing = const bool.fromEnvironment('testing');
 
 class ModeratorMockService {
-  List<RulesItem> getRules(String communityName) {
-    List<RulesItem> foundRules = communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .communityRules;
-    return foundRules;
+  Future<List<RulesItem>> getRules(String communityName) async {
+    if (testing) {
+      List<RulesItem> foundRules = communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .communityRules;
+      return foundRules;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/get-rules/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final List<dynamic> decodedData = json.decode(response.body);
+      final List<RulesItem> rules = decodedData
+          .map((rule) => RulesItem(
+                id: rule["_id"],
+                ruleTitle: rule["rule_title"],
+                appliesTo: rule["applies_to"],
+                reportReason: rule["report_reason"],
+                ruleDescription: rule["full_description"],
+              ))
+          .toList();
+      return rules; //badrr
+    }
   }
 
-  void createRules(
+  Future<void> createRules(
       {required String id,
       required String communityName,
       required String ruleTitle,
       required String appliesTo,
       String? reportReason,
-      String? ruleDescription}) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .communityRules
-        .add(
-          RulesItem(
-            id: id,
-            ruleTitle: ruleTitle,
-            appliesTo: appliesTo,
-            reportReason: reportReason ?? "",
-            ruleDescription: ruleDescription ?? "",
-          ),
-        );
+      String? ruleDescription}) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .communityRules
+          .add(
+            RulesItem(
+              id: id,
+              ruleTitle: ruleTitle,
+              appliesTo: appliesTo,
+              reportReason: reportReason ?? "",
+              ruleDescription: ruleDescription ?? "",
+            ),
+          );
+    }
+    else{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/add-rule');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          // 'username': username,
+        }),
+      );
+  //     "community_name": "Bahringer___Dietrich",
+  // "rule_title": "unique title 1",
+  // "applies_to": "posts_and_comments",
+  // "report_reason":"dummy reason",
+  // "full_description":"this is a full description example"
+    }
   }
 
   void editRules(
@@ -95,7 +145,7 @@ class ModeratorMockService {
     }
   }
 
-  void addApprovedUsers(String username, String communityName) {
+  Future<void> addApprovedUsers(String username, String communityName) async {
     if (testing) {
       communities
           .firstWhere(
@@ -110,16 +160,50 @@ class ModeratorMockService {
         },
       );
     } else {
-      //add
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/approve-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+        }),
+      );
     }
   }
 
-  void removeApprovedUsers(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .approvedUsers
-        .removeWhere((user) => user["username"] == username);
+  Future<void> removeApprovedUsers(
+      String username, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .approvedUsers
+          .removeWhere((user) => user["username"] == username);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/unapprove-user'); //removee badrrr
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+        }),
+      );
+      print(response.body);
+    }
   }
 
   Future<List<Map<String, dynamic>>> getBannedUsers(
@@ -150,7 +234,7 @@ class ModeratorMockService {
     }
   }
 
-  void addBannedUsers({
+  Future<void> addBannedUsers({
     required String username,
     required String communityName,
     required bool permanentFlag,
@@ -158,24 +242,51 @@ class ModeratorMockService {
     String? bannedUntil,
     String? noteForBanMessage,
     String? modNote,
-  }) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .bannedUsers
-        .add(
-      {
-        "username": username,
-        "banned_date": "Now",
-        "reason_for_ban": reasonForBan,
-        "mod_note": modNote ?? "",
-        "permanent_flag": permanentFlag,
-        "banned_until": bannedUntil ?? "",
-        "note_for_ban_message": noteForBanMessage ?? "",
-        "profile_picture": "images/Greddit.png",
-        "_id": "66186ace721cbd638232612a"
-      },
-    );
+  }) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .bannedUsers
+          .add(
+        {
+          "username": username,
+          "banned_date": "Now",
+          "reason_for_ban": reasonForBan,
+          "mod_note": modNote ?? "",
+          "permanent_flag": permanentFlag,
+          "banned_until": bannedUntil ?? "",
+          "note_for_ban_message": noteForBanMessage ?? "",
+          "profile_picture": "images/Greddit.png",
+          "_id": "66186ace721cbd638232612a"
+        },
+      );
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/ban-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          "action": "ban",
+          "reason_for_ban": reasonForBan,
+          "permanent_flag": permanentFlag,
+          if (modNote != null) "mod_note": modNote,
+          if (noteForBanMessage != null)
+            "note_for_ban_message": noteForBanMessage,
+          if (bannedUntil != null) "banned_until": bannedUntil
+        }),
+      );
+      // print("ALOOOOOOOOOOOO");
+      // print(response.body);
+    }
   }
 
   void updateBannedUser({
@@ -199,12 +310,31 @@ class ModeratorMockService {
     user["note_for_ban_message"] = noteForBanMessage ?? "";
   }
 
-  void unBanUser(String username, String communityName) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .bannedUsers
-        .removeWhere((user) => user["username"] == username);
+  Future<void> unBanUser(String username, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .bannedUsers
+          .removeWhere((user) => user["username"] == username);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/communities/ban-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          "action": "unban",
+        }),
+      );
+    }
   }
 
   Future<List<Map<String, dynamic>>> getMutedUsers(String communityName) async {
@@ -270,7 +400,7 @@ class ModeratorMockService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token'); //badrr
       final url = Uri.parse(
-          'https://redditech.me/backend/communities/about/moderators/$communityName');
+          'https://redditech.me/backend/communities/about/moderators-sorted/$communityName');
 
       final response = await http.get(
         url,
@@ -282,7 +412,7 @@ class ModeratorMockService {
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
-      return moderators; //badrrr
+      return moderators.reversed.toList(); //badrrr
     }
   }
 

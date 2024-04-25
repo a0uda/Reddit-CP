@@ -17,9 +17,19 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
+  addUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.addApprovedUsers(
+        userNameController.text, moderatorController.communityName);
+    print("ALOOOOOOO");
+    print(moderatorController
+        .approvedUsers[moderatorController.approvedUsers.length-1]);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    //var approvedUserProvider = context.read<ApprovedUserProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -39,12 +49,9 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
+                    ? () async {
                         //ADD IN MOCK badrrrr
-                        approvedUserProvider.addApprovedUsers(
-                            userNameController.text,
-                            moderatorController.communityName);
-                        Navigator.of(context).pop();
+                        await addUser();
                       }
                     : null,
                 child: Text(

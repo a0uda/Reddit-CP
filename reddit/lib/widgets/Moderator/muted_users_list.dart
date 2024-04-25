@@ -114,6 +114,8 @@ class _MutedUsersListState extends State<MutedUsersList> {
                         itemCount: foundUsers.length,
                         itemBuilder: (BuildContext context, int index) {
                           final item = foundUsers[index];
+                          final mutedAt = DateTime.parse(
+                                          item["mute_date"]!);
                           return Card(
                             elevation: 0,
                             margin: const EdgeInsets.only(bottom: 1),
@@ -132,7 +134,7 @@ class _MutedUsersListState extends State<MutedUsersList> {
                                     "u/${item["username"]!}",
                                   ),
                                   Text(
-                                    item["mute_date"]!,
+                                     '${mutedAt.day}-${mutedAt.month}-${mutedAt.year}',
                                     style: const TextStyle(
                                         color: Colors.grey, fontSize: 10),
                                   )

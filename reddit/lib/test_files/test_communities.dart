@@ -275,7 +275,7 @@ List<GeneralSettings> generalSettings = [
   ),
   GeneralSettings(
     communityID: "4",
-    communityName: 'Photography Passion',
+    communityName: 'Legros_LLC',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
     nsfwFlag: false,
