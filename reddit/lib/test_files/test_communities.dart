@@ -99,7 +99,7 @@ final communities = [
     editableModerators: editableModerators,
     moderators: moderators,
     mutedUsers: mutedUsers,
-    postTypes: "Links Only", //Mostafa Mohyy khena2a
+    postTypes: "Text Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
     allowImage: false,
@@ -271,20 +271,20 @@ List<GeneralSettings> generalSettings = [
     communityDescription:
         'Get fit and stay healthy with the support of our community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "4",
     communityName: 'Legros_LLC',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "5",
     communityName: 'Gaming Universe',
     communityDescription: 'Welcome to the ultimate gaming community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
 ];

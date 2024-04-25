@@ -13,7 +13,13 @@ class ModeratorController {
   List<Map<String, dynamic>> mutedUsers = [];
   List<Map<String, dynamic>> moderators = [];
   List<RulesItem> rules = [];
-  GeneralSettings? generalSettings;
+  GeneralSettings generalSettings = GeneralSettings(
+    communityID: "",
+    communityName: "",
+    communityDescription: "",
+    communityType: "Public",
+    nsfwFlag: false,
+  );
   Map<String, dynamic> postTypesAndOptions = {};
   CommunityItem? communityItem;
 
@@ -25,14 +31,24 @@ class ModeratorController {
     moderators = await moderatorService.getModerators(communityName);
     rules = await moderatorService.getRules(communityName);
     generalSettings =
-        moderatorService.getCommunityGeneralSettings(communityName);
-    postTypesAndOptions =
-        moderatorService.getPostTypesAndOptions(communityName);
+        await moderatorService.getCommunityGeneralSettings(communityName);
+    postTypesAndOptions = moderatorService.getPostTypesAndOptions(communityName)
+        as Map<String, dynamic>;
   }
 
   Future<void> getBannedUsers(String communityName) async {
     bannedUsers = await moderatorService.getBannedUsers(communityName);
   }
+
+  Future<void> getGeneralSettings(String communityName) async {
+    generalSettings =
+        await moderatorService.getCommunityGeneralSettings(communityName);
+  }
+    Future<void> getPostTypesAndOptions(String communityName) async {
+    postTypesAndOptions =
+        await moderatorService.getPostTypesAndOptions(communityName);
+  }
+
 
   Future<void> getApprovedUser(String communityName) async {
     approvedUsers = await moderatorService.getApprovedUsers(communityName);
@@ -43,11 +59,7 @@ class ModeratorController {
   }
 
   Future<void> getModerators(String communityName) async {
-    moderators = await moderatorService.getModerators(communityName);
-  }
-
-  GeneralSettings getGeneralSettings(String communityName) {
-    return moderatorService.getCommunityGeneralSettings(communityName);
+    mutedUsers = await moderatorService.getModerators(communityName);
   }
 
   Future<void> getRules(String communityName) async {
@@ -68,7 +80,7 @@ class ApprovedUserProvider extends ChangeNotifier {
 
   Future<void> removeApprovedUsers(
       String username, String communityName) async {
-    await moderatorService.removeApprovedUsers(username, communityName);
+    moderatorService.removeApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
         await moderatorService.getApprovedUsers(communityName);
     notifyListeners();
@@ -189,7 +201,7 @@ class ModeratorProvider extends ChangeNotifier {
   }
 
   Future<void> removeAsMod(String username, String communityName) async {
-    await moderatorService.removeAsMod(username, communityName);
+    moderatorService.removeAsMod(username, communityName);
     moderatorController.moderators =
         await moderatorService.getModerators(communityName);
     notifyListeners();
@@ -248,8 +260,8 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  void setGeneralSettings(
-      {required String communityName, required GeneralSettings general}) {
+  Future<void> setGeneralSettings(
+      {required String communityName, required GeneralSettings general}) async {
     moderatorService.postGeneralSettings(
         communityName: communityName,
         settings: GeneralSettings(
@@ -258,10 +270,32 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
             communityDescription: general.communityDescription,
             communityType: general.communityType,
             nsfwFlag: general.nsfwFlag));
-    moderatorController.generalSettings =
-        moderatorService.getCommunityGeneralSettings(general.communityName);
+    moderatorController.generalSettings = await moderatorService
+        .getCommunityGeneralSettings(general.communityName);
     moderatorController.communityName = general.communityName;
+    notifyListeners();
+  }
+}
 
+class PostSettingsProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> setCommunityPostSetting(
+      {required String communityName,
+      required bool allowImages,
+      required bool allowPolls,
+      required bool allowVideo,
+      required String postTypes}) async {
+    moderatorService.setPostTypeAndOptions(
+      communityName: communityName,
+      allowImages: allowImages,
+      allowPolls: allowPolls,
+      allowVideos: allowVideo,
+      postTypes: postTypes,
+    );
+    moderatorController.postTypesAndOptions =
+        await moderatorService.getPostTypesAndOptions(communityName);
     notifyListeners();
   }
 }

@@ -90,6 +90,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => ChangeGeneralSettingsProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => PostSettingsProvider(),
       )
     ],
     child: const MyApp(),

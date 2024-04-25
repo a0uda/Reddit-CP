@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
@@ -36,28 +37,30 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String buttonState = 'Join';
-  // final CommunityController communityController =
-  //     GetIt.instance.get<CommunityController>();
-  
+
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   List<Post> communityPost = [];
+
+  late final String communityDescription;
+  late final String communityID;
+  late final String communityType;
+  late String communityName;
+  late final bool communityFlag;
+  late GeneralSettings communityGeneralSettings;
+
+  
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+    communityGeneralSettings = moderatorController.generalSettings;
+  }
 
   @override
   void initState() {
     super.initState();
     moderatorController.communityName = widget.communityName;
   }
-  // Future<void> fetchCommunityPosts() async {
-  //   for (String communityName in communityNames) {
-  //     communityController.getCommunityPost(communityName);
-  //     if (communityController.communityItem != null) {
-  //         communityPost.add({
-
-  //         });
-  //     }
-  //   }
-  // }
 
   void setButton() {
     setState(() {
@@ -216,10 +219,14 @@ class _CommunityPageState extends State<CommunityPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ModResponsive(
-                                        mobileLayout: MobileModTools(communityName: moderatorController.communityName,),
+                                        mobileLayout: MobileModTools(
+                                          communityName:
+                                              moderatorController.communityName,
+                                        ),
                                         desktopLayout: DesktopModTools(
                                           index: 0,
-                                          communityName: moderatorController.communityName,
+                                          communityName:
+                                              moderatorController.communityName,
                                         ),
                                       ),
                                     ),

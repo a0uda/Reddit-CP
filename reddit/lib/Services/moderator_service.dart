@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
@@ -584,46 +583,96 @@ class ModeratorMockService {
     }
   }
 
-  GeneralSettings getCommunityGeneralSettings(String communityName) {
-    return communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .general;
+  Future<GeneralSettings> getCommunityGeneralSettings(
+      String communityName) async {
+    if (testing) {
+      return communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .general;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/get-general-settings/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      );
+      final Map<String, dynamic> decodedSettings = json.decode(response.body);
+      final GeneralSettings generalSettings = GeneralSettings(
+        communityID: decodedSettings["_id"],
+        communityName: decodedSettings["title"],
+        communityDescription: decodedSettings["description"],
+        communityType: decodedSettings["type"],
+        nsfwFlag: decodedSettings["nsfw_flag"],
+      );
+      return generalSettings;
+    }
   }
 
-  Map<String, dynamic> getPostTypesAndOptions(String communityName) {
-    //mostafa mohyy feeha kalam
-    var foundCommunity = communities.firstWhere(
-        (community) => community.general.communityName == communityName);
-    return {
-      "postTypes": foundCommunity.postTypes,
-      "allowImages": foundCommunity.allowImage,
-      "allowPolls": foundCommunity.allowPolls,
-      "allowVideo": foundCommunity.allowVideos,
-    };
+  Future<Map<String, dynamic>> getPostTypesAndOptions(
+      String communityName) async {
+    if (testing) {
+      var foundCommunity = communities.firstWhere(
+          (community) => community.general.communityName == communityName);
+      return {
+        "postTypes": foundCommunity.postTypes,
+        "allowImages": foundCommunity.allowImage,
+        "allowPolls": foundCommunity.allowPolls,
+        "allowVideo": foundCommunity.allowVideos,
+      };
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/get-posts-and-comments/$communityName');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final Map<String, dynamic> decodedSettings = json.decode(response.body);
+      return {
+        "postTypes": decodedSettings["post_type_options"],
+        "allowImages": decodedSettings[
+            "allow_image_uploads_and_links_to_image_hosting_sites"],
+        "allowPolls": decodedSettings["allow_polls"],
+        "allowVideo": decodedSettings["allow_videos"],
+      };
+    }
   }
 
-  void postGeneralSettings(
-      {required GeneralSettings settings, required String communityName}) {
-    communities
-        .firstWhere(
-            (community) => community.general.communityName == communityName)
-        .general
-        .updateAllGeneralSettings(
-            communityID: settings.communityID,
-            communityName: settings.communityName,
-            communityDescription: settings.communityDescription,
-            communityType: settings.communityType,
-            nsfwFlag: settings.nsfwFlag);
+  Future<void> postGeneralSettings(
+      {required GeneralSettings settings,
+      required String communityName}) async {
+    if (testing) {
+      communities
+          .firstWhere(
+              (community) => community.general.communityName == communityName)
+          .general
+          .updateAllGeneralSettings(
+              communityID: settings.communityID,
+              communityName: settings.communityName,
+              communityDescription: settings.communityDescription,
+              communityType: settings.communityType,
+              nsfwFlag: settings.nsfwFlag);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    }
   }
 
-  void setPostTypeAndOptions({
+  Future<void> setPostTypeAndOptions({
     required bool allowImages,
     required bool allowVideos,
     required bool allowPolls,
     required String communityName,
     required String postTypes,
-  }) {
+  }) async {
     var community = communities.firstWhere(
       (community) => community.general.communityName == communityName,
     );

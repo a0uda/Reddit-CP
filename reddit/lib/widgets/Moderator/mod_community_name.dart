@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/test_files/test_communities.dart';
 
 class ModCommName extends StatefulWidget {
   const ModCommName({
@@ -23,33 +24,24 @@ class _ModCommNameState extends State<ModCommName> {
   late final String communityType;
   late String communityName;
   late final bool communityFlag;
+  late GeneralSettings communityGeneralSettings;
 
   int maxCounter = 90;
   int remainingCharacters = 90;
   bool isSaved = false;
   bool doneSaved = true;
   String newCommunityName = '';
-  
 
   @override
   void initState() {
     super.initState();
     remainingCharacters = maxCounter;
-     communityName = moderatorController.communityName;
-    // communityName = moderatorController
-    //   .getGeneralSettings(widget.communityName)
-    //   .communityName;
-    communityDescription = moderatorController
-        .getGeneralSettings(communityName)
-        .communityDescription;
-    communityID = moderatorController
-        .getGeneralSettings(communityName)
-        .communityID;
-    communityType = moderatorController
-        .getGeneralSettings(communityName)
-        .communityType;
-    communityFlag =
-        moderatorController.getGeneralSettings(communityName).nsfwFlag;
+    communityName = moderatorController.communityName;
+  }
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+    communityGeneralSettings = moderatorController.generalSettings;
   }
 
   void updateCharachterCounter() {
@@ -64,7 +56,6 @@ class _ModCommNameState extends State<ModCommName> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -85,14 +76,14 @@ class _ModCommNameState extends State<ModCommName> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-                settingsProvider.setGeneralSettings(
-                    communityName: communityName,
-                    general: GeneralSettings(
-                        communityID: communityID,
-                        communityName: inputController.text,
-                        communityDescription: communityDescription,
-                        communityType: communityType,
-                        nsfwFlag: communityFlag));
+              settingsProvider.setGeneralSettings(
+                  communityName: communityName,
+                  general: GeneralSettings(
+                      communityID: communityID,
+                      communityName: inputController.text,
+                      communityDescription: communityDescription,
+                      communityType: communityType,
+                      nsfwFlag: communityFlag));
               setState(() {
                 doneSaved = true;
               });
@@ -210,76 +201,81 @@ class _ModCommNameState extends State<ModCommName> {
                 })
             : null,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * paddingPercentage),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Row(
+      body: FutureBuilder(
+        future: fetchGeneralSettings(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          return Padding(
+            padding: EdgeInsets.all(screenWidth * paddingPercentage),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment(0, 0),
-                  child: Text(
-                    'Change your community name',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 48, 129, 185),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                const Row(
+                  children: [
+                    Align(
+                      alignment: Alignment(0, 0),
+                      child: Text(
+                        'Change your community name',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 48, 129, 185),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: inputController,
+                  maxLines: null,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
+                  decoration: const InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
                     ),
                   ),
+                  onChanged: ((value) {
+                    updateCharachterCounter();
+                    setState(() {
+                      if (maxCounter == remainingCharacters) {
+                        isSaved = false;
+                        doneSaved = true;
+                      } else {
+                        isSaved = true;
+                        doneSaved = false;
+                      }
+                    });
+                  }),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      child: Text(
+                        '$remainingCharacters',
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 173, 173, 173),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            TextField(
-              controller: inputController,
-              maxLines: null,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
-              ),
-              decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
-                ),
-              ),
-              onChanged: ((value) {
-                updateCharachterCounter();
-                setState(() {
-                  if (maxCounter == remainingCharacters) {
-                    isSaved = false;
-                    doneSaved = true;
-                  } else {
-                    isSaved = true;
-                    doneSaved = false;
-                  }
-                });
-              }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  child: Text(
-                    '$remainingCharacters',
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 173, 173, 173),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w100,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
