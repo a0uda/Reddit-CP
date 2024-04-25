@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/test_files/test_communities.dart';
@@ -24,6 +25,7 @@ class DrawerReddit extends StatefulWidget {
 class _DrawerRedditState extends State<DrawerReddit> {
   bool userMod = true, isExpanded = false;
   final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
+  final UserController userController = GetIt.instance.get<UserController>(); 
   List<Map<String, dynamic>> communitiesDrawer = []; 
 
   @override
@@ -49,7 +51,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
     }
   }
 
-  var userModList = [];
   @override
   Widget build(BuildContext context) {
     return Drawer(
