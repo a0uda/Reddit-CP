@@ -23,7 +23,9 @@ class NewListing extends StatefulWidget {
 
 class NewListingBuild extends State<NewListing> {
   List<PostItem> posts = [];
+  int page=0;
   late Future<void> _dataFuture;
+  bool loading=false;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   Future<void> fetchdata() async {
@@ -33,7 +35,8 @@ class NewListingBuild extends State<NewListing> {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
-        post = await postService.getPosts(user, "hot");
+        post = await postService.getPosts(user, "new",page);
+        page=page+1;
       } else {
         posts = postService.fetchPosts();
       }
@@ -52,22 +55,24 @@ class NewListingBuild extends State<NewListing> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _dataFuture = fetchdata(); // Replace with your actual data fetching logic
-  }
-
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
+      fetchdata();
       print('LOAD MORE');
       // load more data here
 
       //setState(() {});
     }
+  }
+  @override
+ void initState() {
+    super.initState();
+    _dataFuture = fetchdata(); 
+    controller.addListener(HandleScrolling);
+    
   }
 
   @override
@@ -91,7 +96,7 @@ class NewListingBuild extends State<NewListing> {
         } else {
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-              fetchdata();
+            
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
@@ -113,6 +118,8 @@ class NewListingBuild extends State<NewListing> {
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
+                    vote: posts[index].vote,
+
                     title: posts[index].title,
                     postContent: posts[index].description,
                     date: posts[index].createdAt.toString(),

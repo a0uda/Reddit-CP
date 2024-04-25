@@ -52,6 +52,7 @@ class LoginPageState extends State<LoginPage> {
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
+      
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

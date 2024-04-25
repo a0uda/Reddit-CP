@@ -5,6 +5,7 @@ import '../Models/comments.dart';
 import '../Models/profile_settings.dart';
 import '../Models/safety_settings_item.dart';
 import '../Models/community_item.dart';
+import '../Models/notifications_settings_item.dart';
 
 class UserItem {
   List<String>? savedCommentsIds;
@@ -17,6 +18,7 @@ class UserItem {
   final SafetyAndPrivacySettings? safetySettings;
   final AccountSettings? accountSettings;
   List<CommunityItem>? activecommunities;
+   NotificationsSettingsItem? notificationsSettings;
 
   UserItem({
     required this.userAbout,
@@ -29,5 +31,6 @@ class UserItem {
     this.accountSettings,
     this.activecommunities,
     this.savedCommentsIds,
+    this.notificationsSettings,
   });
 }

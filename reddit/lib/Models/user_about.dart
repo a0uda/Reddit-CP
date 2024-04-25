@@ -40,7 +40,7 @@ class UserAbout {
       return UserAbout(username: '');
     }
     return UserAbout(
-      id: jsonDecode['id'],
+     id: jsonDecode['id'],
       createdAt: DateFormat('d MMMM yyyy')
           .format(DateTime.parse(jsonDecode['created_at']))
           .toString(),
@@ -55,7 +55,7 @@ class UserAbout {
           ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['profile_picture'] ),
+      profilePicture: (jsonDecode['profile_picture']==null || jsonDecode['profile_picture']=="")?'images/Greddit.png':jsonDecode['profile_picture'],
       bannerPicture: jsonDecode['banner_picture'],
       country: jsonDecode['country'],
       gender: jsonDecode['gender'],
