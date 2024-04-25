@@ -37,7 +37,7 @@ var mobileModTools = [
   const ModCommName(),
   const ModDescription(),
   const CommunityType(),
-  const MobilePostTypes(),
+  const PostTypes(),
   const Moderators(),
   const ApprovedUsers(),
   const BannedUsers(),
