@@ -19,6 +19,7 @@ import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
 
+
 class UserService {
   void addUser() {
     if (testing) {
@@ -1123,6 +1124,7 @@ class UserService {
 
   Future<NotificationsSettingsItem>? getNotificationsSettings(
       String username) async {
+        
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url =
