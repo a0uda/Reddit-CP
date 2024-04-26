@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
@@ -41,6 +44,9 @@ class _CreatePostState extends State<CreatePost> {
   final postService = GetIt.instance.get<PostService>();
   final communityService = GetIt.instance.get<CommunityService>();
   final communityController = GetIt.instance.get<CommunityController>();
+  final UserController userController = GetIt.instance.get<UserController>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   // firebase_storage.FirebaseStorage storage =
   //     firebase_storage.FirebaseStorage.instance;
@@ -52,8 +58,14 @@ class _CreatePostState extends State<CreatePost> {
   VideoPlayerController? _videoPlayerController;
   String? url;
   String? imageUrl;
+  List<CommunityBackend> userCommunities = [];
 
   List<String> rules = [];
+
+  Future<void> fetchUserCommunities() async {
+    await userController.getUserCommunities();
+    userCommunities = userController.userCommunities!;
+  }
 
   Future<void> _pickImage() async {
     final pickedFile =
@@ -92,6 +104,7 @@ class _CreatePostState extends State<CreatePost> {
   @override
   void initState() {
     super.initState();
+    fetchUserCommunities();
   }
 
   @override
@@ -135,18 +148,9 @@ class _CreatePostState extends State<CreatePost> {
   int selectedDays = 3;
   @override
   Widget build(BuildContext context) {
-    final UserController userController = GetIt.instance.get<UserController>();
     // ignore: unused_local_variable
     String question;
     List<String> options = ['', ''];
-    List<String> userCommunities = communityService.getCommunityNames();
-    if (widget.currentCommunity != null) {
-      communityController.getCommunity(widget.currentCommunity!);
-      communityDescription =
-          communityController.communityItem!.general.communityDescription;
-      communityRules = communityController.communityItem!.communityRules;
-      selectedCommunity = widget.currentCommunity!;
-    }
 
     Future<int> response;
     return MaterialApp(
@@ -302,14 +306,16 @@ class _CreatePostState extends State<CreatePost> {
                                     itemBuilder: (context, index) {
                                       return ListTile(
                                         title: Text(
-                                          userCommunities[index],
+                                          userCommunities[index].name,
                                           style: const TextStyle(
                                             color: Colors.black,
                                           ),
                                         ),
-                                        onTap: () {
-                                          Navigator.pop(
-                                              context, userCommunities[index]);
+                                        onTap: () async {
+                                          await moderatorController.getRules(
+                                              userCommunities[index].name);
+                                          Navigator.pop(context,
+                                              userCommunities[index].name);
                                         },
                                       );
                                     },
@@ -331,28 +337,13 @@ class _CreatePostState extends State<CreatePost> {
                         if (selectedCommunity != "Select Community")
                           TextButton(
                             onPressed: () => {
-                              setState(() {
-                                communityController
-                                    .getCommunity(selectedCommunity);
-                                communityDescription = communityController
-                                    .communityItem!.general.communityDescription;
-                                communityRules = communityController
-                                    .communityItem!.communityRules;
-                              }),
-                              // showModalBottomSheet(
-                              //   backgroundColor: Colors.white,
-                              //   context: context,
-                              //   builder: (BuildContext context) {
-                              //     return Padding(
-                              //       padding: const EdgeInsets.all(16.0),
-                              //       child: DescriptionWidget(
-                              //         communityDescription:
-                              //             communityDescription,
-                              //         communityRules: communityRules,
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
+                              showModalBottomSheet(
+                                backgroundColor: Colors.white,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ModalForRules();
+                                },
+                              ),
                             },
                             child: Text(
                               'RULES',
@@ -625,6 +616,63 @@ class _CreatePostState extends State<CreatePost> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ModalForRules extends StatelessWidget {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+
+  ModalForRules({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0 , top: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding:  EdgeInsets.only(bottom: 15.0),
+            child:  Center(
+              child: Text(
+                "Community Rules",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+          ),
+          const Text(
+            "Rules are different for each community. Reviewing the rules can help you be more successful when posting",
+            style: TextStyle(color: Colors.grey),
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: moderatorController.rules.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = moderatorController.rules[index];
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Text("${index + 1}."),
+                      title: Text(item.ruleTitle),
+                    ),
+                    Divider(
+                      endIndent: 25,
+                      indent: 25,
+                      color: Colors.grey[300],
+                      height: 1,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

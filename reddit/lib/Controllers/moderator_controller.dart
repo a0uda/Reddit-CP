@@ -59,7 +59,7 @@ class ModeratorController {
   }
 
   Future<void> getModerators(String communityName) async {
-    mutedUsers = await moderatorService.getModerators(communityName);
+    moderators = await moderatorService.getModerators(communityName);
   }
 
   Future<void> getRules(String communityName) async {

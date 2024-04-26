@@ -92,7 +92,9 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -109,11 +111,13 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                         },
                       ),
                       FutureBuilder(
-                        future: fetchGeneralSettings(),
+                        future: fetchRules(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else {
@@ -121,34 +125,30 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                               margin: const EdgeInsets.only(top: 20),
                               child: Column(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Container(
-                                          margin:
-                                              const EdgeInsets.only(bottom: 5),
-                                          child: const Text(
-                                            'Rules',
-                                            style: TextStyle(
-                                              fontFamily: 'Roboto',
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: const Text(
+                                          'Rules',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
                                           ),
                                         ),
-                                        const Divider(
-                                          color: Color.fromARGB(
-                                              255, 215, 215, 215),
-                                          height: 1,
-                                          thickness: 1.0,
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      const Divider(
+                                        color: Color.fromARGB(
+                                            255, 215, 215, 215),
+                                        height: 1,
+                                        thickness: 1.0,
+                                      ),
+                                    ],
                                   ),
                                   ListView.builder(
                                     shrinkWrap: true,
@@ -201,7 +201,7 @@ class RuleTileState extends State<RuleTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20),
+      padding: const EdgeInsets.only(left: 0, right: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

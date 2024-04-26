@@ -29,13 +29,6 @@ class _DrawerTileState extends State<DrawerTile> {
   final UserController userController = GetIt.instance.get<UserController>();
   List<CommunityBackend> lists = [];
 
-  // Future<void> fetchCommunities() async {
-  //   if (!communitiesFetched && !widget.isMod) {
-  //     await userController.getUserCommunities();
-  //     lists = userController.userCommunities!;
-  //   }
-  //   communitiesFetched = true;
-  // }
 
   @override
   Widget build(BuildContext context) {

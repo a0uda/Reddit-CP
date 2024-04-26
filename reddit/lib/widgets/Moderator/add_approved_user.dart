@@ -21,9 +21,6 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
     var approvedUserProvider = context.read<ApprovedUserProvider>();
     await approvedUserProvider.addApprovedUsers(
         userNameController.text, moderatorController.communityName);
-    print("ALOOOOOOO");
-    print(moderatorController
-        .approvedUsers[moderatorController.approvedUsers.length-1]);
     Navigator.of(context).pop();
   }
 

@@ -33,8 +33,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
   Future<void> fetchUserCommunities() async {
     if (!communitiesFetched) {
       await userController.getUserCommunities();
-      print("SDJBKVVVVVVVV");
-      print(userController.userAbout?.moderatedCommunities);
     }
     communitiesFetched = true;
   }
@@ -45,24 +43,24 @@ class _DrawerRedditState extends State<DrawerReddit> {
     //fetchCommunities();
   }
 
-  Future<void> fetchCommunities() async {
-    for (CommunityItem community in communities) {
-      communityController.getCommunity(community.general.communityName);
-      if (communityController.communityItem != null) {
-        communitiesDrawer.add({
-          'name': communityController.communityItem!.general.communityName,
-          'communityPage': CommunityPage(
-            communityMembersNo:
-                communityController.communityItem!.communityMembersNo,
-            communityName:
-                communityController.communityItem!.general.communityName,
-            communityProfilePicturePath:
-                communityController.communityItem!.communityProfilePicturePath,
-          ),
-        });
-      }
-    }
-  }
+  // Future<void> fetchCommunities() async {
+  //   for (CommunityItem community in communities) {
+  //     communityController.getCommunity(community.general.communityName);
+  //     if (communityController.communityItem != null) {
+  //       communitiesDrawer.add({
+  //         'name': communityController.communityItem!.general.communityName,
+  //         'communityPage': CommunityPage(
+  //           communityMembersNo:
+  //               communityController.communityItem!.communityMembersNo,
+  //           communityName:
+  //               communityController.communityItem!.general.communityName,
+  //           communityProfilePicturePath:
+  //               communityController.communityItem!.communityProfilePicturePath,
+  //         ),
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

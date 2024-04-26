@@ -34,6 +34,7 @@ class _ModeratorsListState extends State<ModeratorsList>
           .getModerators(moderatorController.communityName);
       startIndex = moderatorController.moderators.indexWhere(
           (mod) => mod["username"] == userController.userAbout?.username);
+      print(moderatorController.moderators);
       editableMods = moderatorController.moderators.sublist(startIndex!);
       usernameController.text = "";
       setState(() {
@@ -75,9 +76,9 @@ class _ModeratorsListState extends State<ModeratorsList>
         builder: (context, moderatorProvider, child) {
       return RefreshIndicator(
         onRefresh: () async {
-            userFetched = false;
-            await fetchModerators();
-          },
+          userFetched = false;
+          await fetchModerators();
+        },
         child: Container(
           color: Colors.grey[200],
           child: Column(
@@ -129,7 +130,6 @@ class _ModeratorsListState extends State<ModeratorsList>
                   hintText: 'Search',
                 ),
               ),
-              
               Container(
                 color: Colors.white,
                 child: TabBar(
@@ -225,7 +225,7 @@ class _ModeratorsListState extends State<ModeratorsList>
                         }
                       },
                     ),
-                  
+
                     // Tab 2 content
                     Column(
                       children: [
