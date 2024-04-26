@@ -563,12 +563,11 @@ class ModeratorMockService {
               (community) => community.general.communityName == communityName)
           .moderators
           .removeWhere((user) => user["username"] == username);
-    }
-    else{
+    } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/communities/remove-moderator');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/remove-moderator');
       final response = await http.post(
         url,
         headers: {
@@ -663,6 +662,22 @@ class ModeratorMockService {
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/change-general-settings/$communityName');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "_id": settings.communityID,
+          "title": settings.communityName,
+          "description": settings.communityName,
+          "type": settings.communityType,
+          "nsfw_flag": settings.nsfwFlag,
+        }),
+      );
     }
   }
 
@@ -673,27 +688,49 @@ class ModeratorMockService {
     required String communityName,
     required String postTypes,
   }) async {
-    var community = communities.firstWhere(
-      (community) => community.general.communityName == communityName,
-    );
-    community.updatePostTypes(
-      communityName: communityName,
-      postTypes: postTypes,
-    );
+    if (testing) {
+      var community = communities.firstWhere(
+        (community) => community.general.communityName == communityName,
+      );
+      community.updatePostTypes(
+        communityName: communityName,
+        postTypes: postTypes,
+      );
 
-    community.updateAllowImage(
-      communityName: communityName,
-      allowImage: allowImages,
-    );
+      community.updateAllowImage(
+        communityName: communityName,
+        allowImage: allowImages,
+      );
 
-    community.updateAllowPools(
-      communityName: communityName,
-      allowPolls: allowPolls,
-    );
+      community.updateAllowPools(
+        communityName: communityName,
+        allowPolls: allowPolls,
+      );
 
-    community.updateAllowVideo(
-      communityName: communityName,
-      allowVideos: allowVideos,
-    );
+      community.updateAllowVideo(
+        communityName: communityName,
+        allowVideos: allowVideos,
+      );
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode(
+          {
+            "post_type_options": postTypes,
+            "allow_image_uploads_and_links_to_image_hosting_sites": allowImages,
+            "allow_polls": allowPolls,
+            "allow_videos": allowVideos,
+          },
+        ),
+      );
+    }
   }
 }
