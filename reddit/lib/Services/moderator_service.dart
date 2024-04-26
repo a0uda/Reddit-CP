@@ -344,22 +344,31 @@ class ModeratorMockService {
       user["banned_until"] = bannedUntil ?? "";
       user["note_for_ban_message"] = noteForBanMessage ?? "";
     } else {
-      // SharedPreferences prefs = await SharedPreferences.getInstance(); //
-      // String? token = prefs.getString('token');
-      // final url =
-      //     Uri.parse('https://redditech.me/backend/communities/ban-user');
-      // final response = await http.post(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': token!,
-      //   },
-      //   body: json.encode({
-      //     'community_name': communityName,
-      //     'username': username,
-      //     'action': "ban",
-      //   }),
-      // ); // to be doneee badrrrr
+      SharedPreferences prefs = await SharedPreferences.getInstance(); //
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/edit-banned-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          'newDetails': {
+            "reason_for_ban": reasonForBan,
+            "mod_note": "User repeatedly violated community rules",
+            "permanent_flag": permanentFlag,
+            if (bannedUntil != null) "banned_until": bannedUntil,
+            if (noteForBanMessage != null)
+              "note_for_ban_message": noteForBanMessage,
+          },
+        }),
+      );
+      print("NADRXS");
+      print(response.body);
     }
   }
 
