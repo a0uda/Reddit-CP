@@ -82,7 +82,7 @@ class _CommunityDescriptionState extends State<CommunityDescription> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DescriptionWidget(
-                                  communityRules: widget.communityRule,
+                                  communityName: widget.communityName,
                                 ),
                               ),
                             );

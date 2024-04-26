@@ -7,11 +7,12 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 
 class DescriptionWidget extends StatefulWidget {
-  const DescriptionWidget(
-      {super.key,
-      required this.communityRules});
+  const DescriptionWidget({
+    super.key,
+    required this.communityName,
+  });
 
-  final communityRules;
+  final String communityName;
   @override
   State<DescriptionWidget> createState() => _DescriptionWidgetState();
 }
@@ -25,10 +26,21 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   late String communityName;
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
+  bool rulesFetched = false;
+  bool generalSettingsFetched = false;
 
   Future<void> fetchGeneralSettings() async {
-    await moderatorController.getGeneralSettings(communityName);
-    communityGeneralSettings = moderatorController.generalSettings;
+    if (!generalSettingsFetched) {
+      await moderatorController.getGeneralSettings(communityName);
+      communityGeneralSettings = moderatorController.generalSettings;
+    }
+  }
+
+  Future<void> fetchRules() async {
+    if (!rulesFetched) {
+      await moderatorController.getRules(communityName);
+      rulesFetched = true;
+    }
   }
 
   @override
@@ -96,53 +108,70 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                           }
                         },
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 20),
+                      FutureBuilder(
+                        future: fetchGeneralSettings(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return Container(
+                              margin: const EdgeInsets.only(top: 20),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(bottom: 5),
-                                    child: const Text(
-                                      'Rules',
-                                      style: TextStyle(
-                                        fontFamily: 'Roboto',
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 5),
+                                          child: const Text(
+                                            'Rules',
+                                            style: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                        const Divider(
+                                          color: Color.fromARGB(
+                                              255, 215, 215, 215),
+                                          height: 1,
+                                          thickness: 1.0,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const Divider(
-                                    color: Color.fromARGB(255, 215, 215, 215),
-                                    height: 1,
-                                    thickness: 1.0,
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: moderatorController.rules.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          RuleTile(
+                                            rule: moderatorController
+                                                .rules[index],
+                                            index: index + 1,
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: widget.communityRules.length,
-                              itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    RuleTile(
-                                      rule: widget.communityRules[index],
-                                      index: index + 1,
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),

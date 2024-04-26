@@ -81,10 +81,10 @@ class _PostTypesState extends State<PostTypesContent> {
 
     communityName = moderatorController.communityName;
     fetchCommunityPostComments();
-    print(moderatorController.postTypesAndOptions["postTypes"]);
-    print(moderatorController.postTypesAndOptions["allowPolls"]);
-    print(moderatorController.postTypesAndOptions["allowVideo"]);
-    print(moderatorController.postTypesAndOptions["allowImages"]);
+    // print(moderatorController.postTypesAndOptions["postTypes"]);
+    // print(moderatorController.postTypesAndOptions["allowPolls"]);
+    // print(moderatorController.postTypesAndOptions["allowVideo"]);
+    // print(moderatorController.postTypesAndOptions["allowImages"]);
 
     if (moderatorController.postTypesAndOptions["postTypes"] == "Any") {
       isAnyIconPressed = true;
@@ -107,8 +107,8 @@ class _PostTypesState extends State<PostTypesContent> {
       falseVideoImageVisiblity();
     }
     initImageState = moderatorController.postTypesAndOptions["allowImages"];
-    initPollState=moderatorController.postTypesAndOptions["allowPolls"];
-    initVideoState=moderatorController.postTypesAndOptions["allowVideo"];
+    initPollState = moderatorController.postTypesAndOptions["allowPolls"];
+    initVideoState = moderatorController.postTypesAndOptions["allowVideo"];
     initTextState = moderatorController.postTypesAndOptions["postTypes"];
   }
 

@@ -636,11 +636,11 @@ class ModeratorMockService {
       );
       final Map<String, dynamic> decodedSettings = json.decode(response.body);
       return {
-        "postTypes": decodedSettings["post_type_options"],
-        "allowImages": decodedSettings[
-            "allow_image_uploads_and_links_to_image_hosting_sites"],
-        "allowPolls": decodedSettings["allow_polls"],
-        "allowVideo": decodedSettings["allow_videos"],
+        "postTypes": decodedSettings['posts']["post_type_options"],
+        "allowImages": decodedSettings['posts']
+            ["allow_image_uploads_and_links_to_image_hosting_sites"],
+        "allowPolls": decodedSettings['posts']["allow_polls"],
+        "allowVideo": decodedSettings['posts']["allow_videos"],
       };
     }
   }
@@ -731,6 +731,8 @@ class ModeratorMockService {
           },
         ),
       );
+      print("MOHYYYYYYYYY");
+      print(response.body);
     }
   }
 }

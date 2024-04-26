@@ -51,8 +51,6 @@ class _CommunityPageState extends State<CommunityPage> {
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
 
-  
-
   Future<void> fetchGeneralSettings() async {
     await moderatorController.getGeneralSettings(communityName);
     communityGeneralSettings = moderatorController.generalSettings;
@@ -257,7 +255,6 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: double.infinity,
                                 child: Post(
                                   vote: 0,
-
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -273,7 +270,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -289,7 +286,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -305,7 +302,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -321,7 +318,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -338,7 +335,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
-                                      vote: 0,
+                                  vote: 0,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
                                   name: "John Doe",
@@ -354,7 +351,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
-                                      vote: 0,
+                                  vote: 0,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
                                   name: "John Doe",
@@ -369,24 +366,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
-                                  isLocked: false,
-                                  id: "1",
-                                  imageUrl: "assets/images/profile.png",
-                                  name: "John Doe",
-                                  title: "Flutter is the best",
-                                  postContent: "Flutter is the best",
-                                  date: "2021-09-09",
-                                  likes: 4,
-                                  commentsCount: 1,
-                                  communityName: "r/FlutterDev",
-                                ),
-                              ),
-                              SizedBox(
-                              
-                                width: double.infinity,
-                                child: Post(
-                                      vote: 0,
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -402,7 +382,23 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                      vote: 0,
+                                  vote: 0,
+                                  isLocked: false,
+                                  id: "1",
+                                  imageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  commentsCount: 1,
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Post(
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -421,9 +417,7 @@ class _CommunityPageState extends State<CommunityPage> {
                         if (MediaQuery.of(context).size.width > 850)
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
-                            child: DescriptionWidget(
-                              communityRules: widget.communityRule,
-                            ),
+                            child: DescriptionWidget(communityName: widget.communityName,),
                           ),
                       ],
                     ),
