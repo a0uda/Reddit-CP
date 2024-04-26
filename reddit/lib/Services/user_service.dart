@@ -52,7 +52,8 @@ class UserService {
       print(username);
 
       print(response.statusCode);
-      print(jsonDecode(response.body));
+      print(jsonDecode(response.body)['content']['moderatedCommunities']);
+      print(UserAbout.fromJson(jsonDecode(response.body)['content']).moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -524,7 +525,7 @@ class UserService {
     }
   }
 
-  Future<List<CommunityBackend>?> getUserCommunities(String username) async {
+  Future<List<CommunityBackend>?> getUserCommunities() async {
     if (testing) {
       return [];
     } else {

@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
@@ -16,20 +17,21 @@ import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 import 'package:reddit/widgets/post.dart';
 
+// ignore: must_be_immutable
 class CommunityPage extends StatefulWidget {
-  const CommunityPage(
+  CommunityPage(
       {super.key,
       required this.communityName,
       required this.communityMembersNo,
-      required this.communityRule,
+      this.communityRule,
       required this.communityProfilePicturePath,
-      required this.communityDescription});
+      this.communityDescription});
 
   final String communityName;
   final int communityMembersNo;
-  final communityRule;
+  RulesItem? communityRule;
   final String communityProfilePicturePath;
-  final String communityDescription;
+  String? communityDescription;
 
   @override
   State<CommunityPage> createState() => _CommunityPageState();
@@ -186,7 +188,6 @@ class _CommunityPageState extends State<CommunityPage> {
                               communityProfilePicturePath:
                                   widget.communityProfilePicturePath,
                               communityRule: widget.communityRule,
-                              communityDescription: widget.communityDescription,
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +422,6 @@ class _CommunityPageState extends State<CommunityPage> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: DescriptionWidget(
-                              communityDescription: widget.communityDescription,
                               communityRules: widget.communityRule,
                             ),
                           ),

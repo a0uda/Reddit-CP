@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Pages/community_page.dart';
 
 void navigateToCommunity(Widget communityPage, BuildContext context) {
   Navigator.of(context)
@@ -8,9 +10,14 @@ void navigateToCommunity(Widget communityPage, BuildContext context) {
 }
 
 class DrawerTile extends StatefulWidget {
-  final List<Map<String, dynamic>> lists;
+  final List<CommunityBackend> lists;
   final String tileTitle;
-  const DrawerTile({super.key, required this.tileTitle, required this.lists});
+  final bool isMod;
+  const DrawerTile(
+      {super.key,
+      required this.tileTitle,
+      required this.lists,
+      required this.isMod});
 
   @override
   State<DrawerTile> createState() => _DrawerTileState();
@@ -18,6 +25,18 @@ class DrawerTile extends StatefulWidget {
 
 class _DrawerTileState extends State<DrawerTile> {
   bool isExpanded = false;
+  bool communitiesFetched = false;
+  final UserController userController = GetIt.instance.get<UserController>();
+  List<CommunityBackend> lists = [];
+
+  // Future<void> fetchCommunities() async {
+  //   if (!communitiesFetched && !widget.isMod) {
+  //     await userController.getUserCommunities();
+  //     lists = userController.userCommunities!;
+  //   }
+  //   communitiesFetched = true;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -43,13 +62,15 @@ class _DrawerTileState extends State<DrawerTile> {
           visible: isExpanded,
           child: Column(
             children: [
-              ListTile(
-                  leading: const Icon(Icons.add, color: Colors.black),
-                  title: const Text("Create Community"),
-                  onTap: () {
-                    //navigate to Create Community Page
-                  },
-                ),
+              !widget.isMod
+                  ? ListTile(
+                      leading: const Icon(Icons.add, color: Colors.black),
+                      title: const Text("Create Community"),
+                      onTap: () {
+                        //navigate to Create Community Page
+                      },
+                    )
+                  : const SizedBox(),
               AnimatedOpacity(
                 opacity: isExpanded ? 1.0 : 0.0,
                 duration: const Duration(seconds: 0),
@@ -60,14 +81,22 @@ class _DrawerTileState extends State<DrawerTile> {
                   itemBuilder: (BuildContext context, int index) {
                     final item = widget.lists[index];
                     return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage: AssetImage("images/logo-mobile.png"),
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(item.profilePictureURL),
                         radius: 10,
                       ),
-                      title: Text(item['name']),
+                      title: Text(item.name),
                       onTap: () {
                         // Call the function to navigate to the community page
-                        navigateToCommunity(item['communityPage'], context);
+                        // navigateToCommunity(
+                        //     item['communityPage'], context);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => (CommunityPage(
+                                  communityMembersNo: item.membersCount,
+                                  communityName: item.name,
+                                  communityProfilePicturePath:
+                                      item.profilePictureURL,
+                                ))));
                       },
                     );
                   },

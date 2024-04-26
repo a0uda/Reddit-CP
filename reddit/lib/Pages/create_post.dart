@@ -339,20 +339,20 @@ class _CreatePostState extends State<CreatePost> {
                                 communityRules = communityController
                                     .communityItem!.communityRules;
                               }),
-                              showModalBottomSheet(
-                                backgroundColor: Colors.white,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: DescriptionWidget(
-                                      communityDescription:
-                                          communityDescription,
-                                      communityRules: communityRules,
-                                    ),
-                                  );
-                                },
-                              ),
+                              // showModalBottomSheet(
+                              //   backgroundColor: Colors.white,
+                              //   context: context,
+                              //   builder: (BuildContext context) {
+                              //     return Padding(
+                              //       padding: const EdgeInsets.all(16.0),
+                              //       child: DescriptionWidget(
+                              //         communityDescription:
+                              //             communityDescription,
+                              //         communityRules: communityRules,
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
                             },
                             child: Text(
                               'RULES',

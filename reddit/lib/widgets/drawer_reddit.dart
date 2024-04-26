@@ -24,29 +24,42 @@ class DrawerReddit extends StatefulWidget {
 
 class _DrawerRedditState extends State<DrawerReddit> {
   bool userMod = true, isExpanded = false;
-  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
-  final UserController userController = GetIt.instance.get<UserController>(); 
-  List<Map<String, dynamic>> communitiesDrawer = []; 
+  final CommunityController communityController =
+      GetIt.instance.get<CommunityController>();
+  final UserController userController = GetIt.instance.get<UserController>();
+  List<Map<String, dynamic>> communitiesDrawer = [];
+  bool communitiesFetched = false;
+
+  Future<void> fetchUserCommunities() async {
+    if (!communitiesFetched) {
+      await userController.getUserCommunities();
+      print("SDJBKVVVVVVVV");
+      print(userController.userAbout?.moderatedCommunities);
+    }
+    communitiesFetched = true;
+  }
 
   @override
   void initState() {
     super.initState();
-    fetchCommunities(); 
+    //fetchCommunities();
   }
+
   Future<void> fetchCommunities() async {
     for (CommunityItem community in communities) {
       communityController.getCommunity(community.general.communityName);
       if (communityController.communityItem != null) {
-          communitiesDrawer.add({
-            'name':  communityController.communityItem!.general.communityName,
-            'communityPage': CommunityPage(
-              communityDescription: communityController.communityItem!.general.communityDescription,
-              communityMembersNo: communityController.communityItem!.communityMembersNo,
-              communityName: communityController.communityItem!.general.communityName,
-              communityProfilePicturePath: communityController.communityItem!.communityProfilePicturePath,
-              communityRule: communityController.communityItem!.communityRules,
-            ),
-          });
+        communitiesDrawer.add({
+          'name': communityController.communityItem!.general.communityName,
+          'communityPage': CommunityPage(
+            communityMembersNo:
+                communityController.communityItem!.communityMembersNo,
+            communityName:
+                communityController.communityItem!.general.communityName,
+            communityProfilePicturePath:
+                communityController.communityItem!.communityProfilePicturePath,
+          ),
+        });
       }
     }
   }
@@ -136,27 +149,59 @@ class _DrawerRedditState extends State<DrawerReddit> {
                         width: 0,
                         height: 0,
                       ),
-               
                 const Divider(
                   color: Colors.grey,
                   height: 30,
                   indent: 30,
                   endIndent: 30,
                 ),
-                
-                DrawerTile(tileTitle: "COMMUNITIES", lists: communitiesDrawer),
-                const Divider(
-                  color: Colors.grey,
-                  height: 30,
-                  indent: 30,
-                  endIndent: 30,
+                FutureBuilder<void>(
+                  future: fetchUserCommunities(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                        return const Text('none');
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      case ConnectionState.done:
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        return Column(
+                          children: [
+                            DrawerTile(
+                              tileTitle: "COMMUNITIES",
+                              lists: userController.userCommunities!,
+                              isMod: false,
+                            ),
+                            const Divider(
+                              color: Colors.grey,
+                              height: 30,
+                              indent: 30,
+                              endIndent: 30,
+                            ),
+                            userController.userAbout?.moderatedCommunities !=
+                                    null
+                                ? DrawerTile(
+                                    tileTitle: "MODERATION",
+                                    lists: userController
+                                        .userAbout!.moderatedCommunities!,
+                                    isMod: true,
+                                  )
+                                : const SizedBox(),
+                          ],
+                        );
+                      default:
+                        return const Text('badr');
+                    }
+                  },
                 ),
-                userMod
-                    ? DrawerTile(
-                        tileTitle: "MODERATION",
-                        lists: communitiesDrawer,
-                      )
-                    : const SizedBox()
               ],
             ),
           ),

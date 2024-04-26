@@ -66,10 +66,10 @@ class UserAbout {
       country: jsonDecode['country'],
       gender: jsonDecode['gender'],
       connectedGoogle: jsonDecode['connected_google'],
-      moderatedCommunities: jsonDecode['moderatedCommunities'] != []
-          ? List<CommunityBackend>.from(jsonDecode['social_links']
-              .map((community) => CommunityBackend.fromJson(community)))
-          : [],
+      moderatedCommunities: jsonDecode['moderatedCommunities'] != null
+          ? List<CommunityBackend>.from(jsonDecode['moderatedCommunities']
+              .map((community) => CommunityBackend.fromJson(community))).toList()
+          : null,
     );
   }
 }

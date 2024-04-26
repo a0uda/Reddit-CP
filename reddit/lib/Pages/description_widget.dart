@@ -9,10 +9,8 @@ import 'package:reddit/Models/rules_item.dart';
 class DescriptionWidget extends StatefulWidget {
   const DescriptionWidget(
       {super.key,
-      required this.communityDescription,
       required this.communityRules});
 
-  final String communityDescription;
   final communityRules;
   @override
   State<DescriptionWidget> createState() => _DescriptionWidgetState();

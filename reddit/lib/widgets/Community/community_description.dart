@@ -10,7 +10,6 @@ class CommunityDescription extends StatefulWidget {
     required this.communityMembersNo,
     required this.communityRule,
     required this.communityProfilePicturePath,
-    required this.communityDescription,
     super.key,
   });
 
@@ -18,7 +17,6 @@ class CommunityDescription extends StatefulWidget {
   final int communityMembersNo;
   final communityRule;
   final String communityProfilePicturePath;
-  final String communityDescription;
 
   @override
   State<CommunityDescription> createState() => _CommunityDescriptionState();
@@ -84,8 +82,6 @@ class _CommunityDescriptionState extends State<CommunityDescription> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DescriptionWidget(
-                                  communityDescription:
-                                      widget.communityDescription,
                                   communityRules: widget.communityRule,
                                 ),
                               ),
