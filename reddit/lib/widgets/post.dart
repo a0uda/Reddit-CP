@@ -171,12 +171,6 @@ class PostState extends State<Post> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => (CommunityPage(
                                     communityName: widget.communityName,
-                                    communityDescription: communityController
-                                        .communityItem!
-                                        .general
-                                        .communityDescription,
-                                    communityRule: communityController
-                                        .communityItem!.communityRules,
                                     communityMembersNo: communityController
                                         .communityItem!.communityMembersNo,
                                     communityProfilePicturePath:

@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class AddModerator extends StatefulWidget {
   const AddModerator({super.key});
@@ -15,6 +18,9 @@ class _AddModeratorState extends State<AddModerator> {
       managePostAndComments = true,
       manageSettings = true;
   TextEditingController userNameController = TextEditingController();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+
   void enableInvite() {
     setState(() {
       if (userNameController.text == "" ||
@@ -28,6 +34,7 @@ class _AddModeratorState extends State<AddModerator> {
 
   @override
   Widget build(BuildContext context) {
+    var moderatorProvider = context.read<ModeratorProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -47,8 +54,16 @@ class _AddModeratorState extends State<AddModerator> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: inviteButtonEnable
-                    ? () {
+                    ? () async {
                         //Send invite IN MOCK badrrrr
+                        await moderatorProvider.inviteModerator(
+                            communityName: moderatorController.communityName,
+                            username: userNameController.text,
+                            everything: fullPermissions,
+                            manageUsers: manageUsers,
+                            manageSettings: manageSettings,
+                            managePostsAndComments: managePostAndComments);
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(

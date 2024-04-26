@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 
 class CommunityType extends StatefulWidget {
   const CommunityType({super.key});
@@ -9,32 +13,90 @@ class CommunityType extends StatefulWidget {
 }
 
 class _CommunityTypeState extends State<CommunityType> {
-  String titleText = 'Public';
-  String subtitleText = 'Anyone can see and participate in this community.';
   bool isSaved = false;
   bool doneSaved = true;
 
-  Color titleTextColor = const Color.fromARGB(255, 73, 208, 96);
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  late String currentCommunityType;
+  late String currentCommunityTypeSubtitle;
+
+  late String communityName;
+
+  late String initCommunityType;
+  late final bool initCommunityFlag;
+
+  String publicSubtitle = 'Anyone can see and participate in this community.';
+  String restrictedSubtitle =
+      'Anyone can see, join or vote in this community, but you control who posts and comments.';
+  String privateSubtitle =
+      'Only people you approve can see and participate in this community.';
+
+  late Color titleTextColor;
   Color subtitleTextColor = const Color.fromARGB(255, 100, 101, 100);
 
-  bool communitySwitchValue = false;
+  @override
+  void initState() {
+    super.initState();
+
+    currentCommunityType = moderatorController.generalSettings.communityType;
+    if (currentCommunityType == "Public") {
+      currentCommunityTypeSubtitle = publicSubtitle;
+      titleTextColor = const Color.fromARGB(255, 73, 208, 96);
+    } else if (currentCommunityType == "Restricted") {
+      currentCommunityTypeSubtitle = restrictedSubtitle;
+      titleTextColor = const Color.fromARGB(255, 221, 153, 39);
+    } else {
+      currentCommunityTypeSubtitle = privateSubtitle;
+      titleTextColor = const Color.fromARGB(255, 253, 1, 0);
+    }
+    fetchGeneralSettings();
+
+    communityName = moderatorController.communityName;
+
+    initCommunityType = moderatorController.generalSettings.communityType;
+    initCommunityFlag = moderatorController.generalSettings.nsfwFlag;
+  }
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+  }
 
   void setTitleText(String newTitleText, Color newTitleTextColor) {
     setState(() {
-      titleText = newTitleText;
+      currentCommunityType = newTitleText;
       titleTextColor = newTitleTextColor;
     });
   }
 
   void setSubtitleText(String newSubtitleText, Color newSubtitleTextColor) {
     setState(() {
-      subtitleText = newSubtitleText;
+      currentCommunityTypeSubtitle = newSubtitleText;
       subtitleTextColor = newSubtitleTextColor;
     });
   }
 
+  void setSaved(String newCommunityType) {
+    isSaved = true;
+    moderatorController.generalSettings.communityType = newCommunityType;
+    checkInitState();
+  }
+
+  void checkInitState() {
+    if (moderatorController.generalSettings.communityType ==
+            initCommunityType &&
+        moderatorController.generalSettings.nsfwFlag == initCommunityFlag) {
+      isSaved = false;
+    } else {
+      isSaved = true;
+      doneSaved = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
+
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
 
@@ -51,6 +113,18 @@ class _CommunityTypeState extends State<CommunityType> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
+              settingsProvider.setGeneralSettings(
+                communityName: moderatorController.communityName,
+                general: GeneralSettings(
+                    communityID:
+                        moderatorController.generalSettings.communityID,
+                    communityName: moderatorController.communityName,
+                    communityDescription: moderatorController
+                        .generalSettings.communityDescription,
+                    communityType:
+                        moderatorController.generalSettings.communityType,
+                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
+              );
               setState(() {
                 doneSaved = true;
               });
@@ -175,23 +249,22 @@ class _CommunityTypeState extends State<CommunityType> {
             child: Column(
               children: [
                 SingleThumbSlider(
-                  titleText: titleText,
-                  subtitleText: subtitleText,
+                  titleText: currentCommunityType,
+                  subtitleText: currentCommunityTypeSubtitle,
                   setTitleText: setTitleText,
                   setSubtitleText: setSubtitleText,
-                  isSaved: isSaved,
-                  doneSaved: doneSaved,
+                  isSavedFunction: setSaved,
                 ),
                 ListTile(
                   title: Text(
-                    titleText,
+                    currentCommunityType,
                     style: TextStyle(
                         color: titleTextColor,
                         fontSize: 24,
                         fontWeight: FontWeight.w500),
                   ),
                   subtitle: Text(
-                    subtitleText,
+                    currentCommunityTypeSubtitle,
                     style: TextStyle(color: subtitleTextColor, fontSize: 14),
                   ),
                 ),
@@ -214,14 +287,15 @@ class _CommunityTypeState extends State<CommunityType> {
                           fontSize: 18),
                     ),
                     Switch(
-                      value: communitySwitchValue,
+                      value: moderatorController.generalSettings.nsfwFlag,
                       onChanged: (newValue) {
-                        setState(
-                          () {
-                            communitySwitchValue = !communitySwitchValue;
-                            isSaved = !isSaved;
-                          },
-                        );
+                        moderatorController.generalSettings.nsfwFlag = newValue;
+                        setState(() {
+                          if (moderatorController.generalSettings.nsfwFlag !=
+                              initCommunityFlag) {
+                          }
+                        });
+                         checkInitState();
                       },
                       activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
                       inactiveThumbColor: Colors.white,
@@ -241,20 +315,19 @@ class _CommunityTypeState extends State<CommunityType> {
 
 // ignore: must_be_immutable
 class SingleThumbSlider extends StatefulWidget {
-  SingleThumbSlider(
-      {super.key,
-      required this.titleText,
-      required this.subtitleText,
-      required this.setTitleText,
-      required this.setSubtitleText,
-      required this.isSaved,
-      required this.doneSaved});
+  SingleThumbSlider({
+    super.key,
+    required this.titleText,
+    required this.subtitleText,
+    required this.setTitleText,
+    required this.setSubtitleText,
+    required this.isSavedFunction,
+  });
   final String titleText;
   final String subtitleText;
   final Function(String text, Color color) setTitleText;
   final Function(String text, Color color) setSubtitleText;
-  bool isSaved;
-  bool doneSaved;
+  final Function(String) isSavedFunction;
 
   String publicText = 'Public';
   String restrictedText = 'Restricted';
@@ -271,8 +344,10 @@ class SingleThumbSlider extends StatefulWidget {
 }
 
 class _SingleThumbSliderState extends State<SingleThumbSlider> {
-  double startValue = 0;
+  late double startValue;
   double endValue = 100;
+
+  late String newCommnuityType;
 
   Color greenColor = const Color.fromARGB(255, 73, 208, 96);
   Color yellowColor = const Color.fromARGB(255, 221, 153, 39);
@@ -281,16 +356,26 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
   Color darkGreyColor = const Color.fromARGB(255, 100, 101, 100);
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.titleText == widget.publicText) {
+      startValue = 0;
+    } else if (widget.titleText == widget.restrictedText) {
+      startValue = 50;
+    } else if (widget.titleText == widget.privateText) {
+      startValue = 100;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     double thumbRadius = (MediaQuery.of(context).size.width < 700)
         ? MediaQuery.of(context).size.width * 0.03
         : MediaQuery.of(context).size.width * 0.02;
     return SliderTheme(
       data: SliderThemeData(
-        thumbColor: getThumbColor(
-            startValue), // Change thumb color based on its position
-        thumbShape: _CustomThumbShape(
-            thumbRadius), // Add a custom thumb shape with border
+        thumbColor: getThumbColor(startValue),
+        thumbShape: _CustomThumbShape(thumbRadius),
         activeTrackColor: getTrackColor(startValue),
       ),
       child: Slider(
@@ -313,8 +398,8 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
                 startValue = 100;
               }
               adjustTitleAndSubtitleText(startValue);
-              widget.isSaved = true;
             });
+            widget.isSavedFunction(newCommnuityType);
           }),
     );
   }
@@ -343,12 +428,15 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
     if (value < 25) {
       widget.setTitleText(widget.publicText, greenColor);
       widget.setSubtitleText(widget.publicSubtitle, darkGreyColor);
+      newCommnuityType = "Public";
     } else if (value >= 25 && value <= 75) {
       widget.setTitleText(widget.restrictedText, yellowColor);
       widget.setSubtitleText(widget.restrictedSubtitle, darkGreyColor);
+      newCommnuityType = "Restricted";
     } else {
       widget.setTitleText(widget.privateText, redColor);
       widget.setSubtitleText(widget.privateSubtitle, darkGreyColor);
+      newCommnuityType = "Private";
     }
   }
 }

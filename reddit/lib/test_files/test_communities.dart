@@ -99,7 +99,7 @@ final communities = [
     editableModerators: editableModerators,
     moderators: moderators,
     mutedUsers: mutedUsers,
-    postTypes: "Links Only", //Mostafa Mohyy khena2a
+    postTypes: "Text Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
     allowImage: false,
@@ -188,19 +188,19 @@ List<Map<String, dynamic>> mutedUsers = [
 
 List<Map<String, dynamic>> approvedUsers = [
   {
-    "username": "malaxk1234d567",
+    "username": "badr",
     "approved_at": "2024-04-11T07:51:09.795Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf44"
   },
   {
-    "username": "Sadie20",
+    "username": "mohy",
     "approved_at": "2024-04-11T07:17:28.324Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf45"
   },
   {
-    "username": "maldaxk1234d56dx7",
+    "username": "fouda",
     "approved_at": "2024-04-11T08:18:25.843Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf46"
@@ -253,38 +253,38 @@ List<Map<String, dynamic>> editableModerators = [
 List<GeneralSettings> generalSettings = [
   GeneralSettings(
     communityID: "1",
-    communityName: 'Flutter Enthusiasts',
+    communityName: 'Hyatt___Tillman',
     communityDescription: 'A community for Flutter enthusiasts.',
     communityType: "Public",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "2",
-    communityName: 'Cooking Masters',
+    communityName: 'Waters___Greenholt',
     communityDescription: 'Join us to explore the art and science of cooking!',
     communityType: "Private",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "3",
-    communityName: 'Fitness Warriors',
+    communityName: 'Conroy_Inc',
     communityDescription:
         'Get fit and stay healthy with the support of our community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "4",
-    communityName: 'Photography Passion',
+    communityName: 'Legros_LLC',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "5",
     communityName: 'Gaming Universe',
     communityDescription: 'Welcome to the ultimate gaming community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
 ];

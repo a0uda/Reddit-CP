@@ -3,28 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
 import 'package:reddit/widgets/Moderator/muted_users_list.dart';
 
-List<Map<String, String>> mutedUsers = [
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Mutedd",
-    "muteTime": "1 mo ago",
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "muteTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "muteTime": "1 mo ago"
-  },
-  {
-    "pictureUrl": "images/Greddit.png",
-    "username": "Purple-7544",
-    "muteTime": "1 mo ago"
-  },
-];
+// List<Map<String, String>> mutedUsers = [
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Mutedd",
+//     "muteTime": "1 mo ago",
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "muteTime": "1 mo ago"
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "muteTime": "1 mo ago"
+//   },
+//   {
+//     "pictureUrl": "images/Greddit.png",
+//     "username": "Purple-7544",
+//     "muteTime": "1 mo ago"
+//   },
+// ];
 
 class MutedUsers extends StatefulWidget {
   const MutedUsers({super.key});

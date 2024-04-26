@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/social_link_item.dart';
 
 class UserAbout {
@@ -17,6 +18,7 @@ class UserAbout {
   String? country;
   String? gender;
   bool? connectedGoogle;
+  List<CommunityBackend>? moderatedCommunities;
 
   UserAbout({
     this.id,
@@ -34,13 +36,14 @@ class UserAbout {
     this.country,
     this.gender,
     this.connectedGoogle,
+    this.moderatedCommunities,
   });
   static UserAbout fromJson(jsonDecode) {
     if (jsonDecode == null) {
       return UserAbout(username: '');
     }
     return UserAbout(
-     id: jsonDecode['id'],
+      id: jsonDecode['id'],
       createdAt: DateFormat('d MMMM yyyy')
           .format(DateTime.parse(jsonDecode['created_at']))
           .toString(),
@@ -55,11 +58,18 @@ class UserAbout {
           ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['profile_picture']==null || jsonDecode['profile_picture']=="")?'images/Greddit.png':jsonDecode['profile_picture'],
+      profilePicture: (jsonDecode['profile_picture'] == null ||
+              jsonDecode['profile_picture'] == "")
+          ? 'images/Greddit.png'
+          : jsonDecode['profile_picture'],
       bannerPicture: jsonDecode['banner_picture'],
       country: jsonDecode['country'],
       gender: jsonDecode['gender'],
       connectedGoogle: jsonDecode['connected_google'],
+      moderatedCommunities: jsonDecode['moderatedCommunities'] != null
+          ? List<CommunityBackend>.from(jsonDecode['moderatedCommunities']
+              .map((community) => CommunityBackend.fromJson(community))).toList()
+          : null,
     );
   }
 }

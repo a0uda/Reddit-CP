@@ -1,5 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class CreateRulePage extends StatefulWidget {
   const CreateRulePage({super.key});
@@ -9,15 +15,19 @@ class CreateRulePage extends StatefulWidget {
 }
 
 class _CreateRulePageState extends State<CreateRulePage> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   bool saveButtonEnable = false;
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descritionController = TextEditingController();
   TextEditingController reportReasonController = TextEditingController();
-  String selectedOption = 'Post and comments';
+  String selectedOption = 'posts_and_comments';
 
   @override
   Widget build(BuildContext context) {
+    var rulesProvider = context.read<RulesProvider>();
+
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -45,8 +55,17 @@ class _CreateRulePageState extends State<CreateRulePage> {
                     foregroundColor: Colors.white,
                     shadowColor: Colors.transparent),
                 onPressed: saveButtonEnable
-                    ? () {
+                    ? () async{
                         //save rule
+                        await rulesProvider.createRule(
+                          //id: Random().nextInt(100000).toString(),
+                          communityName: moderatorController.communityName,
+                          ruleTitle: titleController.text,
+                          appliesTo: selectedOption,
+                          reportReason: reportReasonController.text,
+                          ruleDescription: descritionController.text,
+                        );
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: const Text(
@@ -122,7 +141,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text("Post and comments"),
-                value: 'Post and comments',
+                value: 'posts_and_comments',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -133,7 +152,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only comments'),
-                value: 'comments',
+                value: 'comments_only',
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
@@ -144,7 +163,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
               RadioListTile<String>(
                 activeColor: const Color.fromARGB(255, 42, 101, 210),
                 title: const Text('Only posts'),
-                value: 'posts', //Badrrr
+                value: 'posts_only', //Badrrr
                 groupValue: selectedOption,
                 onChanged: (value) {
                   setState(() {
