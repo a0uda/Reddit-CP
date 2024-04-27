@@ -32,5 +32,6 @@ class UserItem {
     this.activecommunities,
     this.savedCommentsIds,
     this.notificationsSettings,
+    
   });
 }
