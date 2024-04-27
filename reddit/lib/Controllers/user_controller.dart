@@ -24,7 +24,7 @@ class UserController {
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    //blockedUsers = await userService.getBlockedUsers(username);
+    blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
     notificationsSettings =
         await userService.getNotificationsSettings(username);

@@ -53,7 +53,8 @@ class UserService {
 
       print(response.statusCode);
       print(jsonDecode(response.body)['content']['moderatedCommunities']);
-      print(UserAbout.fromJson(jsonDecode(response.body)['content']).moderatedCommunities);
+      print(UserAbout.fromJson(jsonDecode(response.body)['content'])
+          .moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -716,8 +717,8 @@ class UserService {
       if (response.statusCode == 200) {
         print('get block success');
         var data = jsonDecode(response.body);
-        Map<String, dynamic> blockedUsersJson = data['blocked_users'];
-        return Future.wait(blockedUsersJson.values
+        List<dynamic> blockedUsersJson = data['content'];
+        return Future.wait(blockedUsersJson
             .map((json) => BlockedUsersItem.fromJson(json))
             .toList());
       } else {
