@@ -23,20 +23,24 @@ class RisingListing extends StatefulWidget {
 }
 
 class RisingListingBuild extends State<RisingListing> {
+  int page=0;
   ScrollController controller = ScrollController();
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
+  bool isloading=false;
 
   // List of items in our dropdown menu
 
   Future<void> fetchdata() async {
+    isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
     if (widget.type == "home") {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
-        post = await postService.getPosts(user, "hot");
+        post = await postService.getPosts(user, "random",page);
+        page=page+1;
       } else {
         posts = postService.fetchPosts();
       }
@@ -49,23 +53,19 @@ class RisingListingBuild extends State<RisingListing> {
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
-
+    isloading=false;
     setState(() {
       posts.addAll(post);
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _dataFuture = fetchdata(); // Replace with your actual data fetching logic
-  }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+    if ((controller.position.maxScrollExtent) == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
+      fetchdata();
       print('LOAD MORE');
       // load more data here
 
@@ -73,6 +73,13 @@ class RisingListingBuild extends State<RisingListing> {
     }
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = fetchdata(); 
+    controller.addListener(HandleScrolling);
+    
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -92,9 +99,22 @@ class RisingListingBuild extends State<RisingListing> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-              fetchdata();
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
@@ -116,6 +136,8 @@ class RisingListingBuild extends State<RisingListing> {
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
+                     vote: posts[index].vote,
+
                     title: posts[index].title,
                     postContent: posts[index].description,
                     date: posts[index].createdAt.toString(),
@@ -134,6 +156,7 @@ class RisingListingBuild extends State<RisingListing> {
               );
             },
           );
+          }
         }
       },
     );

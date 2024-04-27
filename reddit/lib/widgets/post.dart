@@ -29,6 +29,7 @@ class Post extends StatefulWidget {
   final String id;
   final String communityName;
   final bool isLocked;
+  final int vote;
 
   Post({
     super.key,
@@ -46,6 +47,7 @@ class Post extends StatefulWidget {
     this.poll,
     required this.communityName,
     required this.isLocked,
+    required this.vote
   });
 
   @override
@@ -120,8 +122,8 @@ class PostState extends State<Post> {
     downVoteColor = downVote ? Colors.red : Colors.black;
     if (userController.userAbout != null) {
       String username = userController.userAbout!.username;
-      var saved = postService.getSavePost(username);
-      issaved = saved.any((obj) => obj.id == widget.id);
+      //todo saved posts 
+
     }
 
     String userType;
@@ -130,7 +132,7 @@ class PostState extends State<Post> {
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
         onTap: () => {
-          // open this post TODO
+          
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -169,12 +171,6 @@ class PostState extends State<Post> {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => (CommunityPage(
                                     communityName: widget.communityName,
-                                    communityDescription: communityController
-                                        .communityItem!
-                                        .general
-                                        .communityDescription,
-                                    communityRule: communityController
-                                        .communityItem!.communityRules,
                                     communityMembersNo: communityController
                                         .communityItem!.communityMembersNo,
                                     communityProfilePicturePath:

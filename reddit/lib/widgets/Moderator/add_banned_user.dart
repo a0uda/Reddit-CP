@@ -1,26 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
-List<String> rules = [
-  "Rule1",
-  "Rule1",
-  "Rule1",
-  "Rule1",
-  "Rule1",
-];
-
+// ignore: must_be_immutable
 class AddBannedUser extends StatefulWidget {
-  const AddBannedUser({super.key});
+  final bool seeDetails;
+  String? username;
+  bool? permanentFlag;
+  String? banReason;
+  String? modNote;
+  String? banPeriod;
+  String? banNote;
+
+  AddBannedUser(
+      {super.key,
+      required this.seeDetails,
+      this.username,
+      this.permanentFlag,
+      this.banReason,
+      this.banNote,
+      this.banPeriod,
+      this.modNote});
 
   @override
   State<AddBannedUser> createState() => _AddBannedUserState();
 }
 
 class _AddBannedUserState extends State<AddBannedUser> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   final formKey = GlobalKey<FormState>();
   bool addButtonEnable = false;
-  bool isChecked = true;
+  bool permanentIsChecked = true;
   TextEditingController userNameController = TextEditingController();
   TextEditingController banReasonController = TextEditingController(text: null);
   TextEditingController modNoteController = TextEditingController();
@@ -31,7 +45,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
     setState(() {
       if (userNameController.text.isEmpty ||
           banReasonController.text.isEmpty ||
-          (banPeriodController.text == "" && isChecked == false)) {
+          (banPeriodController.text == "" && permanentIsChecked == false)) {
         addButtonEnable = false;
       } else {
         addButtonEnable = true;
@@ -40,7 +54,35 @@ class _AddBannedUserState extends State<AddBannedUser> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.seeDetails) {
+      userNameController.text = widget.username ?? "";
+      permanentIsChecked = widget.permanentFlag!;
+      banReasonController.text = widget.banReason ?? "";
+      modNoteController.text = widget.modNote ?? "";
+      banPeriodController.text = widget.banPeriod ?? "";
+      noteController.text = widget.banNote ?? "";
+    }
+  }
+
+  banUser() async {
+    var bannedUserProvider = context.read<BannedUserProvider>();
+    await bannedUserProvider.addBannedUsers(
+      username: userNameController.text,
+      communityName: moderatorController.communityName,
+      permanentFlag: permanentIsChecked,
+      reasonForBan: banReasonController.text,
+      bannedUntil: banPeriodController.text,
+      modNote: modNoteController.text,
+      noteForBanMessage: noteController.text,
+    );
+    Navigator.of(context).pop();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var bannedUserProvider = context.read<BannedUserProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -49,10 +91,10 @@ class _AddBannedUserState extends State<AddBannedUser> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Center(
+        title: Center(
           child: Text(
-            "Add an banned user",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            widget.seeDetails ? "Ban details " : "Add an banned user",
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         actions: [
@@ -60,12 +102,27 @@ class _AddBannedUserState extends State<AddBannedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
-                        //add to mock Badrrrrr
+                    ? () async {
+                        //print(banPeriodController.text);
+                        if (widget.seeDetails) {
+                          bannedUserProvider.updateBannedUser(
+                            username: userNameController.text,
+                            communityName: moderatorController.communityName,
+                            permanentFlag: permanentIsChecked,
+                            reasonForBan: banReasonController.text,
+                            bannedUntil: banPeriodController.text,
+                            modNote: modNoteController.text,
+                            noteForBanMessage: noteController.text,
+                          );
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        } else {
+                          await banUser();
+                        }
                       }
                     : null,
                 child: Text(
-                  "Add",
+                  widget.seeDetails ? "Update " : "Add",
                   style: TextStyle(
                     color: (addButtonEnable)
                         ? const Color.fromARGB(255, 23, 105, 165)
@@ -90,6 +147,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                 Container(
                   color: Colors.grey[200],
                   child: TextFormField(
+                    enabled: !widget.seeDetails,
                     cursorColor: Colors.blue,
                     controller: userNameController,
                     onChanged: (value) => {
@@ -125,6 +183,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                         return ModalForRules(
                           banReason: banReasonController,
                           validate: validateForm,
+
                         );
                       },
                     ),
@@ -140,7 +199,8 @@ class _AddBannedUserState extends State<AddBannedUser> {
                           border: InputBorder.none,
                           hintText: "Pick a reason",
                           hintStyle: const TextStyle(
-                            color: Colors.grey, fontWeight: FontWeight.normal),
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal),
                           contentPadding: const EdgeInsets.only(
                               top: 10, bottom: 10, left: 8),
                           suffixIcon: Icon(
@@ -162,6 +222,11 @@ class _AddBannedUserState extends State<AddBannedUser> {
                   child: TextFormField(
                     cursorColor: Colors.blue,
                     controller: modNoteController,
+                    onChanged: widget.seeDetails
+                        ? (value) {
+                            validateForm();
+                          }
+                        : null,
                     decoration: const InputDecoration(
                         isDense: true,
                         hintText: "Only mods will see this",
@@ -194,9 +259,9 @@ class _AddBannedUserState extends State<AddBannedUser> {
                         onChanged: (value) => {
                           setState(() {
                             if (value == "") {
-                              isChecked = true;
+                              permanentIsChecked = true;
                             } else {
-                              isChecked = false;
+                              permanentIsChecked = false;
                             }
                           }),
                           validateForm()
@@ -213,11 +278,14 @@ class _AddBannedUserState extends State<AddBannedUser> {
                       child: Text("Days"),
                     ),
                     Checkbox(
-                      value: isChecked,
+                      value: permanentIsChecked,
                       activeColor: const Color.fromARGB(255, 23, 105, 165),
                       onChanged: (value) => {
                         setState(() {
-                          isChecked = value!;
+                          permanentIsChecked = value!;
+                          if (value == true) {
+                            banPeriodController.text = "";
+                          }
                         }),
                         if (value == false) {validateForm()}
                       },
@@ -238,6 +306,11 @@ class _AddBannedUserState extends State<AddBannedUser> {
                   child: TextFormField(
                     cursorColor: Colors.blue,
                     controller: noteController,
+                    onChanged: widget.seeDetails
+                        ? (value) {
+                            validateForm();
+                          }
+                        : null,
                     decoration: const InputDecoration(
                         isDense: true,
                         hintStyle: TextStyle(
@@ -259,10 +332,11 @@ class _AddBannedUserState extends State<AddBannedUser> {
 }
 
 class ModalForRules extends StatelessWidget {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   final TextEditingController banReason;
   final VoidCallback validate;
-  const ModalForRules(
-      {super.key, required this.banReason, required this.validate});
+  ModalForRules({super.key, required this.banReason, required this.validate});
 
   @override
   Widget build(BuildContext context) {
@@ -284,18 +358,54 @@ class ModalForRules extends StatelessWidget {
           indent: 20,
           height: 0.5,
         ),
+        ListTile(
+          title: const Text("Spam"),
+          onTap: () {
+            banReason.text = "Spam";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
+        ),
+        ListTile(
+          title: const Text("Personal information"),
+          onTap: () {
+            banReason.text = "Personal information";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
+        ),
+        ListTile(
+          title: const Text("Threatening"),
+          onTap: () {
+            banReason.text = "Threatening";
+            validate();
+            Navigator.of(context).pop();
+          },
+        ),
+        Divider(
+          color: Colors.grey[300],
+          height: 1,
+        ),
         Expanded(
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: rules.length,
+            itemCount: moderatorController.rules.length,
             itemBuilder: (BuildContext context, int index) {
-              final item = rules[index];
+              final item = moderatorController.rules[index];
               return Column(
                 children: [
                   ListTile(
-                    title: Text(item),
+                    title: Text(item.ruleTitle),
                     onTap: () {
-                      banReason.text = item;
+                      banReason.text = item.ruleTitle;
                       validate();
                       Navigator.of(context).pop();
                     },

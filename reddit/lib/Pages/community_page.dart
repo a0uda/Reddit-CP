@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
@@ -14,20 +17,21 @@ import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 import 'package:reddit/widgets/post.dart';
 
+// ignore: must_be_immutable
 class CommunityPage extends StatefulWidget {
-  const CommunityPage(
+  CommunityPage(
       {super.key,
       required this.communityName,
       required this.communityMembersNo,
-      required this.communityRule,
+      this.communityRule,
       required this.communityProfilePicturePath,
-      required this.communityDescription});
+      this.communityDescription});
 
   final String communityName;
   final int communityMembersNo;
-  final communityRule;
+  RulesItem? communityRule;
   final String communityProfilePicturePath;
-  final String communityDescription;
+  String? communityDescription;
 
   @override
   State<CommunityPage> createState() => _CommunityPageState();
@@ -35,26 +39,28 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   String buttonState = 'Join';
-  final CommunityController communityController =
-      GetIt.instance.get<CommunityController>();
+
+  final moderatorController = GetIt.instance.get<ModeratorController>();
 
   List<Post> communityPost = [];
+
+  late final String communityDescription;
+  late final String communityID;
+  late final String communityType;
+  late String communityName;
+  late final bool communityFlag;
+  late GeneralSettings communityGeneralSettings;
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+    communityGeneralSettings = moderatorController.generalSettings;
+  }
 
   @override
   void initState() {
     super.initState();
-    //  fetchCommunityPosts();
+    moderatorController.communityName = widget.communityName;
   }
-  // Future<void> fetchCommunityPosts() async {
-  //   for (String communityName in communityNames) {
-  //     communityController.getCommunityPost(communityName);
-  //     if (communityController.communityItem != null) {
-  //         communityPost.add({
-
-  //         });
-  //     }
-  //   }
-  // }
 
   void setButton() {
     setState(() {
@@ -180,7 +186,6 @@ class _CommunityPageState extends State<CommunityPage> {
                               communityProfilePicturePath:
                                   widget.communityProfilePicturePath,
                               communityRule: widget.communityRule,
-                              communityDescription: widget.communityDescription,
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,10 +218,14 @@ class _CommunityPageState extends State<CommunityPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ModResponsive(
-                                        mobileLayout: MobileModTools(communityName: widget.communityName,),
+                                        mobileLayout: MobileModTools(
+                                          communityName:
+                                              moderatorController.communityName,
+                                        ),
                                         desktopLayout: DesktopModTools(
                                           index: 0,
-                                          communityName: widget.communityName,
+                                          communityName:
+                                              moderatorController.communityName,
                                         ),
                                       ),
                                     ),
@@ -245,6 +254,71 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
+                                  vote: 0,
+                                  isLocked: false,
+                                  id: "1",
+                                  imageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  commentsCount: 1,
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Post(
+                                  vote: 0,
+                                  isLocked: false,
+                                  id: "1",
+                                  imageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  commentsCount: 1,
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Post(
+                                  vote: 0,
+                                  isLocked: false,
+                                  id: "1",
+                                  imageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  commentsCount: 1,
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Post(
+                                  vote: 0,
+                                  isLocked: false,
+                                  id: "1",
+                                  imageUrl: "assets/images/profile.png",
+                                  name: "John Doe",
+                                  title: "Flutter is the best",
+                                  postContent: "Flutter is the best",
+                                  date: "2021-09-09",
+                                  likes: 4,
+                                  commentsCount: 1,
+                                  communityName: "r/FlutterDev",
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Post(
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -261,6 +335,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
+                                  vote: 0,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
                                   name: "John Doe",
@@ -276,6 +351,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                 width: double.infinity,
                                 child: Post(
                                   isLocked: false,
+                                  vote: 0,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
                                   name: "John Doe",
@@ -290,6 +366,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -305,6 +382,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -320,66 +398,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: Post(
-                                  isLocked: false,
-                                  id: "1",
-                                  imageUrl: "assets/images/profile.png",
-                                  name: "John Doe",
-                                  title: "Flutter is the best",
-                                  postContent: "Flutter is the best",
-                                  date: "2021-09-09",
-                                  likes: 4,
-                                  commentsCount: 1,
-                                  communityName: "r/FlutterDev",
-                                ),
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Post(
-                                  isLocked: false,
-                                  id: "1",
-                                  imageUrl: "assets/images/profile.png",
-                                  name: "John Doe",
-                                  title: "Flutter is the best",
-                                  postContent: "Flutter is the best",
-                                  date: "2021-09-09",
-                                  likes: 4,
-                                  commentsCount: 1,
-                                  communityName: "r/FlutterDev",
-                                ),
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Post(
-                                  isLocked: false,
-                                  id: "1",
-                                  imageUrl: "assets/images/profile.png",
-                                  name: "John Doe",
-                                  title: "Flutter is the best",
-                                  postContent: "Flutter is the best",
-                                  date: "2021-09-09",
-                                  likes: 4,
-                                  commentsCount: 1,
-                                  communityName: "r/FlutterDev",
-                                ),
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Post(
-                                  isLocked: false,
-                                  id: "1",
-                                  imageUrl: "assets/images/profile.png",
-                                  name: "John Doe",
-                                  title: "Flutter is the best",
-                                  postContent: "Flutter is the best",
-                                  date: "2021-09-09",
-                                  likes: 4,
-                                  commentsCount: 1,
-                                  communityName: "r/FlutterDev",
-                                ),
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Post(
+                                  vote: 0,
                                   isLocked: false,
                                   id: "1",
                                   imageUrl: "assets/images/profile.png",
@@ -398,10 +417,7 @@ class _CommunityPageState extends State<CommunityPage> {
                         if (MediaQuery.of(context).size.width > 850)
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
-                            child: DescriptionWidget(
-                              communityDescription: widget.communityDescription,
-                              communityRules: widget.communityRule,
-                            ),
+                            child: DescriptionWidget(communityName: widget.communityName,),
                           ),
                       ],
                     ),

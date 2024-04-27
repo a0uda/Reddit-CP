@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Pages/history.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/saved.dart';
 import '../Pages/profile_screen.dart';
@@ -79,6 +80,10 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("History"),
             onTap: () {
               //Navigate to History
+                    Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const History()),
+              );
             },
           ),
           ListTile(

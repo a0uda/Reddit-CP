@@ -41,6 +41,7 @@ class CommentsService {
         for (var comment in data['comments']) {
           commentsList.add(Comments.fromJson(comment));
         }
+        print(commentsList);
         return commentsList;
       } else {
         throw Exception('Failed to load comments');

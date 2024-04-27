@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/drawer_tile.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -21,42 +24,44 @@ class DrawerReddit extends StatefulWidget {
 
 class _DrawerRedditState extends State<DrawerReddit> {
   bool userMod = true, isExpanded = false;
-  final CommunityController communityController = GetIt.instance.get<CommunityController>(); 
-  List<Map<String, dynamic>> communities = []; 
+  final CommunityController communityController =
+      GetIt.instance.get<CommunityController>();
+  final UserController userController = GetIt.instance.get<UserController>();
+  List<Map<String, dynamic>> communitiesDrawer = [];
+  bool communitiesFetched = false;
+
+  Future<void> fetchUserCommunities() async {
+    if (!communitiesFetched) {
+      await userController.getUserCommunities();
+    }
+    communitiesFetched = true;
+  }
 
   @override
   void initState() {
     super.initState();
-    fetchCommunities(); 
-  }
-  Future<void> fetchCommunities() async {
-    for (String communityName in communityNames) {
-      communityController.getCommunity(communityName);
-      if (communityController.communityItem != null) {
-          communities.add({
-            'name': communityName,
-            'communityPage': CommunityPage(
-              communityDescription: communityController.communityItem!.general.communityDescription,
-              communityMembersNo: communityController.communityItem!.communityMembersNo,
-              communityName: communityController.communityItem!.general.communityName,
-              communityProfilePicturePath: communityController.communityItem!.communityProfilePicturePath,
-              communityRule: communityController.communityItem!.communityRules,
-            ),
-          });
-      }
-    }
+    //fetchCommunities();
   }
 
+  // Future<void> fetchCommunities() async {
+  //   for (CommunityItem community in communities) {
+  //     communityController.getCommunity(community.general.communityName);
+  //     if (communityController.communityItem != null) {
+  //       communitiesDrawer.add({
+  //         'name': communityController.communityItem!.general.communityName,
+  //         'communityPage': CommunityPage(
+  //           communityMembersNo:
+  //               communityController.communityItem!.communityMembersNo,
+  //           communityName:
+  //               communityController.communityItem!.general.communityName,
+  //           communityProfilePicturePath:
+  //               communityController.communityItem!.communityProfilePicturePath,
+  //         ),
+  //       });
+  //     }
+  //   }
+  // }
 
-  List<String> communityNames = [
-    'Flutter Enthusiasts',
-    'Cooking Masters',
-    'Fitness Warriors',
-    'Photography Passion',
-    'Gaming Universe',
-  ];
-
-  var userModList = [];
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -142,100 +147,59 @@ class _DrawerRedditState extends State<DrawerReddit> {
                         width: 0,
                         height: 0,
                       ),
-                widget.inHome
-                    ? ListTile(
-                        leading: Icon(
-                            widget.indexOfPage == 2
-                                ? CupertinoIcons.graph_circle_fill
-                                : CupertinoIcons.graph_circle,
-                            color: Colors.black),
-                        title: const Text("All"),
-                        onTap: () {
-                          if (widget.indexOfPage == 2) {
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                              builder: (context) => const ResponsiveLayout(
-                                  mobileLayout: MobileLayout(
-                                    mobilePageMode: 2,
-                                  ),
-                                  desktopLayout: DesktopHomePage(
-                                    indexOfPage: 2,
-                                  )),
-                            ));
-                          } else {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ResponsiveLayout(
-                                  mobileLayout: MobileLayout(
-                                    mobilePageMode: 2,
-                                  ),
-                                  desktopLayout: DesktopHomePage(
-                                    indexOfPage: 2,
-                                  )),
-                            ));
-                          }
-                        },
-                      )
-                    : const SizedBox(
-                        width: 0,
-                        height: 0,
-                      ),
-                widget.inHome
-                    ? ListTile(
-                        leading: Icon(
-                            widget.indexOfPage == 3
-                                ? Icons.watch_later
-                                : Icons.watch_later_outlined,
-                            color: Colors.black),
-                        title: const Text("Latest"),
-                        onTap: () {
-                          if (widget.indexOfPage == 3) {
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                              builder: (context) => const ResponsiveLayout(
-                                  mobileLayout: MobileLayout(
-                                    mobilePageMode: 3,
-                                  ),
-                                  desktopLayout: DesktopHomePage(
-                                    indexOfPage: 3,
-                                  )),
-                            ));
-                          } else {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const ResponsiveLayout(
-                                  mobileLayout: MobileLayout(
-                                    mobilePageMode: 3,
-                                  ),
-                                  desktopLayout: DesktopHomePage(
-                                    indexOfPage: 3,
-                                  )),
-                            ));
-                          }
-                        },
-                      )
-                    : const SizedBox(
-                        width: 0,
-                        height: 0,
-                      ),
                 const Divider(
                   color: Colors.grey,
                   height: 30,
                   indent: 30,
                   endIndent: 30,
                 ),
-                
-                DrawerTile(tileTitle: "COMMUNITIES", lists: communities),
-                const Divider(
-                  color: Colors.grey,
-                  height: 30,
-                  indent: 30,
-                  endIndent: 30,
+                FutureBuilder<void>(
+                  future: fetchUserCommunities(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                        return const Text('none');
+                      case ConnectionState.waiting:
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      case ConnectionState.done:
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        return Column(
+                          children: [
+                            DrawerTile(
+                              tileTitle: "COMMUNITIES",
+                              lists: userController.userCommunities!,
+                              isMod: false,
+                            ),
+                            const Divider(
+                              color: Colors.grey,
+                              height: 30,
+                              indent: 30,
+                              endIndent: 30,
+                            ),
+                            userController.userAbout?.moderatedCommunities !=
+                                    null
+                                ? DrawerTile(
+                                    tileTitle: "MODERATION",
+                                    lists: userController
+                                        .userAbout!.moderatedCommunities!,
+                                    isMod: true,
+                                  )
+                                : const SizedBox(),
+                          ],
+                        );
+                      default:
+                        return const Text('badr');
+                    }
+                  },
                 ),
-                userMod
-                    ? DrawerTile(
-                        tileTitle: "MODERATION",
-                        lists: communities,
-                      )
-                    : const SizedBox()
               ],
             ),
           ),
@@ -243,13 +207,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
   }
 }
 
- List<String> communityNames = [
-    'Flutter Enthusiasts',
-    'Cooking Masters',
-    'Fitness Warriors',
-    'Photography Passion',
-    'Gaming Universe',
-  ];
 
 // List<Map<String, dynamic>> communites = [
 //   {

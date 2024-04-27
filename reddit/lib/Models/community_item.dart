@@ -18,7 +18,7 @@ class CommunityItem {
     this.communityCoverPicturePath,
   });
 
-  final GeneralSettings general;
+  GeneralSettings general;
   final int communityMembersNo;
   final List<RulesItem> communityRules;
   final String communityProfilePicturePath;

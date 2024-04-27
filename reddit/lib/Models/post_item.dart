@@ -32,6 +32,7 @@ class PostItem {
   final String? setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;
+  final int vote;
 
   PostItem({
     required this.id,
@@ -59,6 +60,7 @@ class PostItem {
     required this.nsfwFlag,
     required this.lockedFlag,
     required this.allowrepliesFlag,
+    required this.vote,
     this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,
@@ -87,7 +89,8 @@ class PostItem {
         nsfwFlag: json['nsfw_flag'],
         lockedFlag: json['locked_flag'],
         allowrepliesFlag: json['allowreplies_flag'],
-        setSuggestedSort: json['set_suggeested_sort']);
+        setSuggestedSort: json['set_suggeested_sort'],
+        vote: 0);
   }
 }
 

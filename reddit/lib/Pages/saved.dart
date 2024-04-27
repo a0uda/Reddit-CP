@@ -28,32 +28,57 @@ class SavedScreen extends State<Saved> {
     super.initState();
     initUser();
   }
+ Future<void> SavedPosts() async {
+ 
 
+   final UserController userController = GetIt.instance.get<UserController>();
+    final postService = GetIt.instance.get<PostService>();
+    String username = userController.userAbout!.username;
+    posts =await postService.getSavePost(username);
+  }
   Future<void> initUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+   final UserController userController = GetIt.instance.get<UserController>();
+    final postService = GetIt.instance.get<PostService>();
+    String username = userController.userAbout!.username;
     username2 = prefs.getString('username');
+    posts =await postService.getSavePost(username);
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserController userController = GetIt.instance.get<UserController>();
+ final UserController userController = GetIt.instance.get<UserController>();
     final postService = GetIt.instance.get<PostService>();
-
     String username = userController.userAbout!.username;
-    posts = postService.getSavePost(username);
 
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         backgroundColor: Colors.grey[200],
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('Saved'),
+           titleTextStyle: TextStyle(
+        color: Color.fromARGB(255, 244, 87, 3),
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),   leading: GestureDetector(
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            size: 20,
+            color: Color.fromARGB(255, 244, 87, 3),
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous page
+          },
+        ),  ),
           bottom: TabBar(
             indicatorColor: Colors.deepOrange[400],
-            labelColor: Colors.black,
+            labelColor:  const Color.fromARGB(255, 0, 0, 0),
             unselectedLabelColor: Colors.grey,
-            dividerColor: Colors.transparent,
+            dividerColor: Color.fromARGB(255, 147, 142, 142),
             tabs: const [
               Tab(text: 'Posts'),
               Tab(text: 'Comments'),
@@ -62,9 +87,26 @@ class SavedScreen extends State<Saved> {
         ),
         body: TabBarView(
           children: [
-            Consumer<SavePost>(
+             FutureBuilder<void>(
+future:SavedPosts() ,
+  builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+           return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+            return Consumer<SavePost>(
               builder: (context, socialLinksController, child) {
-                posts = postService.getSavePost(username);
+              
                 return ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
@@ -73,6 +115,8 @@ class SavedScreen extends State<Saved> {
                       return buildBlur(
                           context: context,
                           child: Post(
+                                              vote: posts[index].vote,
+
                             name: posts[index].username,
                             title: posts[index].title,
                             postContent: posts[index].description!,
@@ -86,11 +130,12 @@ class SavedScreen extends State<Saved> {
                             poll: posts[index].poll,
                             id: posts[index].id,
                             communityName: posts[index].communityName,
-                            isLocked:posts[index].lockedFlag,
-                          
+                            isLocked: posts[index].lockedFlag,
                           ));
                     }
                     return Post(
+                                        vote: posts[index].vote,
+
                       name: posts[index].username,
                       title: posts[index].title,
                       postContent: posts[index].description!,
@@ -104,24 +149,34 @@ class SavedScreen extends State<Saved> {
                       poll: posts[index].poll,
                       id: posts[index].id,
                       communityName: posts[index].communityName,
-                      isLocked:posts[index].lockedFlag,
+                      isLocked: posts[index].lockedFlag,
                     );
                   },
-                );
-              },
-            ),
+             );});}}),
+              
+  
             Consumer<SaveComment>(
               builder: (context, socialLinksController, child) {
-                List<Comments>? comments =
-                    userController.getSavedComments(username2!);
-                return ListView.builder(
-                  itemCount: comments?.length,
-                  itemBuilder: (context, index) {
-                    return Comment(
-                      comment: comments![index],
-                      isSaved: true,
-                      isComingFromSaved: true,
-                    );
+                return FutureBuilder<List<Comments>>(
+                  future: userController.getSavedComments(username2!),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Comments>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          return Comment(
+                            comment: snapshot.data![index],
+                            isSaved: true,
+                            isComingFromSaved: true,
+                          );
+                        },
+                      );
+                    }
                   },
                 );
               },
