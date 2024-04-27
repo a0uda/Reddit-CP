@@ -24,10 +24,23 @@ import 'package:reddit/widgets/Moderator/queues.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 //TODO : FIREBASE
 // import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white,
+        )
+      ],
+      debug: true);
   // Registering MockService with GetIt
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp(); //TODO : FIREBASE

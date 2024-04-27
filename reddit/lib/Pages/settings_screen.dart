@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screen_ex/flutter_settings_screen_ex.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,6 +24,16 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  @override
+  void initState() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
@@ -87,6 +98,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 buildManageBlockedAccounts(context),
                 buildAllowPeopleToFollowYou(),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Handle button press
+                  AwesomeNotifications().createNotification(
+                    content: NotificationContent(
+                      id: 10,
+                      channelKey: 'basic_channel',
+                      title: 'Simple Notification',
+                      body: 'Simple body',
+                    ),
+                  );
+                },
+                child: const Text('Button Text'),
+              ),
             ),
           ],
         ),
