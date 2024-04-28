@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,10 +8,10 @@ class InboxOptions extends StatefulWidget {
   });
 
   @override
-  InboxOptionState createState() => InboxOptionState();
+  Postoptions createState() => Postoptions();
 }
 
-class InboxOptionState extends State<InboxOptions> {
+class Postoptions extends State<InboxOptions> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -92,3 +93,5 @@ class InboxOptionState extends State<InboxOptions> {
         icon: const Icon(Icons.more_horiz));
   }
 }
+
+
