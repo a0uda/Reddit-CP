@@ -41,8 +41,9 @@ final rules = [
 
 final communities = [
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[0],
-    communityMembersNo: 5000,
+    communityMembersNo: "5000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: 'images/reddit-logo.png',
@@ -57,8 +58,9 @@ final communities = [
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[1],
-    communityMembersNo: 8000,
+    communityMembersNo: "8000",
     communityRules: rules,
     communityProfilePicturePath: 'images/Greddit.png',
     communityCoverPicturePath: 'images/Greddit.png',
@@ -73,8 +75,9 @@ final communities = [
     allowImage: true,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[2],
-    communityMembersNo: 10000,
+    communityMembersNo: "10000",
     communityRules: rules,
     communityProfilePicturePath: 'images/pp.jpg',
     communityCoverPicturePath: null,
@@ -89,8 +92,9 @@ final communities = [
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[3],
-    communityMembersNo: 12000,
+    communityMembersNo: "12000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: '',
@@ -99,14 +103,15 @@ final communities = [
     editableModerators: editableModerators,
     moderators: moderators,
     mutedUsers: mutedUsers,
-    postTypes: "Links Only", //Mostafa Mohyy khena2a
+    postTypes: "Text Only", //Mostafa Mohyy khena2a
     allowPolls: true,
     allowVideos: true,
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[4],
-    communityMembersNo: 15000,
+    communityMembersNo: "15000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: '',
@@ -188,19 +193,19 @@ List<Map<String, dynamic>> mutedUsers = [
 
 List<Map<String, dynamic>> approvedUsers = [
   {
-    "username": "malaxk1234d567",
+    "username": "badr",
     "approved_at": "2024-04-11T07:51:09.795Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf44"
   },
   {
-    "username": "Sadie20",
+    "username": "mohy",
     "approved_at": "2024-04-11T07:17:28.324Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf45"
   },
   {
-    "username": "maldaxk1234d56dx7",
+    "username": "fouda",
     "approved_at": "2024-04-11T08:18:25.843Z",
     "profile_picture": "images/Greddit.png",
     "_id": "6618844ad57c873637b5cf46"
@@ -253,38 +258,38 @@ List<Map<String, dynamic>> editableModerators = [
 List<GeneralSettings> generalSettings = [
   GeneralSettings(
     communityID: "1",
-    communityName: 'Flutter Enthusiasts',
+    communityTitle: 'Hyatt___Tillman',
     communityDescription: 'A community for Flutter enthusiasts.',
     communityType: "Public",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "2",
-    communityName: 'Cooking Masters',
+    communityTitle: 'Waters___Greenholt',
     communityDescription: 'Join us to explore the art and science of cooking!',
     communityType: "Private",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "3",
-    communityName: 'Fitness Warriors',
+    communityTitle: 'Conroy_Inc',
     communityDescription:
         'Get fit and stay healthy with the support of our community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "4",
-    communityName: 'Photography Passion',
+    communityTitle: 'Legros_LLC',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "5",
-    communityName: 'Gaming Universe',
+    communityTitle: 'Gaming Universe',
     communityDescription: 'Welcome to the ultimate gaming community!',
     communityType: "Restricted",
-    nsfwFlag: false,
+    nsfwFlag: true,
   ),
 ];

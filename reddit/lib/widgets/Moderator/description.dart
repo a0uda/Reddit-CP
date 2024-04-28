@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
 
 class ModDescription extends StatefulWidget {
   const ModDescription({super.key});
@@ -10,15 +14,32 @@ class ModDescription extends StatefulWidget {
 
 class _ModDescriptionState extends State<ModDescription> {
   TextEditingController inputController = TextEditingController();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   int maxCounter = 500;
   int remainingCharacters = 500;
   bool isSaved = false;
   bool doneSaved = true;
 
+  late final String communityDescription;
+  late final String communityID;
+  late final String communityType;
+  late String communityName;
+  late final bool communityFlag;
+  late GeneralSettings communityGeneralSettings;
+
   @override
   void initState() {
     super.initState();
     remainingCharacters = maxCounter;
+    communityName = moderatorController.communityName;
+
+    fetchGeneralSettings();
+  }
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+    communityGeneralSettings = moderatorController.generalSettings;
   }
 
   void updateCharachterCounter() {
@@ -36,6 +57,7 @@ class _ModDescriptionState extends State<ModDescription> {
 
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
 
@@ -51,7 +73,19 @@ class _ModDescriptionState extends State<ModDescription> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
+            onPressed: () async{
+              await settingsProvider.setGeneralSettings(
+                communityName: moderatorController.communityName,
+                general: GeneralSettings(
+                    communityID:
+                        moderatorController.generalSettings.communityID,
+                    communityTitle:
+                        moderatorController.generalSettings.communityTitle,
+                    communityDescription: inputController.text,
+                    communityType:
+                        moderatorController.generalSettings.communityType,
+                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
+              );
               setState(() {
                 doneSaved = true;
               });
@@ -212,10 +246,10 @@ class _ModDescriptionState extends State<ModDescription> {
                 setState(() {
                   if (maxCounter == remainingCharacters) {
                     isSaved = false;
-                    doneSaved=true;
+                    doneSaved = true;
                   } else {
                     isSaved = true;
-                    doneSaved=false;
+                    doneSaved = false;
                   }
                 });
               }),

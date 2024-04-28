@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class AddMutedUser extends StatefulWidget {
   const AddMutedUser({super.key});
@@ -10,9 +13,12 @@ class AddMutedUser extends StatefulWidget {
 
 class _AddMutedUserState extends State<AddMutedUser> {
   bool addButtonEnable = false;
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   TextEditingController userNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var mutedUserProvider = context.read<MutedUserProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -32,8 +38,11 @@ class _AddMutedUserState extends State<AddMutedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
+                    ? () async{
                         //ADD IN MOCK Badrrrrrr
+                        await mutedUserProvider.addMutedUsers(userNameController.text,
+                            moderatorController.communityName);
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(
@@ -76,7 +85,6 @@ class _AddMutedUserState extends State<AddMutedUser> {
                     prefixStyle: TextStyle(color: Colors.black)),
               ),
             ),
-            
           ],
         ),
       ),

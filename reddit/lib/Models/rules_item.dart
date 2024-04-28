@@ -1,20 +1,20 @@
 class RulesItem {
   RulesItem({
-    required this.id,
+    this.id,
     required this.ruleTitle,
     required this.appliesTo,
     this.reportReason,
     this.ruleDescription,
   });
 
-  String id;
+  String? id;
   String ruleTitle;
   String appliesTo;
   String? ruleDescription;
   String? reportReason;
 
   void updateAll(
-      {required String id,
+      {String? id,
       required String ruleTitle,
       required String appliesTo,
       String? ruleDescription,

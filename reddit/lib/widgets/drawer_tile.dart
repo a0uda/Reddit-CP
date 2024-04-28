@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/comments_desktop.dart';
 
 void navigateToCommunity(Widget communityPage, BuildContext context) {
   Navigator.of(context)
@@ -8,9 +15,14 @@ void navigateToCommunity(Widget communityPage, BuildContext context) {
 }
 
 class DrawerTile extends StatefulWidget {
-  final List<Map<String, dynamic>> lists;
+  final List<CommunityBackend> lists;
   final String tileTitle;
-  const DrawerTile({super.key, required this.tileTitle, required this.lists});
+  final bool isMod;
+  const DrawerTile(
+      {super.key,
+      required this.tileTitle,
+      required this.lists,
+      required this.isMod});
 
   @override
   State<DrawerTile> createState() => _DrawerTileState();
@@ -18,6 +30,12 @@ class DrawerTile extends StatefulWidget {
 
 class _DrawerTileState extends State<DrawerTile> {
   bool isExpanded = false;
+  bool communitiesFetched = false;
+  final UserController userController = GetIt.instance.get<UserController>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+  List<CommunityBackend> lists = [];
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,42 +58,61 @@ class _DrawerTileState extends State<DrawerTile> {
           },
         ),
         Visibility(
-          visible: isExpanded,
-          child: Column(
-            children: [
-              ListTile(
-                  leading: const Icon(Icons.add, color: Colors.black),
-                  title: const Text("Create Community"),
-                  onTap: () {
-                    //navigate to Create Community Page
-                  },
+            visible: isExpanded,
+            child: Column(
+              children: [
+                !widget.isMod
+                    ? ListTile(
+                        leading: const Icon(Icons.add, color: Colors.black),
+                        title: const Text("Create Community"),
+                        onTap: () {
+                          //navigate to Create Community Page
+                        },
+                      )
+                    : const SizedBox(),
+                AnimatedOpacity(
+                  opacity: isExpanded ? 1.0 : 0.0,
+                  duration: const Duration(seconds: 0),
+                  curve: Curves.bounceInOut,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.lists.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = widget.lists[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: AssetImage(item.profilePictureURL),
+                          radius: 10,
+                        ),
+                        title: Text(item.name),
+                        onTap: () {
+                          // Call the function to navigate to the community page
+                          // navigateToCommunity(
+                          //     item['communityPage'], context);
+                          moderatorController.profilePictureURL =
+                              item.profilePictureURL;
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => (CommunityLayout(
+                          //           desktopLayout: DesktopCommunityPage(
+                          //               communityName: item.name),
+                          //           mobileLayout: MobileCommunityPage(
+                          //             communityName: item.name,
+                          //           ),
+                          //         ))));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => (CommunityPage(
+                                    communityMembersNo: item.membersCount,
+                                    communityName: item.name,
+                                    communityProfilePicturePath:
+                                        item.profilePictureURL,
+                                  ))));
+                        },
+                      );
+                    },
+                  ),
                 ),
-              AnimatedOpacity(
-                opacity: isExpanded ? 1.0 : 0.0,
-                duration: const Duration(seconds: 0),
-                curve: Curves.bounceInOut,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: widget.lists.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final item = widget.lists[index];
-                    return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundImage: AssetImage("images/logo-mobile.png"),
-                        radius: 10,
-                      ),
-                      title: Text(item['name']),
-                      onTap: () {
-                        // Call the function to navigate to the community page
-                        navigateToCommunity(item['communityPage'], context);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        )
+              ],
+            ))
       ],
     );
   }

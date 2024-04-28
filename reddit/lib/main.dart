@@ -41,7 +41,8 @@ void main() async {
   GetIt.instance.registerSingleton<CommunityService>(CommunityService());
   GetIt.instance.registerSingleton<CommunityController>(CommunityController());
 
-  GetIt.instance.registerSingleton<ModeratorMockService>(ModeratorMockService());
+  GetIt.instance
+      .registerSingleton<ModeratorMockService>(ModeratorMockService());
   GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
 
   GetIt.instance.registerSingleton<ChatsService>(ChatsService());
@@ -49,6 +50,21 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(
+        create: (context) => RulesProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ModeratorProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ApprovedUserProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => MutedUserProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BannedUserProvider(),
+      ),
       ChangeNotifierProvider(
         create: (context) => SocialLinksController(),
       ),
@@ -75,6 +91,12 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => ChangeEmail(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => ChangeGeneralSettingsProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => PostSettingsProvider(),
       )
     ],
     child: const MyApp(),

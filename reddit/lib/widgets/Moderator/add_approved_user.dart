@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
 class AddApprovedUser extends StatefulWidget {
@@ -16,8 +17,16 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
+  addUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.addApprovedUsers(
+        userNameController.text, moderatorController.communityName);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
+    //var approvedUserProvider = context.read<ApprovedUserProvider>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -37,12 +46,9 @@ class _AddApprovedUserState extends State<AddApprovedUser> {
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
                 onPressed: addButtonEnable
-                    ? () {
+                    ? () async {
                         //ADD IN MOCK badrrrr
-                        moderatorController.addApprovedUsers(
-                            userNameController.text,
-                            moderatorController.communityName);
-                        Navigator.of(context).pop();
+                        await addUser();
                       }
                     : null,
                 child: Text(

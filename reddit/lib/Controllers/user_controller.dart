@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
@@ -19,6 +20,7 @@ class UserController {
   AccountSettings? accountSettings;
   ProfileSettings? profileSettings;
   NotificationsSettingsItem? notificationsSettings;
+  List<CommunityBackend>? userCommunities;
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -93,6 +95,10 @@ class UserController {
     await userService.updateNotificationSettings(
         userAbout!.username, notificationsSettings!);
     await userService.getNotificationsSettings(userAbout!.username);
+  }
+
+  Future<void> getUserCommunities() async {
+    userCommunities = await userService.getUserCommunities();
   }
 }
 

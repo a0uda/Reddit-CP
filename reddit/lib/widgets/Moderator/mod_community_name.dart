@@ -1,8 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/test_files/test_communities.dart';
 
 class ModCommName extends StatefulWidget {
-  const ModCommName({super.key});
+  const ModCommName({
+    super.key,
+  });
 
   @override
   State<ModCommName> createState() => _ModCommNameState();
@@ -10,15 +17,31 @@ class ModCommName extends StatefulWidget {
 
 class _ModCommNameState extends State<ModCommName> {
   TextEditingController inputController = TextEditingController();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  late final String communityDescription;
+  late final String communityID;
+  late final String communityType;
+  late String communityName;
+  late final bool communityFlag;
+  late GeneralSettings communityGeneralSettings;
+
   int maxCounter = 90;
   int remainingCharacters = 90;
   bool isSaved = false;
   bool doneSaved = true;
+  String newCommunityName = '';
 
   @override
   void initState() {
     super.initState();
     remainingCharacters = maxCounter;
+    communityName = moderatorController.communityName;
+  }
+
+  Future<void> fetchGeneralSettings() async {
+    await moderatorController.getGeneralSettings(communityName);
+    communityGeneralSettings = moderatorController.generalSettings;
   }
 
   void updateCharachterCounter() {
@@ -36,6 +59,7 @@ class _ModCommNameState extends State<ModCommName> {
 
   @override
   Widget build(BuildContext context) {
+    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
     double screenWidth = MediaQuery.of(context).size.width;
     double paddingPercentage = 0.1;
 
@@ -51,7 +75,19 @@ class _ModCommNameState extends State<ModCommName> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              await settingsProvider.setGeneralSettings(
+                communityName: communityName,
+                general: GeneralSettings(
+                    communityID:
+                        moderatorController.generalSettings.communityID,
+                    communityTitle: inputController.text,
+                    communityDescription: moderatorController
+                        .generalSettings.communityDescription,
+                    communityType:
+                        moderatorController.generalSettings.communityType,
+                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
+              );
               setState(() {
                 doneSaved = true;
               });
@@ -169,76 +205,81 @@ class _ModCommNameState extends State<ModCommName> {
                 })
             : null,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(screenWidth * paddingPercentage),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Row(
+      body: FutureBuilder(
+        future: fetchGeneralSettings(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          return Padding(
+            padding: EdgeInsets.all(screenWidth * paddingPercentage),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment(0, 0),
-                  child: Text(
-                    'Change your community name',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 48, 129, 185),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                const Row(
+                  children: [
+                    Align(
+                      alignment: Alignment(0, 0),
+                      child: Text(
+                        'Change your community name',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 48, 129, 185),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: inputController,
+                  maxLines: null,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                  ),
+                  decoration: const InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
                     ),
                   ),
+                  onChanged: ((value) {
+                    updateCharachterCounter();
+                    setState(() {
+                      if (maxCounter == remainingCharacters) {
+                        isSaved = false;
+                        doneSaved = true;
+                      } else {
+                        isSaved = true;
+                        doneSaved = false;
+                      }
+                    });
+                  }),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 0),
+                      child: Text(
+                        '$remainingCharacters',
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 173, 173, 173),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w100,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            TextField(
-              controller: inputController,
-              maxLines: null,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
-              ),
-              decoration: const InputDecoration(
-                focusedBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: Color.fromARGB(255, 23, 105, 165)),
-                ),
-              ),
-              onChanged: ((value) {
-                updateCharachterCounter();
-                setState(() {
-                  if (maxCounter == remainingCharacters) {
-                    isSaved = false;
-                    doneSaved=true;
-                  } else {
-                    isSaved = true;
-                    doneSaved=false;
-                  }
-                });
-              }),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
-                  child: Text(
-                    '$remainingCharacters',
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 173, 173, 173),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w100,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

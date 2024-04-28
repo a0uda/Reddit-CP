@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/community_item.dart';
@@ -52,7 +53,8 @@ class UserService {
       print(username);
 
       print(response.statusCode);
-      print(jsonDecode(response.body));
+      print(jsonDecode(response.body)['content']['moderatedCommunities']);
+      print(UserAbout.fromJson(jsonDecode(response.body)['content']).moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -521,6 +523,27 @@ class UserService {
       return users
           .firstWhere((element) => element.userAbout.username == 'Purple-7544')
           .activecommunities!;
+    }
+  }
+
+  Future<List<CommunityBackend>?> getUserCommunities() async {
+    if (testing) {
+      return [];
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/communities');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      List<dynamic> decoded = jsonDecode(response.body)['content'];
+      return List<CommunityBackend>.from(
+          decoded.map((community) => CommunityBackend.fromJson(community)));
     }
   }
 

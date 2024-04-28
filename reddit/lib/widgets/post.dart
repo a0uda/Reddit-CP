@@ -217,8 +217,7 @@ class PostState extends State<Post> {
                                                     .communityItem!
                                                     .general
                                                     .communityDescription,
-                                            communityRule: communityController
-                                                .communityItem!.communityRules,
+                    
                                             communityMembersNo:
                                                 communityController
                                                     .communityItem!

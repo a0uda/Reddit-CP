@@ -80,19 +80,6 @@ class ModToolsList extends StatelessWidget {
           },
         ),
         ListTile(
-          leading: const Icon(CupertinoIcons.placemark),
-          title: Text(
-            'Location',
-            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
-          ),
-          trailing: isMobile
-              ? const Icon(Icons.arrow_forward_rounded)
-              : const SizedBox(),
-          onTap: () {
-            changePage(4);
-          },
-        ),
-        ListTile(
           leading: const Icon(CupertinoIcons.shield),
           title: Text(
             'Moderators',
@@ -102,7 +89,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(5);
+            changePage(4);
           },
         ),
         ListTile(
@@ -115,7 +102,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(6);
+            changePage(5);
           },
         ),
         ListTile(
@@ -128,7 +115,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(7);
+            changePage(6);
           },
         ),
         ListTile(
@@ -141,7 +128,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(8);
+            changePage(7);
           },
         ),
         ListTile(
@@ -154,7 +141,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(9);
+            changePage(8);
           },
         ),
          ListTile(
@@ -167,7 +154,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(10);
+            changePage(9);
           },
         ),
       ],
