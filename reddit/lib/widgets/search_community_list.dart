@@ -4,14 +4,14 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 
 
-class ApprovedUserList extends StatefulWidget {
-  const ApprovedUserList({super.key});
+class SearchCommunityList extends StatefulWidget {
+  const SearchCommunityList({super.key});
 
   @override
-  State<ApprovedUserList> createState() => _ApprovedUserListState();
+  State<SearchCommunityList> createState() => _SearchCommunityListState();
 }
 
-class _ApprovedUserListState extends State<ApprovedUserList> {
+class _SearchCommunityListState extends State<SearchCommunityList> {
   List<Map<String, dynamic>> foundUsers = [];
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();

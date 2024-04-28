@@ -199,158 +199,157 @@ class PostState extends State<Post> {
                 ),
                 title: Column(
                   children: [
-                    Row(
+                    Row(children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: (widget.communityName != "")
+                            ? InkWell(
+                                onTap: () => {
+                                  //TODO: go to community
+                                  communityController
+                                      .getCommunity(widget.communityName),
 
-                    children: [ Align(
-                      alignment: Alignment.centerLeft,
-                      child: (widget.communityName != "")
-                          ? InkWell(
-                              onTap: () => {
-                                //TODO: go to community
-                                communityController
-                                    .getCommunity(widget.communityName),
-
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => (CommunityPage(
-                                          communityName: widget.communityName,
-                                          communityDescription:
-                                              communityController.communityItem!
-                                                  .general.communityDescription,
-                                          communityRule: communityController
-                                              .communityItem!.communityRules,
-                                          communityMembersNo:
-                                              communityController.communityItem!
-                                                  .communityMembersNo,
-                                          communityProfilePicturePath:
-                                              communityController.communityItem!
-                                                  .communityProfilePicturePath,
-                                        )))),
-                              },
-                              onHover: (hover) {
-                                setState(() {
-                                  isHovering = hover;
-                                });
-                              },
-                              child: Text(
-                                (widget.communityName) == "Select Community"
-                                    ? widget.name
-                                    : widget.communityName,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Arial'),
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () => {
-                                userType = userController.userAbout!.username ==
-                                        widget.name
-                                    ? 'me'
-                                    : 'other',
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        FutureBuilder<UserAbout?>(
-                                      future:
-                                          userService.getUserAbout(widget.name),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
-                                        } else if (snapshot.hasError) {
-                                          print(widget.name);
-                                          print(snapshot.data);
-                                          return Text(
-                                              'Error: ${snapshot.error}');
-                                        } else {
-                                          print(widget.name);
-                                          print(snapshot.data);
-                                          return ProfileScreen(
-                                            snapshot.data,
-                                            userType,
-                                          );
-                                        }
-                                      },
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => (CommunityPage(
+                                            communityName: widget.communityName,
+                                            communityDescription:
+                                                communityController
+                                                    .communityItem!
+                                                    .general
+                                                    .communityDescription,
+                                            communityRule: communityController
+                                                .communityItem!.communityRules,
+                                            communityMembersNo:
+                                                communityController
+                                                    .communityItem!
+                                                    .communityMembersNo,
+                                            communityProfilePicturePath:
+                                                communityController
+                                                    .communityItem!
+                                                    .communityProfilePicturePath,
+                                          )))),
+                                },
+                                onHover: (hover) {
+                                  setState(() {
+                                    isHovering = hover;
+                                  });
+                                },
+                                child: Text(
+                                  (widget.communityName) == "Select Community"
+                                      ? widget.name
+                                      : widget.communityName,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Arial'),
+                                ),
+                              )
+                            : InkWell(
+                                onTap: () => {
+                                  userType =
+                                      userController.userAbout!.username ==
+                                              widget.name
+                                          ? 'me'
+                                          : 'other',
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FutureBuilder<UserAbout?>(
+                                        future: userService
+                                            .getUserAbout(widget.name),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            print(widget.name);
+                                            print(snapshot.data);
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            print(widget.name);
+                                            print(snapshot.data);
+                                            return ProfileScreen(
+                                              snapshot.data,
+                                              userType,
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ),
+                                },
+                                onHover: (hover) {
+                                  setState(() {
+                                    isHovering = hover;
+                                  });
+                                },
+                                child: Text(
+                                  widget.name,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Arial'),
                                 ),
-                              },
-                              onHover: (hover) {
-                                setState(() {
-                                  isHovering = hover;
-                                });
-                              },
-                              child: Text(
-                                widget.name,
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Arial'),
                               ),
-                            ),
-                    ),
-                  
-                        Text(
-                          '  • ${formatDateTime(widget.date)}',
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromARGB(255, 117, 116, 115)),
-                        ),
+                      ),
+                      Text(
+                        '  • ${formatDateTime(widget.date)}',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 117, 116, 115)),
+                      ),
                     ]),
-                
-                        if (widget.communityName != "")
-                   Align( alignment: Alignment.topLeft,
-                    child:   InkWell(
-                            onTap: () => {
-                              userType = userController.userAbout!.username ==
-                                      widget.name
-                                  ? 'me'
-                                  : 'other',
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FutureBuilder<UserAbout?>(
-                                    future:
-                                        userService.getUserAbout(widget.name),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        print(widget.name);
-                                        print(snapshot.data);
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-                                        print(widget.name);
-                                        print(snapshot.data);
-                                        return ProfileScreen(
-                                          snapshot.data,
-                                          userType,
-                                        );
-                                      }
-                                    },
-                                  ),
+                    if (widget.communityName != "")
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: InkWell(
+                          onTap: () => {
+                            userType = userController.userAbout!.username ==
+                                    widget.name
+                                ? 'me'
+                                : 'other',
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FutureBuilder<UserAbout?>(
+                                  future: userService.getUserAbout(widget.name),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      print(widget.name);
+                                      print(snapshot.data);
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      print(widget.name);
+                                      print(snapshot.data);
+                                      return ProfileScreen(
+                                        snapshot.data,
+                                        userType,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
-                            },
-                            onHover: (hover) {
-                              setState(() {
-                                isHovering = hover;
-                              });
-                            },
-                            child: Text(
-                              widget.name,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w200,
-                                  fontFamily: 'Arial'),
                             ),
+                          },
+                          onHover: (hover) {
+                            setState(() {
+                              isHovering = hover;
+                            });
+                          },
+                          child: Text(
+                            widget.name,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w200,
+                                fontFamily: 'Arial'),
                           ),
-                      
-                      
-                 ),
+                        ),
+                      ),
                   ],
                 ),
                 trailing: SizedBox(
@@ -575,11 +574,38 @@ class PostState extends State<Post> {
                                     return SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.7,
+                                              0.28,
                                       width: MediaQuery.of(context).size.width *
                                           0.5,
                                       child: Column(
-                                        children: [],
+                                        children: [
+                                            ListTile(
+                                      leading: Text(
+                                        "Share to",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.mediation_sharp,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to Community"),
+                                      onTap: () => {},
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.person,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to profile"),
+                                      onTap: () => {},
+                                    ),
+
+                                        ],
                                       ),
                                     );
                                   }),
@@ -593,9 +619,38 @@ class PostState extends State<Post> {
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return Container(
-                                height: heigth * 0.5,
+                                height: heigth * 0.4,
                                 width: width,
                                 padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      leading: Text(
+                                        "Share to",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.mediation_sharp,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to Community"),
+                                      onTap: () => {},
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.person,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to profile"),
+                                      onTap: () => {},
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           );

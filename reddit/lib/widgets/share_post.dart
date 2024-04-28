@@ -29,6 +29,7 @@ class ShareOptionsScreen extends State<ShareOptions> {
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
     return Column(children: [
+      
     ]);
   }
 }
