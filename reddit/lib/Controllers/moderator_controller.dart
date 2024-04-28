@@ -44,11 +44,11 @@ class ModeratorController {
     generalSettings =
         await moderatorService.getCommunityGeneralSettings(communityName);
   }
-    Future<void> getPostTypesAndOptions(String communityName) async {
+
+  Future<void> getPostTypesAndOptions(String communityName) async {
     postTypesAndOptions =
         await moderatorService.getPostTypesAndOptions(communityName);
   }
-
 
   Future<void> getApprovedUser(String communityName) async {
     approvedUsers = await moderatorService.getApprovedUsers(communityName);
@@ -296,6 +296,20 @@ class PostSettingsProvider extends ChangeNotifier {
     );
     moderatorController.postTypesAndOptions =
         await moderatorService.getPostTypesAndOptions(communityName);
+    notifyListeners();
+  }
+}
+
+class CreateCommunityProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> createCommuntiy({
+      required String communityName, required String communityType, required bool communityFlag}) async {
+    await moderatorService.createCommunity(
+        communityName: communityName,
+        communityType: communityType,
+        communityFlag: communityFlag);
     notifyListeners();
   }
 }

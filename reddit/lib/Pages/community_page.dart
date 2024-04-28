@@ -52,8 +52,25 @@ class _CommunityPageState extends State<CommunityPage> {
   late GeneralSettings communityGeneralSettings;
 
   Future<void> fetchGeneralSettings() async {
-    await moderatorController.getGeneralSettings(communityName);
-    communityGeneralSettings = moderatorController.generalSettings;
+    bool optionsFetched = false;
+    late Map<String, dynamic> postCommentOptions;
+
+    Future<void> fetchCommunityPostComments() async {
+      await moderatorController
+          .getPostTypesAndOptions(moderatorController.communityName);
+      print('HenaCommunityy');
+      print(moderatorController.postTypesAndOptions["postTypes"]);
+      print(moderatorController.postTypesAndOptions["allowPolls"]);
+      print(moderatorController.postTypesAndOptions["allowVideo"]);
+      print(moderatorController.postTypesAndOptions["allowImages"]);
+    }
+
+    Future<void> fetchGeneralSettings() async {
+      await moderatorController.getGeneralSettings(communityName);
+      communityGeneralSettings = moderatorController.generalSettings;
+      print('HenaCommunityy');
+      print('ayKALAM');
+    }
   }
 
   @override
@@ -417,7 +434,9 @@ class _CommunityPageState extends State<CommunityPage> {
                         if (MediaQuery.of(context).size.width > 850)
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
-                            child: DescriptionWidget(communityName: widget.communityName,),
+                            child: DescriptionWidget(
+                              communityName: widget.communityName,
+                            ),
                           ),
                       ],
                     ),

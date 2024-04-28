@@ -16,7 +16,7 @@ class PostTypes extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(), // or any loading indicator
+              child: CircularProgressIndicator(), 
             ),
           );
         } else if (snapshot.hasError) {
@@ -26,7 +26,7 @@ class PostTypes extends StatelessWidget {
             ),
           );
         } else {
-          return PostTypesContent();
+          return const PostTypesContent();
         }
       },
     );
@@ -70,17 +70,12 @@ class _PostTypesState extends State<PostTypesContent> {
   bool isVideoImageVisible = true;
   bool toggleOptionsTypeVisiblity = false;
 
-  Future<void> fetchCommunityPostComments() async {
-    await moderatorController
-        .getPostTypesAndOptions(moderatorController.communityName);
-  }
 
   @override
   void initState() {
     super.initState();
 
     communityName = moderatorController.communityName;
-    fetchCommunityPostComments();
     // print(moderatorController.postTypesAndOptions["postTypes"]);
     // print(moderatorController.postTypesAndOptions["allowPolls"]);
     // print(moderatorController.postTypesAndOptions["allowVideo"]);
@@ -361,10 +356,11 @@ class _PostTypesState extends State<PostTypesContent> {
                   ]),
                 ),
                 onTap: () {
-                  setState(
-                    () {
-                      isOptionsTypeVisible = !isOptionsTypeVisible;
-                    },
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return OptionsWidget(changeTextShown: changeTextShown, chooseAny: chooseAny, chooseLink: chooseLink, chooseText: chooseText, isAnyIconPressed: isAnyIconPressed, isLinkOnlyIconPressed: isLinkOnlyIconPressed, isTextOnlyIconPressed: isTextOnlyIconPressed, falseVideoImageVisiblity: falseVideoImageVisiblity, trueVideoImageVisibility: trueVideoImageVisiblity);
+                    }
                   );
                 },
               ),

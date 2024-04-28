@@ -17,6 +17,7 @@ import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Create%20Community/create_community_page.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
