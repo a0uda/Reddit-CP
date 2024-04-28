@@ -167,7 +167,7 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                 SizedBox(
                                                   width: 160,
                                                   child: Text(
-                                                    "r/${community.general.communityName}",
+                                                    "r/${community.communityName}",
                                                     textAlign: TextAlign.center,
                                                     style: const TextStyle(
                                                         fontSize: 15),

@@ -80,7 +80,7 @@ class _PostTypesState extends State<PostTypesContent> {
     super.initState();
 
     communityName = moderatorController.communityName;
-    fetchCommunityPostComments();
+    //fetchCommunityPostComments();
     // print(moderatorController.postTypesAndOptions["postTypes"]);
     // print(moderatorController.postTypesAndOptions["allowPolls"]);
     // print(moderatorController.postTypesAndOptions["allowVideo"]);
@@ -159,7 +159,7 @@ class _PostTypesState extends State<PostTypesContent> {
       isLinkOnlyIconPressed = false;
       isTextOnlyIconPressed = true;
     });
-    moderatorController.postTypesAndOptions["postTypes"] = "Text Only";
+    moderatorController.postTypesAndOptions["postTypes"] = "Text Posts Only";
     moderatorController.postTypesAndOptions["allowVideo"] = false;
     moderatorController.postTypesAndOptions["allowImages"] = false;
     checkInitSaveState();
@@ -194,8 +194,8 @@ class _PostTypesState extends State<PostTypesContent> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              settingsProvider.setCommunityPostSetting(
+            onPressed: () async {
+              await settingsProvider.setCommunityPostSetting(
                 communityName: communityName,
                 allowImages:
                     moderatorController.postTypesAndOptions["allowImages"],

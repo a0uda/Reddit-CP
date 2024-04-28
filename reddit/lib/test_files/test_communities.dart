@@ -41,8 +41,9 @@ final rules = [
 
 final communities = [
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[0],
-    communityMembersNo: 5000,
+    communityMembersNo: "5000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: 'images/reddit-logo.png',
@@ -57,8 +58,9 @@ final communities = [
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[1],
-    communityMembersNo: 8000,
+    communityMembersNo: "8000",
     communityRules: rules,
     communityProfilePicturePath: 'images/Greddit.png',
     communityCoverPicturePath: 'images/Greddit.png',
@@ -73,8 +75,9 @@ final communities = [
     allowImage: true,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[2],
-    communityMembersNo: 10000,
+    communityMembersNo: "10000",
     communityRules: rules,
     communityProfilePicturePath: 'images/pp.jpg',
     communityCoverPicturePath: null,
@@ -89,8 +92,9 @@ final communities = [
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[3],
-    communityMembersNo: 12000,
+    communityMembersNo: "12000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: '',
@@ -105,8 +109,9 @@ final communities = [
     allowImage: false,
   ),
   CommunityItem(
+    communityName: 'Hyatt___Tillman',
     general: generalSettings[4],
-    communityMembersNo: 15000,
+    communityMembersNo: "15000",
     communityRules: rules,
     communityProfilePicturePath: 'images/reddit-logo.png',
     communityCoverPicturePath: '',
@@ -253,21 +258,21 @@ List<Map<String, dynamic>> editableModerators = [
 List<GeneralSettings> generalSettings = [
   GeneralSettings(
     communityID: "1",
-    communityName: 'Hyatt___Tillman',
+    communityTitle: 'Hyatt___Tillman',
     communityDescription: 'A community for Flutter enthusiasts.',
     communityType: "Public",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "2",
-    communityName: 'Waters___Greenholt',
+    communityTitle: 'Waters___Greenholt',
     communityDescription: 'Join us to explore the art and science of cooking!',
     communityType: "Private",
     nsfwFlag: false,
   ),
   GeneralSettings(
     communityID: "3",
-    communityName: 'Conroy_Inc',
+    communityTitle: 'Conroy_Inc',
     communityDescription:
         'Get fit and stay healthy with the support of our community!',
     communityType: "Restricted",
@@ -275,14 +280,14 @@ List<GeneralSettings> generalSettings = [
   ),
   GeneralSettings(
     communityID: "4",
-    communityName: 'Legros_LLC',
+    communityTitle: 'Legros_LLC',
     communityDescription: 'Capture the beauty of the world through your lens!',
     communityType: "Restricted",
     nsfwFlag: true,
   ),
   GeneralSettings(
     communityID: "5",
-    communityName: 'Gaming Universe',
+    communityTitle: 'Gaming Universe',
     communityDescription: 'Welcome to the ultimate gaming community!',
     communityType: "Restricted",
     nsfwFlag: true,
