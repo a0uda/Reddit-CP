@@ -28,7 +28,7 @@ class CommunityPage extends StatefulWidget {
       this.communityDescription});
 
   final String communityName;
-  final int communityMembersNo;
+  final String communityMembersNo;
   RulesItem? communityRule;
   final String communityProfilePicturePath;
   String? communityDescription;
@@ -51,27 +51,13 @@ class _CommunityPageState extends State<CommunityPage> {
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
 
-  Future<void> fetchGeneralSettings() async {
-    bool optionsFetched = false;
-    late Map<String, dynamic> postCommentOptions;
+  // Future<void> fetchGeneralSettings() async {
+  //   print("BADRRRRRRR");
+  //   //print(communityName);
 
-    Future<void> fetchCommunityPostComments() async {
-      await moderatorController
-          .getPostTypesAndOptions(moderatorController.communityName);
-      print('HenaCommunityy');
-      print(moderatorController.postTypesAndOptions["postTypes"]);
-      print(moderatorController.postTypesAndOptions["allowPolls"]);
-      print(moderatorController.postTypesAndOptions["allowVideo"]);
-      print(moderatorController.postTypesAndOptions["allowImages"]);
-    }
-
-    Future<void> fetchGeneralSettings() async {
-      await moderatorController.getGeneralSettings(communityName);
-      communityGeneralSettings = moderatorController.generalSettings;
-      print('HenaCommunityy');
-      print('ayKALAM');
-    }
-  }
+  //   await moderatorController.getGeneralSettings(communityName);
+  //   communityGeneralSettings = moderatorController.generalSettings;
+  // }
 
   @override
   void initState() {

@@ -75,15 +75,19 @@ class _ModCommNameState extends State<ModCommName> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              settingsProvider.setGeneralSettings(
-                  communityName: communityName,
-                  general: GeneralSettings(
-                      communityID: communityID,
-                      communityName: inputController.text,
-                      communityDescription: communityDescription,
-                      communityType: communityType,
-                      nsfwFlag: communityFlag));
+            onPressed: () async {
+              await settingsProvider.setGeneralSettings(
+                communityName: communityName,
+                general: GeneralSettings(
+                    communityID:
+                        moderatorController.generalSettings.communityID,
+                    communityTitle: inputController.text,
+                    communityDescription: moderatorController
+                        .generalSettings.communityDescription,
+                    communityType:
+                        moderatorController.generalSettings.communityType,
+                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
+              );
               setState(() {
                 doneSaved = true;
               });

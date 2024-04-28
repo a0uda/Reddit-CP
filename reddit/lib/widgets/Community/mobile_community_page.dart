@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
@@ -11,19 +12,13 @@ import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 
 class MobileCommunityPage extends StatefulWidget {
-  const MobileCommunityPage(
-      {super.key,
-      required this.communityName,
-      required this.communityMembersNo,
-      required this.communityRule,
-      required this.communityProfilePicturePath,
-      required this.communityDescription});
+  const MobileCommunityPage({
+    super.key,
+    required this.communityName,
+  });
 
   final String communityName;
-  final String communityMembersNo;
-  final communityRule;
-  final String communityProfilePicturePath;
-  final String communityDescription;
+
   @override
   State<MobileCommunityPage> createState() => _MobileCommunityPageState();
 }
@@ -165,10 +160,6 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: MobileCommunityPageBar(
                       communityName: widget.communityName,
-                      communityDescription: widget.communityDescription,
-                      communityMembersNo: widget.communityMembersNo,
-                      communityProfilePicturePath:
-                          widget.communityProfilePicturePath,
                       setButtonFunction: setButton,
                       buttonState: buttonState!,
                       isJoined: isJoined,
@@ -190,18 +181,12 @@ class MobileCommunityPageBar extends StatefulWidget {
   const MobileCommunityPageBar({
     super.key,
     required this.communityName,
-    required this.communityMembersNo,
-    required this.communityProfilePicturePath,
-    required this.communityDescription,
     required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
   });
 
   final String communityName;
-  final String communityMembersNo;
-  final String communityProfilePicturePath;
-  final String communityDescription;
   final String buttonState;
   final bool isJoined;
 
@@ -212,6 +197,25 @@ class MobileCommunityPageBar extends StatefulWidget {
 }
 
 class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+  bool membersFetched = false;
+  bool generalSettingsFetched = false;
+
+  Future<void> fetchGeneralSettings() async {
+    if (!generalSettingsFetched) {
+      await moderatorController.getGeneralSettings(widget.communityName);
+      generalSettingsFetched = true;
+    }
+  }
+
+  Future<void> fetchMembersCount() async {
+    if (!membersFetched) {
+      await moderatorController.getMembersCount(widget.communityName);
+      membersFetched = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -229,7 +233,7 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                 children: [
                   CircleAvatar(
                     backgroundImage:
-                        AssetImage(widget.communityProfilePicturePath),
+                        AssetImage(moderatorController.profilePictureURL),
                     backgroundColor: Colors.white,
                     radius: 20,
                   ),
@@ -245,12 +249,35 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                           fontSize: 16,
                         ),
                       ),
-                      Text(
-                        "${widget.communityMembersNo} members",
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 98, 98, 98),
-                          fontSize: 12,
-                        ),
+                      FutureBuilder<void>(
+                        future: fetchMembersCount(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<void> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                              return const Text('none');
+                            case ConnectionState.waiting:
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 30.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            case ConnectionState.done:
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+                              return Text(
+                                "${moderatorController.membersCount} members",
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 98, 98, 98),
+                                  fontSize: 12,
+                                ),
+                              );
+                            default:
+                              return const Text('badr');
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -273,15 +300,37 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
               ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(top: 0),
-            child: Text(
-              widget.communityDescription,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-              ),
-            ),
+          FutureBuilder<void>(
+            future: fetchGeneralSettings(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return const Text('none');
+                case ConnectionState.waiting:
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  return Container(
+                    margin: const EdgeInsets.only(top: 0),
+                    child: Text(
+                      moderatorController.generalSettings.communityDescription,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                default:
+                  return const Text('badr');
+              }
+            },
           ),
           TextButton(
             onPressed: () {},

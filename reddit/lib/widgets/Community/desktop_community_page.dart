@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
@@ -11,19 +12,12 @@ import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
-  const DesktopCommunityPage(
-      {super.key,
-      required this.communityName,
-      required this.communityMembersNo,
-      required this.communityRule,
-      required this.communityProfilePicturePath,
-      required this.communityDescription});
+  const DesktopCommunityPage({
+    super.key,
+    required this.communityName,
+  });
 
   final String communityName;
-  final String communityMembersNo;
-  final communityRule;
-  final String communityProfilePicturePath;
-  final String communityDescription;
 
   @override
   State<DesktopCommunityPage> createState() => _DesktopCommunityPageState();
@@ -34,6 +28,8 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
   String? buttonState;
   final CommunityController communityController =
       GetIt.instance.get<CommunityController>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   @override
   void initState() {
@@ -167,17 +163,12 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                           horizontal: 16, vertical: 8),
                       child: DesktopCommunityPageBar(
                         communityName: widget.communityName,
-                        communityDescription: widget.communityDescription,
-                        communityMembersNo: widget.communityMembersNo,
-                        communityProfilePicturePath:
-                            widget.communityProfilePicturePath,
                         setButtonFunction: setButton,
                         buttonState: buttonState!,
                         isJoined: isJoined,
                       ),
                     ),
                   ),
-                  
                 ],
               ),
             )
@@ -192,18 +183,12 @@ class DesktopCommunityPageBar extends StatefulWidget {
   const DesktopCommunityPageBar({
     super.key,
     required this.communityName,
-    required this.communityMembersNo,
-    required this.communityProfilePicturePath,
-    required this.communityDescription,
     required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
   });
 
   final String communityName;
-  final String communityMembersNo;
-  final String communityProfilePicturePath;
-  final String communityDescription;
   final String buttonState;
   final bool isJoined;
 
@@ -214,6 +199,23 @@ class DesktopCommunityPageBar extends StatefulWidget {
 }
 
 class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
+  bool membersFetched = false;
+  bool generalSettingsFetched = false;
+
+  Future<void> fetchGeneralSettings() async {
+    if (!generalSettingsFetched) {
+      await moderatorController.getGeneralSettings(widget.communityName);
+    }
+  }
+
+  Future<void> fetchMembersCount() async {
+    if (!membersFetched) {
+      await moderatorController.getMembersCount(widget.communityName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -221,18 +223,82 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
       child: Column(
         children: [
           SizedBox(
-            height: 170,
+            height: 180,
             child: Stack(
               children: [
-                Container(
-                  height: 128,
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                      image: AssetImage("images/reddit-banner-image.jpg"),
-                      fit: BoxFit.cover,
+                Column(
+                  children: [
+                    Container(
+                      height: 128,
+                      decoration: BoxDecoration(
+                        image: const DecorationImage(
+                          image: AssetImage("images/reddit-banner-image.jpg"),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                                left: screenWidth >= 576 && screenWidth < 768
+                                    ? 85 // Adjust margin for medium devices
+                                    : screenWidth >= 768 && screenWidth < 992
+                                        ? 90 // Adjust margin for large devices
+                                        : screenWidth >= 992 &&
+                                                screenWidth < 1200
+                                            ? 100 // Adjust margin for extra large devices
+                                            : screenWidth > 1200
+                                                ? 100
+                                                : 80), // Default margin size),
+                            child: Text(
+                              "r/${widget.communityName}",
+                              style: TextStyle(
+                                fontSize: screenWidth >= 576 &&
+                                        screenWidth < 768
+                                    ? 20 // Adjust font size for medium devices
+                                    : screenWidth >= 768 && screenWidth < 992
+                                        ? 25 // Adjust font size for large devices
+                                        : screenWidth >= 992 &&
+                                                screenWidth < 1200
+                                            ? 30 // Adjust font size for extra large devices
+                                            : screenWidth > 1200
+                                                ? 32
+                                                : 20, // Default font size
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          OutlineButtonWidget(
+                            'Create a post',
+                            () {},
+                            icon: const Icon(CupertinoIcons.add),
+                            borderColor: Colors.black,
+                          ),
+                          SizedBox(width: screenWidth * 0.01),
+                          OutlineButtonWidget(
+                            widget.buttonState,
+                            () {
+                              widget.setButtonFunction();
+                            },
+                            backgroundColour: widget.isJoined
+                                ? Colors.white
+                                : const Color.fromARGB(255, 69, 72, 78),
+                            borderColor: widget.isJoined
+                                ? Colors.black
+                                : Colors.transparent,
+                            foregroundColour:
+                                widget.isJoined ? Colors.black : Colors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 Positioned(
                   top: 90,
@@ -255,62 +321,6 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric( horizontal: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: screenWidth >= 576 && screenWidth < 768
-                          ? 85 // Adjust margin for medium devices
-                          : screenWidth >= 768 && screenWidth < 992
-                              ? 90 // Adjust margin for large devices
-                              : screenWidth >= 992 && screenWidth < 1200
-                                  ? 100 // Adjust margin for extra large devices
-                                  : screenWidth > 1200
-                                      ? 100
-                                      : 80), // Default margin size),
-                  child: Text(
-                    "r/${widget.communityName}",
-                    style: TextStyle(
-                      fontSize: screenWidth >= 576 && screenWidth < 768
-                          ? 20 // Adjust font size for medium devices
-                          : screenWidth >= 768 && screenWidth < 992
-                              ? 25 // Adjust font size for large devices
-                              : screenWidth >= 992 && screenWidth < 1200
-                                  ? 30 // Adjust font size for extra large devices
-                                  : screenWidth > 1200
-                                      ? 32
-                                      : 20, // Default font size
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                OutlineButtonWidget(
-                  'Create a post',
-                  () {},
-                  icon: const Icon(CupertinoIcons.add),
-                  borderColor: Colors.black,
-                ),
-                SizedBox(width: screenWidth * 0.01),
-                OutlineButtonWidget(
-                  widget.buttonState,
-                  () {
-                    widget.setButtonFunction();
-                  },
-                  backgroundColour: widget.isJoined
-                      ? Colors.white
-                      : const Color.fromARGB(255, 69, 72, 78),
-                  borderColor:
-                      widget.isJoined ? Colors.black : Colors.transparent,
-                  foregroundColour:
-                      widget.isJoined ? Colors.black : Colors.white,
-                )
-              ],
-            ),
-          )
         ],
       ),
     );
