@@ -15,12 +15,14 @@ class ModeratorController {
   List<RulesItem> rules = [];
   GeneralSettings generalSettings = GeneralSettings(
     communityID: "",
-    communityName: "",
+    communityTitle: "",
     communityDescription: "",
     communityType: "Public",
     nsfwFlag: false,
   );
+  String membersCount = "";
   Map<String, dynamic> postTypesAndOptions = {};
+  String profilePictureURL = "";
   CommunityItem? communityItem;
 
   Future<void> getCommunity(String communityName) async {
@@ -44,11 +46,11 @@ class ModeratorController {
     generalSettings =
         await moderatorService.getCommunityGeneralSettings(communityName);
   }
-    Future<void> getPostTypesAndOptions(String communityName) async {
+
+  Future<void> getPostTypesAndOptions(String communityName) async {
     postTypesAndOptions =
         await moderatorService.getPostTypesAndOptions(communityName);
   }
-
 
   Future<void> getApprovedUser(String communityName) async {
     approvedUsers = await moderatorService.getApprovedUsers(communityName);
@@ -64,6 +66,10 @@ class ModeratorController {
 
   Future<void> getRules(String communityName) async {
     rules = await moderatorService.getRules(communityName);
+  }
+
+  Future<void> getMembersCount(String communityName) async {
+    membersCount = await moderatorService.getMembersCount(communityName);
   }
 }
 
@@ -201,7 +207,7 @@ class ModeratorProvider extends ChangeNotifier {
   }
 
   Future<void> removeAsMod(String username, String communityName) async {
-    moderatorService.removeAsMod(username, communityName);
+    await moderatorService.removeAsMod(username, communityName);
     moderatorController.moderators =
         await moderatorService.getModerators(communityName);
     notifyListeners();
@@ -262,18 +268,19 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
 
   Future<void> setGeneralSettings(
       {required String communityName, required GeneralSettings general}) async {
-    moderatorService.postGeneralSettings(
+    await moderatorService.postGeneralSettings(
         communityName: communityName,
         settings: GeneralSettings(
             communityID: general.communityID,
-            communityName: general.communityName,
+            communityTitle: general.communityTitle,
             communityDescription: general.communityDescription,
             communityType: general.communityType,
             nsfwFlag: general.nsfwFlag));
-    moderatorController.generalSettings = await moderatorService
-        .getCommunityGeneralSettings(general.communityName);
-    moderatorController.communityName = general.communityName;
+    moderatorController.generalSettings =
+        await moderatorService.getCommunityGeneralSettings(communityName);
+
     notifyListeners();
+
   }
 }
 
@@ -287,7 +294,7 @@ class PostSettingsProvider extends ChangeNotifier {
       required bool allowPolls,
       required bool allowVideo,
       required String postTypes}) async {
-    moderatorService.setPostTypeAndOptions(
+    await moderatorService.setPostTypeAndOptions(
       communityName: communityName,
       allowImages: allowImages,
       allowPolls: allowPolls,

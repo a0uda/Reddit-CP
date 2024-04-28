@@ -4,7 +4,7 @@ class CommunityBackend{
   String name;
   String profilePictureURL;
   bool favoriteFlag;
-  int membersCount;
+  String membersCount;
   bool? joined;
 
   CommunityBackend({
@@ -22,7 +22,7 @@ class CommunityBackend{
       name: community['name'],
       profilePictureURL: community['profile_picture'],
       favoriteFlag: community['favorite_flag'],
-      membersCount: community['members_count'],
+      membersCount: community['members_count'].toString(),
       joined: community["joined"],
     );
   }
