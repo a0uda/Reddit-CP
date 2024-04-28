@@ -28,8 +28,6 @@ class _MobileAppBarState extends State<MobileAppBar> {
   Widget build(BuildContext context) {
     isInbox = widget.isInbox;
     final bool userLoggedIn = userController.userAbout != null;
-    print("ana fi appbar");
-    print(isInbox);
     return AppBar(
       title: !isInbox
           ? Row(
