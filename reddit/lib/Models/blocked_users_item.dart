@@ -12,6 +12,14 @@ class BlockedUsersItem {
   });
 
   static Future<BlockedUsersItem> fromJson(json) {
+    if(json == null) {
+      return Future.value(BlockedUsersItem(
+        id: null,
+        username: '',
+        profilePicture: '',
+        blockedDate: '',
+      ));
+    }
     return Future.value(BlockedUsersItem(
       id: json['id'],
       username: json['username'],

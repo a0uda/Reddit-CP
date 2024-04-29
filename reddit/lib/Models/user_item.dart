@@ -1,4 +1,5 @@
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/blocked_users_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
@@ -19,6 +20,7 @@ class UserItem {
   final AccountSettings? accountSettings;
   List<CommunityItem>? activecommunities;
    NotificationsSettingsItem? notificationsSettings;
+   BlockedUsersItem? blockedUsers;
 
   UserItem({
     required this.userAbout,
@@ -32,5 +34,7 @@ class UserItem {
     this.activecommunities,
     this.savedCommentsIds,
     this.notificationsSettings,
+    this.blockedUsers,
+  
   });
 }
