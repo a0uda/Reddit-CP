@@ -131,13 +131,18 @@ class UserService {
             username: username,
           ));
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
         body: json.encode({
           "other_username": username,
+          
         }),
       );
       print(response.body);
@@ -157,11 +162,15 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+                'Authorization': token!,
+        },
         body: json.encode({
           'other_username': username,
         }),
