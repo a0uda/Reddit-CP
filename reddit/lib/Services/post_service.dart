@@ -201,10 +201,10 @@ class PostService {
         
         
       );
-      print(response.body);
+   
       if(response.statusCode==200)
       {
-      final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+      final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();

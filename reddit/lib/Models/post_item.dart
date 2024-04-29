@@ -69,6 +69,7 @@ class PostItem {
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
+    print(json);
     final List<dynamic> jsonlist = json['images'];
       final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
         return ImageItem.fromJson(jsonitem);
@@ -84,7 +85,7 @@ class PostItem {
         createdAt: DateTime.parse(json['created_at']),
         type: json['type'],
         communityId: json['community_id'],
-        communityName: json['community_name'],
+        communityName:(json['community_name']!=null)?(json['community_name']):'',
         commentsCount: json['comments_count'],
         viewsCount: json['views_count'],
         sharesCount: json['shares_count'],

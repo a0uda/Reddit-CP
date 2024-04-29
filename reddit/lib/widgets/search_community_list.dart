@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 
 
@@ -12,20 +15,35 @@ class SearchCommunityList extends StatefulWidget {
 }
 
 class _SearchCommunityListState extends State<SearchCommunityList> {
-  List<Map<String, dynamic>> foundUsers = [];
-  final ModeratorController moderatorController =
-      GetIt.instance.get<ModeratorController>();
+  List<CommunityBackend> foundCom = [];
+  final TextEditingController usernameController = TextEditingController();
+  bool comFetched = false;
+  final UserController comController =
+      GetIt.instance.get<UserController>();
+
+  Future<void> fetchUserCom() async {
+    if (!comFetched) {
+      await comController
+          .getUserCommunities();
+      usernameController.text = "";
+      setState(() {
+        foundCom = comController.userCommunities!;
+        comFetched = true;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    foundUsers = List.from(moderatorController.approvedUsers);
+
   }
 
-  void searchUsers(String search) {
+  void searchCom(String search) {
     setState(() {
-      foundUsers = moderatorController.approvedUsers.where((user) {
-        final name = user['username'].toString().toLowerCase();
+      comFetched = true;
+      foundCom = comController.userCommunities!.where((com) {
+        final name = com.name.toLowerCase();
         return name.contains(search.toLowerCase());
       }).toList();
     });
@@ -34,129 +52,100 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      color: Colors.grey[200],
-      child: Column(
-        children: [
-          (screenWidth > 700)
-              ? AppBar(
-                  title: const Text(
-                    'Approved Users',
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return Consumer<ApprovedUserProvider>(
+        builder: (context, approvedUserProvider, child) {
+      return Container(
+        color: Colors.grey[200],
+        child: RefreshIndicator(
+          onRefresh: () async {
+            comFetched = false;
+            await fetchUserCom();
+          },
+          child: Column(
+            children: [
+              (screenWidth > 700)
+                  ? AppBar(
+                      leading: const SizedBox(
+                        width: 0,
+                      ),
+                      title: const Text(
+                        'Communities',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
+              TextField(
+                onChanged: searchCom,
+                controller: usernameController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 20,
                   ),
-                  actions: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 42, 101, 210)),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const AddApprovedUser(),
-                              ),
-                            );
-                          }, // Approve user Badrrr ele hya add
-                          child: const Text(
-                            "Approve User",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ])
-              : const SizedBox(),
-          TextField(
-            onChanged: searchUsers,
-            decoration: const InputDecoration(
-              prefixIcon: Icon(
-                Icons.search,
-                size: 20,
+                  hintText: 'Search',
+                ),
               ),
-              hintText: 'Search',
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: foundUsers.length,
-              itemBuilder: (BuildContext context, int index) {
-                final item = foundUsers[index];
-                return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 1),
-                  color: Colors.white,
-                  child: ListTile(
-                    tileColor: Colors.white,
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(item["profile_picture"]!),
-                      radius: 15,
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "u/${item["username"]!}",
+              FutureBuilder<void>(
+                future: fetchUserCom(),
+                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.none:
+                      return const Text('none');
+                    case ConnectionState.waiting:
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 30.0),
+                          child: CircularProgressIndicator(),
                         ),
-                        Text(
-                          item["approved_at"]!,
-                          style:
-                              const TextStyle(color: Colors.grey, fontSize: 10),
-                        )
-                      ],
-                    ),
-                    trailing: IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            backgroundColor: Colors.white,
-                            context: context,
-                            builder: (context) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 20.0),
-                                child: ListView(
-                                  shrinkWrap: true,
+                      );
+                    case ConnectionState.done:
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: foundCom.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final item = foundCom[index];  
+                            return Card(
+                              elevation: 0,
+                              margin: const EdgeInsets.only(bottom: 1),
+                              color: Colors.white,
+                              child: ListTile(
+                                tileColor: Colors.white,
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage(item.profilePictureURL),
+                                  radius: 15,
+                                ),
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ListTile(
-                                      leading: const Icon(Icons.person),
-                                      title: const Text("View Profile"),
-                                      onTap: () {
-                                        //navigate to profile of this user Badrr
-                                      },
+                                    Text(
+                                      "${item.name}",
                                     ),
-                                    ListTile(
-                                      leading: const Icon(Icons.do_disturb_alt),
-                                      title: const Text("Remove"),
-                                      onTap: () {
-                                        moderatorController.removeApprovedUsers(
-                                            item["username"],
-                                            moderatorController.communityName);
-                                        setState(() {
-                                          foundUsers =
-                                              moderatorController.approvedUsers;
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
+                          
                                   ],
                                 ),
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.more_horiz)),
-                  ),
-                );
-              },
-            ),
+                             
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    default:
+                      return const Text('badr');
+                  }
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }

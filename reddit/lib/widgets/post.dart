@@ -4,6 +4,7 @@ import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
+import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
@@ -593,7 +594,33 @@ class PostState extends State<Post> {
                                         color: Color.fromARGB(255, 0, 0, 0),
                                       ),
                                       title: const Text("Share to Community"),
-                                      onTap: () => {},
+                                      onTap: () => {
+                                            showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                scrollable: true,
+                                content: Builder(
+                                  builder: ((context) {
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                     child:SearchCommunityList(),
+
+                                    );
+                                  }),
+                                ),
+                              );
+                            },
+                          ),
+
+
+
+                                      },
                                     ),
                                     ListTile(
                                       leading: const Icon(
@@ -638,7 +665,29 @@ class PostState extends State<Post> {
                                         color: Color.fromARGB(255, 0, 0, 0),
                                       ),
                                       title: const Text("Share to Community"),
-                                      onTap: () => {},
+                                      onTap: () => {
+                                         showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return Container(
+                                height: heigth * 0.9,
+                                width: width,
+                                padding: const EdgeInsets.all(16.0),
+                                child: SearchCommunityList(),
+                                  
+                                
+                              );
+                            },
+                          ),
+                        
+
+
+
+
+
+
+                                      },
                                     ),
                                     ListTile(
                                       leading: const Icon(
