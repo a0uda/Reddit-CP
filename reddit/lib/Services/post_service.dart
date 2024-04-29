@@ -535,6 +535,33 @@ class PostService {
     }
   }
 
+Future<void> SharePost(String id,String comName,String caption,bool flag)async{
+    if (testing) {
+      
+    } else {
+      print(id);
+         print(comName);
+            print(caption);
+               print(flag);
+        final url =
+          Uri.parse('https://redditech.me/backend/posts/share-post');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,"community_name":comName,"caption":caption,"post_in_community_flag":flag}),
+      );
+      print(response.body);
+
+      // dislike post in database
+    }
+  }
 
 
 

@@ -14,6 +14,7 @@ import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/widgets/add_text_share.dart';
 
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
@@ -218,7 +219,6 @@ class PostState extends State<Post> {
                                                     .communityItem!
                                                     .general
                                                     .communityDescription,
-                    
                                             communityMembersNo:
                                                 communityController
                                                     .communityItem!
@@ -571,67 +571,110 @@ class PostState extends State<Post> {
                                 scrollable: true,
                                 content: Builder(
                                   builder: ((context) {
-                                    return SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.28,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.5,
-                                      child: Column(
-                                        children: [
+                                    return Container(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.28,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        child: Column(
+                                          children: [
                                             ListTile(
-                                      leading: Text(
-                                        "Share to",
-                                        style: TextStyle(
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(
-                                        Icons.mediation_sharp,
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                      ),
-                                      title: const Text("Share to Community"),
-                                      onTap: () => {
-                                            showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                scrollable: true,
-                                content: Builder(
-                                  builder: ((context) {
-                                    return SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.5,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.5,
-                                     child:SearchCommunityList(),
-
-                                    );
-                                  }),
-                                ),
-                              );
-                            },
-                          ),
-
-
-
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(
-                                        Icons.person,
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                      ),
-                                      title: const Text("Share to profile"),
-                                      onTap: () => {},
-                                    ),
-
-                                        ],
+                                              leading: Text(
+                                                "Share to",
+                                                style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(
+                                                Icons.mediation_sharp,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                              ),
+                                              title: const Text(
+                                                  "Share to Community"),
+                                              onTap: () => {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.5,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                            child:
+                                                                SearchCommunityList(
+                                                                    postId:
+                                                                        widget
+                                                                            .id),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              },
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(
+                                                Icons.person,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                              ),
+                                              title: const Text(
+                                                  "Share to profile"),
+                                              onTap: () => {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.5,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                            child: AddtextShare(
+                                                              comName: "",
+                                                              postId: widget.id,
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }),
@@ -645,6 +688,7 @@ class PostState extends State<Post> {
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return Container(
+                                decoration: BoxDecoration(color: Colors.white),
                                 height: heigth * 0.4,
                                 width: width,
                                 padding: const EdgeInsets.all(16.0),
@@ -666,27 +710,22 @@ class PostState extends State<Post> {
                                       ),
                                       title: const Text("Share to Community"),
                                       onTap: () => {
-                                         showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return Container(
-                                height: heigth * 0.9,
-                                width: width,
-                                padding: const EdgeInsets.all(16.0),
-                                child: SearchCommunityList(),
-                                  
-                                
-                              );
-                            },
-                          ),
-                        
-
-
-
-
-
-
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (BuildContext context) {
+                                            return Container(
+                                              color: Colors.white,
+                                              height: heigth * 0.9,
+                                              width: width,
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
+                                              child: SearchCommunityList(
+                                                postId: widget.id,
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       },
                                     ),
                                     ListTile(
@@ -695,7 +734,25 @@ class PostState extends State<Post> {
                                         color: Color.fromARGB(255, 0, 0, 0),
                                       ),
                                       title: const Text("Share to profile"),
-                                      onTap: () => {},
+                                      onTap: () => {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white),
+                                                height: heigth * 0.8,
+                                                width: width,
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: AddtextShare(
+                                                  comName: "",
+                                                  postId: widget.id,
+                                                ),
+                                              );
+                                            })
+                                      },
                                     ),
                                   ],
                                 ),

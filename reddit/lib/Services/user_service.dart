@@ -137,7 +137,7 @@ class UserService {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'other_username': username,
+          "other_username": username,
         }),
       );
       print(response.body);

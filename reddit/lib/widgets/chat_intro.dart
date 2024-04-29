@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Models/chat_user.dart';
+import 'package:reddit/widgets/add_chat.dart';
 import 'package:reddit/widgets/chat_tile.dart';
 
 class ChatIntro extends StatefulWidget {
@@ -56,22 +57,26 @@ class _ChatIntroState extends State<ChatIntro> {
                       style:
                           TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     ),
-                    FloatingActionButton.small(
-                      onPressed: () {
-                        /// addd cjhatt TODO
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            90),
-                      ),
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                      backgroundColor: Color.fromARGB(255, 10, 116, 51),
-                      elevation: 0,
-                    ),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                  onPressed: () {
+                     Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  AddChat(), 
+            ),
+          );
+    
+                  },
+                  icon: Icon(Icons.add, color: Colors.white),
+                  label: Text(
+                    'New',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                   
                   ],
                 ),
               ),

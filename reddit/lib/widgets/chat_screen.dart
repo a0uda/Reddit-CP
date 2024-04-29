@@ -13,6 +13,8 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  TextEditingController textController = TextEditingController();
+
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   List<ChatMessage> messages = [];
   late Future<void> _dataFuture;
@@ -106,13 +108,13 @@ class _ChatPageState extends State<ChatPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               color: (messages[index].messageType == "receiver"
-                                  ?  Color.fromARGB(255, 163, 228, 246)
+                                  ?   Color.fromARGB(255, 253, 119, 10)
                                   : Colors.grey.shade200),
                             ),
                             width: MediaQuery.of(context).size.width * 0.7,
                             child: Card(
                               color: (messages[index].messageType == "receiver"
-                                  ?   Color.fromARGB(255, 163, 228, 246)
+                                  ?    Color.fromARGB(255, 253, 119, 10)
                                   : Colors.grey.shade200),
                               elevation: 0,
                               child: Column(
@@ -156,29 +158,29 @@ class _ChatPageState extends State<ChatPage> {
                       width: 15,
                     ),
                     Expanded(
-                      child: TextField(
+                      child:Align( alignment: Alignment.topLeft,
+                        child:  TextField(
+                        controller: textController,
                         decoration: InputDecoration(
                             hintText: "Write message...",
                             hintStyle: TextStyle(color: Colors.black54),
                             border: InputBorder.none),
-                      ),
+                      ),),
                     ),
                     SizedBox(
                       width: 15,
                     ),
-                    FloatingActionButton.small(
-                      onPressed: () {},
-                             shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            90),),
-                      child: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                      backgroundColor: Color.fromARGB(255, 10, 116, 51),
-                      elevation: 0,
-                    ),
+                   IconButton(
+                              iconSize: 20,
+                              color: Color.fromARGB(255, 253, 119, 10),
+         
+                              highlightColor:
+                                  Theme.of(context).colorScheme.primary,
+                              icon: const Icon(Icons.send),
+                              onPressed: () {
+                            
+                              },
+                            ),
                   ],
                 ),
               ),

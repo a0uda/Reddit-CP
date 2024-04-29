@@ -4,31 +4,35 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Services/user_service.dart';
 
 import 'package:reddit/widgets/add_text_share.dart';
+import 'package:reddit/widgets/follower_list.dart';
 
-class SearchCommunityList extends StatefulWidget {
-  String postId;
-  SearchCommunityList({super.key, required this.postId});
+class AddChat extends StatefulWidget {
+
+ AddChat({super.key});
 
   @override
-  State<SearchCommunityList> createState() => _SearchCommunityListState();
+  State<AddChat> createState() => _AddChatState();
 }
 
-class _SearchCommunityListState extends State<SearchCommunityList> {
-  List<CommunityBackend> foundCom = [];
-
+class _AddChatState extends State<AddChat> {
+  List<FollowersFollowingItem>? foundFollowing ;
+  List<FollowersFollowingItem>? Following =[];
   final TextEditingController usernameController = TextEditingController();
-  bool comFetched = false;
-  final UserController comController = GetIt.instance.get<UserController>();
-
-  Future<void> fetchUserCom() async {
-    if (!comFetched) {
-      await comController.getUserCommunities();
+  bool followFetched = false;
+  final UserService userController = GetIt.instance.get<UserService>();
+  final UserController user = GetIt.instance.get<UserController>();
+  Future<void> fetchUserFollow() async {
+    if (!followFetched) {
+    
+        foundFollowing = await userController.getFollowing(user.userAbout!.username);
+      Following=foundFollowing!;
       usernameController.text = "";
       setState(() {
-        foundCom = comController.userCommunities!;
-        comFetched = true;
+        followFetched = true;
       });
     }
   }
@@ -38,11 +42,11 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
     super.initState();
   }
 
-  void searchCom(String search) {
+  void searchFollow(String search) {
     setState(() {
-      comFetched = true;
-      foundCom = comController.userCommunities!.where((com) {
-        final name = com.name.toLowerCase();
+      followFetched = true;
+      foundFollowing = Following!.where((com) {
+        final name = com.username.toLowerCase();
         return name.contains(search.toLowerCase());
       }).toList();
     });
@@ -55,17 +59,39 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
     bool ismobile = (screenWidth < 700) ? true : false;
     return Consumer<ApprovedUserProvider>(
         builder: (context, approvedUserProvider, child) {
-      return Container(
+      return Scaffold(
+        appBar:AppBar(
+          centerTitle: true,
+          title: const Text('New chat'),
+           titleTextStyle: TextStyle(
+        color: Color.fromARGB(255, 244, 87, 3),
+        fontWeight: FontWeight.bold,
+        fontSize: 20,
+      ),   leading: GestureDetector(
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            size: 20,
+            color: Color.fromARGB(255, 244, 87, 3),
+          ),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous page
+          },
+        ),  ),
+     
+        ),
+        
+      body:  Container(
         color: Color.fromARGB(255, 255, 255, 255),
         child: RefreshIndicator(
           onRefresh: () async {
-            comFetched = false;
-            await fetchUserCom();
+            followFetched = false;
+            await fetchUserFollow();
           },
           child: Column(
             children: [
               TextField(
-                onChanged: searchCom,
+                onChanged: searchFollow,
                 controller: usernameController,
                 decoration: InputDecoration(
                   hintText: "Search...",
@@ -84,7 +110,7 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                 ),
               ),
               FutureBuilder<void>(
-                future: fetchUserCom(),
+                future: fetchUserFollow(),
                 builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
@@ -102,62 +128,12 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                       }
                       return Expanded(
                         child: ListView.builder(
-                          itemCount: foundCom.length,
+                          itemCount: foundFollowing!.length,
                           itemBuilder: (BuildContext context, int index) {
-                            final item = foundCom[index];
+                            final item = foundFollowing![index];
                             return InkWell(
                               onTap: () => {
-                                if (ismobile)
-                                  {
-                                    Navigator.of(context).pop(),
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white),
-                                            height: heigth * 0.8,
-                                            width: screenWidth,
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: AddtextShare(
-                                              comName: foundCom[index].name,
-                                              postId: widget.postId,
-                                            ),
-                                          );
-                                        })
-                                  }
-                                else
-                                  {
-                                    Navigator.of(context).pop(),
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          scrollable: true,
-                                          content: Builder(
-                                            builder: ((context) {
-                                              return SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.5,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.5,
-                                                child: AddtextShare(
-                                                  comName: foundCom[index].name,
-                                                  postId: widget.postId,
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  }
+                               
                               },
                               child: Card(
                                 elevation: 0,
@@ -167,7 +143,7 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                   tileColor: Colors.white,
                                   leading: CircleAvatar(
                                     backgroundImage:
-                                        AssetImage(item.profilePictureURL),
+                                        AssetImage(item.profilePicture!),
                                     radius: 15,
                                   ),
                                   title: Column(
@@ -175,7 +151,7 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "${item.name}",
+                                        "${item.username}",
                                       ),
                                     ],
                                   ),
@@ -193,7 +169,8 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
             ],
           ),
         ),
-      );
+      ),);
+
     });
   }
 }
