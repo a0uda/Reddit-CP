@@ -52,6 +52,7 @@ class CommentsService {
 
   Future<int> addComment(String postId, String commentDescription,
       String username, String userId) async {
+    print("adding comment");
     if (testing) {
       comments.add(Comments(
         id: comments.length.toString(),
@@ -71,6 +72,7 @@ class CommentsService {
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/comments/new-comment');
+      print(token!);
 
       final response = await http.post(
         url,
@@ -83,6 +85,10 @@ class CommentsService {
           'description': commentDescription,
         }),
       );
+      print({
+        'id': postId,
+        'description': commentDescription,
+      });
 
       if (response.statusCode == 200) {
         print('commentt addededde');

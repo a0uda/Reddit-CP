@@ -50,4 +50,47 @@ class NotificationsService with ChangeNotifier {
       throw Exception('Failed to hide notification');
     }
   }
+
+  Future<bool> markAsRead(String notificationId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/notifications/mark-as-read');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: jsonEncode({
+        'id': notificationId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return true;
+    } else {
+      throw Exception('Failed to mark notification as read');
+    }
+  }
+
+  Future<bool> markAllAsRead() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/notifications/mark-all-as-read');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return true;
+    } else {
+      throw Exception('Failed to mark all notifications as read');
+    }
+  }
 }

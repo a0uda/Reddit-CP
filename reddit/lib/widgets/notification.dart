@@ -3,7 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/notification_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/notifications_service.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
 class NotificationCard extends StatefulWidget {
@@ -70,15 +73,44 @@ class NotificationCardState extends State<NotificationCard> {
 
     return ListTile(
       onTap: isPost
-          ? () {
+          ? () async {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) =>
                       CommentsDesktop(postId: widget.notificationItem.postId!),
                 ),
               );
+              await notificationsService
+                  .markAsRead(widget.notificationItem.id!);
             }
-          : null,
+          : () async {
+              var userService = GetIt.instance.get<UserService>();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FutureBuilder<UserAbout?>(
+                    future: userService.getUserAbout(
+                        widget.notificationItem.sendingUserUsername!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return ProfileScreen(
+                          snapshot.data,
+                          "other",
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+              await notificationsService
+                  .markAsRead(widget.notificationItem.id!);
+            },
       tileColor: widget.notificationItem.unreadFlag == true
           ? const Color.fromARGB(255, 138, 184, 207)
           : null,
@@ -91,7 +123,7 @@ class NotificationCardState extends State<NotificationCard> {
         title,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
       ),
-      subtitle: Text(subtitle),
+      subtitle: subtitle != '' ? Text(subtitle) : null,
       trailing: IconButton(
         icon: const Icon(Icons.more_horiz),
         onPressed: () {
@@ -136,7 +168,12 @@ class NotificationCardState extends State<NotificationCard> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => {},
+                    onPressed: () => {
+                      userController.updateSingleNotificationSetting(
+                          userController.userAbout!.username,
+                          widget.notificationItem.type!,
+                          false)
+                    },
                     child: const Row(
                       children: [
                         Icon(

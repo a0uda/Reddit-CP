@@ -1227,4 +1227,42 @@ class UserService {
       }
     }
   }
+
+  Future<void> updateSingleNotificationSetting(
+      String username, String notificationType, bool value) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-notification-settings');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'notification_settings': {
+            notificationType: value,
+          }
+        }),
+      );
+      print(
+        jsonEncode({
+          'notification_settings': {
+            notificationType: value,
+          }
+        }),
+      );
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('notification settings updated successfully');
+      } else {
+        print('failed to update notification settings');
+      }
+    }
+  }
 }
