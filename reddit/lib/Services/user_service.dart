@@ -712,10 +712,10 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == 200) {
-        print('get block success');
+        print('get notifications success');
         var data = jsonDecode(response.body);
         List<dynamic> blockedUsersJson = data['content'];
         return Future.wait(blockedUsersJson
