@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -82,6 +84,24 @@ class _CreatePostState extends State<CreatePost> {
 
       //TODO: FIREBASE
       //saveImage();
+      // try {
+      final storageRef = FirebaseStorage.instance.ref().child(
+          'images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print('images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print(File(_image!.path));
+      try {
+        await storageRef.putFile(File(_image!.path));
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
+      print(File(_image!.path));
+
+      // imageUrl = await storageRef.getDownloadURL();
+      print(imageUrl);
+      // } catch (e) {
+      //   print(e);
+      // }
     }
   }
 
@@ -632,13 +652,13 @@ class ModalForRules extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0 , top: 20),
+      padding: const EdgeInsets.only(left: 10.0, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
-            padding:  EdgeInsets.only(bottom: 15.0),
-            child:  Center(
+            padding: EdgeInsets.only(bottom: 15.0),
+            child: Center(
               child: Text(
                 "Community Rules",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),

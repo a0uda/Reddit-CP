@@ -15,6 +15,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/firebase_options.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
@@ -25,12 +26,14 @@ import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 //TODO : FIREBASE
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   // Registering MockService with GetIt
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); //TODO : FIREBASE
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
 
