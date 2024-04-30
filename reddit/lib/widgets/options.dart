@@ -11,7 +11,9 @@ class Options extends StatefulWidget {
   final bool saved;
   bool islocked;
   final bool isMyPost;
+  final String username;
   Options({
+    required this.username,
     required this.postId,
     required this.saved,
     required this.islocked,
@@ -31,7 +33,7 @@ class Postoptions extends State<Options> {
   Widget build(BuildContext context) {
     var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
-    bool isMyPost = postService.isMyPost(widget.postId!, username);
+    bool isMyPost = (username==widget.username)?true:false;
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
@@ -148,6 +150,25 @@ class Postoptions extends State<Options> {
                     ],
                   ),
                 ),
+
+                 if (isMyPost)
+                        PopupMenuItem(
+                  value: 4,
+                  onTap: () {
+    ///todo
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                         'Edit')
+                    ],
+                  ),
+                ),
             ],
             offset: const Offset(0, 25),
             color: Colors.white,
@@ -161,7 +182,7 @@ class Postoptions extends State<Options> {
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return Container(
-                        height: heigth * 0.3,
+                        height: heigth * 0.4,
                         width: width,
                         padding: const EdgeInsets.all(16.0),
                         child: ListView(
@@ -237,6 +258,20 @@ class Postoptions extends State<Options> {
                                   Navigator.of(context).pop();
                                 },
                               ),
+  if (isMyPost)
+                              ListTile(
+                                leading: Icon(Icons.edit
+                                    ),
+                                title: Text('Edit'),
+                                onTap: () {
+                                  setState(() {
+                               
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+
+
                             //
                           ],
                         ),

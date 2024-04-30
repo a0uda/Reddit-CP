@@ -64,6 +64,8 @@ class PostService {
           allowrepliesFlag: true, // Assuming initial allow replies flag is true
           setSuggestedSort: "None",
           vote: 0,
+          isReposted: false,
+          originalPostID: '',
         ),
       );
       
@@ -450,6 +452,7 @@ class PostService {
     if (testing) {
       return posts.firstWhere((element) => element.id == postId);
     } else {
+      print(postId);
       final url =
           Uri.parse('https://redditech.me/backend/posts/get-post?id=$postId');
 
@@ -464,7 +467,7 @@ class PostService {
       //print(json.decode(response.body)['post']);
 
       if (response.statusCode == 200) {
-        return PostItem.fromJson(json.decode(response.body)['post']);
+        return PostItem.fromJson(json.decode(response.body)['content']);
       } else {
         throw Exception('Failed to load post');
       }

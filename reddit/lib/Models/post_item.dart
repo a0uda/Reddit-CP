@@ -15,6 +15,7 @@ class PostItem {
   final DateTime? editedAt;
   final DateTime? deletedAt;
   final String type;
+  final bool isReposted;
   final String? linkUrl;
   final List<ImageItem>? images;
   final List<VideoItem>? videos;
@@ -35,15 +36,18 @@ class PostItem {
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;
   final int vote;
+  final String originalPostID;
 
   PostItem({
     required this.id,
     required this.userId,
     required this.username,
     required this.title,
+    required this.isReposted,
     this.description,
     required this.createdAt,
     this.editedAt,
+    required this.originalPostID,
     this.deletedAt,
     required this.type,
     this.linkUrl,
@@ -77,6 +81,8 @@ class PostItem {
     return PostItem(
 
         ///todo
+        isReposted: json['is_reposted_flag'],
+        originalPostID: "662bc4861980ada1a43262ac", //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
         id: json['_id'],
         userId: json['user_id'],
         description: json['description'],

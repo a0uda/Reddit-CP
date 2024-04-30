@@ -6,6 +6,7 @@ import 'package:reddit/widgets/collapse_post.dart';
 
 import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
 
 import 'package:reddit/Services/post_service.dart';
@@ -26,7 +27,9 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
   late Future<void> _dataFuture;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
+    bool isloading=false;
   Future<void> fetchdata() async {
+        isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
     
@@ -35,7 +38,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
       print(username);
       // Remove objects from list1 if their IDs match any in list2
     
-
+  isloading=false;
     setState(() {
       posts.addAll(post);
     });
@@ -62,7 +65,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
   }
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -80,13 +83,45 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-            
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
+                      var imageurl=null;
+                  if (posts[index].images != null ) {
+                    imageurl=  posts[index].images?[0].path;
+                  }
+                    print(posts[index].isReposted);
+                  if (posts[index].isReposted) {
+                    return Repost(
+                        id: posts[index].id,
+                        name: posts[index].username,
+                        title: posts[index].title,
+                        originalID: posts[index].originalPostID,
+                        date: posts[index].createdAt.toString(),
+                        likes: posts[index].upvotesCount -
+                            posts[index].downvotesCount,
+                        commentsCount: posts[index].commentsCount,
+                        communityName: posts[index].communityName,
+                        isLocked: posts[index].lockedFlag,
+                        vote: posts[index].vote);
+                  }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
                     return CollapsePost(
@@ -104,7 +139,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
-                    vote: posts[index].vote,
+                     vote: posts[index].vote,
 
                     title: posts[index].title,
                     postContent: posts[index].description,
@@ -113,7 +148,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl: posts[index].images?[0].path,
+                    imageUrl: imageurl,
                     videoUrl: posts[index].videos?[0].path,
                     poll: posts[index].poll,
                     id: posts[index].id,
@@ -124,6 +159,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
               );
             },
           );
+          }
         }
       },
     );

@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
@@ -44,60 +47,58 @@ String formatDateTime(String dateTimeString) {
 }
 
 //for merging
-class Post extends StatefulWidget {
+class Repost extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent;
+  final String originalID;
   final String date;
   int likes;
   final int commentsCount;
-  final String? imageUrl;
-  final String? linkUrl;
-  final String? videoUrl;
-  final PollItem? poll;
   final String id;
   final String communityName;
   final bool isLocked;
   final int vote;
 
-  Post(
+  Repost(
       {super.key,
       required this.id,
       // required this.profileImageUrl,
       required this.name,
       required this.title,
-      required this.postContent,
+      required this.originalID,
       required this.date,
       required this.likes,
       required this.commentsCount,
-      this.imageUrl,
-      this.linkUrl,
-      this.videoUrl,
-      this.poll,
       required this.communityName,
       required this.isLocked,
       required this.vote});
 
   @override
-  PostState createState() => PostState();
+  RepostState createState() => RepostState();
 }
 
-class PostState extends State<Post> {
+class RepostState extends State<Repost> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
   bool issaved = false;
   bool upVote = false;
   bool downVote = false;
+
+ late Future fetch;
   CommunityController communityController =
       GetIt.instance.get<CommunityController>();
   bool isHovering = false;
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  PostItem? post;
+  Future<void> loadOriginalPost() async {
 
-  // bool isMyPost = postService.isMyPost(widget.postId!, username);
+    post= await postService.getPostById(widget.originalID);
+ 
+  }
 
   void incrementCounter() {
     setState(() {
@@ -147,6 +148,7 @@ class PostState extends State<Post> {
   @override
   void initState() {
     super.initState();
+ fetch=loadOriginalPost();
 
     if (widget.vote == 1) {
       upVote = true;
@@ -365,6 +367,7 @@ class PostState extends State<Post> {
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
                             ? Options(
+                              
                                 postId: widget.id,
                                 saved: issaved,
                                 islocked: widget.isLocked,
@@ -391,101 +394,266 @@ class PostState extends State<Post> {
                             fontFamily: 'Arial'),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.postContent ?? "",
-                        style:
-                            const TextStyle(fontSize: 16, fontFamily: 'Arial'),
+
+
+                    //// future
+                    ///
+                    FutureBuilder(future: fetch, 
+                    builder:(context, snapshot) {
+
+                       if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: InkWell(
+                        onTap: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentsDesktop(
+                                  postId: post!.id), // pass the post ID here
+                            ),
+                          ),
+                        },
+                        onHover: (value) {
+                          ishovering = value;
+                          setState(() {});
+                        },
+                        child: Card(
+                          color: !ishovering
+                              ? Theme.of(context).colorScheme.background
+                              : Theme.of(context).colorScheme.primary,
+                          shadowColor: Theme.of(context).colorScheme.background,
+                          surfaceTintColor:
+                              Theme.of(context).colorScheme.background,
+                          child: Column(children: <Widget>[
+                            ListTile(
+                              leading: CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/reddit-logo.png'),
+                              ),
+                              title: Column(
+                                children: [
+                                  Row(children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: (post!.communityName != "")
+                                          ? InkWell(
+                                              onTap: () => {
+                                                //TODO: go to community
+                                                communityController
+                                                    .getCommunity(
+                                                        post!.communityName),
+
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            (CommunityPage(
+                                                              communityName: post!
+                                                                  .communityName,
+                                                              communityDescription:
+                                                                  communityController
+                                                                      .communityItem!
+                                                                      .general
+                                                                      .communityDescription,
+                                                              communityMembersNo:
+                                                                  communityController
+                                                                      .communityItem!
+                                                                      .communityMembersNo,
+                                                              communityProfilePicturePath:
+                                                                  communityController
+                                                                      .communityItem!
+                                                                      .communityProfilePicturePath,
+                                                            )))),
+                                              },
+                                              onHover: (hover) {
+                                                setState(() {
+                                                  isHovering = hover;
+                                                });
+                                              },
+                                              child: Text(
+                                                (post!.communityName) ==
+                                                        "Select Community"
+                                                    ? post!.username
+                                                    :  post!.communityName,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Arial'),
+                                              ),
+                                            )
+                                          : InkWell(
+                                              onTap: () => {
+                                                userType = userController
+                                                            .userAbout!
+                                                            .username ==
+                                                         post!.username
+                                                    ? 'me'
+                                                    : 'other',
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        FutureBuilder<
+                                                            UserAbout?>(
+                                                      future: userService
+                                                          .getUserAbout(
+                                                             post!.username),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          return const CircularProgressIndicator();
+                                                        } else if (snapshot
+                                                            .hasError) {
+                                                          print(widget.name);
+                                                          print(snapshot.data);
+                                                          return Text(
+                                                              'Error: ${snapshot.error}');
+                                                        } else {
+                                                          print(widget.name);
+                                                          print(snapshot.data);
+                                                          return ProfileScreen(
+                                                            snapshot.data,
+                                                            userType,
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              },
+                                              onHover: (hover) {
+                                                setState(() {
+                                                  isHovering = hover;
+                                                });
+                                              },
+                                              child: Text(
+                                               post!.username,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Arial'),
+                                              ),
+                                            ),
+                                    ),
+                                    Text(
+                                      '  • ${formatDateTime( post!.createdAt.toString())}',
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Color.fromARGB(
+                                              255, 117, 116, 115)),
+                                    ),
+                                  ]),
+                                  if ( post!.communityName != "")
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: InkWell(
+                                        onTap: () => {
+                                          userType = userController
+                                                      .userAbout!.username ==
+                                                  post!.username
+                                              ? 'me'
+                                              : 'other',
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FutureBuilder<UserAbout?>(
+                                                future: userService
+                                                    .getUserAbout( post!.username),
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return const CircularProgressIndicator();
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    print(widget.name);
+                                                    print(snapshot.data);
+                                                    return Text(
+                                                        'Error: ${snapshot.error}');
+                                                  } else {
+                                                    print(widget.name);
+                                                    print(snapshot.data);
+                                                    return ProfileScreen(
+                                                      snapshot.data,
+                                                      userType,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        },
+                                        onHover: (hover) {
+                                          setState(() {
+                                            isHovering = hover;
+                                          });
+                                        },
+                                        child: Text(
+                                           post!.username,
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w200,
+                                              fontFamily: 'Arial'),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                             
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    post!.title,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Arial'),
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                 post!.description ?? "",
+                                    style: const TextStyle(
+                                        fontSize: 16, fontFamily: 'Arial'),
+                                  ),
+                                ),
+                              ]),
+                            ),
+                          ]),
+                        ),
                       ),
+                    );
+                    }}
                     ),
-                    if (widget.imageUrl != null)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.background,
-                            borderRadius: BorderRadius.circular(20),
-                            image: DecorationImage(
-                              image: NetworkImage(widget.imageUrl!),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          height: MediaQuery.of(context).size.height * 0.5,
-                        ),
-                      ),
-                    if (widget.linkUrl != null)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          child: Text(
-                            widget.linkUrl!,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontFamily: 'Arial',
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onTap: () async {
-                            if (await canLaunchUrl(
-                                Uri.parse(widget.linkUrl!))) {
-                              await launchUrl(Uri.parse(widget.linkUrl!));
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Invalid Link'),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text(
-                                              'OK',
-                                              style: TextStyle(
-                                                  color: Colors.deepOrange),
-                                            )),
-                                      ],
-                                    );
-                                  });
-                            }
-                          },
-                        ),
-                      ),
-                    if (widget.videoUrl != null)
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          // Border width
-                          decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              shape: BoxShape.rectangle),
-                          child: const Text("VIDEO") //TODO: VideoScreen(),
-                          ),
-                    if (widget.poll != null)
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        child: PollView(
-                          id: int.parse(widget.id),
-                          question: widget.poll!.question,
-                          options: widget.poll!.options
-                              .asMap()
-                              .map((index, option) => MapEntry(index, {
-                                    option: widget.poll!.votes[index].toDouble()
-                                  }))
-                              .values
-                              .toList(),
-                          option1UserVotes: widget.poll!.option1Votes,
-                          option2UserVotes: widget.poll!.option2Votes,
-                          currentUser: userController.userAbout!.username,
-                        ),
-                      )
                   ],
                 ),
               ),
-              Padding(
+
+
+               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: <Widget>[

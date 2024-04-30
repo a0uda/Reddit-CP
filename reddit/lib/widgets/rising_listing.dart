@@ -6,6 +6,7 @@ import 'package:reddit/widgets/collapse_post.dart';
 
 import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
 
 import 'package:reddit/Services/post_service.dart';
@@ -122,6 +123,21 @@ class RisingListingBuild extends State<RisingListing> {
                       var imageurl=null;
                   if (posts[index].images != null ) {
                     imageurl=  posts[index].images?[0].path;
+                  }
+                    print(posts[index].isReposted);
+                  if (posts[index].isReposted) {
+                    return Repost(
+                        id: posts[index].id,
+                        name: posts[index].username,
+                        title: posts[index].title,
+                        originalID: posts[index].originalPostID,
+                        date: posts[index].createdAt.toString(),
+                        likes: posts[index].upvotesCount -
+                            posts[index].downvotesCount,
+                        commentsCount: posts[index].commentsCount,
+                        communityName: posts[index].communityName,
+                        isLocked: posts[index].lockedFlag,
+                        vote: posts[index].vote);
                   }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
