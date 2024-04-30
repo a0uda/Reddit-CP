@@ -306,3 +306,17 @@ class PostSettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class CreateCommunityProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> createCommuntiy({
+      required String communityName, required String communityType, required bool communityFlag}) async {
+    await moderatorService.createCommunity(
+        communityName: communityName,
+        communityType: communityType,
+        communityFlag: communityFlag);
+    notifyListeners();
+  }
+}

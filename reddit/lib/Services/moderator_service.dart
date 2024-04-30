@@ -759,4 +759,28 @@ class ModeratorMockService {
       );
     }
   }
+
+  Future<void> createCommunity(
+      {required String communityName,
+      required bool communityFlag,
+      required String communityType}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "name": communityName,
+          "type": communityType,
+          "nsfw_flag": communityFlag,
+        },
+      ),
+    );
+  }
 }
