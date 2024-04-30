@@ -81,9 +81,9 @@ class NotificationCardState extends State<NotificationCard> {
                 children: [
                   TextButton(
                     onPressed: () async {
+                      Navigator.pop(context);
                       await notificationsService
                           .hideNotification(widget.notificationItem.id!);
-                      Navigator.pop(context);
                     },
                     child: const Row(
                       children: [
