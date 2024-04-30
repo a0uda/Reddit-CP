@@ -56,7 +56,6 @@ class CommentsWidgetState extends State<CommentsWidget> {
                   width: double.infinity,
                   child: Post(
                     vote: post!.vote,
-
                     name: post!.username,
                     title: post!.title,
                     postContent: post!.description ?? '',
@@ -126,6 +125,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       commentController.text,
                       userController.userAbout!.username,
                       userController.userAbout?.id ?? '');
+                  print(status);
                   if (status == 200) {
                     loadComments();
                     commentController.clear();

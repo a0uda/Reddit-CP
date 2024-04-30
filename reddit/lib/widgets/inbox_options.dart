@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Services/notifications_service.dart';
+import 'package:reddit/widgets/notifications_settings.dart';
 
 class InboxOptions extends StatefulWidget {
   const InboxOptions({
@@ -18,6 +21,9 @@ class InboxOptionState extends State<InboxOptions> {
               showModalBottomSheet(
                   context: context,
                   builder: (BuildContext context) {
+                    late NotificationsService notificationsService =
+                        Provider.of<NotificationsService>(context,
+                            listen: false);
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -37,7 +43,9 @@ class InboxOptionState extends State<InboxOptions> {
                               ],
                             )),
                         TextButton(
-                            onPressed: () => {},
+                            onPressed: () async {
+                              await notificationsService.markAllAsRead();
+                            },
                             child: const Row(
                               children: [
                                 Icon(
@@ -50,7 +58,15 @@ class InboxOptionState extends State<InboxOptions> {
                               ],
                             )),
                         TextButton(
-                            onPressed: () => {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NotificationsSettings(),
+                                ),
+                              );
+                            },
                             child: const Row(
                               children: [
                                 Icon(

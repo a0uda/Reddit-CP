@@ -712,10 +712,10 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == 200) {
-        print('get block success');
+        print('get notifications success');
         var data = jsonDecode(response.body);
         List<dynamic> blockedUsersJson = data['content'];
         return Future.wait(blockedUsersJson
@@ -1215,6 +1215,44 @@ class UserService {
             'private_messages': notificationsSettingsItem.privateMessages,
             'chat_messages': notificationsSettingsItem.chatMessages,
             'chat_requests': notificationsSettingsItem.chatRequests,
+          }
+        }),
+      );
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('notification settings updated successfully');
+      } else {
+        print('failed to update notification settings');
+      }
+    }
+  }
+
+  Future<void> updateSingleNotificationSetting(
+      String username, String notificationType, bool value) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-notification-settings');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'notification_settings': {
+            notificationType: value,
+          }
+        }),
+      );
+      print(
+        jsonEncode({
+          'notification_settings': {
+            notificationType: value,
           }
         }),
       );
