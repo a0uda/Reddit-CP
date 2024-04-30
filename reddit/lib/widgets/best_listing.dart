@@ -111,6 +111,7 @@ class BestListingBuild extends State<BestListing> {
                   if (posts[index].isReposted) {
                     return Repost(
                         id: posts[index].id,
+                        description: posts[index].description!,
                         name: posts[index].username,
                         title: posts[index].title,
                         originalID: posts[index].originalPostID,

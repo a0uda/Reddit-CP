@@ -567,6 +567,58 @@ Future<void> SharePost(String id,String comName,String caption,bool flag)async{
   }
 
 
+Future<void> EditPost(String id,String caption)async{
+    if (testing) {
+      
+    } else {
+ 
+        final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/edit-text');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,"edited_text":caption,"is_post":true}),
+      );
+      print(response.body);
+
+      // dislike post in database
+    }
+  }
+
+
+Future<void> DeletePost(String id)async{
+    if (testing) {
+      
+    } else {
+ 
+        final url =
+          Uri.parse('https://redditech.me/backend/posts/remove');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,}),
+      );
+      print(response.body);
+
+
+    }
+  }
+
+
 
 
 }

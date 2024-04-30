@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/widgets/delete_post.dart';
+import 'package:reddit/widgets/edit_post.dart';
 import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
@@ -76,18 +78,7 @@ class Postoptions extends State<Options> {
                       ),
                     ),
               // PopupMenuItem 2
-              const PopupMenuItem(
-                value: 2,
-                child: Row(
-                  children: [
-                    Icon(Icons.hide_image),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text("Hide")
-                  ],
-                ),
-              ),
+            
               PopupMenuItem(
                 value: 3,
                 onTap: () => {
@@ -155,7 +146,37 @@ class Postoptions extends State<Options> {
                         PopupMenuItem(
                   value: 4,
                   onTap: () {
-    ///todo
+    ///todo edit 
+    showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.5,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                            child: EditPost(
+                                                              
+                                                              postId: widget.postId!,
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
                   },
                   child: Row(
                     children: [
@@ -169,6 +190,55 @@ class Postoptions extends State<Options> {
                     ],
                   ),
                 ),
+                if(isMyPost)
+                   PopupMenuItem(
+                    onTap:() {
+                      //to do delete
+                              showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.3,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.4,
+                                                            child: DeletePost(
+                                                              
+                                                              postId: widget.postId!,
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+
+                    },
+
+                    
+                value: 2,
+                child: Row(
+                  children: [
+                    Icon(Icons.delete),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Delete")
+                  ],
+                ),
+              ),
             ],
             offset: const Offset(0, 25),
             color: Colors.white,
@@ -264,10 +334,55 @@ class Postoptions extends State<Options> {
                                     ),
                                 title: Text('Edit'),
                                 onTap: () {
-                                  setState(() {
-                               
-                                  });
+                           
                                   Navigator.of(context).pop();
+                                                    showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white),
+                                                height: heigth * 0.8,
+                                                width: width,
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: EditPost(
+                                                
+                                                  postId: widget.postId!,
+                                                ),
+                                              );
+                                            });
+                                },
+                              ),
+
+ if (isMyPost)
+                              ListTile(
+                                leading: Icon(Icons.delete
+                                    ),
+                                title: Text('Delete'),
+                                onTap: () {
+                         
+                                  Navigator.of(context).pop();
+
+
+                                    showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white),
+                                                height: heigth * 0.3,
+                                                width: width,
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: DeletePost(
+                                                
+                                                  postId: widget.postId!,
+                                                ),
+                                              );
+                                            });
                                 },
                               ),
 

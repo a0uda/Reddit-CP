@@ -58,6 +58,7 @@ class Repost extends StatefulWidget {
   final String id;
   final String communityName;
   final bool isLocked;
+   String? description;
   final int vote;
 
   Repost(
@@ -72,6 +73,7 @@ class Repost extends StatefulWidget {
       required this.commentsCount,
       required this.communityName,
       required this.isLocked,
+     this.description,
       required this.vote});
 
   @override
@@ -394,7 +396,14 @@ class RepostState extends State<Repost> {
                             fontFamily: 'Arial'),
                       ),
                     ),
-
+  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.description ?? "",
+                        style:
+                            const TextStyle(fontSize: 16, fontFamily: 'Arial'),
+                      ),
+  ),
 
                     //// future
                     ///

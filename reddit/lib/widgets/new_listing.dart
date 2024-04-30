@@ -108,6 +108,7 @@ class NewListingBuild extends State<NewListing> {
                   print(posts[index].isReposted);
                   if (posts[index].isReposted) {
                     return Repost(
+                          description: posts[index].description,
                         id: posts[index].id,
                         name: posts[index].username,
                         title: posts[index].title,
