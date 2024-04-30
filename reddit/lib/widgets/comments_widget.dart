@@ -56,7 +56,6 @@ class CommentsWidgetState extends State<CommentsWidget> {
                   width: double.infinity,
                   child: Post(
                     vote: post!.vote,
-
                     name: post!.username,
                     title: post!.title,
                     postContent: post!.description ?? '',

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/notification_item.dart';
 import 'package:reddit/Services/notifications_service.dart';
+import 'package:reddit/widgets/comments_desktop.dart';
 
 class NotificationCard extends StatefulWidget {
   final NotificationItem notificationItem;
@@ -21,6 +22,7 @@ class NotificationCardState extends State<NotificationCard> {
   Widget build(BuildContext context) {
     String title;
     String subtitle;
+    bool isPost = false;
 
     if (widget.notificationItem.type == 'upvotes_posts' &&
         widget.notificationItem.isInCommunity == true) {
@@ -28,28 +30,34 @@ class NotificationCardState extends State<NotificationCard> {
           'u/${widget.notificationItem.sendingUserUsername} upvoted your post in ${widget.notificationItem.communityName}';
       subtitle =
           'Go see your post on u/${widget.notificationItem.communityName}';
+      isPost = true;
     } else if (widget.notificationItem.type == 'upvotes_posts') {
       title =
           'u/${widget.notificationItem.sendingUserUsername} upvoted your post';
       subtitle = 'Go see your post on u/${userController.userAbout?.username}';
+      isPost = true;
     } else if (widget.notificationItem.type == 'comments' &&
         widget.notificationItem.isInCommunity == true) {
       title =
           'u/${widget.notificationItem.sendingUserUsername} replied to your post in ${widget.notificationItem.communityName}';
       subtitle = '';
+      isPost = true;
     } else if (widget.notificationItem.type == 'comments') {
       title =
           'u/${widget.notificationItem.sendingUserUsername} replied to your post';
       subtitle = '';
+      isPost = true;
     } else if (widget.notificationItem.type == 'replies' &&
         widget.notificationItem.isInCommunity == true) {
       title =
           'u/${widget.notificationItem.sendingUserUsername} replied to your comment in ${widget.notificationItem.communityName}';
       subtitle = '';
+      isPost = true;
     } else if (widget.notificationItem.type == 'replies') {
       title =
           'u/${widget.notificationItem.sendingUserUsername} replied to your comment';
       subtitle = '';
+      isPost = true;
     } else if (widget.notificationItem.type == 'new_followers') {
       title = 'u/${widget.notificationItem.sendingUserUsername} followed you';
       subtitle = '';
@@ -57,9 +65,23 @@ class NotificationCardState extends State<NotificationCard> {
       title = '';
 
       subtitle = '';
+      isPost = false;
     }
 
     return ListTile(
+      onTap: isPost
+          ? () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CommentsDesktop(postId: widget.notificationItem.postId!),
+                ),
+              );
+            }
+          : null,
+      tileColor: widget.notificationItem.unreadFlag == true
+          ? const Color.fromARGB(255, 138, 184, 207)
+          : null,
       leading: const CircleAvatar(
         //TODO: CHANGE THE PICTURE FROM DATABASE
         // backgroundImage: NetworkImage(widget.notificationItem.profilePicture!),
