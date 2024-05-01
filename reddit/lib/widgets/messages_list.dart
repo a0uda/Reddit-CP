@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/message_content.dart';
 
@@ -81,6 +84,9 @@ class MessagesState extends State<MessagesPage> {
                                 : (message.senderType == 'user'
                                     ? message.senderUsername
                                     : message.senderVia);
+                            String? receiverType = message.isSent
+                                ? message.receiverType
+                                : message.senderType;
                             return ListTile(
                               onTap: () async {
                                 userService.markoneMessageRead(message.id);
@@ -100,15 +106,52 @@ class MessagesState extends State<MessagesPage> {
                               tileColor: Colors.white,
                               title: Row(
                                 children: [
-                                  Text(
-                                    "${message.isSent ? message.receiverType == 'user' ? message.receiverUsername ?? '' : 'r/${message.receiverUsername}' : message.senderType == 'user' ? message.senderUsername : message.senderVia}",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        color: message.unreadFlag
-                                            ? Colors.black
-                                            : const Color.fromARGB(
-                                                255, 112, 112, 112),
-                                        fontWeight: FontWeight.bold),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (receiverType == 'user') {
+                                        var userType = userController
+                                                    .userAbout!.username ==
+                                                messageReceiver
+                                            ? 'me'
+                                            : 'other';
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                FutureBuilder<UserAbout?>(
+                                              future: userService.getUserAbout(
+                                                  messageReceiver!),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const CircularProgressIndicator();
+                                                } else if (snapshot.hasError) {
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else {
+                                                  return ProfileScreen(
+                                                    snapshot.data,
+                                                    userType,
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        // todo: navigate to subreddit
+                                      }
+                                    },
+                                    child: Text(
+                                      "${message.isSent ? message.receiverType == 'user' ? message.receiverUsername ?? '' : 'r/${message.receiverUsername}' : message.senderType == 'user' ? message.senderUsername : 'r/${message.senderVia}'}",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: message.unreadFlag
+                                              ? Colors.black
+                                              : const Color.fromARGB(
+                                                  255, 112, 112, 112),
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                   Text(
                                     ' • ${getDateTimeDifferenceWithLabel(message.createdAt ?? '')}',

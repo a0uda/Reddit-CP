@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
 import 'package:reddit/widgets/report_options.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageContent extends StatefulWidget {
   final List<Messages> messages;
@@ -139,19 +141,25 @@ class _MessageContentState extends State<MessageContent> {
                               ),
                             ],
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(height: 5),
                           showMessageContent[index]
                               ? Padding(
-                                  padding: const EdgeInsets.only(left: 10),
-                                  child: Text(
-                                    message.message ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black,
+                                  padding: const EdgeInsets.only(left: 17),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: message.isInvitation!
+                                          ? _parseInvitationMessage(
+                                              message.message!)
+                                          : _parseMessage(message.message!),
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 )
                               : const SizedBox.shrink(),
+                          const SizedBox(height: 5),
                         ],
                       ),
               );
@@ -303,6 +311,117 @@ class _MessageContentState extends State<MessageContent> {
         );
       },
     );
+  }
+
+  List<TextSpan> _parseInvitationMessage(String message) {
+    final List<TextSpan> spans = [];
+
+    final RegExp regex = RegExp(
+      r'(moderators page for \/r\/\S+)',
+      caseSensitive: false,
+    );
+
+    final Iterable<RegExpMatch> matches = regex.allMatches(message);
+
+    int start = 0;
+
+    for (final match in matches) {
+      final link = match.group(0);
+      if (start < match.start) {
+        spans.add(
+          TextSpan(
+            text: message.substring(start, match.start),
+          ),
+        );
+      }
+      final gestureRecognizer = TapGestureRecognizer()
+        ..onTap = () {
+          // todo: implement the navigation to the moderators page
+        };
+
+      spans.add(
+        TextSpan(
+          text: link,
+          style:  TextStyle(
+            color: Colors.blue[900],
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: gestureRecognizer,
+        ),
+      );
+      start = match.end;
+    }
+
+    if (start < message.length) {
+      spans.add(
+        TextSpan(
+          text: message.substring(start),
+        ),
+      );
+    }
+
+    return spans;
+  }
+
+  List<TextSpan> _parseMessage(String message) {
+    final List<TextSpan> spans = [];
+
+    final RegExp regex = RegExp(
+      r'\b(([\w-]+://?|www[.]|\b|^)[^\s]+\.[^\s]+)',
+      caseSensitive: false,
+    );
+
+    final Iterable<RegExpMatch> matches = regex.allMatches(message);
+
+    int start = 0;
+
+    for (final match in matches) {
+      final link = match.group(0);
+      if (start < match.start) {
+        spans.add(
+          TextSpan(
+            text: message.substring(start, match.start),
+          ),
+        );
+      }
+      final gestureRecognizer = TapGestureRecognizer()
+        ..onTap = () {
+          _launchURL(link!);
+        };
+
+      spans.add(
+        TextSpan(
+          text: link,
+          style: TextStyle(
+            color: Colors.blue[900],
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: gestureRecognizer,
+        ),
+      );
+      start = match.end;
+    }
+
+    if (start < message.length) {
+      spans.add(
+        TextSpan(
+          text: message.substring(start),
+        ),
+      );
+    }
+
+    return spans;
+  }
+
+  void _launchURL(String url) async {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'http://$url';
+    }
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void showMoreOptionsDialog(

@@ -15,7 +15,8 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: null,
-      subject: "message"),
+      subject: "message",
+      isInvitation: false),
   Messages(
       id: "2",
       senderUsername: "Purple-7544",
@@ -30,7 +31,8 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: "1",
-      subject: "message"),
+      subject: "message",
+      isInvitation: false),
   Messages(
       id: "3",
       senderUsername: "johndoe",
@@ -45,7 +47,8 @@ final List<Messages> userMessages = [
       isSent: false,
       isReply: false,
       parentMessageId: "1",
-      subject: "message"),
+      subject: "message",
+      isInvitation: false),
   Messages(
       id: "4",
       senderUsername: "johndoe",
@@ -60,7 +63,8 @@ final List<Messages> userMessages = [
       isSent: false,
       isReply: false,
       parentMessageId: null,
-      subject: "subject"),
+      subject: "subject",
+      isInvitation: false),
   Messages(
       id: "5",
       senderUsername: "Mark_45",
@@ -75,7 +79,8 @@ final List<Messages> userMessages = [
       isSent: false,
       isReply: false,
       parentMessageId: null,
-      subject: "subject"),
+      subject: "subject",
+      isInvitation: false),
   Messages(
       id: "6",
       senderUsername: "",
@@ -83,14 +88,16 @@ final List<Messages> userMessages = [
       receiverUsername: "Purple-7544",
       receiverType: "user",
       senderVia: "bizoooo",
-      message: "test the unread to heba reciever",
+      message:
+          "invitation to moderate r/bizoooo, to accept visit the moderators page for /r/bizoooo and click 'accept'.",
       createdAt: "2024-04-28T04:39:31.197Z",
       deletedAt: null,
       unreadFlag: true,
       isSent: false,
       isReply: false,
       parentMessageId: null,
-      subject: "subject"),
+      subject: "subject",
+      isInvitation: true),
   Messages(
       id: "6",
       senderUsername: "Purple-7544",
@@ -106,7 +113,8 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: null,
-      subject: "Consequatur tui aranea."),
+      subject: "Consequatur tui aranea.",
+      isInvitation: false),
   Messages(
       id: "7",
       senderUsername: "Mark_45",
@@ -122,7 +130,8 @@ final List<Messages> userMessages = [
       isSent: false,
       isReply: false,
       parentMessageId: null,
-      subject: "Consequatur tui aranea."),
+      subject: "Consequatur tui aranea.",
+      isInvitation: false),
   Messages(
       id: "8",
       senderUsername: "Purple-7544",
@@ -137,7 +146,8 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: null,
-      subject: "test compose "),
+      subject: "test compose ",
+      isInvitation: false),
   Messages(
       id: "9",
       senderUsername: "Purple-7544",
@@ -152,7 +162,8 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: null,
-      subject: "subject"),
+      subject: "subject",
+      isInvitation: false),
   Messages(
       id: "10",
       senderUsername: "Purple-7544",
@@ -167,5 +178,6 @@ final List<Messages> userMessages = [
       isSent: true,
       isReply: false,
       parentMessageId: null,
-      subject: "subject")
+      subject: "subject",
+      isInvitation: false),
 ];

@@ -13,6 +13,7 @@ class Messages {
   bool? isReply;
   String? parentMessageId;
   String? subject;
+  bool? isInvitation;
 
   Messages({
     required this.id,
@@ -29,6 +30,7 @@ class Messages {
     this.senderVia,
     this.deletedAt,
     this.parentMessageId,
+    this.isInvitation,
   });
 
   factory Messages.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class Messages {
       isReply: json['is_reply'],
       parentMessageId: json['parent_message_id'],
       subject: json['subject'],
+      isInvitation: json['is_invitation'],
     );
   }
 }
