@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
@@ -27,9 +25,19 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   late String communityTitle;
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
+
   bool rulesFetched = false;
   bool generalSettingsFetched = false;
   bool membersFetched = false;
+  bool communityInfoFetched = false;
+  bool userFetched = false;
+
+  Future<void> fetchModerators() async {
+    if (!userFetched) {
+      await moderatorController
+          .getModerators(moderatorController.communityName);
+    }
+  }
 
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
@@ -60,162 +68,294 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ChangeGeneralSettingsProvider>(
-        builder: (context, settingsProvider, child) {
-      return Material(
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 248, 250, 251),
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (MediaQuery.of(context).size.width < 700)
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                child: const Text(
-                                  // moderatorController.generalSettings.communityTitle,
-                                  'ba test bas el donya mashya ezay - Community Title',
-                                  style: TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color.fromARGB(255, 42, 60, 66)),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: const Text(
-                                  'Bagrab ahot description ashoof el donya mashya ezay',
-                                  style: TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontSize: 14,
-                                    color: Color.fromARGB(255, 87, 111, 118),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(bottom: 4),
-                                      child: const Text(
-                                        // moderatorController.membersCount,
-                                        '4',
-                                        style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color.fromARGB(
-                                                255, 42, 60, 66)),
-                                      ),
-                                    ),
-                                    const Text(
-                                      'Members',
-                                      style: TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w300,
-                                          color: Color.fromARGB(
-                                              255, 87, 111, 118)),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+      builder: (context, settingsProvider, child) {
+        return Material(
+          child: SingleChildScrollView(
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 245, 245, 245),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (MediaQuery.of(context).size.width < 700)
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                     ),
-                    const Divider(
-                      color: Color.fromARGB(255, 215, 215, 215),
-                      height: 1,
-                      thickness: 1.0,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 16),
-                      child: Padding(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              child: const Text(
-                                'Rules',
-                                style: TextStyle(
-                                  fontFamily: 'Roboto',
-                                  fontSize: 14, // el mafrood 12
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromARGB(255, 97, 104, 110),
-                                ),
-                              ),
-                            ),
-                            FutureBuilder(
-                              future: fetchRules(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else {
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: moderatorController.rules.length,
-                                    itemBuilder: (context, index) {
-                                      return Column(
-                                        children: [
-                                          RuleTile(
-                                            rule: moderatorController
-                                                .rules[index],
-                                            index: index + 1,
-                                          ),
-                                        ],
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FutureBuilder(
+                                  future: fetchGeneralSettings(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
                                       );
-                                    },
-                                  );
-                                }
-                              },
+                                    } else if (snapshot.hasError) {
+                                      return const Text('');
+                                    } else {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Text(
+                                          moderatorController
+                                              .generalSettings.communityTitle,
+                                          //'ba test bas el donya mashya ezay - Community Title',
+                                          style: const TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              color: Color.fromARGB(
+                                                  255, 42, 60, 66)),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                FutureBuilder(
+                                  future: fetchGeneralSettings(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return const Text('');
+                                    } else {
+                                      return Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 8),
+                                        child: Text(
+                                          moderatorController.generalSettings
+                                              .communityDescription,
+                                          style: const TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 14,
+                                            color: Color.fromARGB(
+                                                255, 87, 111, 118),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FutureBuilder(
+                                        future: fetchGeneralSettings(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return const Text('0');
+                                          } else {
+                                            return Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 4),
+                                              child: Text(
+                                                moderatorController
+                                                    .membersCount,
+                                                //'4',
+                                                style: const TextStyle(
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color.fromARGB(
+                                                        255, 42, 60, 66)),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      const Text(
+                                        'Members',
+                                        style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300,
+                                            color: Color.fromARGB(
+                                                255, 87, 111, 118)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const Divider(
+                        color: Color.fromARGB(255, 215, 215, 215),
+                        height: 1,
+                        thickness: 1.0,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: const Text(
+                                  'Rules',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14, // el mafrood 12
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromARGB(255, 97, 104, 110),
+                                  ),
+                                ),
+                              ),
+                              FutureBuilder(
+                                future: fetchRules(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return const Text('');
+                                  } else {
+                                    if (moderatorController.rules.isEmpty) {
+                                      return const Text(
+                                        'No rules have been set for this community yet.',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 14,
+                                          color:
+                                              Color.fromARGB(255, 97, 104, 110),
+                                        ),
+                                      );
+                                    } else {
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            moderatorController.rules.length,
+                                        itemBuilder: (context, index) {
+                                          return Column(
+                                            children: [
+                                              RuleTile(
+                                                rule: moderatorController
+                                                    .rules[index],
+                                                index: index + 1,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Divider(
+                        color: Color.fromARGB(255, 215, 215, 215),
+                        height: 1,
+                        thickness: 1.0,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: const Text(
+                                  'Moderators',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14, // el mafrood 12
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromARGB(255, 97, 104, 110),
+                                  ),
+                                ),
+                              ),
+                              FutureBuilder(
+                                future: fetchModerators(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return const Text('');
+                                  } else {
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                          moderatorController.rules.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          children: [
+                                            ModeratorTile(
+                                              moderatorUsername:
+                                                  moderatorController
+                                                          .moderators[index]
+                                                      ["username"],
+                                              moderatorProfilePicture:
+                                                  moderatorController
+                                                          .moderators[index]
+                                                      ["profile_picture"],
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }
 
@@ -235,20 +375,24 @@ class RuleTileState extends State<RuleTile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0, right: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ListTile(
             title: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    '${widget.index}. ${widget.rule.ruleTitle}',
-                    style: const TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 14,
-                      color: Colors.black,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 6.0),
+                    child: Text(
+                      '${widget.index} ${widget.rule.ruleTitle}',
+                      style: const TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                        color: Color.fromARGB(255, 97, 104, 110),
+                      ),
                     ),
                   ),
                 ),
@@ -257,7 +401,7 @@ class RuleTileState extends State<RuleTile> {
                     isExpanded
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
-                    color: Colors.black,
+                    color: const Color.fromARGB(255, 19, 21, 23),
                   ),
                   onPressed: () {
                     setState(() {
@@ -274,29 +418,68 @@ class RuleTileState extends State<RuleTile> {
             },
           ),
           AnimatedOpacity(
-            duration: const Duration(milliseconds: 0),
+            duration: const Duration(milliseconds: 100),
             opacity: isExpanded ? 1.0 : 0.0,
             child: Visibility(
               visible: isExpanded,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                 child: Text(
                   widget.rule.ruleDescription ?? "",
                   style: const TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 14,
-                    color: Colors.black,
+                    color: Color.fromARGB(255, 97, 104, 110),
                   ),
                 ),
               ),
             ),
           ),
-          const Divider(
-            color: Color.fromARGB(255, 215, 215, 215),
-            height: 1,
-            thickness: 1.0,
-          ),
         ],
+      ),
+    );
+  }
+}
+
+class ModeratorTile extends StatefulWidget {
+  const ModeratorTile(
+      {super.key,
+      required this.moderatorUsername,
+      required this.moderatorProfilePicture});
+
+  final String moderatorUsername;
+  final String moderatorProfilePicture;
+
+  @override
+  ModeratorTileState createState() => ModeratorTileState();
+}
+
+class ModeratorTileState extends State<ModeratorTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 32,
+          backgroundImage: NetworkImage(widget.moderatorProfilePicture),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6.0),
+          child: GestureDetector(
+              child: Text(
+                "u/${widget.moderatorUsername}",
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 14,
+                  color: Color.fromARGB(255, 97, 104, 110),
+                ),
+              ),
+              onTap: () {
+                
+              },),
+        ),
       ),
     );
   }

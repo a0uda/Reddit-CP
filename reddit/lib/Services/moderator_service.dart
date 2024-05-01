@@ -783,4 +783,26 @@ class ModeratorMockService {
       ),
     );
   }
+
+  Future<Map<String, dynamic>> getCommunityInfo(
+      {required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/get-community-view/$communityName');
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': token!},
+    );
+    final Map<String, dynamic> decodedInfo = json.decode(response.body);
+    return {
+      "communityDescription": decodedInfo["description"],
+      "communityTitle":decodedInfo["title"],
+      "communityType": decodedInfo["type"],
+      "communityFlag": decodedInfo["nsfw_flag"],
+      "communityProfilePicture": decodedInfo["profile_picture"],
+      "communityBannerPicture": decodedInfo["banner_picture"],
+      "communityJoined": decodedInfo["joined_flag"],
+    };
+  }
 }
