@@ -67,7 +67,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-
       ),
       FollowersFollowingItem(
         id: '2',
@@ -100,16 +99,16 @@ final List<UserItem> users = [
     ),
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'johndoe',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
-        BlockedUsersItem(
-          username: 'jane123',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'johndoe',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
+        // BlockedUsersItem(
+        //   username: 'jane123',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
       ],
       mutedCommunities: [
         MutedCommunity(
@@ -192,11 +191,11 @@ final List<UserItem> users = [
     comments: [],
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'jane123',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'jane123',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
       ],
       mutedCommunities: [
         MutedCommunity(
@@ -277,11 +276,11 @@ final List<UserItem> users = [
     ),
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'johndoe',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'johndoe',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
       ],
       mutedCommunities: [
         MutedCommunity(

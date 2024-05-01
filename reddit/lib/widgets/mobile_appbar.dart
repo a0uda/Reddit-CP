@@ -77,7 +77,7 @@ class _MobileAppBarState extends State<MobileAppBar> {
                   style: TextStyle(color: Colors.black, fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.152),
+                const Spacer(),
                 const InboxOptions()
               ],
             ),

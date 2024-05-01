@@ -141,6 +141,6 @@ String getDateTimeDifferenceWithLabel(String dateFromDatabaseString) {
 
   // If all differences are 0, return '0 s'
   else {
-    return '0s';
+    return 'now';
   }
 }

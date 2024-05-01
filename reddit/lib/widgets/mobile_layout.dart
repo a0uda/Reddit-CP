@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
+import 'package:reddit/widgets/messages_list.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
@@ -77,7 +78,7 @@ class _MobileLayoutState extends State<MobileLayout> {
               child: TabBarView(
                 children: [
                   Center(child: Text("stay tuned")), //todo: notifications
-                  Center(child: Text("stay tuned")), //todo: messages
+                  MessagesPage(),
                 ],
               ),
             ),

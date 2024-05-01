@@ -15,7 +15,9 @@ import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
+import '../Models/message_item.dart';
 import '../test_files/test_users.dart';
+import '../test_files/test_messages.dart';
 import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
@@ -53,7 +55,8 @@ class UserService {
 
       print(response.statusCode);
       print(jsonDecode(response.body)['content']['moderatedCommunities']);
-      print(UserAbout.fromJson(jsonDecode(response.body)['content']).moderatedCommunities);
+      print(UserAbout.fromJson(jsonDecode(response.body)['content'])
+          .moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -508,6 +511,124 @@ class UserService {
       socialLink.displayText = displayText;
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
+    }
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Future<List<Messages>?> getMessages(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(userMessages);
+      return messages;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/read-all-messages');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get messages');
+      print(response.statusCode);
+      print(response.body);
+      List<dynamic> body = jsonDecode(response.body)['content'];
+      print(body);
+      return Future.wait(
+          body.map((dynamic item) async => Messages.fromJson(item)));
+    }
+  }
+
+  Future<bool> replyMessage(String parentid, String senderUsername,
+      String receiverUsername, String receiverType, String message) async {
+    if (testing) {
+      userMessages.add(Messages(
+        id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+            .toString(),
+        senderUsername: senderUsername,
+        senderType: 'user',
+        receiverUsername: receiverUsername,
+        receiverType: receiverType,
+        senderVia: null,
+        message: message,
+        createdAt: DateTime.now().toString(),
+        deletedAt: null,
+        unreadFlag: false,
+        isSent: true,
+        isReply: false,
+        parentMessageId: parentid,
+        subject: null,
+      ));
+      return true;
+    } else {
+      // todo: reply to message in database
+      return false;
+    }
+  }
+
+  Future<bool> sendNewMessage(String senderUsername, String receiverUsername,
+      String message, String subject) async {
+    if (testing) {
+      if (users.any(
+              (element) => element.userAbout.username == receiverUsername) ==
+          false) {
+        return false;
+      } else {
+        userMessages.add(Messages(
+          id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+              .toString(),
+          senderUsername: senderUsername,
+          senderType: 'user',
+          receiverUsername: receiverUsername,
+          receiverType: 'user',
+          senderVia: null,
+          message: message,
+          createdAt: DateTime.now().toString(),
+          deletedAt: null,
+          unreadFlag: true,
+          isSent: true,
+          isReply: false,
+          parentMessageId: null,
+          subject: subject,
+        ));
+        print('message added tmm mn add msg function');
+        for (var msg in userMessages) {
+          print(msg.id);
+          print(msg.receiverUsername);
+        }
+
+        return true;
+      }
+    } else {
+      // todo: add new message to database
+      return false;
+    }
+  }
+
+  Future<void> markoneMessageRead(String id) async {
+    if (testing) {
+      userMessages.firstWhere((element) => element.id == id).unreadFlag = false;
+    } else {}
+  }
+
+  Future<void> markAllMessagesRead() async {
+    if (testing) {
+      for (var msg in userMessages) {
+        msg.unreadFlag = false;
+      }
+    } else {
+      // todo: mark all messages read in database
+    }
+  }
+
+  Future<void> reportUser(String username, String reason) async {
+    if (testing) {
+      //to be implemented
+    } else {
+      // todo: report user in database
     }
   }
 
