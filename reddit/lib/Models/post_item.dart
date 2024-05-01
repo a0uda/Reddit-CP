@@ -77,7 +77,7 @@ class PostItem {
         title: json['title'],
         createdAt: DateTime.parse(json['created_at']),
         type: json['type'],
-        communityId: json['community_id'],
+        communityId: "sas",//Todo
         communityName: json['community_name'],
         commentsCount: json['comments_count'],
         viewsCount: json['views_count'],
