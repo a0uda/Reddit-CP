@@ -38,7 +38,7 @@ class CommentsService {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         List<Comments> commentsList = [];
-        for (var comment in data['comments']) {
+        for (var comment in data['content']) {
           commentsList.add(Comments.fromJson(comment));
         }
         print(commentsList);

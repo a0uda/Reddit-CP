@@ -8,6 +8,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/inbox_options.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/search_bar.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -94,6 +95,9 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 child: IconButton(
                   onPressed: () {
                     //Navigate to chattt
+                            Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>  ChatIntro(),
+                  ));
                   },
                   icon: const Icon(CupertinoIcons.chat_bubble_text),
                 ),

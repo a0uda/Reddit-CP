@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
@@ -83,7 +84,12 @@ class _MobileLayoutState extends State<MobileLayout> {
             ),
           ],
         ),
-      )
+      ),
+      ChatIntro(),
+    
+      // MobileHomePage(
+      //   widgetIndex: 0, //Inbox page here
+      // )
     ];
     var selectedScreen = screens[selectedIndexPage];
     var selectedDrawer = drawers[selectedIndexPage == 0 ? 0 : 1];

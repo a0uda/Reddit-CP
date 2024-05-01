@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 
+
 class ApprovedUserList extends StatefulWidget {
   const ApprovedUserList({super.key});
 

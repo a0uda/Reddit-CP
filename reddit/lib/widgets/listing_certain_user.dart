@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/post_controller.dart';
+import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/widgets/collapse_post.dart';
 
 import 'package:reddit/widgets/post.dart';
@@ -8,67 +9,53 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
 
-import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Models/user_about.dart';
 
 final userController = GetIt.instance.get<UserController>();
 
-class BestListing extends StatefulWidget {
-  final String type;
+class ListingCertainUser extends StatefulWidget {
   final UserAbout? userData;
-  const BestListing({super.key, required this.type, this.userData});
+  const ListingCertainUser({super.key, this.userData});
   @override
-  State<BestListing> createState() => BestListingBuild();
+  State<ListingCertainUser> createState() =>ListingCertainUserScreen();
 }
 
-class BestListingBuild extends State<BestListing> {
-  ScrollController controller = ScrollController();
-  int page=0;
-  // List of items in our dropdown menu
-  bool? isMyPost;
-
-  late Future<void> _dataFuture;
+class ListingCertainUserScreen extends State<ListingCertainUser> {
   List<PostItem> posts = [];
-
+  int page=0;
+  late Future<void> _dataFuture;
+  ScrollController controller = ScrollController();
+  // List of items in our dropdown menu
+    bool isloading=false;
   Future<void> fetchdata() async {
+        isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    if (widget.type == "home") {
-      if (userController.userAbout != null) {
-        String user = userController.userAbout!.username;
-
-        post = await postService.getPosts(user, "hot",page);
-             page=page+1;
-      } else {
-        posts = postService.fetchPosts();
-      }
-    } else if (widget.type == "popular") {
-      posts = await postService.getPopularPosts();
-    } else if (widget.type == "profile") {
+    
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
+      post = await postService.getMyPosts(username);
       print(username);
-    }
-    // Remove objects from list1 if their IDs match any in list2
-    post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
-
+      // Remove objects from list1 if their IDs match any in list2
+    
+  isloading=false;
     setState(() {
       posts.addAll(post);
     });
   }
 
-
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
+      // Load more data here (e.g., fetch additional items from an API)
+      // Add the new items to your existing list
+      // Example: myList.addAll(newItems);
+      
       print('LOAD MORE');
-      fetchdata();
       // load more data here
 
       //setState(() {});
     }
   }
-
   @override
  void initState() {
     super.initState();
@@ -76,8 +63,9 @@ class BestListingBuild extends State<BestListing> {
     controller.addListener(HandleScrolling);
     
   }
+
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -93,12 +81,24 @@ class BestListingBuild extends State<BestListing> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text(
-              'Error: ${snapshot.error}'); // Display error message if any
+          return Text('Error: ${snapshot.error}');
         } else {
+          if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-              
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
@@ -110,8 +110,8 @@ class BestListingBuild extends State<BestListing> {
                     print(posts[index].isReposted);
                   if (posts[index].isReposted) {
                     return Repost(
+                          description: posts[index].description,
                         id: posts[index].id,
-                        description: posts[index].description!,
                         name: posts[index].username,
                         title: posts[index].title,
                         originalID: posts[index].originalPostID,
@@ -140,7 +140,7 @@ class BestListingBuild extends State<BestListing> {
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
-                    vote: posts[index].vote,
+                     vote: posts[index].vote,
 
                     title: posts[index].title,
                     postContent: posts[index].description,
@@ -149,7 +149,7 @@ class BestListingBuild extends State<BestListing> {
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl:imageurl,
+                    imageUrl: imageurl,
                     videoUrl: posts[index].videos?[0].path,
                     poll: posts[index].poll,
                     id: posts[index].id,
@@ -160,6 +160,7 @@ class BestListingBuild extends State<BestListing> {
               );
             },
           );
+          }
         }
       },
     );

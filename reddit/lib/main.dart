@@ -12,6 +12,7 @@ import 'package:reddit/Pages/community_page.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
@@ -46,6 +47,9 @@ void main() async {
   GetIt.instance
       .registerSingleton<ModeratorMockService>(ModeratorMockService());
   GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
+
+  GetIt.instance.registerSingleton<ChatsService>(ChatsService());
+
 
   runApp(MultiProvider(
     providers: [
