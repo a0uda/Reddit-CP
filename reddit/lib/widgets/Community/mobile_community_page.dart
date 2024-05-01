@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
-import 'package:reddit/widgets/listing.dart';
-
 import 'package:reddit/widgets/mobile_appbar.dart';
 
 class MobileCommunityPage extends StatefulWidget {

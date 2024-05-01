@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
@@ -23,30 +24,37 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   String communityDescription = '';
   late final String communityID;
   late final String communityType;
-  late String communityName;
+  late String communityTitle;
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
   bool rulesFetched = false;
   bool generalSettingsFetched = false;
+  bool membersFetched = false;
 
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
-      await moderatorController.getGeneralSettings(communityName);
+      await moderatorController.getGeneralSettings(widget.communityName);
       communityGeneralSettings = moderatorController.generalSettings;
     }
   }
 
   Future<void> fetchRules() async {
     if (!rulesFetched) {
-      await moderatorController.getRules(communityName);
+      await moderatorController.getRules(widget.communityName);
       rulesFetched = true;
+    }
+  }
+
+  Future<void> fetchMembersCount() async {
+    if (!membersFetched) {
+      await moderatorController.getMembersCount(widget.communityName);
+      membersFetched = true;
     }
   }
 
   @override
   void initState() {
     super.initState();
-    communityName = moderatorController.communityName;
   }
 
   @override
@@ -55,8 +63,11 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
         builder: (context, settingsProvider, child) {
       return Material(
         child: SingleChildScrollView(
-          child: Card(
-            color: const Color.fromARGB(255, 255, 255, 255),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 248, 250, 251),
+              borderRadius: BorderRadius.circular(5.0),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -67,90 +78,113 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                       Navigator.of(context).pop();
                     },
                   ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, right: 20, top: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Text(
-                        'Description',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const Divider(
-                        color: Color.fromARGB(255, 215, 215, 215),
-                        height: 10,
-                        thickness: 1.0,
-                      ),
-                      FutureBuilder(
-                        future: fetchGeneralSettings(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return Text(
-                              moderatorController
-                                  .generalSettings.communityDescription,
-                              style: const TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 14,
-                                color: Colors.black,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                child: const Text(
+                                  // moderatorController.generalSettings.communityTitle,
+                                  'ba test bas el donya mashya ezay - Community Title',
+                                  style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color.fromARGB(255, 42, 60, 66)),
+                                ),
                               ),
-                            );
-                          }
-                        },
-                      ),
-                      FutureBuilder(
-                        future: fetchRules(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            return Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              child: Column(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Container(
-                                        margin:
-                                            const EdgeInsets.only(bottom: 5),
-                                        child: const Text(
-                                          'Rules',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                      const Divider(
-                                        color: Color.fromARGB(
-                                            255, 215, 215, 215),
-                                        height: 1,
-                                        thickness: 1.0,
-                                      ),
-                                    ],
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: const Text(
+                                  'Bagrab ahot description ashoof el donya mashya ezay',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 14,
+                                    color: Color.fromARGB(255, 87, 111, 118),
                                   ),
-                                  ListView.builder(
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 4),
+                                      child: const Text(
+                                        // moderatorController.membersCount,
+                                        '4',
+                                        style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                            color: Color.fromARGB(
+                                                255, 42, 60, 66)),
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Members',
+                                      style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300,
+                                          color: Color.fromARGB(
+                                              255, 87, 111, 118)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(
+                      color: Color.fromARGB(255, 215, 215, 215),
+                      height: 1,
+                      thickness: 1.0,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: const Text(
+                                'Rules',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 14, // el mafrood 12
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromARGB(255, 97, 104, 110),
+                                ),
+                              ),
+                            ),
+                            FutureBuilder(
+                              future: fetchRules(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else {
+                                  return ListView.builder(
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
@@ -166,15 +200,15 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                         ],
                                       );
                                     },
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
