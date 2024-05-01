@@ -52,8 +52,9 @@ class UserService {
       print(username);
 
       print(response.statusCode);
-      print(jsonDecode(response.body)['content']['moderatedCommunities']);
-      print(UserAbout.fromJson(jsonDecode(response.body)['content']).moderatedCommunities);
+      print(jsonDecode(response.body));
+      print(UserAbout.fromJson(jsonDecode(response.body)['content'])
+          .moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -130,16 +131,20 @@ class UserService {
             username: username,
           ));
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+      
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+         'Authorization': token!,
+        },
         body: json.encode({
           'other_username': username,
         }),
       );
-      print(response.body);
     }
   }
 
@@ -156,16 +161,19 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json' , 
+         'Authorization': token!,
+        },
         body: json.encode({
           'other_username': username,
         }),
       );
-      print(response.body);
     }
   }
 
@@ -267,9 +275,9 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print(response.statusCode);
+      print("ALOOO");
+      print(response.body);
       List<dynamic> body = jsonDecode(response.body)['content'];
-      print(body);
       return Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
     }

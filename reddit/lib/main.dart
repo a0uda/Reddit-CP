@@ -15,6 +15,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/Create%20Community/create_community_page.dart';
@@ -35,6 +36,7 @@ void main() async {
   // await Firebase.initializeApp(); //TODO : FIREBASE
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
+  GetIt.instance.registerSingleton<SearchService>(SearchService());
 
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());

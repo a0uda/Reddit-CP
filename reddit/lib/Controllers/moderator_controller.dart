@@ -86,7 +86,7 @@ class ApprovedUserProvider extends ChangeNotifier {
 
   Future<void> removeApprovedUsers(
       String username, String communityName) async {
-    moderatorService.removeApprovedUsers(username, communityName);
+    await moderatorService.removeApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
         await moderatorService.getApprovedUsers(communityName);
     notifyListeners();

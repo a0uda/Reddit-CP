@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
-import 'package:reddit/widgets/search_bar.dart';
+import 'package:reddit/widgets/Search/search_bar.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
