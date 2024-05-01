@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
-import 'package:reddit/widgets/search_bar.dart';
 
 class ManageBlockedAccounts extends StatefulWidget {
   const ManageBlockedAccounts({super.key});
@@ -13,10 +12,29 @@ class ManageBlockedAccounts extends StatefulWidget {
 
 class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
   final UserController userController = GetIt.instance.get<UserController>();
+  List<BlockedUsersItem> blockedUsers = [];
+  List<BlockedUsersItem> searchResults = [];
   bool undo = false;
+
+  @override
+  void initState() {
+    super.initState();
+    blockedUsers = userController.blockedUsers!;
+    searchResults = blockedUsers;
+  }
+
+  void searchBlockedUsers(String search) {
+    setState(() {
+      searchResults = blockedUsers.where((blockedUser) {
+        return blockedUser.username
+            .toLowerCase()
+            .contains(search.toLowerCase());
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<BlockedUsersItem> blockedUsers = userController.blockedUsers!;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Blocked Accounts'),
@@ -25,28 +43,27 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
         margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                showSearch(context: context, delegate: SearchBarClass());
-              },
-              style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: Colors.grey[200],
-                  foregroundColor: Colors.grey,
-                  shadowColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0))),
-              child: const Row(children: [
-                Icon(
+            TextField(
+              onChanged: searchBlockedUsers,
+              decoration: InputDecoration(
+                hintText: "Block new account",
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                prefixIcon: Icon(
                   Icons.search,
-                  color: Colors.black,
+                  color: Colors.grey.shade600,
+                  size: 20,
                 ),
-                Text("Block new account")
-              ]),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                contentPadding: EdgeInsets.all(8),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(color: Colors.grey.shade100)),
+              ),
             ),
             Expanded(
                 child: ListView(
-              children: blockedUsers.map((blockedUser) {
+              children: searchResults.map((blockedUser) {
                 return ListTile(
                   leading: CircleAvatar(
                     radius: 15,
