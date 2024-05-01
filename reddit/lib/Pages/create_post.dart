@@ -75,30 +75,43 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _image = pickedFile;
-        imageSelected = true;
-        showLinkField = false;
-        videoSelected = false;
-        pollSelected = false;
         type = 'image';
       });
 
       //TODO: FIREBASE
       //saveImage();
       // try {
-      final storageRef = FirebaseStorage.instance.ref().child(
-          'images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
       print('images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
-      print(File(_image!.path));
+      print(_image!.name);
       try {
-        await storageRef.putFile(File(_image!.path));
+        // upload the file to Firebase Storage
+        final uploadFile = File(_image!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
       } catch (e) {
         print('Error uploading file to Firebase Storage: $e');
         // Handle the error as needed, such as displaying an error message to the user.
       }
-      print(File(_image!.path));
 
-      // imageUrl = await storageRef.getDownloadURL();
+      imageUrl = await storageRef.getDownloadURL();
       print(imageUrl);
+      setState(() {
+        imageSelected = true;
+        showLinkField = false;
+        videoSelected = false;
+        pollSelected = false;
+      });
       // } catch (e) {
       //   print(e);
       // }
@@ -435,7 +448,8 @@ class _CreatePostState extends State<CreatePost> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     image: DecorationImage(
-                                      image: FileImage(File(_image!.path)),
+                                      // image: FileImage(File(_image!.path)),
+                                      image: NetworkImage(imageUrl!),
                                       fit: BoxFit.contain,
                                     ),
                                   ),
