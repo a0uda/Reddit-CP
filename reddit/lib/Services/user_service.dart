@@ -1244,14 +1244,15 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             notificationType: value,
           }
         }),
       );
+      print(token);
       print(
         jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             notificationType: value,
           }
         }),
