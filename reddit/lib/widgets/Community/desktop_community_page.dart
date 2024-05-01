@@ -1,23 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
+import 'package:reddit/widgets/post.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
   const DesktopCommunityPage({
     super.key,
     required this.communityName,
+    required this.isMod,
   });
 
   final String communityName;
+  final bool isMod;
 
   @override
   State<DesktopCommunityPage> createState() => _DesktopCommunityPageState();
@@ -31,6 +33,11 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
+  double descriptionOffset = 0.0;
+
+  bool membersFetched = false;
+  bool generalSettingsFetched = false;
+
   @override
   void initState() {
     if (isJoined) {
@@ -39,6 +46,12 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
       buttonState = 'Join';
     }
     super.initState();
+  }
+
+  void updateDescriptionOffset(double offset) {
+    setState(() {
+      descriptionOffset = offset;
+    });
   }
 
   void setButton() {
@@ -122,7 +135,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 242, 242, 242),
+      backgroundColor: const Color.fromARGB(255, 251, 251, 251),
       appBar: MediaQuery.of(context).size.width > 700
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -136,43 +149,146 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
           : null,
       endDrawer: EndDrawerReddit(),
-      body: SizedBox(
-        child: Row(
-          children: [
-            MediaQuery.of(context).size.width > 700
-                ? const DrawerReddit(
-                    indexOfPage: 0,
-                    inHome: true,
-                  )
-                : const SizedBox(
-                    width: 0,
-                  ),
-            MediaQuery.of(context).size.width > 700
-                ? VerticalDivider(
-                    color: Theme.of(context).colorScheme.primary, width: 1)
-                : const SizedBox(
-                    width: 0,
-                  ),
-            Expanded(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: DesktopCommunityPageBar(
-                        communityName: widget.communityName,
-                        setButtonFunction: setButton,
-                        buttonState: buttonState!,
-                        isJoined: isJoined,
+      body: Listener(
+        onPointerMove: (event) {
+          updateDescriptionOffset(event.position.dy);
+        },
+        child: SizedBox(
+          child: Row(
+            children: [
+              MediaQuery.of(context).size.width > 700
+                  ? const DrawerReddit(
+                      indexOfPage: 0,
+                      inHome: true,
+                    )
+                  : const SizedBox(
+                      width: 0,
+                    ),
+              MediaQuery.of(context).size.width > 700
+                  ? VerticalDivider(
+                      color: Theme.of(context).colorScheme.primary, width: 1)
+                  : const SizedBox(
+                      width: 0,
+                    ),
+              Expanded(
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.symmetric(
+                            horizontal: 24),
+                        child: Column(
+                          children: [
+                            Container(
+                              color: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              child: DesktopCommunityPageBar(
+                                communityName: widget.communityName,
+                                setButtonFunction: setButton,
+                                buttonState: buttonState!,
+                                isJoined: isJoined,
+                                isMod: widget.isMod,
+                              ),
+                            ),
+                            Container(
+                              height: 24,
+                              color: const Color.fromARGB(255, 251, 251, 251),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Post(
+                                          vote: 0,
+                                          isLocked: false,
+                                          id: "1",
+                                          imageUrl: "assets/images/profile.png",
+                                          name: "John Doe",
+                                          title: "Flutter is the best",
+                                          postContent: "Flutter is the best",
+                                          date: "2021-09-09",
+                                          likes: 4,
+                                          commentsCount: 1,
+                                          communityName: "r/FlutterDev",
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Post(
+                                          vote: 0,
+                                          isLocked: false,
+                                          id: "1",
+                                          imageUrl: "assets/images/profile.png",
+                                          name: "John Doe",
+                                          title: "Flutter is the best",
+                                          postContent: "Flutter is the best",
+                                          date: "2021-09-09",
+                                          likes: 4,
+                                          commentsCount: 1,
+                                          communityName: "r/FlutterDev",
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Post(
+                                          vote: 0,
+                                          isLocked: false,
+                                          id: "1",
+                                          imageUrl: "assets/images/profile.png",
+                                          name: "John Doe",
+                                          title: "Flutter is the best",
+                                          postContent: "Flutter is the best",
+                                          date: "2021-09-09",
+                                          likes: 4,
+                                          commentsCount: 1,
+                                          communityName: "r/FlutterDev",
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Post(
+                                          vote: 0,
+                                          isLocked: false,
+                                          id: "1",
+                                          imageUrl: "assets/images/profile.png",
+                                          name: "John Doe",
+                                          title: "Flutter is the best",
+                                          postContent: "Flutter is the best",
+                                          date: "2021-09-09",
+                                          likes: 4,
+                                          commentsCount: 1,
+                                          communityName: "r/FlutterDev",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  flex: 1,
+                                  child: DescriptionWidget(
+                                    communityName:
+                                        moderatorController.communityName,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -186,11 +302,13 @@ class DesktopCommunityPageBar extends StatefulWidget {
     required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
+    required this.isMod,
   });
 
   final String communityName;
   final String buttonState;
   final bool isJoined;
+  final bool isMod;
 
   final Function() setButtonFunction;
   @override
@@ -203,6 +321,13 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
       GetIt.instance.get<ModeratorController>();
   bool membersFetched = false;
   bool generalSettingsFetched = false;
+  bool communityInfoFetched = false;
+
+  Future<void> fetchCommunityInfo() async {
+    if (!communityInfoFetched) {
+      await moderatorController.getCommunityInfo(widget.communityName);
+    }
+  }
 
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
@@ -228,15 +353,30 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
               children: [
                 Column(
                   children: [
-                    Container(
-                      height: 128,
-                      decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage("images/reddit-banner-image.jpg"),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                    FutureBuilder(
+                      future: fetchCommunityInfo(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return Container(
+                            height: 128,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    moderatorController.bannerPictureURL),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -281,20 +421,53 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                             borderColor: Colors.black,
                           ),
                           SizedBox(width: screenWidth * 0.01),
-                          OutlineButtonWidget(
-                            widget.buttonState,
-                            () {
-                              widget.setButtonFunction();
-                            },
-                            backgroundColour: widget.isJoined
-                                ? Colors.white
-                                : const Color.fromARGB(255, 69, 72, 78),
-                            borderColor: widget.isJoined
-                                ? Colors.black
-                                : Colors.transparent,
-                            foregroundColour:
-                                widget.isJoined ? Colors.black : Colors.white,
-                          )
+                          widget.isMod
+                              ? OutlineButtonWidget(
+                                  'Mod Tools',
+                                  () {},
+                                  borderColor: Colors.transparent,
+                                  backgroundColour:
+                                      const Color.fromARGB(255, 0, 69, 172),
+                                  foregroundColour: Colors.white,
+                                )
+                              : FutureBuilder(
+                                  future: fetchCommunityInfo(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return OutlineButtonWidget(
+                                        moderatorController.joinedFlag
+                                            ? 'Joined'
+                                            : 'Join',
+                                        () {
+                                          setState(() {
+                                            moderatorController.joinedFlag =
+                                                !moderatorController.joinedFlag;
+                                          });
+                                        },
+                                        backgroundColour:
+                                            moderatorController.joinedFlag
+                                                ? Colors.white
+                                                : const Color.fromARGB(
+                                                    255, 69, 72, 78),
+                                        borderColor:
+                                            moderatorController.joinedFlag
+                                                ? Colors.black
+                                                : Colors.transparent,
+                                        foregroundColour:
+                                            moderatorController.joinedFlag
+                                                ? Colors.black
+                                                : Colors.white,
+                                      );
+                                    }
+                                  },
+                                ),
                         ],
                       ),
                     ),
@@ -303,19 +476,31 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                 Positioned(
                   top: 90,
                   left: screenWidth * 0.01,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 4),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                        "images/pp.jpg",
-                      ),
-                    ),
+                  child: FutureBuilder(
+                    future: fetchCommunityInfo(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 4),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundImage: AssetImage(
+                                moderatorController.profilePictureURL),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
               ],

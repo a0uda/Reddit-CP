@@ -20,9 +20,11 @@ class ModeratorController {
     communityType: "Public",
     nsfwFlag: false,
   );
-  String membersCount = "";
+  bool joinedFlag = false;
+  String membersCount = "0";
   Map<String, dynamic> postTypesAndOptions = {};
-  String profilePictureURL = "";
+  String profilePictureURL = "images/logo-mobile.png";
+  String bannerPictureURL = "images/reddit-banner-image.jpg";
   CommunityItem? communityItem;
 
   Future<void> getCommunity(String communityName) async {
@@ -36,6 +38,18 @@ class ModeratorController {
         await moderatorService.getCommunityGeneralSettings(communityName);
     postTypesAndOptions = moderatorService.getPostTypesAndOptions(communityName)
         as Map<String, dynamic>;
+  }
+
+  Future<void> getCommunityInfo(String communityName) async {
+    Map<String, dynamic> info =
+        await moderatorService.getCommunityInfo(communityName: communityName);
+    generalSettings.communityTitle = info["communityTitle"];
+    generalSettings.communityDescription = info["communityDescription"];
+    generalSettings.communityType = info["communityType"];
+    generalSettings.nsfwFlag = info["communityFlag"];
+    profilePictureURL = info["communityProfilePicture"];
+    bannerPictureURL = info["communityBannerPicture"];
+    joinedFlag = info["communityJoined"];
   }
 
   Future<void> getBannedUsers(String communityName) async {
@@ -280,7 +294,6 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
         await moderatorService.getCommunityGeneralSettings(communityName);
 
     notifyListeners();
-
   }
 }
 
@@ -311,8 +324,10 @@ class CreateCommunityProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  Future<void> createCommuntiy({
-      required String communityName, required String communityType, required bool communityFlag}) async {
+  Future<void> createCommuntiy(
+      {required String communityName,
+      required String communityType,
+      required bool communityFlag}) async {
     await moderatorService.createCommunity(
         communityName: communityName,
         communityType: communityType,
