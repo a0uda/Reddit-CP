@@ -91,7 +91,7 @@ class PostService {
         },
         body: json.encode({
           "title": title,
-          "description": description,
+          "description": description??'',
           "type": type,
           "link_url": linkUrl,
           "images": images
@@ -637,76 +637,3 @@ class PostService {
     }
   }
 }
-
-
-
-
-// '''
-// New_Post:
-//       type: object
-//       required:
-//         - title
-//         - community-name
-//       properties:
-//         title:
-//           type: string
-//         description:
-//           type: string
-//         type:
-//           type: string
-//           enum:
-//             - image_and_videos
-//             - polls
-//             - url
-//             - text
-//             - hybrid
-//         link_url:
-//           type: string
-//         images:
-//           type: array
-//           items:
-//             type: object
-//             properties:
-//               path:
-//                 type: string
-//               caption:
-//                 type: string
-//               link:
-//                 type: string
-//             additionalProperties: false
-//         videos:
-//           type: array
-//           items:
-//             type: object
-//             properties:
-//               path:
-//                 type: string
-//               caption:
-//                 type: string
-//               link:
-//                 type: string
-//             additionalProperties: false
-//         poll:
-//           type: object
-//           properties:
-//             options:
-//               type: array
-//               items:
-//                 type: string
-//             votes:
-//               type: array
-//               items:
-//                 type: number
-//           additionalProperties: false
-//         community_id:
-//           type: string
-//           format: objectId
-//         community-name:
-//           type: string
-//         oc_flag:
-//           type: boolean
-//         spoiler_flag:
-//           type: boolean
-//         nsfw_flag:
-//           type: boolean
-// '''

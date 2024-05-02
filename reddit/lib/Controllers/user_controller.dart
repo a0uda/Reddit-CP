@@ -26,8 +26,8 @@ class UserController {
     userAbout = await userService.getUserAbout(username);
     blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
-   // notificationsSettings =
-     //   await userService.getNotificationsSettings(username);
+    notificationsSettings =
+        await userService.getNotificationsSettings(username);
   }
 
   Future<NotificationsSettingsItem?> getNotificationsSettings(
@@ -97,7 +97,8 @@ class UserController {
     await userService.getNotificationsSettings(userAbout!.username);
   }
 
-  Future<void>updateSingleNotificationSetting(String username, String type, bool value) async {
+  Future<void> updateSingleNotificationSetting(
+      String username, String type, bool value) async {
     await userService.updateSingleNotificationSetting(username, type, value);
     await userService.getNotificationsSettings(username);
   }

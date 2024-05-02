@@ -9,6 +9,33 @@ import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
+String formatDateTime(String dateTimeString) {
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
+
 class NotificationCard extends StatefulWidget {
   final NotificationItem notificationItem;
 
@@ -70,6 +97,7 @@ class NotificationCardState extends State<NotificationCard> {
       subtitle = '';
       isPost = false;
     }
+    title += ' • ${formatDateTime(widget.notificationItem.createdAt!)}';
 
     return ListTile(
       onTap: isPost
@@ -114,16 +142,24 @@ class NotificationCardState extends State<NotificationCard> {
       tileColor: widget.notificationItem.unreadFlag == true
           ? const Color.fromARGB(255, 138, 184, 207)
           : null,
-      leading: const CircleAvatar(
-        //TODO: CHANGE THE PICTURE FROM DATABASE
-        // backgroundImage: NetworkImage(widget.notificationItem.profilePicture!),
-        backgroundImage: AssetImage("images/logo-mobile.png"),
+      leading: CircleAvatar(
+        backgroundImage: (widget.notificationItem.profilePicture != null &&
+                widget.notificationItem.profilePicture != '')
+            ? NetworkImage(widget.notificationItem.profilePicture!)
+            : const NetworkImage(
+                "https://static-00.iconduck.com/assets.00/reddit-icon-icon-2048x2048-fdxpdoih.png"),
       ),
       title: Text(
         title,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
       ),
-      subtitle: subtitle != '' ? Text(subtitle) : null,
+      subtitle: subtitle != ''
+          ? Text(subtitle,
+              style: TextStyle(
+                  fontWeight: FontWeight.w200,
+                  fontSize: 12,
+                  color: Colors.grey[600]))
+          : null,
       trailing: IconButton(
         icon: const Icon(Icons.more_horiz),
         onPressed: () {

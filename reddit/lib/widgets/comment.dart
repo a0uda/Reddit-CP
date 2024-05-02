@@ -11,6 +11,33 @@ import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+String formatDateTime(String dateTimeString) {
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
+
 class Comment extends StatefulWidget {
   final Comments comment;
   bool isSaved;
@@ -161,13 +188,10 @@ class _CommentState extends State<Comment> {
                     width: 10,
                   ),
                   Text(
-                    widget.comment.createdAt!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Arial',
-                    ),
+                    '  • ${formatDateTime(widget.comment.createdAt!)}',
+                    style: const TextStyle(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 117, 116, 115)),
                   ),
                 ],
               ),
