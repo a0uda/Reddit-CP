@@ -200,21 +200,15 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
+                                const Expanded(
                                   flex: 3,
-                                  child: Listing(type: 'home');
-                    
-                                
-                                    
+                                  child: Listing(type: 'home'),
                                 ),
-                              ],
-                                
                                 const SizedBox(width: 16),
                                 Expanded(
                                   flex: 1,
                                   child: DescriptionWidget(
-                                    communityName:
-                                       widget.communityName,
+                                    communityName: widget.communityName,
                                   ),
                                 ),
                               ],
@@ -272,14 +266,14 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
       await moderatorController.getGeneralSettings(widget.communityName);
-      generalSettingsFetched=true;
+      generalSettingsFetched = true;
     }
   }
 
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
-      membersFetched=true;
+      membersFetched = true;
     }
   }
 

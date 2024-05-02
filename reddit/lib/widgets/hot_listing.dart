@@ -25,7 +25,7 @@ class HotListing extends StatefulWidget {
 
 class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
-  int page=0;
+  int page=1;
   // List of items in our dropdown menu
   List<PostItem> posts = [];
   late Future<void> _dataFuture;

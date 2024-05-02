@@ -24,7 +24,7 @@ class BestListing extends StatefulWidget {
 
 class BestListingBuild extends State<BestListing> {
   ScrollController controller = ScrollController();
-  int page=0;
+  int page=1;
   // List of items in our dropdown menu
   bool? isMyPost;
 
