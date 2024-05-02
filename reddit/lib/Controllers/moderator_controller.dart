@@ -85,6 +85,13 @@ class ModeratorController {
   Future<void> getMembersCount(String communityName) async {
     membersCount = await moderatorService.getMembersCount(communityName);
   }
+
+//Rawan: add moderator
+  Future<void> addAsMod(
+      String username, String profilePicture, String communityName) async {
+    await moderatorService.addModUser(username, profilePicture, communityName);
+    moderators = await moderatorService.getModerators(communityName);
+  }
 }
 
 class ApprovedUserProvider extends ChangeNotifier {

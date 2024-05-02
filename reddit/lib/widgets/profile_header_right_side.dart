@@ -39,6 +39,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
           await userService.getFollowing(userController.userAbout!.username);
     }
     setState(() {
+      print('data fetched');
       _dataFetched = true;
     });
   }
@@ -50,6 +51,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   }
 
   Widget _buildProfileHeaderRightSide() {
+    _dataFetched = false;
     var followerFollowingController =
         context.read<FollowerFollowingController>();
     return SizedBox(
@@ -82,24 +84,17 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                           builder: (context) => const EditProfileScreen()),
                     );
                   } else {
-                    setState(
-                      () async {
-                        if (followingList!
-                            .where((element) =>
-                                element.username == userData.username)
-                            .isEmpty) {
-                          setState(() {
-                            followerFollowingController
-                                .followUser(userData.username);
-                          });
-                        } else {
-                          setState(() {
-                            followerFollowingController
-                                .unfollowUser(userData.username);
-                          });
-                        }
-                      },
-                    );
+                    if (followingList!
+                        .where(
+                            (element) => element.username == userData.username)
+                        .isEmpty) {
+                      await followerFollowingController
+                          .followUser(userData.username);
+                    } else {
+                      await followerFollowingController
+                          .unfollowUser(userData.username);
+                    }
+                    setState(() {});
                   }
                 },
                 style: TextButton.styleFrom(

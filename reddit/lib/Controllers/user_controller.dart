@@ -26,7 +26,7 @@ class UserController {
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    blockedUsers = await userService.getBlockedUsers(username);
+    // blockedUsers = await userService.getBlockedUsers(username);
     // accountSettings = await userService.getAccountSettings(username);
     // notificationsSettings =
     //     await userService.getNotificationsSettings(username);
@@ -344,8 +344,7 @@ class MessagesOperations extends ChangeNotifier {
     return success;
   }
 
-  Future<void> markallAsRead() async 
-  {
+  Future<void> markallAsRead() async {
     await userService.markAllMessagesRead(userController.userAbout!.username);
     notifyListeners();
   }

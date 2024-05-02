@@ -2,9 +2,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
+import 'package:reddit/widgets/Moderator/moderators.dart';
+import 'package:reddit/widgets/Moderator/moderators_list.dart';
 import 'package:reddit/widgets/report_options.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -222,6 +227,7 @@ class _MessageContentState extends State<MessageContent> {
                                         isReply: true,
                                         parentMessageId: messages[0].id,
                                         subject: null,
+                                        isInvitation: false,
                                       ));
                                       showMessageContent.add(false);
                                       Navigator.pop(context);
@@ -334,15 +340,32 @@ class _MessageContentState extends State<MessageContent> {
           ),
         );
       }
+
       final gestureRecognizer = TapGestureRecognizer()
         ..onTap = () {
-          // todo: implement the navigation to the moderators page
+          final ModeratorController moderatorController =
+              GetIt.instance.get<ModeratorController>();
+          print(link!.split(' ')[3].replaceFirst('/r/', ''));
+          moderatorController.communityName =
+              link.split(' ')[3].replaceFirst('/r/', '');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ModResponsive(
+                  mobileLayout: Moderators(isInvite: true),
+                  desktopLayout: DesktopModTools(
+                    index: 4,
+                    communityName: moderatorController.communityName,
+                    isInvite: true,
+                  )),
+            ),
+          );
         };
 
       spans.add(
         TextSpan(
           text: link,
-          style:  TextStyle(
+          style: TextStyle(
             color: Colors.blue[900],
             decoration: TextDecoration.underline,
           ),

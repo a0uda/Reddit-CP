@@ -54,6 +54,7 @@ class MessagesState extends State<MessagesPage> {
               return Consumer<BlockUnblockUser>(
                 builder: (context, BlockUnblockUser, child) {
                   List<Messages> messagesList = snapshot.data![0];
+                  print('ana fi message list ${messagesList.length}');
                   List<FollowersFollowingItem>? following =
                       followerfollowingcontroller.following;
                   // List<BlockedUsersItem>? blockedUsers =
@@ -246,12 +247,12 @@ class MessagesState extends State<MessagesPage> {
   }
 
   List<Messages> processMessage(List<Messages> messagesList, Messages message) {
-    if (message.parentMessageId == null) {
+    if (message.parentMessageId == null ) {
       return [message];
     }
     List<Messages> replies = messagesList
         .where((msg) =>
-            msg.parentMessageId != null &&
+            msg.parentMessageId != null  &&
             msg.parentMessageId == message.parentMessageId)
         .toList();
     Messages msg =

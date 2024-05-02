@@ -22,7 +22,6 @@ import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
 
-
 class UserService {
   void addUser() {
     if (testing) {
@@ -138,7 +137,7 @@ class UserService {
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
-      
+
       final response = await http.post(
         url,
         headers: {
@@ -147,7 +146,6 @@ class UserService {
         },
         body: json.encode({
           "other_username": username,
-          
         }),
       );
     }
@@ -587,11 +585,18 @@ class UserService {
       );
       print('in get messages');
       print(response.statusCode);
-      print(response.body);
+      //print(jsonDecode(response.body)['messages']);
       List<dynamic> body = jsonDecode(response.body)['messages'];
+      print('dh el body');
       print(body);
-      return Future.wait(
-          body.map((dynamic item) async => Messages.fromJson(item)));
+      List<Messages>? messages = await Future.wait(
+        body
+            .where((item) => item != null)
+            .map((dynamic item) async => Messages.fromJson(item)),
+      );
+      messages.removeWhere(
+          (element) => element.deletedAt != null || element.deletedAt != '');
+      return messages;
     }
   }
 
@@ -617,6 +622,7 @@ class UserService {
         isReply: false,
         parentMessageId: parentid,
         subject: null,
+        isInvitation: false,
       ));
       return true;
     } else {
@@ -660,6 +666,7 @@ class UserService {
           isReply: false,
           parentMessageId: null,
           subject: subject,
+          isInvitation: false,
         ));
         print('message added tmm mn add msg function');
         for (var msg in userMessages!) {
@@ -1341,7 +1348,6 @@ class UserService {
 
   Future<NotificationsSettingsItem>? getNotificationsSettings(
       String username) async {
-        
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url =

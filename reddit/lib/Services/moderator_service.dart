@@ -3,6 +3,7 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
+import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -550,6 +551,42 @@ class ModeratorMockService {
     }
   }
 
+//Rawan: add moderator to the community
+  Future<void> addModUser(
+      String username, String profilePicture, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere((community) => community.communityName == communityName)
+          .moderators
+          .add({
+        "everything": true,
+        "manage_users": true,
+        "manage_settings": true,
+        "manage_posts_and_comments": true,
+        "username": username,
+        "profile_picture": profilePicture,
+        "moderator_since": DateTime.now().toString(),
+      });
+    } else {
+      // todo: add moderator to the community
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      // final url = Uri.parse(
+      //     'https://redditech.me/backend/communities/remove-moderator');
+      // final response = await http.post(
+      //   url,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': token!,
+      //   },
+      //   body: json.encode({
+      //     'community_name': communityName,
+      //     'username': username,
+      //   }),
+      // );
+    }
+  }
+
   Future<void> removeAsMod(String username, String communityName) async {
     if (testing) {
       communities
@@ -787,7 +824,7 @@ class ModeratorMockService {
     final Map<String, dynamic> decodedInfo = json.decode(response.body);
     return {
       "communityDescription": decodedInfo["description"],
-      "communityTitle":decodedInfo["title"],
+      "communityTitle": decodedInfo["title"],
       "communityType": decodedInfo["type"],
       "communityFlag": decodedInfo["nsfw_flag"],
       "communityProfilePicture": decodedInfo["profile_picture"],

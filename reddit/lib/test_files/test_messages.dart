@@ -88,9 +88,9 @@ final List<List<Messages>> userMessages = [
         senderType: "moderator",
         receiverUsername: "Purple-7544",
         receiverType: "user",
-        senderVia: "bizoooo",
+        senderVia: "Hyatt___Tillman",
         message:
-            "invitation to moderate r/bizoooo, to accept visit the moderators page for /r/bizoooo and click 'accept'.",
+            "invitation to moderate r/Hyatt___Tillman, to accept visit the moderators page for /r/Hyatt___Tillman and click 'accept'.",
         createdAt: "2024-04-28T04:39:31.197Z",
         deletedAt: null,
         unreadFlag: true,
@@ -450,9 +450,9 @@ final List<List<Messages>> userMessages = [
         senderType: "moderator",
         receiverUsername: "jane123",
         receiverType: "user",
-        senderVia: "bizoooo",
+        senderVia: "Hyatt___Tillman",
         message:
-            "invitation to moderate r/bizoooo, to accept visit the moderators page for /r/bizoooo and click 'accept'.",
+            "invitation to moderate r/Hyatt___Tillman, to accept visit the moderators page for /r/Hyatt___Tillman and click 'accept'.",
         createdAt: "2024-04-28T04:39:31.197Z",
         deletedAt: null,
         unreadFlag: true,
