@@ -10,7 +10,6 @@ import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
-import 'package:reddit/widgets/post.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
   const DesktopCommunityPage({
@@ -150,78 +149,77 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
           : null,
       endDrawer: EndDrawerReddit(),
-      body: Listener(
-        onPointerMove: (event) {
-          updateDescriptionOffset(event.position.dy);
-        },
-        child: SizedBox(
-          child: Row(
-            children: [
-              MediaQuery.of(context).size.width > 700
-                  ? const DrawerReddit(
-                      indexOfPage: 0,
-                      inHome: true,
-                    )
-                  : const SizedBox(
-                      width: 0,
-                    ),
-              MediaQuery.of(context).size.width > 700
-                  ? VerticalDivider(
-                      color: Theme.of(context).colorScheme.primary, width: 1)
-                  : const SizedBox(
-                      width: 0,
-                    ),
-              Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.symmetric(
-                            horizontal: 24),
-                        child: Column(
-                          children: [
-                            Container(
-                              color: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: DesktopCommunityPageBar(
-                                communityName: widget.communityName,
-                                setButtonFunction: setButton,
-                                buttonState: buttonState!,
-                                isJoined: isJoined,
-                                isMod: widget.isMod,
-                              ),
+      body: SizedBox(
+        child: Row(
+          children: [
+            MediaQuery.of(context).size.width > 700
+                ? const DrawerReddit(
+                    indexOfPage: 0,
+                    inHome: true,
+                  )
+                : const SizedBox(
+                    width: 0,
+                  ),
+            MediaQuery.of(context).size.width > 700
+                ? VerticalDivider(
+                    color: Theme.of(context).colorScheme.primary, width: 1)
+                : const SizedBox(
+                    width: 0,
+                  ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding:
+                          const EdgeInsetsDirectional.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: DesktopCommunityPageBar(
+                              communityName: widget.communityName,
+                              setButtonFunction: setButton,
+                              //buttonState: buttonState!,
+                              isJoined: isJoined,
+                              isMod: widget.isMod,
                             ),
-                            Container(
-                              height: 24,
-                              color: const Color.fromARGB(255, 251, 251, 251),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Expanded(
-                                  flex: 3,
-                                  child: Listing(type: 'home'),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  flex: 1,
-                                  child: DescriptionWidget(
-                                    communityName: widget.communityName,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: 24,
+                      color: const Color.fromARGB(255, 251, 251, 251),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          flex: 3,
+                          child: Listing(type: 'home'),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 1,
+                          child: DescriptionWidget(
+                            communityName: widget.communityName,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -232,14 +230,14 @@ class DesktopCommunityPageBar extends StatefulWidget {
   const DesktopCommunityPageBar({
     super.key,
     required this.communityName,
-    required this.buttonState,
+    //required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
     required this.isMod,
   });
 
   final String communityName;
-  final String buttonState;
+  //final String buttonState;
   final bool isJoined;
   final bool isMod;
 
@@ -263,12 +261,12 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
     }
   }
 
-  Future<void> fetchGeneralSettings() async {
-    if (!generalSettingsFetched) {
-      await moderatorController.getGeneralSettings(widget.communityName);
-      generalSettingsFetched = true;
-    }
-  }
+  // Future<void> fetchGeneralSettings() async {
+  //   if (!generalSettingsFetched) {
+  //     await moderatorController.getGeneralSettings(widget.communityName);
+  //     generalSettingsFetched = true;
+  //   }
+  // }
 
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {

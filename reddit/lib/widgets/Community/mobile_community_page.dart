@@ -31,11 +31,12 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
   final CommunityController communityController =
       GetIt.instance.get<CommunityController>();
 
-Future<void> fetchCommunityInfo() async {
+  Future<void> fetchCommunityInfo() async {
     if (!communityInfoFetched) {
       await moderatorController.getCommunityInfo(widget.communityName);
     }
   }
+
   @override
   void initState() {
     if (isJoined) {
@@ -109,7 +110,7 @@ Future<void> fetchCommunityInfo() async {
         );
       } else {
         setState(() {
-            moderatorController.joinedFlag = true;
+          moderatorController.joinedFlag = true;
           buttonState = 'Joined';
         });
       }
@@ -313,33 +314,46 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                     ],
                   ),
                   const Spacer(),
-                  FutureBuilder(
-                    future: fetchCommunityInfo(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return OutlineButtonWidget(
-                          moderatorController.joinedFlag ? 'Joined' : 'Join',
-                          () {
-                            widget.setButtonFunction();
+                  widget.isMod
+                      ? OutlineButtonWidget(
+                          'Mod Tools',
+                          () {},
+                          borderColor: Colors.transparent,
+                          backgroundColour:
+                              const Color.fromARGB(255, 0, 69, 172),
+                          foregroundColour: Colors.white,
+                        )
+                      : FutureBuilder(
+                          future: fetchCommunityInfo(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return OutlineButtonWidget(
+                                moderatorController.joinedFlag
+                                    ? 'Joined'
+                                    : 'Join',
+                                () {
+                                  widget.setButtonFunction();
+                                },
+                                backgroundColour: moderatorController.joinedFlag
+                                    ? Colors.white
+                                    : const Color.fromARGB(255, 37, 79, 165),
+                                foregroundColour: moderatorController.joinedFlag
+                                    ? Colors.black
+                                    : Colors.white,
+                                borderColor: moderatorController.joinedFlag
+                                    ? Colors.black
+                                    : const Color.fromARGB(255, 1, 69, 173),
+                              );
+                            }
                           },
-                          backgroundColour: moderatorController.joinedFlag
-                              ? Colors.white
-                              : const Color.fromARGB(255, 37, 79, 165),
-                          foregroundColour:
-                              moderatorController.joinedFlag ? Colors.black : Colors.white,
-                          borderColor: moderatorController.joinedFlag
-                              ? Colors.black
-                              : const Color.fromARGB(255, 1, 69, 173),
-                        );
-                      }
-                    },
-                  ),
+                        ),
                 ],
               ),
             ),

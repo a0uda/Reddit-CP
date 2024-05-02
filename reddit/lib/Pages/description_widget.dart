@@ -57,7 +57,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
       membersFetched = true;
-      print(moderatorController.membersCount);
+      //print(moderatorController.membersCount);
     }
   }
 
@@ -65,8 +65,8 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
     if (!communityInfoFetched) {
       await moderatorController.getCommunityInfo(widget.communityName);
       communityInfoFetched = true;
-      print(moderatorController.generalSettings.communityTitle);
-      print(moderatorController.generalSettings.communityDescription);
+      //print(moderatorController.generalSettings.communityTitle);
+      //print(moderatorController.generalSettings.communityDescription);
     }
   }
 
