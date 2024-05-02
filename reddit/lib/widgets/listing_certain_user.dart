@@ -23,7 +23,7 @@ class ListingCertainUser extends StatefulWidget {
 
 class ListingCertainUserScreen extends State<ListingCertainUser> {
   List<PostItem> posts = [];
-  int page=0;
+  int page=1;
   late Future<void> _dataFuture;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu

@@ -24,7 +24,7 @@ class NewListing extends StatefulWidget {
 
 class NewListingBuild extends State<NewListing> {
   List<PostItem> posts = [];
-  int page = 0;
+  int page = 1;
   late Future<void> _dataFuture;
   bool loading = false;
   ScrollController controller = ScrollController();

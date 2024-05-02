@@ -335,3 +335,14 @@ class CreateCommunityProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class UpdateProfilePicture extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> updateProfilePicture ({required String communityName, required String pictureUrl}) async {
+    await moderatorService.addProfilePicture(communityName: communityName, pictureURL: pictureUrl);
+    moderatorController.profilePictureURL = pictureUrl;
+    notifyListeners();
+  }
+}

@@ -24,7 +24,7 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-  int page=0;
+  int page=1;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
   // List of items in our dropdown menu

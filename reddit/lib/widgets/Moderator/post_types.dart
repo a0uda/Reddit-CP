@@ -6,7 +6,7 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 
 //Hena fel page deeh el mafrood te3ml boolean bey-save el state beta3t el community w yeshoof law etghayret wala laa law etghayret yeb2a hatghayr isSaved
 class PostTypes extends StatelessWidget {
-  const PostTypes({Key? key}) : super(key: key);
+  const PostTypes({super.key});
 
   @override
   Widget build(BuildContext context) {
