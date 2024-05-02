@@ -8,6 +8,7 @@ import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
+import 'package:reddit/widgets/listing_notifications.dart';
 
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
@@ -77,7 +78,8 @@ class _MobileLayoutState extends State<MobileLayout> {
             const Expanded(
               child: TabBarView(
                 children: [
-                  Center(child: Text("stay tuned")), //todo: notifications
+                  ListingNotifications(),
+                  //Center(child: Text("stay tuned")), //todo: notifications
                   Center(child: Text("stay tuned")), //todo: messages
                 ],
               ),

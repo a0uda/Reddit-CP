@@ -9,7 +9,6 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
-import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -722,10 +721,10 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print(response.body);
+      // print(response.body);
 
       if (response.statusCode == 200) {
-        print('get block success');
+        print('get notifications success');
         var data = jsonDecode(response.body);
         List<dynamic> blockedUsersJson = data['content'];
         return Future.wait(blockedUsersJson
@@ -1197,7 +1196,7 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             'mentions': notificationsSettingsItem.mentions,
             'comments': notificationsSettingsItem.comments,
             'upvotes_posts': notificationsSettingsItem.upvotesPosts,
@@ -1226,6 +1225,45 @@ class UserService {
             'private_messages': notificationsSettingsItem.privateMessages,
             'chat_messages': notificationsSettingsItem.chatMessages,
             'chat_requests': notificationsSettingsItem.chatRequests,
+          }
+        }),
+      );
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('notification settings updated successfully');
+      } else {
+        print('failed to update notification settings');
+      }
+    }
+  }
+
+  Future<void> updateSingleNotificationSetting(
+      String username, String notificationType, bool value) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-notification-settings');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'notifications_settings': {
+            notificationType: value,
+          }
+        }),
+      );
+      print(token);
+      print(
+        jsonEncode({
+          'notifications_settings': {
+            notificationType: value,
           }
         }),
       );

@@ -194,6 +194,7 @@ class PostService {
         'pageSize': '10'
       };
 
+      print(queryparams.toString());
       var url = Uri.parse('https://redditech.me/backend/listing/posts/best')
           .replace(queryParameters: queryparams);
 
@@ -212,6 +213,8 @@ class PostService {
       } else if (sortingType == "random") {
         url = Uri.parse('https://redditech.me/backend/listing/posts/random')
             .replace(queryParameters: queryparams);
+        print(url);
+        print(page);
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -252,6 +255,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
+      print(username);
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -303,6 +307,7 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == id);
       post.upvotesCount++;
     } else {
+      print(id);
       final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
 

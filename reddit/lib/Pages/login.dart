@@ -8,6 +8,7 @@ import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -52,7 +53,6 @@ class LoginPageState extends State<LoginPage> {
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
-      
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -158,7 +158,13 @@ class LoginPageState extends State<LoginPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await canLaunchUrl(Uri.parse(
+                                    'https://redditech.me/backend/users/signup-google'))
+                                ? await launchUrl(Uri.parse(
+                                    'https://redditech.me/backend/users/signup-google'))
+                                : throw 'Could not launch https://redditech.me/backend/users/signup-google';
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.all(buttonPadding),
                             textStyle: TextStyle(fontSize: buttonTextSize),

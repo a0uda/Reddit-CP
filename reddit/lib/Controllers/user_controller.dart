@@ -97,6 +97,11 @@ class UserController {
     await userService.getNotificationsSettings(userAbout!.username);
   }
 
+  Future<void>updateSingleNotificationSetting(String username, String type, bool value) async {
+    await userService.updateSingleNotificationSetting(username, type, value);
+    await userService.getNotificationsSettings(username);
+  }
+
   Future<void> getUserCommunities() async {
     userCommunities = await userService.getUserCommunities();
   }

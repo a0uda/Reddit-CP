@@ -17,6 +17,7 @@ import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/firebase_options.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
@@ -100,7 +101,10 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => PostSettingsProvider(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => NotificationsService(),
+      ),
     ],
     child: const MyApp(),
   ));
