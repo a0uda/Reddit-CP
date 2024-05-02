@@ -32,10 +32,10 @@ class UserController {
     //     await userService.getNotificationsSettings(username);
   }
 
-  Future<NotificationsSettingsItem?> getNotificationsSettings(
-      String username) async {
-    return await userService.getNotificationsSettings(username);
-  }
+  // Future<NotificationsSettingsItem?> getNotificationsSettings(
+  //     String username) async {
+  //   return await userService.getNotificationsSettings(username);
+  // }
 
   Future<void>? getUserAbout(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -93,11 +93,11 @@ class UserController {
     return userService.getSavedComments(username);
   }
 
-  Future<void> updateNotificationSettings() async {
-    await userService.updateNotificationSettings(
-        userAbout!.username, notificationsSettings!);
-    await userService.getNotificationsSettings(userAbout!.username);
-  }
+  // Future<void> updateNotificationSettings() async {
+  //   await userService.updateNotificationSettings(
+  //       userAbout!.username, notificationsSettings!);
+  //   await userService.getNotificationsSettings(userAbout!.username);
+  // }
 
   Future<void> getUserCommunities() async {
     userCommunities = await userService.getUserCommunities();

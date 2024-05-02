@@ -2,6 +2,7 @@ import 'package:reddit/Models/rules_item.dart';
 
 class CommunityItem {
   CommunityItem({
+    required this.communityName,
     required this.general,
     required this.communityMembersNo,
     required this.communityRules,
@@ -19,7 +20,8 @@ class CommunityItem {
   });
 
   GeneralSettings general;
-  final int communityMembersNo;
+  final String communityName;
+  final String communityMembersNo;
   final List<RulesItem> communityRules;
   final String communityProfilePicturePath;
   final String? communityCoverPicturePath;
@@ -57,25 +59,25 @@ class CommunityItem {
 class GeneralSettings {
   GeneralSettings(
       {required this.communityID,
-      required this.communityName,
+      required this.communityTitle,
       required this.communityDescription,
       required this.communityType,
       required this.nsfwFlag});
 
   String communityID;
-  String communityName;
+  String communityTitle;
   String communityDescription;
   String communityType;
   bool nsfwFlag;
 
   void updateAllGeneralSettings(
       {required String communityID,
-      required String communityName,
+      required String communityTitle,
       required String communityDescription,
       required String communityType,
       required bool nsfwFlag}) {
     this.communityID = communityID;
-    this.communityName = communityName;
+    this.communityTitle = communityTitle;
     this.communityDescription = communityDescription;
     this.communityType = communityType;
     this.nsfwFlag = nsfwFlag;

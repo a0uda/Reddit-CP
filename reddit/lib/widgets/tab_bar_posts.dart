@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 
-import 'package:reddit/widgets/listing.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -167,7 +167,7 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                 SizedBox(
                                                   width: 160,
                                                   child: Text(
-                                                    "r/${community.general.communityName}",
+                                                    "r/${community.communityName}",
                                                     textAlign: TextAlign.center,
                                                     style: const TextStyle(
                                                         fontSize: 15),
@@ -219,8 +219,8 @@ class TabBarPostsState extends State<TabBarPosts> {
                   SliverFillRemaining(
                     child: Consumer<BlockUnblockUser>(
                         builder: (context, BlockUnblockUser, child) {
-                      return Listing(
-                        type: "profile",
+                      return ListingCertainUser(
+                    
                         userData: userData,
                       );
                     }), 

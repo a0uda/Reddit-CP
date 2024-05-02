@@ -6,6 +6,7 @@ import 'package:reddit/Models/user_about.dart';
 
 import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Services/post_service.dart';
@@ -100,6 +101,27 @@ class TopListingBuild extends State<TopListing> {
               itemCount: posts.length,
               controller: controller,
               itemBuilder: (context, index) {
+                    var imageurl=null;
+                  if (posts[index].images != null ) {
+                    imageurl=  posts[index].images?[0].path;
+                  }
+
+                    print(posts[index].isReposted);
+                  if (posts[index].isReposted) {
+                    return Repost(
+                          description: posts[index].description,
+                        id: posts[index].id,
+                        name: posts[index].username,
+                        title: posts[index].title,
+                        originalID: posts[index].originalPostID,
+                        date: posts[index].createdAt.toString(),
+                        likes: posts[index].upvotesCount -
+                            posts[index].downvotesCount,
+                        commentsCount: posts[index].commentsCount,
+                        communityName: posts[index].communityName,
+                        isLocked: posts[index].lockedFlag,
+                        vote: posts[index].vote);
+                  }
                 if (posts[index].nsfwFlag == true ||
                     posts[index].spoilerFlag == true) {
                   return CollapsePost(
@@ -126,7 +148,7 @@ class TopListingBuild extends State<TopListing> {
                       posts[index].upvotesCount - posts[index].downvotesCount,
                   commentsCount: posts[index].commentsCount,
                   linkUrl: posts[index].linkUrl,
-                  imageUrl: posts[index].images?[0].path,
+                  imageUrl: imageurl,
                   videoUrl: posts[index].videos?[0].path,
                   poll: posts[index].poll,
                   id: posts[index].id,

@@ -15,6 +15,8 @@ import 'package:reddit/widgets/Moderator/muted_users_list.dart';
 import 'package:reddit/widgets/Moderator/mod_community_name.dart';
 import 'package:reddit/widgets/Moderator/post_types.dart';
 import 'package:reddit/widgets/Moderator/queues.dart';
+import 'package:reddit/widgets/Moderator/scheduled.dart';
+import 'package:reddit/widgets/Moderator/scheduled_list.dart';
 
 //hena widgetss kol wahdaaa
 
@@ -31,6 +33,7 @@ var desktopModTools = [
   const MutedUsersList(),
   const ModQueues(),
   const ModRulesList(isEditMode: false,),
+  const ScheduledPostsList()
 ];
 
 var mobileModTools = [
@@ -44,4 +47,5 @@ var mobileModTools = [
   const MutedUsers(),
   const ModQueues(),
   const ModRules(),
+  const ScheduledPosts(),
 ];

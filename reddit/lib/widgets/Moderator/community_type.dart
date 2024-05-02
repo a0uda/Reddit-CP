@@ -112,13 +112,13 @@ class _CommunityTypeState extends State<CommunityType> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              settingsProvider.setGeneralSettings(
+            onPressed: () async {
+              await settingsProvider.setGeneralSettings(
                 communityName: moderatorController.communityName,
                 general: GeneralSettings(
                     communityID:
                         moderatorController.generalSettings.communityID,
-                    communityName: moderatorController.communityName,
+                    communityTitle: moderatorController.generalSettings.communityTitle,
                     communityDescription: moderatorController
                         .generalSettings.communityDescription,
                     communityType:

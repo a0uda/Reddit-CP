@@ -73,14 +73,14 @@ class _ModDescriptionState extends State<ModDescription> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              settingsProvider.setGeneralSettings(
+            onPressed: () async{
+              await settingsProvider.setGeneralSettings(
                 communityName: moderatorController.communityName,
                 general: GeneralSettings(
                     communityID:
                         moderatorController.generalSettings.communityID,
-                    communityName:
-                        moderatorController.generalSettings.communityName,
+                    communityTitle:
+                        moderatorController.generalSettings.communityTitle,
                     communityDescription: inputController.text,
                     communityType:
                         moderatorController.generalSettings.communityType,

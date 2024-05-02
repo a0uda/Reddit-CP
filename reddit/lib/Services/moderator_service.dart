@@ -12,8 +12,7 @@ class ModeratorMockService {
   Future<List<RulesItem>> getRules(String communityName) async {
     if (testing) {
       List<RulesItem> foundRules = communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .communityRules;
       return foundRules;
     } else {
@@ -52,8 +51,7 @@ class ModeratorMockService {
       String? ruleDescription}) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .communityRules
           .add(
             RulesItem(
@@ -95,8 +93,7 @@ class ModeratorMockService {
       String? ruleDescription}) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .communityRules
           .firstWhere((rule) => rule.id == id)
           .updateAll(
@@ -131,8 +128,7 @@ class ModeratorMockService {
   Future<void> deleteRule(String communityName, String id) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .communityRules
           .removeWhere((rule) => rule.id == id);
     } else {
@@ -158,8 +154,7 @@ class ModeratorMockService {
       String communityName) async {
     if (testing == true) {
       List<Map<String, dynamic>> approvedUsers = communities //badr
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .approvedUsers;
       return approvedUsers;
     } else {
@@ -185,8 +180,7 @@ class ModeratorMockService {
   Future<void> addApprovedUsers(String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .approvedUsers
           .add(
         {
@@ -219,8 +213,7 @@ class ModeratorMockService {
       String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .approvedUsers
           .removeWhere((user) => user["username"] == username);
     } else {
@@ -246,8 +239,7 @@ class ModeratorMockService {
       String communityName) async {
     if (testing) {
       List<Map<String, dynamic>> bannedUsers = communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .bannedUsers;
       return bannedUsers;
     } else {
@@ -281,8 +273,7 @@ class ModeratorMockService {
   }) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .bannedUsers
           .add(
         {
@@ -334,8 +325,7 @@ class ModeratorMockService {
   }) async {
     if (testing) {
       var user = communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .bannedUsers
           .firstWhere((user) => user["username"] == username);
       user["reason_for_ban"] = reasonForBan;
@@ -344,30 +334,36 @@ class ModeratorMockService {
       user["banned_until"] = bannedUntil ?? "";
       user["note_for_ban_message"] = noteForBanMessage ?? "";
     } else {
-      // SharedPreferences prefs = await SharedPreferences.getInstance(); //
-      // String? token = prefs.getString('token');
-      // final url =
-      //     Uri.parse('https://redditech.me/backend/communities/ban-user');
-      // final response = await http.post(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': token!,
-      //   },
-      //   body: json.encode({
-      //     'community_name': communityName,
-      //     'username': username,
-      //     'action': "ban",
-      //   }),
-      // ); // to be doneee badrrrr
+      SharedPreferences prefs = await SharedPreferences.getInstance(); //
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/edit-banned-user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'username': username,
+          'newDetails': {
+            "reason_for_ban": reasonForBan,
+            "mod_note": "User repeatedly violated community rules",
+            "permanent_flag": permanentFlag,
+            if (bannedUntil != null) "banned_until": bannedUntil,
+            if (noteForBanMessage != null)
+              "note_for_ban_message": noteForBanMessage,
+          },
+        }),
+      );
     }
   }
 
   Future<void> unBanUser(String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .bannedUsers
           .removeWhere((user) => user["username"] == username);
     } else {
@@ -393,8 +389,7 @@ class ModeratorMockService {
   Future<List<Map<String, dynamic>>> getMutedUsers(String communityName) async {
     if (testing) {
       List<Map<String, dynamic>> mutedUsers = communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .mutedUsers;
       return mutedUsers;
     } else {
@@ -420,8 +415,7 @@ class ModeratorMockService {
   Future<void> addMutedUsers(String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .mutedUsers
           .add(
         {
@@ -456,8 +450,7 @@ class ModeratorMockService {
   Future<void> unMuteUser(String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .mutedUsers
           .removeWhere((user) => user["username"] == username);
     } else {
@@ -483,8 +476,7 @@ class ModeratorMockService {
   Future<List<Map<String, dynamic>>> getModerators(String communityName) async {
     if (testing) {
       List<Map<String, dynamic>> moderators = communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .moderators;
       return moderators;
     } else {
@@ -517,8 +509,7 @@ class ModeratorMockService {
   }) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .moderators
           .add(
         {
@@ -553,14 +544,16 @@ class ModeratorMockService {
           },
         }),
       );
+      print("MOOOOODDD");
+      print(communityName);
+      print(response.body);
     }
   }
 
   Future<void> removeAsMod(String username, String communityName) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .moderators
           .removeWhere((user) => user["username"] == username);
     } else {
@@ -582,12 +575,33 @@ class ModeratorMockService {
     }
   }
 
+  Future<String> getMembersCount(String communityName) async {
+    if (testing) {
+      return communities
+          .firstWhere((community) => community.communityName == communityName)
+          .communityMembersNo;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/members-count/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      );
+      final String membersCount =
+          json.decode(response.body)["members_count"].toString();
+
+      return membersCount;
+    }
+  }
+
   Future<GeneralSettings> getCommunityGeneralSettings(
       String communityName) async {
     if (testing) {
       return communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .general;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -602,7 +616,7 @@ class ModeratorMockService {
       final Map<String, dynamic> decodedSettings = json.decode(response.body);
       final GeneralSettings generalSettings = GeneralSettings(
         communityID: decodedSettings["_id"],
-        communityName: decodedSettings["title"],
+        communityTitle: decodedSettings["title"],
         communityDescription: decodedSettings["description"],
         communityType: decodedSettings["type"],
         nsfwFlag: decodedSettings["nsfw_flag"],
@@ -614,8 +628,8 @@ class ModeratorMockService {
   Future<Map<String, dynamic>> getPostTypesAndOptions(
       String communityName) async {
     if (testing) {
-      var foundCommunity = communities.firstWhere(
-          (community) => community.general.communityName == communityName);
+      var foundCommunity = communities
+          .firstWhere((community) => community.communityName == communityName);
       return {
         "postTypes": foundCommunity.postTypes,
         "allowImages": foundCommunity.allowImage,
@@ -650,12 +664,11 @@ class ModeratorMockService {
       required String communityName}) async {
     if (testing) {
       communities
-          .firstWhere(
-              (community) => community.general.communityName == communityName)
+          .firstWhere((community) => community.communityName == communityName)
           .general
           .updateAllGeneralSettings(
               communityID: settings.communityID,
-              communityName: settings.communityName,
+              communityTitle: settings.communityTitle,
               communityDescription: settings.communityDescription,
               communityType: settings.communityType,
               nsfwFlag: settings.nsfwFlag);
@@ -672,8 +685,8 @@ class ModeratorMockService {
         },
         body: json.encode({
           "_id": settings.communityID,
-          "title": settings.communityName,
-          "description": settings.communityName,
+          "title": settings.communityTitle,
+          "description": settings.communityDescription,
           "type": settings.communityType,
           "nsfw_flag": settings.nsfwFlag,
         }),
@@ -690,7 +703,7 @@ class ModeratorMockService {
   }) async {
     if (testing) {
       var community = communities.firstWhere(
-        (community) => community.general.communityName == communityName,
+        (community) => community.communityName == communityName,
       );
       community.updatePostTypes(
         communityName: communityName,
@@ -724,13 +737,62 @@ class ModeratorMockService {
         },
         body: json.encode(
           {
-            "post_type_options": postTypes,
-            "allow_image_uploads_and_links_to_image_hosting_sites": allowImages,
-            "allow_polls": allowPolls,
-            "allow_videos": allowVideos,
+            "posts": {
+              "post_type_options": postTypes,
+              "allow_image_uploads_and_links_to_image_hosting_sites":
+                  allowImages,
+              "allow_polls": allowPolls,
+              "allow_videos": allowVideos,
+            }
           },
         ),
       );
     }
+  }
+
+  Future<void> createCommunity(
+      {required String communityName,
+      required bool communityFlag,
+      required String communityType}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "name": communityName,
+          "type": communityType,
+          "nsfw_flag": communityFlag,
+        },
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> getCommunityInfo(
+      {required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/get-community-view/$communityName');
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': token!},
+    );
+    final Map<String, dynamic> decodedInfo = json.decode(response.body);
+    return {
+      "communityDescription": decodedInfo["description"],
+      "communityTitle":decodedInfo["title"],
+      "communityType": decodedInfo["type"],
+      "communityFlag": decodedInfo["nsfw_flag"],
+      "communityProfilePicture": decodedInfo["profile_picture"],
+      "communityBannerPicture": decodedInfo["banner_picture"],
+      "communityJoined": decodedInfo["joined_flag"],
+    };
   }
 }

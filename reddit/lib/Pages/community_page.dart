@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
@@ -28,7 +27,7 @@ class CommunityPage extends StatefulWidget {
       this.communityDescription});
 
   final String communityName;
-  final int communityMembersNo;
+  final String communityMembersNo;
   RulesItem? communityRule;
   final String communityProfilePicturePath;
   String? communityDescription;
@@ -51,10 +50,13 @@ class _CommunityPageState extends State<CommunityPage> {
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
 
-  Future<void> fetchGeneralSettings() async {
-    await moderatorController.getGeneralSettings(communityName);
-    communityGeneralSettings = moderatorController.generalSettings;
-  }
+  // Future<void> fetchGeneralSettings() async {
+  //   print("BADRRRRRRR");
+  //   //print(communityName);
+
+  //   await moderatorController.getGeneralSettings(communityName);
+  //   communityGeneralSettings = moderatorController.generalSettings;
+  // }
 
   @override
   void initState() {
@@ -417,7 +419,9 @@ class _CommunityPageState extends State<CommunityPage> {
                         if (MediaQuery.of(context).size.width > 850)
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
-                            child: DescriptionWidget(communityName: widget.communityName,),
+                            child: DescriptionWidget(
+                              communityName: widget.communityName,
+                            ),
                           ),
                       ],
                     ),
