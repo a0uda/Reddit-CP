@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -143,6 +144,16 @@ class MessagesState extends State<MessagesPage> {
                                         );
                                       } else {
                                         // todo: navigate to subreddit
+                                        List<CommunityBackend>
+                                            moderatedCammunities =
+                                            userController.userAbout!
+                                                .moderatedCommunities!;
+                                        if (moderatedCammunities.any(
+                                                (element) =>
+                                                    element.name ==
+                                                    messageReceiver) ==
+                                            true) {
+                                        } else {}
                                       }
                                     },
                                     child: Text(
@@ -247,12 +258,12 @@ class MessagesState extends State<MessagesPage> {
   }
 
   List<Messages> processMessage(List<Messages> messagesList, Messages message) {
-    if (message.parentMessageId == null ) {
+    if (message.parentMessageId == null) {
       return [message];
     }
     List<Messages> replies = messagesList
         .where((msg) =>
-            msg.parentMessageId != null  &&
+            msg.parentMessageId != null &&
             msg.parentMessageId == message.parentMessageId)
         .toList();
     Messages msg =
