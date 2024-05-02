@@ -115,8 +115,8 @@ class _PeopleListState extends State<PeopleList> {
                                   : const SizedBox(),
                               Text(
                                 '${createdAt.day}-${createdAt.month}-${createdAt.year}',
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 10),
+                                style:  TextStyle(
+                                    color: Colors.grey[600], fontSize: 10),
                               ),
                             ],
                           )

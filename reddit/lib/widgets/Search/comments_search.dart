@@ -1,29 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
-import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
-import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/search_service.dart';
-import 'package:reddit/widgets/Community/community_responsive.dart';
-import 'package:reddit/widgets/Community/desktop_community_page.dart';
-import 'package:reddit/widgets/Community/mobile_community_page.dart';
 
-class CommunitiesSearch extends StatefulWidget {
+class CommentsSearch extends StatefulWidget {
   final String searchFor;
-  const CommunitiesSearch({super.key, required this.searchFor});
+  const CommentsSearch({super.key, required this.searchFor});
 
   @override
-  State<CommunitiesSearch> createState() => _CommunitiesSearchState();
+  State<CommentsSearch> createState() => _CommentsSearchState();
 }
 
-class _CommunitiesSearchState extends State<CommunitiesSearch> {
-  List<CommunityBackend> joined = [];
+class _CommentsSearchState extends State<CommentsSearch> {
+  List<FollowersFollowingItem> following = [];
   final UserController userController = GetIt.instance.get<UserController>();
-  final ModeratorController moderatorController =
-      GetIt.instance.get<ModeratorController>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
   List<Map<String, dynamic>> foundUsers = [];
   bool fetched = false;
@@ -32,35 +23,24 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
   Future<void> fetchPeople() async {
     if (!fetched) {
       searchFor = widget.searchFor;
-      foundUsers = original;
+      foundUsers = [];
+      // for (var org in original) {
+      //   if (org["username"].toLowerCase().contains(searchFor.toLowerCase())) {
+      //     foundUsers.add(org);
+      //   }
 
-      if (userController.userCommunities == null) {
-        await userController.getUserCommunities();
-        joined = userController.userCommunities!;
-      } else {
-        joined = userController.userCommunities!;
-      }
-      fetched = true;
+      //   var followerfollowingcontroller =
+      //       context.read<FollowerFollowingController>();
+
+      //   if (followerfollowingcontroller.following == null) {
+      //     following = await followerfollowingcontroller
+      //         .getFollowing(userController.userAbout!.username);
+      //   } else {
+      //     following = followerfollowingcontroller.following!;
+      //   }
+      //   fetched = true;
+      // }
     }
-  }
-
-  void navigateToCommunity(String name, String pp) {
-    List<CommunityBackend> moderated =
-        userController.userAbout!.moderatedCommunities ?? [];
-    moderatorController.profilePictureURL = pp;
-    bool isMod = moderated.any((element) => element.name == name);
-    moderatorController.communityName = name;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => (CommunityLayout(
-          desktopLayout:
-              DesktopCommunityPage(isMod: isMod, communityName: name),
-          mobileLayout: MobileCommunityPage(
-            communityName: name,
-          ),
-        )),
-      ),
-    );
   }
 
   @override
@@ -91,24 +71,20 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
             }
             return ListView.builder(
               itemCount: foundUsers.length,
-              itemBuilder: (context, int index) {
+              itemBuilder: (BuildContext context, int index) {
                 final item = foundUsers[index];
                 String description = item["general_settings"]["description"];
                 if (description.length > 80) {
                   description = "${description.substring(0, 80)}...";
                 }
-                bool isJoined = joined.any((element) => element.name == item["name"]);
+                bool isJoined = false;
                 // following.any((user) => user.username == item["username"]); to be changed
                 return Column(
                   children: [
                     ListTile(
-                      onTap: () {
-                        navigateToCommunity(
-                            item["name"], item["profile_picture"]);
-                      },
                       tileColor: Colors.white,
                       leading: CircleAvatar(
-                        backgroundImage: NetworkImage(item["profile_picture"]),
+                        backgroundImage: AssetImage(item["profile_picture"]),
                         radius: 15,
                       ),
                       title: Column(
@@ -212,41 +188,41 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
   }
 }
 
-List<Map<String, dynamic>> original = [
-  {
-    "_id": "6629881c676aa6854cccdf8a",
-    "name": "malaktest",
-    "members_count": 0,
-    "general_settings": {
-      "description":
-          "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-      "type": "Public",
-      "nsfw_flag": false,
-    },
-    "profile_picture": "Greddit.png",
-  },
-  {
-    "_id": "6629881c676aa6854cccdf8a",
-    "name": "Legros_LLC",
-    "members_count": 500,
-    "general_settings": {
-      "description":
-          "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-      "type": "Public",
-      "nsfw_flag": true,
-    },
-    "profile_picture": "Greddit.png",
-  },
-  {
-    "_id": "6629881c676aa6854cccdf8a",
-    "name": "malaktest",
-    "members_count": 0,
-    "general_settings": {
-      "description":
-          "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-      "type": "Public",
-      "nsfw_flag": true,
-    },
-    "profile_picture": "Greddit.png",
-  },
-];
+// List<Map<String, dynamic>> original = [
+//   {
+//     "_id": "6629881c676aa6854cccdf8a",
+//     "name": "malaktest",
+//     "members_count": 0,
+//     "general_settings": {
+//       "description":
+//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
+//       "type": "Public",
+//       "nsfw_flag": false,
+//     },
+//     "profile_picture": "Greddit.png",
+//   },
+//   {
+//     "_id": "6629881c676aa6854cccdf8a",
+//     "name": "badrrrr",
+//     "members_count": 500,
+//     "general_settings": {
+//       "description":
+//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
+//       "type": "Public",
+//       "nsfw_flag": true,
+//     },
+//     "profile_picture": "Greddit.png",
+//   },
+//   {
+//     "_id": "6629881c676aa6854cccdf8a",
+//     "name": "malaktest",
+//     "members_count": 0,
+//     "general_settings": {
+//       "description":
+//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
+//       "type": "Public",
+//       "nsfw_flag": true,
+//     },
+//     "profile_picture": "Greddit.png",
+//   },
+// ];
