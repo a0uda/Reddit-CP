@@ -585,23 +585,33 @@ class UserService {
       );
       print('in get messages');
       print(response.statusCode);
-      //print(jsonDecode(response.body)['messages']);
       List<dynamic> body = jsonDecode(response.body)['messages'];
-      print('dh el body');
-      print(body);
       List<Messages>? messages = await Future.wait(
         body
             .where((item) => item != null)
             .map((dynamic item) async => Messages.fromJson(item)),
       );
-      messages.removeWhere(
-          (element) => element.deletedAt != null || element.deletedAt != '');
+      for (var msg in messages) {
+        print(msg.id);
+        print(msg.senderType);
+        print(msg.senderUsername);
+        print(msg.receiverType);
+        print(msg.receiverUsername);
+        print(msg.message);
+      }
       return messages;
     }
   }
 
-  Future<bool> replyMessage(String parentid, String senderUsername,
-      String receiverUsername, String receiverType, String message) async {
+  Future<bool> replyMessage(
+      String parentid,
+      String senderUsername,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,
+      String subject) async {
     if (testing) {
       List<Messages>? userMessages = users
           .firstWhere((element) => element.userAbout.username == senderUsername)
@@ -610,13 +620,12 @@ class UserService {
         id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
             .toString(),
         senderUsername: senderUsername,
-        senderType: 'user',
+        senderType: senderType,
         receiverUsername: receiverUsername,
         receiverType: receiverType,
-        senderVia: null,
+        senderVia: senderVia,
         message: message,
         createdAt: DateTime.now().toString(),
-        deletedAt: null,
         unreadFlag: false,
         isSent: true,
         isReply: false,
@@ -626,8 +635,34 @@ class UserService {
       ));
       return true;
     } else {
-      // todo: reply to message in database
-      return false;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/reply');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": senderType,
+            "receiver_username": receiverUsername,
+            "receiver_type": receiverType,
+            "subject": subject,
+            "message": message,
+            "senderVia": senderVia,
+            "parent_message_id": parentid
+          }
+        }),
+      );
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -660,7 +695,6 @@ class UserService {
           senderVia: null,
           message: message,
           createdAt: DateTime.now().toString(),
-          deletedAt: null,
           unreadFlag: true,
           isSent: true,
           isReply: false,
@@ -668,17 +702,38 @@ class UserService {
           subject: subject,
           isInvitation: false,
         ));
-        print('message added tmm mn add msg function');
-        for (var msg in userMessages!) {
-          print(msg.id);
-          print(msg.receiverUsername);
-        }
-
         return true;
       }
     } else {
-      // todo: add new message to database
-      return false;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/compose');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": "user",
+            "receiver_username": receiverUsername,
+            "receiver_type": "user",
+            "subject": subject,
+            "message": message
+          }
+        }),
+      );
+      print("in send new message");
+      print(senderUsername);
+      print(receiverUsername);
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -689,7 +744,23 @@ class UserService {
           .usermessages;
       userMessages?.firstWhere((element) => element.id == id).unreadFlag =
           false;
-    } else {}
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({"_id": id}),
+      );
+      print('in mark one message read');
+      print(response.body);
+    }
   }
 
   Future<void> markAllMessagesRead(String username) async {
@@ -709,7 +780,22 @@ class UserService {
     if (testing) {
       //to be implemented
     } else {
-      // todo: report user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/report-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "reported_username": username,
+        }),
+      );
+      print('in report user');
+      print(response.body);
     }
   }
 

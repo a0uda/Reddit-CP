@@ -9,7 +9,6 @@ class Messages {
   String? senderVia;
   String? message;
   String? createdAt;
-  String? deletedAt;
   bool unreadFlag;
   bool isSent;
   bool? isReply;
@@ -30,7 +29,6 @@ class Messages {
     this.isReply,
     this.subject,
     this.senderVia,
-    this.deletedAt,
     this.parentMessageId,
     this.isInvitation,
   });
@@ -45,7 +43,6 @@ class Messages {
       senderVia: json['sender_via'] ?? '',
       message: json['message'] ?? '',
       createdAt: json['created_at'] ?? '',
-      deletedAt: json['deleted_at'] ?? '',
       unreadFlag: json['unread_flag'] ?? false,
       isSent: json['is_sent'] ?? false,
       isReply: json['is_reply'] ?? false,

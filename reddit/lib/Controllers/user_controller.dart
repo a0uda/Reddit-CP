@@ -320,14 +320,21 @@ class MessagesOperations extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  Future<bool> replyToMessage(String parentMessageId, String receiverUsername,
-      String receiverType, String message) async {
+  Future<bool> replyToMessage(
+      String parentMessageId,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,subject) async {
     bool success = await userService.replyMessage(
         parentMessageId,
         userController.userAbout!.username,
         receiverUsername,
         receiverType,
-        message);
+        senderType,
+        senderVia,
+        message,subject);
     if (success) {
       notifyListeners();
     }
