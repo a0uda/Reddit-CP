@@ -64,9 +64,11 @@ class PostService {
           allowrepliesFlag: true, // Assuming initial allow replies flag is true
           setSuggestedSort: "None",
           vote: 0,
+          isReposted: false,
+          originalPostID: '',
         ),
       );
-      //print(posts);
+      
     } else {
       // add post to database
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
@@ -111,8 +113,7 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-      //print(response.statusCode);
-
+  
       // print(json.encode({
       //   "title": title,
       //   "description": description,
@@ -175,7 +176,7 @@ class PostService {
         'pageSize':'10'
       };
     
-      print(queryparams.toString());
+  
       var url = Uri.parse('https://redditech.me/backend/listing/posts/best').replace(queryParameters:queryparams);
 
       if (sortingType == "best") {
@@ -188,8 +189,7 @@ class PostService {
        url = Uri.parse('https://redditech.me/backend/listing/posts/top').replace(queryParameters:queryparams);
       } else if (sortingType == "random") {
        url = Uri.parse('https://redditech.me/backend/listing/posts/random').replace(queryParameters:queryparams);
-       print(url);
-       print(page);
+  
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -203,13 +203,21 @@ class PostService {
         
         
       );
-      print(json.decode(response.body)['content']);
+   print(response.body);
+      if(response.statusCode==200)
+      {
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
 
       return postsItem;
+      }
+      else
+      {
+        List<PostItem> nullPost=[];
+        return nullPost;
+      }
     }
   }
 
@@ -227,7 +235,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-    print(username);
+   
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -240,13 +248,12 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      print((response.body));
+  
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
       }).toList();
 
-      //print(postsItem);
       return postsItem;
       //return posts;
     }
@@ -280,7 +287,7 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == id);
       post.upvotesCount++;
     } else {
-      print(id);
+
         final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
 
@@ -310,7 +317,7 @@ class PostService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      print(id);
+    
       final response = await http.post(
         url,
         headers: {
@@ -319,7 +326,7 @@ class PostService {
         },
         body: json.encode({"id": id,"is_post":true,"vote":"-1"}),
       );
-      print(response.body);
+      print(response.statusCode);
 
       // dislike post in database
     }
@@ -445,6 +452,7 @@ class PostService {
     if (testing) {
       return posts.firstWhere((element) => element.id == postId);
     } else {
+      print(postId);
       final url =
           Uri.parse('https://redditech.me/backend/posts/get-post?id=$postId');
 
@@ -459,7 +467,7 @@ class PostService {
       //print(json.decode(response.body)['post']);
 
       if (response.statusCode == 200) {
-        return PostItem.fromJson(json.decode(response.body)['post']);
+        return PostItem.fromJson(json.decode(response.body)['content']);
       } else {
         throw Exception('Failed to load post');
       }
@@ -530,6 +538,85 @@ class PostService {
     }
   }
 
+Future<void> SharePost(String id,String comName,String caption,bool flag)async{
+    if (testing) {
+      
+    } else {
+      print(id);
+         print(comName);
+            print(caption);
+               print(flag);
+        final url =
+          Uri.parse('https://redditech.me/backend/posts/share-post');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,"community_name":comName,"caption":caption,"post_in_community_flag":flag}),
+      );
+      print(response.body);
+
+      // dislike post in database
+    }
+  }
+
+
+Future<void> EditPost(String id,String caption)async{
+    if (testing) {
+      
+    } else {
+ 
+        final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/edit-text');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,"edited_text":caption,"is_post":true}),
+      );
+      print(response.body);
+
+      // dislike post in database
+    }
+  }
+
+
+Future<void> DeletePost(String id)async{
+    if (testing) {
+      
+    } else {
+ 
+        final url =
+          Uri.parse('https://redditech.me/backend/posts/remove');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+    
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": id,}),
+      );
+      print(response.body);
+
+
+    }
+  }
 
 
 

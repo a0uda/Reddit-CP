@@ -357,8 +357,6 @@ class ModeratorMockService {
           },
         }),
       );
-      print("NADRXS");
-      print(response.body);
     }
   }
 
@@ -546,6 +544,9 @@ class ModeratorMockService {
           },
         }),
       );
+      print("MOOOOODDD");
+      print(communityName);
+      print(response.body);
     }
   }
 
@@ -729,17 +730,6 @@ class ModeratorMockService {
       String? token = prefs.getString('token');
       final url = Uri.parse(
           'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
-      print("BEFOREEEEEE");
-      print(
-        json.encode(
-          {
-            "post_type_options": postTypes,
-            "allow_image_uploads_and_links_to_image_hosting_sites": allowImages,
-            "allow_polls": allowPolls,
-            "allow_videos": allowVideos,
-          },
-        ),
-      );
       final response = await http.post(
         url,
         headers: {

@@ -35,6 +35,8 @@ final List<PostItem> posts = [
     setSuggestedSort: "None (Recommended)",
     moderatorDetails: null,
     userDetails: null,
+    isReposted: false,
+    originalPostID: '',
   ),
   PostItem(
         vote: 0,
@@ -44,6 +46,8 @@ final List<PostItem> posts = [
     title: 'A pic example',
     type: 'type',
     communityId: "0",
+        isReposted: false,
+    originalPostID: '',
     communityName: "r/Photography",
     ocFlag: false,
     spoilerFlag: false,
@@ -79,6 +83,8 @@ final List<PostItem> posts = [
 final List<PostItem> popularPosts = [
   PostItem(
         vote: 0,
+            isReposted: false,
+    originalPostID: '',
     id: "2",
     userId: users[1].userAbout.id!,
     username: users[1].userAbout.username,
@@ -117,6 +123,8 @@ final List<PostItem> popularPosts = [
   ),
   PostItem(
         vote: 0,
+            isReposted: false,
+    originalPostID: '',
     id: "2",
     userId: users[1].userAbout.id!,
     username: users[1].userAbout.username,
