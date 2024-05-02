@@ -149,20 +149,20 @@ class _PeopleListState extends State<PeopleList> {
                                   side: isFollowing
                                       ? const BorderSide(
                                           color:
-                                              Color.fromARGB(255, 3, 55, 146),
+                                              Color.fromARGB(255, 0, 69, 172),
                                         )
                                       : null,
                                   padding:
                                       const EdgeInsets.fromLTRB(14, 8, 14, 8),
                                   backgroundColor: isFollowing
                                       ? Colors.white
-                                      : const Color.fromARGB(255, 3, 55, 146),
+                                      : const Color.fromARGB(255, 0, 69, 172),
                                   foregroundColor: isFollowing
-                                      ? const Color.fromARGB(255, 3, 55, 146)
+                                      ? const Color.fromARGB(255, 0, 69, 172)
                                       : Colors.white,
                                 ),
                                 child: isFollowing
-                                    ? const Text("unfollow")
+                                    ? const Text("Unfollow")
                                     : const Text("Follow"),
                               );
                             })

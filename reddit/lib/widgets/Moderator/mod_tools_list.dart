@@ -54,6 +54,19 @@ class ModToolsList extends StatelessWidget {
           onTap: () => {changePage(1)},
         ),
         ListTile(
+          leading: const Icon(Icons.photo_size_select_actual_rounded),
+          title: Text(
+            'Change Pictures',
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+          ),
+          trailing: isMobile
+              ? const Icon(Icons.arrow_forward_rounded)
+              : const SizedBox(),
+          onTap: () {
+            changePage(2);
+          },
+        ),
+        ListTile(
           leading: const Icon(CupertinoIcons.lock),
           title: Text(
             'Community Type',
@@ -63,7 +76,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(2);
+            changePage(3);
           },
         ),
         ListTile(
@@ -76,7 +89,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(3);
+            changePage(4);
           },
         ),
         ListTile(
@@ -89,7 +102,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(4);
+            changePage(5);
           },
         ),
         ListTile(
@@ -102,7 +115,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(5);
+            changePage(6);
           },
         ),
         ListTile(
@@ -115,7 +128,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(6);
+            changePage(7);
           },
         ),
         ListTile(
@@ -128,7 +141,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(7);
+            changePage(8);
           },
         ),
         ListTile(
@@ -141,7 +154,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(8);
+            changePage(9);
           },
         ),
         ListTile(
@@ -154,7 +167,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(9);
+            changePage(10);
           },
         ),
         ListTile(
@@ -167,7 +180,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(10);
+            changePage(11);
           },
         ),
       ],

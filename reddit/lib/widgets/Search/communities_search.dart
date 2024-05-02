@@ -186,8 +186,8 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
                                 : Colors.white,
                           ),
                           child: isJoined
-                              ? const Text("joined")
-                              : const Text("join"),
+                              ? const Text("Joined")
+                              : const Text("Join"),
                         );
                       }),
                     ),

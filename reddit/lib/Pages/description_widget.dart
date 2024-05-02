@@ -35,7 +35,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   Future<void> fetchModerators() async {
     if (!userFetched) {
       await moderatorController
-          .getModerators(moderatorController.communityName);
+          .getModerators(widget.communityName);
     }
   }
 

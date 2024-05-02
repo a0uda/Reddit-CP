@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -227,6 +230,13 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
     }
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    moderatorController.communityName = widget.communityName;
+  }
+
   bool communityInfoFetched = false;
 
   Future<void> fetchCommunityInfo() async {
@@ -317,7 +327,24 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                   widget.isMod
                       ? OutlineButtonWidget(
                           'Mod Tools',
-                          () {},
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ModResponsive(
+                                  mobileLayout: MobileModTools(
+                                    communityName:
+                                        moderatorController.communityName,
+                                  ),
+                                  desktopLayout: DesktopModTools(
+                                    index: 0,
+                                    communityName:
+                                        moderatorController.communityName,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                           borderColor: Colors.transparent,
                           backgroundColour:
                               const Color.fromARGB(255, 0, 69, 172),

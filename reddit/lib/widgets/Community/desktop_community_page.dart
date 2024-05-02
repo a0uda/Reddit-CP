@@ -4,6 +4,9 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -45,6 +48,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
     } else {
       buttonState = 'Join';
     }
+    moderatorController.communityName = widget.communityName;
     super.initState();
   }
 
@@ -358,7 +362,24 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                           widget.isMod
                               ? OutlineButtonWidget(
                                   'Mod Tools',
-                                  () {},
+                                  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ModResponsive(
+                                          mobileLayout: MobileModTools(
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                          desktopLayout: DesktopModTools(
+                                            index: 0,
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                   borderColor: Colors.transparent,
                                   backgroundColour:
                                       const Color.fromARGB(255, 0, 69, 172),
