@@ -344,8 +344,9 @@ class MessagesOperations extends ChangeNotifier {
     return success;
   }
 
-  Future<void> markallAsRead() async {
-    await userService.markAllMessagesRead();
+  Future<void> markallAsRead() async 
+  {
+    await userService.markAllMessagesRead(userController.userAbout!.username);
     notifyListeners();
   }
 }

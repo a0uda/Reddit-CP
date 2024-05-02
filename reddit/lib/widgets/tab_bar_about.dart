@@ -39,32 +39,36 @@ class TabBarAbout extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Consumer<FollowerFollowingController>(builder:
-                                (context, followerFollowingController, child) {
-                              return FutureBuilder<List<int>>(
-                                  future: Future.wait([
-                                    userService
-                                        .getFollowersCount(userData!.username),
-                                  ]),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<List<int>> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      int followersCount = snapshot.data![0];
+                            Consumer<BlockUnblockUser>(
+                                builder: (context, BlockUnblockUser, child) {
+                              return Consumer<FollowerFollowingController>(
+                                  builder: (context,
+                                      followerFollowingController, child) {
+                                return FutureBuilder<List<int>>(
+                                    future: Future.wait([
+                                      userService.getFollowersCount(
+                                          userData!.username),
+                                    ]),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<List<int>> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else {
+                                        int followersCount = snapshot.data![0];
 
-                                      return Text(
-                                        '$followersCount',
-                                        style: const TextStyle(
-                                          fontSize: 15.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      );
-                                    }
-                                  });
+                                        return Text(
+                                          '$followersCount',
+                                          style: const TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }
+                                    });
+                              });
                             }),
                             const Text(
                               'Followers',

@@ -56,12 +56,12 @@ class MessagesState extends State<MessagesPage> {
                   List<Messages> messagesList = snapshot.data![0];
                   List<FollowersFollowingItem>? following =
                       followerfollowingcontroller.following;
-                  List<BlockedUsersItem>? blockedUsers =
-                      userController.blockedUsers;
-                  messagesList.removeWhere((element) => blockedUsers!.any(
-                      (blockedUser) =>
-                          blockedUser.username == element.senderUsername ||
-                          blockedUser.username == element.receiverUsername));
+                  // List<BlockedUsersItem>? blockedUsers =
+                  //     userController.blockedUsers;
+                  // messagesList.removeWhere((element) => blockedUsers!.any(
+                  //     (blockedUser) =>
+                  //         blockedUser.username == element.senderUsername ||
+                  //         blockedUser.username == element.receiverUsername));
                   List<Messages> originalMessagesList = List.from(messagesList);
                   if (messagesList.isNotEmpty) {
                     messagesList = processAllMessage(messagesList);
@@ -89,7 +89,9 @@ class MessagesState extends State<MessagesPage> {
                                 : message.senderType;
                             return ListTile(
                               onTap: () async {
-                                userService.markoneMessageRead(message.id);
+                                userService.markoneMessageRead(
+                                    userController.userAbout!.username,
+                                    message.id);
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

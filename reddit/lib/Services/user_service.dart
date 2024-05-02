@@ -174,10 +174,16 @@ class UserService {
 
   Future<int> getFollowersCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
-          .followers!
-          .length;
+          .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -201,9 +207,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -228,10 +241,16 @@ class UserService {
 
   Future<int> getFollowingCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
-          .following!
-          .length;
+          .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -255,9 +274,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -280,9 +306,16 @@ class UserService {
 
   Future<List<Comments>?> getcomments(String username) async {
     if (testing) {
-      return users
+      List<Comments> comments = users
           .firstWhere((element) => element.userAbout.username == username)
           .comments!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      comments.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return comments;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -517,7 +550,16 @@ class UserService {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   Future<List<Messages>?> getMessages(String username) async {
     if (testing) {
-      List<Messages> messages = List.from(userMessages);
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      messages.removeWhere((element) => blockedUsers.any((blockedUser) =>
+          blockedUser.username == element.senderUsername ||
+          blockedUser.username == element.receiverUsername));
       return messages;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -535,7 +577,7 @@ class UserService {
       print('in get messages');
       print(response.statusCode);
       print(response.body);
-      List<dynamic> body = jsonDecode(response.body)['content'];
+      List<dynamic> body = jsonDecode(response.body)['messages'];
       print(body);
       return Future.wait(
           body.map((dynamic item) async => Messages.fromJson(item)));
@@ -545,7 +587,10 @@ class UserService {
   Future<bool> replyMessage(String parentid, String senderUsername,
       String receiverUsername, String receiverType, String message) async {
     if (testing) {
-      userMessages.add(Messages(
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .usermessages;
+      userMessages?.add(Messages(
         id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
             .toString(),
         senderUsername: senderUsername,
@@ -572,12 +617,23 @@ class UserService {
   Future<bool> sendNewMessage(String senderUsername, String receiverUsername,
       String message, String subject) async {
     if (testing) {
-      if (users.any(
-              (element) => element.userAbout.username == receiverUsername) ==
-          false) {
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .safetySettings!
+          .blockedUsers;
+      if (users.any((element) =>
+                  element.userAbout.username == receiverUsername) ==
+              false ||
+          (blockedUsers
+                  .any((element) => element.username == receiverUsername) ==
+              true)) {
         return false;
       } else {
-        userMessages.add(Messages(
+        List<Messages>? userMessages = users
+            .firstWhere(
+                (element) => element.userAbout.username == senderUsername)
+            .usermessages;
+        userMessages?.add(Messages(
           id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
               .toString(),
           senderUsername: senderUsername,
@@ -595,7 +651,7 @@ class UserService {
           subject: subject,
         ));
         print('message added tmm mn add msg function');
-        for (var msg in userMessages) {
+        for (var msg in userMessages!) {
           print(msg.id);
           print(msg.receiverUsername);
         }
@@ -608,15 +664,22 @@ class UserService {
     }
   }
 
-  Future<void> markoneMessageRead(String id) async {
+  Future<void> markoneMessageRead(String username, String id) async {
     if (testing) {
-      userMessages.firstWhere((element) => element.id == id).unreadFlag = false;
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      userMessages?.firstWhere((element) => element.id == id).unreadFlag =
+          false;
     } else {}
   }
 
-  Future<void> markAllMessagesRead() async {
+  Future<void> markAllMessagesRead(String username) async {
     if (testing) {
-      for (var msg in userMessages) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      for (var msg in userMessages!) {
         msg.unreadFlag = false;
       }
     } else {

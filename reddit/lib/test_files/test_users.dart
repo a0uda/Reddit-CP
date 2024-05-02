@@ -4,6 +4,7 @@ import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/test_files/test_comments.dart';
+import 'package:reddit/test_files/test_messages.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
@@ -104,11 +105,11 @@ final List<UserItem> users = [
         //   profilePicture: 'images/pp.jpg',
         //   blockedDate: '5 March 2024',
         // ),
-        // BlockedUsersItem(
-        //   username: 'jane123',
-        //   profilePicture: 'images/pp.jpg',
-        //   blockedDate: '5 March 2024',
-        // ),
+        BlockedUsersItem(
+          username: 'jane123',
+          profilePicture: 'images/pp.jpg',
+          blockedDate: '5 March 2024',
+        ),
       ],
       mutedCommunities: [
         MutedCommunity(
@@ -138,6 +139,7 @@ final List<UserItem> users = [
       communities[1],
       communities[2],
     ],
+    usermessages: List.from(userMessages[0]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -225,6 +227,7 @@ final List<UserItem> users = [
       communities[1],
       communities[2],
     ],
+    usermessages: List.from(userMessages[1]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -295,6 +298,7 @@ final List<UserItem> users = [
       communities[2],
       communities[3],
     ],
+    usermessages: List.from(userMessages[2]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -354,5 +358,6 @@ final List<UserItem> users = [
       communities[2],
       communities[3],
     ],
+    usermessages: List.from(userMessages[3]),
   ),
 ];
