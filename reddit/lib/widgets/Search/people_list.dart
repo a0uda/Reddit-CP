@@ -146,15 +146,20 @@ class _PeopleListState extends State<PeopleList> {
                                   //badrrrr followw
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  side: isFollowing ? const BorderSide(color:  Color.fromARGB(255, 2, 38, 101),) : null,
-                                  padding: const EdgeInsets.fromLTRB(14,8,14,8),
+                                  side: isFollowing
+                                      ? const BorderSide(
+                                          color:
+                                              Color.fromARGB(255, 3, 55, 146),
+                                        )
+                                      : null,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(14, 8, 14, 8),
                                   backgroundColor: isFollowing
                                       ? Colors.white
-                                      : const Color.fromARGB(255, 2, 38, 101),
+                                      : const Color.fromARGB(255, 3, 55, 146),
                                   foregroundColor: isFollowing
-                                      ? const Color.fromARGB(255, 2, 38, 101)
+                                      ? const Color.fromARGB(255, 3, 55, 146)
                                       : Colors.white,
-                                  
                                 ),
                                 child: isFollowing
                                     ? const Text("unfollow")

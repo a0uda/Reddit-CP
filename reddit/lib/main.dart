@@ -9,7 +9,6 @@ import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
-import 'package:reddit/Pages/description_widget.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
@@ -126,6 +125,6 @@ class MyApp extends StatelessWidget {
               background: const Color.fromARGB(255, 255, 255, 255)),
           fontFamily: 'Arial',
         ),
-        home: const DesktopCommunityPage(communityName: 'ay haga', isMod: true),);
+        home: const LoginPage());
   }
 }

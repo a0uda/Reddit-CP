@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Search/People_Lits.dart';
+import 'package:reddit/widgets/Search/communities_search.dart';
+import 'package:reddit/widgets/Search/people_list.dart';
 
 class SearchBarClass extends SearchDelegate {
 // Demo list to show querying
@@ -53,6 +54,7 @@ class SearchBarClass extends SearchDelegate {
       child: Column(
         children: [
           const TabBar(
+            isScrollable: true,
             dividerColor: Colors.grey,
             indicatorColor: Colors.black,
             labelColor: Colors.black,
@@ -74,11 +76,7 @@ class SearchBarClass extends SearchDelegate {
                   ),
                 ),
                 // Content for Array 2
-                Container(
-                  child: Center(
-                    child: Text('Content for Array 2'),
-                  ),
-                ),
+                CommunitiesSearch(searchFor: query),
                 // Content for Array 3
                 Container(
                   child: Center(
