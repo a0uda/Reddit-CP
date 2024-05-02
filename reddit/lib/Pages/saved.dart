@@ -47,7 +47,7 @@ class SavedScreen extends State<Saved> {
   }
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
  final UserController userController = GetIt.instance.get<UserController>();
     final postService = GetIt.instance.get<PostService>();
     String username = userController.userAbout!.username;

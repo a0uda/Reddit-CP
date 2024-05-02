@@ -179,6 +179,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                                 userController.userAbout!.username,
                                 _emailController.text,
                                 _passwordController.text);
+                                
                             if (changed) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Email updated')),

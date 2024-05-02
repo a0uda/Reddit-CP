@@ -72,6 +72,7 @@ class UserController {
   }
 
   Future<void> changeCountry(String username, String country) {
+    userAbout!.country = country;
     return userService.changeCountry(username, country);
   }
 
@@ -290,7 +291,7 @@ class ChangeEmail extends ChangeNotifier {
 
   Future<bool> changeEmail(
       String username, String email, String password) async {
-    Future<bool> result = userService.changeEmail(username, email, password);
+    bool result = await userService.changeEmail(username, email, password);
     await userController.getUserAbout(username);
     notifyListeners();
     return result;
