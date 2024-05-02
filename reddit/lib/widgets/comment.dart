@@ -40,13 +40,16 @@ String formatDateTime(String dateTimeString) {
 
 class Comment extends StatefulWidget {
   final Comments comment;
+  int likes;
   bool isSaved;
   bool isComingFromSaved;
-  Comment(
-      {super.key,
-      required this.comment,
-      required this.isSaved,
-      this.isComingFromSaved = false});
+  Comment({
+    super.key,
+    required this.comment,
+    required this.isSaved,
+    this.isComingFromSaved = false,
+    required this.likes,
+  });
 
   @override
   State<Comment> createState() => _CommentState();
@@ -87,12 +90,14 @@ class _CommentState extends State<Comment> {
         if (downVote == true) {
           commentService.upVoteComment(commentId);
           downVoteColor = Colors.black;
-
+          widget.likes++;
           downVote = false;
         }
+        widget.likes++;
       } else {
         commentService.downVoteComment(commentId);
         upVoteColor = Colors.black;
+        widget.likes--;
       }
       upVote = !upVote;
     });
@@ -108,10 +113,13 @@ class _CommentState extends State<Comment> {
           commentService.downVoteComment(commentId);
           upVoteColor = Colors.black;
           upVote = false;
+          widget.likes--;
         }
+        widget.likes--;
       } else {
         commentService.upVoteComment(commentId);
         downVoteColor = Colors.black;
+        widget.likes++;
       }
       downVote = !downVote;
     });
@@ -281,9 +289,7 @@ class _CommentState extends State<Comment> {
                     },
                   ),
                   Text(
-                    (widget.comment.upvotesCount -
-                            widget.comment.downvotesCount)
-                        .toString(),
+                    (widget.likes).toString(),
                     style: const TextStyle(
                       fontSize: 13,
                     ),
