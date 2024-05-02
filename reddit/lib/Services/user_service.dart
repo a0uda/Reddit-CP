@@ -386,6 +386,29 @@ class UserService {
     }
   }
 
+  Future<void> updateAllowFollowers(bool allowFollowers) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/change-profile-settings');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode({
+        'profile_settings': {
+          'allow_followers': allowFollowers,
+        }
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('updated allow followers flag');
+    }
+    print(response.body);
+  }
+
   Future<void> addBannerPicture(String username, String bannerPicture) async {
     if (testing) {
       users
@@ -800,6 +823,8 @@ class UserService {
           'blocked_username': blockedUsername,
         }),
       );
+      print(blockedUsername);
+      print(response.body);
 
       if (response.statusCode == 200) {
         print('User unblocked successfully.');
@@ -1144,7 +1169,7 @@ class UserService {
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body)['comments'];
+        List<dynamic> body = jsonDecode(response.body)['content']['comments'];
         print(body);
         return Future.wait(
             body.map((dynamic item) async => Comments.fromJson(item)));
