@@ -105,7 +105,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                 itemBuilder: (context, index) {
                       var imageurl=null;
                   if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
+                    imageurl=  posts[index].images?[0].link;
                   }
                     print(posts[index].isReposted);
                   if (posts[index].isReposted) {

@@ -111,6 +111,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         videoSelected = false;
         pollSelected = false;
+        type = 'images';
       });
       // } catch (e) {
       //   print(e);
@@ -130,7 +131,7 @@ class _CreatePostState extends State<CreatePost> {
       showLinkField = false;
       imageSelected = false;
       videoSelected = false;
-      type = 'poll';
+      type = 'polls';
     });
   }
 
@@ -156,7 +157,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         imageSelected = false;
         pollSelected = false;
-        type = 'video';
+        type = 'videos';
       });
 
       _videoPlayerController = VideoPlayerController.file(File(_video!.path))
