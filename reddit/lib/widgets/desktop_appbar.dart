@@ -10,6 +10,7 @@ import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/listing_notifications.dart';
+import 'package:reddit/widgets/listing_notifications_desktop.dart';
 import 'package:reddit/widgets/search_bar.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -127,7 +128,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 onPressed: () {
                   //Navigate to Inbox
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const ListingNotifications(),
+                    builder: (context) => const NotificationsDesktop(),
                   ));
                 },
                 icon: const Icon(CupertinoIcons.bell),
