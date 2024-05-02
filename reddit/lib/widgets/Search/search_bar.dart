@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Search/comments_search.dart';
 import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
 
@@ -80,11 +81,7 @@ class SearchBarClass extends SearchDelegate {
                 // Content for Array 2
                 CommunitiesSearch(searchFor: query),
                 // Content for Array 3
-                Container(
-                  child: Center(
-                    child: Text('Content for Array 3'),
-                  ),
-                ),
+                CommentsSearch(searchFor: query),
                 PeopleList(
                   searchFor: query,
                 ),

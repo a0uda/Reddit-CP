@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
-import 'package:reddit/Models/followers_following_item.dart';
-import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
@@ -56,6 +53,7 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
           desktopLayout:
               DesktopCommunityPage(isMod: isMod, communityName: name),
           mobileLayout: MobileCommunityPage(
+            isMod: isMod,
             communityName: name,
           ),
         )),

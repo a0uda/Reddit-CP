@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/widgets/Search/comments_ui.dart';
 
 class CommentsSearch extends StatefulWidget {
   final String searchFor;
@@ -16,30 +17,15 @@ class _CommentsSearchState extends State<CommentsSearch> {
   List<FollowersFollowingItem> following = [];
   final UserController userController = GetIt.instance.get<UserController>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
-  List<Map<String, dynamic>> foundUsers = [];
+  List<Map<String, dynamic>> foundComments = [];
   bool fetched = false;
   String searchFor = "";
 
   Future<void> fetchPeople() async {
     if (!fetched) {
       searchFor = widget.searchFor;
-      foundUsers = [];
-      // for (var org in original) {
-      //   if (org["username"].toLowerCase().contains(searchFor.toLowerCase())) {
-      //     foundUsers.add(org);
-      //   }
-
-      //   var followerfollowingcontroller =
-      //       context.read<FollowerFollowingController>();
-
-      //   if (followerfollowingcontroller.following == null) {
-      //     following = await followerfollowingcontroller
-      //         .getFollowing(userController.userAbout!.username);
-      //   } else {
-      //     following = followerfollowingcontroller.following!;
-      //   }
-      //   fetched = true;
-      // }
+      foundComments = original;
+      fetched = true;
     }
   }
 
@@ -70,111 +56,18 @@ class _CommentsSearchState extends State<CommentsSearch> {
               return Text('Error: ${snapshot.error}');
             }
             return ListView.builder(
-              itemCount: foundUsers.length,
+              itemCount: foundComments.length,
               itemBuilder: (BuildContext context, int index) {
-                final item = foundUsers[index];
-                String description = item["general_settings"]["description"];
-                if (description.length > 80) {
-                  description = "${description.substring(0, 80)}...";
-                }
-                bool isJoined = false;
-                // following.any((user) => user.username == item["username"]); to be changed
+                final item = foundComments[index];
                 return Column(
                   children: [
-                    ListTile(
-                      tileColor: Colors.white,
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(item["profile_picture"]),
-                        radius: 15,
-                      ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "r/${item["name"]}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Row(
-                            children: [
-                              item["general_settings"]["nsfw_flag"]
-                                  ? const Icon(
-                                      Icons.dangerous_sharp,
-                                      color: Color(0xFFE00096),
-                                      size: 13,
-                                    )
-                                  : const SizedBox(),
-                              item["general_settings"]["nsfw_flag"]
-                                  ? const Padding(
-                                      padding: EdgeInsets.only(right: 8.0),
-                                      child: Text(
-                                        "NSFW",
-                                        style: TextStyle(
-                                            color: Color(0xFFE00096),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 10),
-                                      ),
-                                    )
-                                  : const SizedBox(),
-                              Text(
-                                '${item["members_count"]} members',
-                                style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 10),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            description,
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 10),
-                          ),
-                        ],
-                      ),
-                      trailing: StatefulBuilder(builder:
-                          (BuildContext context, StateSetter setState) {
-                        //check typr of community
-                        return ElevatedButton(
-                          onPressed: () async {
-                            if (!isJoined) {
-                              setState(() {
-                                isJoined = true;
-                              });
-                              // await followerfollowingcontroller
-                              //     .followUser(item["username"]);
-                            } else {
-                              setState(() {
-                                isJoined = false;
-                              });
-                              // await followerfollowingcontroller
-                              //     .unfollowUser(item["username"]);
-                            }
-                            //badrrrr followw
-                          },
-                          style: ElevatedButton.styleFrom(
-                            side: isJoined
-                                ? const BorderSide(
-                                    color: Color.fromARGB(255, 3, 55, 146),
-                                  )
-                                : null,
-                            padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-                            backgroundColor: isJoined
-                                ? Colors.white
-                                : const Color.fromARGB(255, 3, 55, 146),
-                            foregroundColor: isJoined
-                                ? const Color.fromARGB(255, 3, 55, 146)
-                                : Colors.white,
-                          ),
-                          child: isJoined
-                              ? const Text("joined")
-                              : const Text("join"),
-                        );
-                      }),
-                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Divider(
-                        height: 1,
-                        color: Colors.grey[300],
-                      ),
+                      padding: const EdgeInsets.all(10.0),
+                      child: CommentUI(comment: item),
+                    ),
+                    Divider(
+                      color: Colors.grey[300],
+                      height: 2,
                     )
                   ],
                 );
@@ -188,41 +81,27 @@ class _CommentsSearchState extends State<CommentsSearch> {
   }
 }
 
-// List<Map<String, dynamic>> original = [
-//   {
-//     "_id": "6629881c676aa6854cccdf8a",
-//     "name": "malaktest",
-//     "members_count": 0,
-//     "general_settings": {
-//       "description":
-//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-//       "type": "Public",
-//       "nsfw_flag": false,
-//     },
-//     "profile_picture": "Greddit.png",
-//   },
-//   {
-//     "_id": "6629881c676aa6854cccdf8a",
-//     "name": "badrrrr",
-//     "members_count": 500,
-//     "general_settings": {
-//       "description":
-//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-//       "type": "Public",
-//       "nsfw_flag": true,
-//     },
-//     "profile_picture": "Greddit.png",
-//   },
-//   {
-//     "_id": "6629881c676aa6854cccdf8a",
-//     "name": "malaktest",
-//     "members_count": 0,
-//     "general_settings": {
-//       "description":
-//           "Arto damnatio inventore constans vilicus depono thema vulnus patruus. Vester defaeco varius comburo strenuus. Nisi ocer aureus deinde voluptas ago congregatio corporis catena argumentum. Hic ullam coaegresco statim communis deludo pauper vomer votum. Dicta veritas clam aeternus asperiores adipisci talus tripudio consequuntur.",
-//       "type": "Public",
-//       "nsfw_flag": true,
-//     },
-//     "profile_picture": "Greddit.png",
-//   },
-// ];
+List<Map<String, dynamic>> original = [
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "community_name": "Thiel___Wolff",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description": "test reply2 notcountttttttttttt",
+    "comment_in_community_flag": false,
+    "community_name": "Thiel___Wolff",
+    "upvotes_count": 1,
+  },
+];
