@@ -77,7 +77,11 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       itemCount: comments?.length,
                       itemBuilder: (context, index) {
                         final comment = comments![index];
-                        return Comment(comment: comment, isSaved: false);
+                        return Comment(
+                          comment: comment,
+                          isSaved: false,
+                          likes: comment.upvotesCount - comment.downvotesCount,
+                        );
                       },
                     ),
                   ),
