@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             SettingsGroup(
               title: 'BASIC SETTINGS',
-              titleTextStyle: TextStyle(
+              titleTextStyle: TextStyle( 
                   height: 2,
                   fontWeight: FontWeight.bold,
                   fontSize: 12.0,

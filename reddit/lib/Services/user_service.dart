@@ -910,6 +910,7 @@ class UserService {
 
       print("in change email");
       print(response.statusCode);
+
       return response.statusCode == 200 ? true : false;
     }
   }
@@ -932,20 +933,18 @@ class UserService {
           "Authorization": token!,
         },
         body: jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
+          "current_password": currentPassword,
+          "new_password": newPassword,
+          "verified_new_password": verifiedNewPassword,
         }),
       );
       print(token);
       print(response.statusCode);
-      print(
-        jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
-        }),
-      );
+      print(jsonEncode({
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "verified_new_password": verifiedNewPassword,
+      }));
       return response.isRedirect;
     }
   }
