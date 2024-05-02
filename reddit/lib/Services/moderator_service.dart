@@ -589,6 +589,7 @@ class ModeratorMockService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
+      print(response.body);
       final String membersCount =
           json.decode(response.body)["members_count"].toString();
 
@@ -797,12 +798,92 @@ class ModeratorMockService {
     final Map<String, dynamic> decodedInfo = json.decode(response.body);
     return {
       "communityDescription": decodedInfo["description"],
-      "communityTitle":decodedInfo["title"],
+      "communityTitle": decodedInfo["title"],
       "communityType": decodedInfo["type"],
       "communityFlag": decodedInfo["nsfw_flag"],
       "communityProfilePicture": decodedInfo["profile_picture"],
       "communityBannerPicture": decodedInfo["banner_picture"],
       "communityJoined": decodedInfo["joined_flag"],
     };
+  }
+
+  Future<void> addProfilePicture(
+      {required String communityName, required String pictureURL}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/add-profile-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+          "profile_picture": pictureURL,
+        },
+      ),
+    );
+  }
+
+  Future<void> addBannerPicture(
+      {required String communityName, required String pictureURL}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/add-banner-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+          "banner_picture": pictureURL,
+        },
+      ),
+    );
+  }
+
+  Future<void> deleteProfilePicture({required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/delete-profile-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+        },
+      ),
+    );
+  }
+
+  Future<void> deleteBannerPicture({required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/delete-banner-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+        },
+      ),
+    );
   }
 }

@@ -8,6 +8,7 @@ import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 import 'package:reddit/widgets/post.dart';
 
@@ -201,81 +202,19 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                               children: [
                                 Expanded(
                                   flex: 3,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  child: Listing(type: 'home');
+                    
+                                
+                                    
                                 ),
+                              ],
+                                
                                 const SizedBox(width: 16),
                                 Expanded(
                                   flex: 1,
                                   child: DescriptionWidget(
                                     communityName:
-                                        moderatorController.communityName,
+                                       widget.communityName,
                                   ),
                                 ),
                               ],
@@ -326,18 +265,21 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
   Future<void> fetchCommunityInfo() async {
     if (!communityInfoFetched) {
       await moderatorController.getCommunityInfo(widget.communityName);
+      communityInfoFetched = true;
     }
   }
 
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
       await moderatorController.getGeneralSettings(widget.communityName);
+      generalSettingsFetched=true;
     }
   }
 
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
+      membersFetched=true;
     }
   }
 
@@ -368,7 +310,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                             height: 128,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(
+                                image: NetworkImage(
                                     moderatorController.bannerPictureURL),
                                 fit: BoxFit.cover,
                               ),
@@ -495,7 +437,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                           ),
                           child: CircleAvatar(
                             radius: 40,
-                            backgroundImage: AssetImage(
+                            backgroundImage: NetworkImage(
                                 moderatorController.profilePictureURL),
                           ),
                         );

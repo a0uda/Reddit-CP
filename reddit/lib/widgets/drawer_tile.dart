@@ -100,11 +100,12 @@ class _DrawerTileState extends State<DrawerTile> {
                           //           ),
                           //         ))));
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => (CommunityPage(
-                                    communityMembersNo: item.membersCount,
+                              builder: (context) => (DesktopCommunityPage(
+                                    //communityMembersNo: item.membersCount,
                                     communityName: item.name,
-                                    communityProfilePicturePath:
-                                        item.profilePictureURL,
+                                    //communityProfilePicturePath:
+                                      //  item.profilePictureURL,
+                                      isMod: false,
                                   ))));
                         },
                       );

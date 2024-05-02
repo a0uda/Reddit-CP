@@ -12,9 +12,11 @@ class MobileCommunityPage extends StatefulWidget {
   const MobileCommunityPage({
     super.key,
     required this.communityName,
+    required this.isMod,
   });
 
   final String communityName;
+  final bool isMod;
 
   @override
   State<MobileCommunityPage> createState() => _MobileCommunityPageState();
@@ -22,10 +24,18 @@ class MobileCommunityPage extends StatefulWidget {
 
 class _MobileCommunityPageState extends State<MobileCommunityPage> {
   bool isJoined = false;
+  bool communityInfoFetched = false;
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   String? buttonState;
   final CommunityController communityController =
       GetIt.instance.get<CommunityController>();
 
+Future<void> fetchCommunityInfo() async {
+    if (!communityInfoFetched) {
+      await moderatorController.getCommunityInfo(widget.communityName);
+    }
+  }
   @override
   void initState() {
     if (isJoined) {
@@ -38,7 +48,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
 
   void setButton() {
     setState(() {
-      if (isJoined) {
+      if (moderatorController.joinedFlag) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -75,7 +85,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                     setState(() {
-                      isJoined = false;
+                      moderatorController.joinedFlag = false;
                       buttonState = 'Join';
                     });
                   },
@@ -99,7 +109,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
         );
       } else {
         setState(() {
-          isJoined = true;
+            moderatorController.joinedFlag = true;
           buttonState = 'Joined';
         });
       }
@@ -160,6 +170,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                       setButtonFunction: setButton,
                       buttonState: buttonState!,
                       isJoined: isJoined,
+                      isMod: widget.isMod,
                     ),
                   ),
                 ),
@@ -181,11 +192,13 @@ class MobileCommunityPageBar extends StatefulWidget {
     required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
+    required this.isMod,
   });
 
   final String communityName;
   final String buttonState;
   final bool isJoined;
+  final bool isMod;
 
   final Function() setButtonFunction;
 
@@ -213,6 +226,14 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
     }
   }
 
+  bool communityInfoFetched = false;
+
+  Future<void> fetchCommunityInfo() async {
+    if (!communityInfoFetched) {
+      await moderatorController.getCommunityInfo(widget.communityName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -228,11 +249,24 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    backgroundImage:
-                        AssetImage(moderatorController.profilePictureURL),
-                    backgroundColor: Colors.white,
-                    radius: 20,
+                  FutureBuilder(
+                    future: fetchCommunityInfo(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              moderatorController.profilePictureURL),
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(width: 8.0),
                   Column(
@@ -279,26 +313,39 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                     ],
                   ),
                   const Spacer(),
-                  OutlineButtonWidget(
-                    widget.buttonState,
-                    () {
-                      widget.setButtonFunction();
+                  FutureBuilder(
+                    future: fetchCommunityInfo(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return OutlineButtonWidget(
+                          moderatorController.joinedFlag ? 'Joined' : 'Join',
+                          () {
+                            widget.setButtonFunction();
+                          },
+                          backgroundColour: moderatorController.joinedFlag
+                              ? Colors.white
+                              : const Color.fromARGB(255, 37, 79, 165),
+                          foregroundColour:
+                              moderatorController.joinedFlag ? Colors.black : Colors.white,
+                          borderColor: moderatorController.joinedFlag
+                              ? Colors.black
+                              : const Color.fromARGB(255, 1, 69, 173),
+                        );
+                      }
                     },
-                    backgroundColour: widget.isJoined
-                        ? Colors.white
-                        : const Color.fromARGB(255, 37, 79, 165),
-                    foregroundColour:
-                        widget.isJoined ? Colors.black : Colors.white,
-                    borderColor: widget.isJoined
-                        ? Colors.black
-                        : const Color.fromARGB(255, 1, 69, 173),
                   ),
                 ],
               ),
             ),
           ),
           FutureBuilder<void>(
-            future: fetchGeneralSettings(),
+            future: fetchCommunityInfo(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
