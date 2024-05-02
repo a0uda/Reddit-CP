@@ -8,4 +8,13 @@ class ImageItem {
     this.caption,
     required this.link,
   });
+  factory ImageItem.fromJson(Map<String, dynamic> json) {
+    return ImageItem(
+      path: json['path'],
+      caption: json['caption'],
+      link: json['link'],
+    );
+
+    ///todo
+  }
 }

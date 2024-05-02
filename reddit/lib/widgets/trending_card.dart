@@ -27,21 +27,44 @@ class TrendState extends State<TrendingPost> {
         child: Card(
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
-              borderRadius: BorderRadius.circular(10),
-              image: DecorationImage(
-                image: NetworkImage(widget.imageUrl),
-                fit: BoxFit.cover,
-              ),
+        
             ),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                widget.title,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold),
-              ),
+            child: Stack(
+              children: [
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                      image: NetworkImage(widget.imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.black,
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

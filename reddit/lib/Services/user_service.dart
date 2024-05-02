@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
 
+
 class UserService {
   void addUser() {
     if (testing) {
@@ -142,7 +143,8 @@ class UserService {
          'Authorization': token!,
         },
         body: json.encode({
-          'other_username': username,
+          "other_username": username,
+          
         }),
       );
     }
@@ -161,14 +163,14 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+          SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json' , 
-         'Authorization': token!,
+        headers: {'Content-Type': 'application/json',
+                'Authorization': token!,
         },
         body: json.encode({
           'other_username': username,
@@ -1154,6 +1156,7 @@ class UserService {
 
   Future<NotificationsSettingsItem>? getNotificationsSettings(
       String username) async {
+        
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url =
