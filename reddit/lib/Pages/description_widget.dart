@@ -35,7 +35,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   Future<void> fetchModerators() async {
     if (!userFetched) {
       await moderatorController
-          .getModerators(moderatorController.communityName);
+          .getModerators(widget.communityName);
     }
   }
 
@@ -57,6 +57,16 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
       membersFetched = true;
+      //print(moderatorController.membersCount);
+    }
+  }
+
+  Future<void> fetchCommunityInfo() async {
+    if (!communityInfoFetched) {
+      await moderatorController.getCommunityInfo(widget.communityName);
+      communityInfoFetched = true;
+      //print(moderatorController.generalSettings.communityTitle);
+      //print(moderatorController.generalSettings.communityDescription);
     }
   }
 
@@ -98,7 +108,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 FutureBuilder(
-                                  future: fetchGeneralSettings(),
+                                  future: fetchCommunityInfo(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -127,7 +137,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                   },
                                 ),
                                 FutureBuilder(
-                                  future: fetchGeneralSettings(),
+                                  future: fetchCommunityInfo(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
@@ -162,7 +172,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       FutureBuilder(
-                                        future: fetchGeneralSettings(),
+                                        future: fetchMembersCount(),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -424,7 +434,7 @@ class RuleTileState extends State<RuleTile> {
               visible: isExpanded,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    const EdgeInsets.symmetric(vertical: 4.0),
                 child: Text(
                   widget.rule.ruleDescription ?? "",
                   style: const TextStyle(
@@ -462,23 +472,22 @@ class ModeratorTileState extends State<ModeratorTile> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       child: ListTile(
         leading: CircleAvatar(
-          radius: 32,
+          radius: 20,
           backgroundImage: NetworkImage(widget.moderatorProfilePicture),
         ),
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6.0),
           child: GestureDetector(
-              child: Text(
-                "u/${widget.moderatorUsername}",
-                style: const TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 14,
-                  color: Color.fromARGB(255, 97, 104, 110),
-                ),
+            child: Text(
+              "u/${widget.moderatorUsername}",
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 14,
+                color: Color.fromARGB(255, 97, 104, 110),
               ),
-              onTap: () {
-                
-              },),
+            ),
+            onTap: () {},
+          ),
         ),
       ),
     );

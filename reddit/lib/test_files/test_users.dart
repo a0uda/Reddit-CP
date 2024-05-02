@@ -34,7 +34,7 @@ final List<UserItem> users = [
           displayText: 'rawan_adel165',
           type: 'instagram',
           customUrl:
-              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+              "https://redditech.me/backend/users/signup-google",
         ),
         SocialLlinkItem(
           id: '1',

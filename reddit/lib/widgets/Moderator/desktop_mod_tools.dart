@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/banned_user_list.dart';
+import 'package:reddit/widgets/Moderator/change_banner_profile_picture.dart';
 import 'package:reddit/widgets/Moderator/community_type.dart';
 import 'package:reddit/widgets/Moderator/description.dart';
 import 'package:reddit/widgets/Moderator/mod_community_name.dart';
@@ -47,6 +48,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
     desktopModTools = [
       const ModCommName(),
       const ModDescription(),
+      const ChangeProfilePicture(),
       const CommunityType(),
       const PostTypes(),
       ModeratorsList(isInvite: widget.isInvite),
@@ -57,7 +59,8 @@ class _DesktopModToolsState extends State<DesktopModTools> {
       const ModRulesList(
         isEditMode: false,
       ),
-      const ScheduledPostsList()
+      const ScheduledPostsList(),
+
     ];
   }
 

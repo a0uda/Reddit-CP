@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
 
 class CommunitiesSearch extends StatefulWidget {
   final String searchFor;
@@ -14,8 +17,10 @@ class CommunitiesSearch extends StatefulWidget {
 }
 
 class _CommunitiesSearchState extends State<CommunitiesSearch> {
-  List<FollowersFollowingItem> following = [];
+  List<CommunityBackend> joined = [];
   final UserController userController = GetIt.instance.get<UserController>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
   List<Map<String, dynamic>> foundUsers = [];
   bool fetched = false;
@@ -25,23 +30,35 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
     if (!fetched) {
       searchFor = widget.searchFor;
       foundUsers = original;
-      // for (var org in original) {
-      //   if (org["username"].toLowerCase().contains(searchFor.toLowerCase())) {
-      //     foundUsers.add(org);
-      //   }
 
-      //   var followerfollowingcontroller =
-      //       context.read<FollowerFollowingController>();
-
-      //   if (followerfollowingcontroller.following == null) {
-      //     following = await followerfollowingcontroller
-      //         .getFollowing(userController.userAbout!.username);
-      //   } else {
-      //     following = followerfollowingcontroller.following!;
-      //   }
-      //   fetched = true;
-      // }
+      if (userController.userCommunities == null) {
+        await userController.getUserCommunities();
+        joined = userController.userCommunities!;
+      } else {
+        joined = userController.userCommunities!;
+      }
+      fetched = true;
     }
+  }
+
+  void navigateToCommunity(String name, String pp) {
+    List<CommunityBackend> moderated =
+        userController.userAbout!.moderatedCommunities ?? [];
+    moderatorController.profilePictureURL = pp;
+    bool isMod = moderated.any((element) => element.name == name);
+    moderatorController.communityName = name;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => (CommunityLayout(
+          desktopLayout:
+              DesktopCommunityPage(isMod: isMod, communityName: name),
+          mobileLayout: MobileCommunityPage(
+            isMod: isMod,
+            communityName: name,
+          ),
+        )),
+      ),
+    );
   }
 
   @override
@@ -72,27 +89,31 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
             }
             return ListView.builder(
               itemCount: foundUsers.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, int index) {
                 final item = foundUsers[index];
                 String description = item["general_settings"]["description"];
                 if (description.length > 80) {
                   description = "${description.substring(0, 80)}...";
                 }
-                bool isJoined = false;
+                bool isJoined = joined.any((element) => element.name == item["name"]);
                 // following.any((user) => user.username == item["username"]); to be changed
                 return Column(
                   children: [
                     ListTile(
+                      onTap: () {
+                        navigateToCommunity(
+                            item["name"], item["profile_picture"]);
+                      },
                       tileColor: Colors.white,
                       leading: CircleAvatar(
-                        backgroundImage: AssetImage(item["profile_picture"]),
+                        backgroundImage: NetworkImage(item["profile_picture"]),
                         radius: 15,
                       ),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "u/${item["name"]}",
+                            "r/${item["name"]}",
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Row(
@@ -117,16 +138,16 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
                                     )
                                   : const SizedBox(),
                               Text(
-                                '${item["members_count"]}',
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 10),
+                                '${item["members_count"]} members',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 10),
                               ),
                             ],
                           ),
                           Text(
                             description,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 10),
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 10),
                           ),
                         ],
                       ),
@@ -165,8 +186,8 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
                                 : Colors.white,
                           ),
                           child: isJoined
-                              ? const Text("joined")
-                              : const Text("join"),
+                              ? const Text("Joined")
+                              : const Text("Join"),
                         );
                       }),
                     ),
@@ -204,7 +225,7 @@ List<Map<String, dynamic>> original = [
   },
   {
     "_id": "6629881c676aa6854cccdf8a",
-    "name": "badrrrr",
+    "name": "Legros_LLC",
     "members_count": 500,
     "general_settings": {
       "description":

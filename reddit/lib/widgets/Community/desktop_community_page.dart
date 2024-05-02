@@ -4,12 +4,15 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
-import 'package:reddit/widgets/post.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
   const DesktopCommunityPage({
@@ -45,6 +48,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
     } else {
       buttonState = 'Join';
     }
+    moderatorController.communityName = widget.communityName;
     super.initState();
   }
 
@@ -149,146 +153,77 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
           : null,
       endDrawer: EndDrawerReddit(),
-      body: Listener(
-        onPointerMove: (event) {
-          updateDescriptionOffset(event.position.dy);
-        },
-        child: SizedBox(
-          child: Row(
-            children: [
-              MediaQuery.of(context).size.width > 700
-                  ? const DrawerReddit(
-                      indexOfPage: 0,
-                      inHome: true,
-                    )
-                  : const SizedBox(
-                      width: 0,
-                    ),
-              MediaQuery.of(context).size.width > 700
-                  ? VerticalDivider(
-                      color: Theme.of(context).colorScheme.primary, width: 1)
-                  : const SizedBox(
-                      width: 0,
-                    ),
-              Expanded(
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.symmetric(
-                            horizontal: 24),
-                        child: Column(
-                          children: [
-                            Container(
-                              color: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              child: DesktopCommunityPageBar(
-                                communityName: widget.communityName,
-                                setButtonFunction: setButton,
-                                buttonState: buttonState!,
-                                isJoined: isJoined,
-                                isMod: widget.isMod,
-                              ),
+      body: SizedBox(
+        child: Row(
+          children: [
+            MediaQuery.of(context).size.width > 700
+                ? const DrawerReddit(
+                    indexOfPage: 0,
+                    inHome: true,
+                  )
+                : const SizedBox(
+                    width: 0,
+                  ),
+            MediaQuery.of(context).size.width > 700
+                ? VerticalDivider(
+                    color: Theme.of(context).colorScheme.primary, width: 1)
+                : const SizedBox(
+                    width: 0,
+                  ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding:
+                          const EdgeInsetsDirectional.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: DesktopCommunityPageBar(
+                              communityName: widget.communityName,
+                              setButtonFunction: setButton,
+                              //buttonState: buttonState!,
+                              isJoined: isJoined,
+                              isMod: widget.isMod,
                             ),
-                            Container(
-                              height: 24,
-                              color: const Color.fromARGB(255, 251, 251, 251),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: Post(
-                                          vote: 0,
-                                          isLocked: false,
-                                          id: "1",
-                                          imageUrl: "assets/images/profile.png",
-                                          name: "John Doe",
-                                          title: "Flutter is the best",
-                                          postContent: "Flutter is the best",
-                                          date: "2021-09-09",
-                                          likes: 4,
-                                          commentsCount: 1,
-                                          communityName: "r/FlutterDev",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  flex: 1,
-                                  child: DescriptionWidget(
-                                    communityName:
-                                        moderatorController.communityName,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: 24,
+                      color: const Color.fromARGB(255, 251, 251, 251),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          flex: 3,
+                          child: Listing(type: 'home'),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 1,
+                          child: DescriptionWidget(
+                            communityName: widget.communityName,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -299,14 +234,14 @@ class DesktopCommunityPageBar extends StatefulWidget {
   const DesktopCommunityPageBar({
     super.key,
     required this.communityName,
-    required this.buttonState,
+    //required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
     required this.isMod,
   });
 
   final String communityName;
-  final String buttonState;
+  //final String buttonState;
   final bool isJoined;
   final bool isMod;
 
@@ -326,18 +261,21 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
   Future<void> fetchCommunityInfo() async {
     if (!communityInfoFetched) {
       await moderatorController.getCommunityInfo(widget.communityName);
+      communityInfoFetched = true;
     }
   }
 
-  Future<void> fetchGeneralSettings() async {
-    if (!generalSettingsFetched) {
-      await moderatorController.getGeneralSettings(widget.communityName);
-    }
-  }
+  // Future<void> fetchGeneralSettings() async {
+  //   if (!generalSettingsFetched) {
+  //     await moderatorController.getGeneralSettings(widget.communityName);
+  //     generalSettingsFetched = true;
+  //   }
+  // }
 
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
+      membersFetched = true;
     }
   }
 
@@ -368,7 +306,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                             height: 128,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(
+                                image: NetworkImage(
                                     moderatorController.bannerPictureURL),
                                 fit: BoxFit.cover,
                               ),
@@ -424,7 +362,24 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                           widget.isMod
                               ? OutlineButtonWidget(
                                   'Mod Tools',
-                                  () {},
+                                  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ModResponsive(
+                                          mobileLayout: MobileModTools(
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                          desktopLayout: DesktopModTools(
+                                            index: 0,
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                   borderColor: Colors.transparent,
                                   backgroundColour:
                                       const Color.fromARGB(255, 0, 69, 172),
@@ -495,7 +450,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                           ),
                           child: CircleAvatar(
                             radius: 40,
-                            backgroundImage: AssetImage(
+                            backgroundImage: NetworkImage(
                                 moderatorController.profilePictureURL),
                           ),
                         );

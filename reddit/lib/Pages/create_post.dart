@@ -863,8 +863,8 @@ class _ModalForScheduleState extends State<ModalForSchedule> {
                             selectedDate, selectedTime, selectedRepeat);
                       },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 0, 49, 90)),
+                        backgroundColor: const Color.fromARGB(255, 0, 69, 172),
+                      ),
                       child: const Text("Save"),
                     ),
                   )

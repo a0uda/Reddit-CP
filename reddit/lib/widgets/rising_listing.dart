@@ -24,7 +24,7 @@ class RisingListing extends StatefulWidget {
 }
 
 class RisingListingBuild extends State<RisingListing> {
-  int page=0;
+  int page=1;
   ScrollController controller = ScrollController();
   List<PostItem> posts = [];
   late Future<void> _dataFuture;

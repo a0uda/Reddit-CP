@@ -7,7 +7,6 @@ import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 
-
 class ApprovedUserList extends StatefulWidget {
   const ApprovedUserList({super.key});
 

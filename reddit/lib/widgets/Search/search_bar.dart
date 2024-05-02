@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Search/comments_search.dart';
 import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
 
@@ -49,21 +50,23 @@ class SearchBarClass extends SearchDelegate {
     //     matchQuery.add(fruit);
     //   }
     // }
+    double size = MediaQuery.of(context).size.width;
     return DefaultTabController(
       length: 4,
       child: Column(
         children: [
-          const TabBar(
+          TabBar(
+            tabAlignment: TabAlignment.start,
             isScrollable: true,
             dividerColor: Colors.grey,
             indicatorColor: Colors.black,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
             tabs: [
-              Tab(text: 'Posts'),
-              Tab(text: 'Communities'),
-              Tab(text: 'Comments'),
-              Tab(text: 'People'),
+              SizedBox(width: size / 4, child: const Tab(text: 'Posts')),
+              SizedBox(width: size / 4, child: const Tab(text: 'Communities')),
+              SizedBox(width: size / 4, child: const Tab(text: 'Comments')),
+              SizedBox(width: size / 4, child: const Tab(text: 'People')),
             ],
           ),
           Expanded(
@@ -78,12 +81,10 @@ class SearchBarClass extends SearchDelegate {
                 // Content for Array 2
                 CommunitiesSearch(searchFor: query),
                 // Content for Array 3
-                Container(
-                  child: Center(
-                    child: Text('Content for Array 3'),
-                  ),
+                CommentsSearch(searchFor: query),
+                PeopleList(
+                  searchFor: query,
                 ),
-                PeopleList(searchFor: query,),
               ],
             ),
           ),

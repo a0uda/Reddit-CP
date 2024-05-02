@@ -91,21 +91,24 @@ class _DrawerTileState extends State<DrawerTile> {
                           //     item['communityPage'], context);
                           moderatorController.profilePictureURL =
                               item.profilePictureURL;
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => (CommunityLayout(
-                          //           desktopLayout: DesktopCommunityPage(
-                          //               communityName: item.name),
-                          //           mobileLayout: MobileCommunityPage(
-                          //             communityName: item.name,
-                          //           ),
-                          //         ))));
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => (CommunityPage(
-                                    communityMembersNo: item.membersCount,
-                                    communityName: item.name,
-                                    communityProfilePicturePath:
-                                        item.profilePictureURL,
+                              builder: (context) => (CommunityLayout(
+                                    desktopLayout: DesktopCommunityPage(
+                                        isMod: widget.isMod,
+                                        communityName: item.name),
+                                    mobileLayout: MobileCommunityPage(
+                                      isMod : widget.isMod,
+                                      communityName: item.name,
+                                    ),
                                   ))));
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => (DesktopCommunityPage(
+                          //           //communityMembersNo: item.membersCount,
+                          //           communityName: item.name,
+                          //           //communityProfilePicturePath:
+                          //             //  item.profilePictureURL,
+                          //             isMod: false,
+                          //         ))));
                         },
                       );
                     },
