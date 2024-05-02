@@ -75,7 +75,7 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _image = pickedFile;
-        type = 'image';
+        type = 'image_and_videos';
       });
 
       //TODO: FIREBASE
@@ -111,7 +111,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         videoSelected = false;
         pollSelected = false;
-        type = 'images';
+        type = 'image_and_videos';
       });
       // } catch (e) {
       //   print(e);
@@ -157,7 +157,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         imageSelected = false;
         pollSelected = false;
-        type = 'videos';
+        type = 'image_and_videos';
       });
 
       _videoPlayerController = VideoPlayerController.file(File(_video!.path))
@@ -174,7 +174,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
-  String type = 'type';
+  String type = 'text';
   String selectedCommunity = "Select Community";
   String communityDescription = "Select Community";
 
@@ -429,6 +429,7 @@ class _CreatePostState extends State<CreatePost> {
                                     onPressed: () {
                                       setState(() {
                                         showLinkField = false;
+                                        type = 'text';
                                       });
                                     },
                                   ),
@@ -596,7 +597,7 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () {
                         setState(() {
                           showLinkField = true;
-                          type = 'link';
+                          type = 'url';
                           if (imageSelected) {
                             setState(() => imageSelected = false);
                           }
