@@ -3,7 +3,10 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/best_listing.dart';
 
 class PeopleList extends StatefulWidget {
@@ -17,6 +20,7 @@ class PeopleList extends StatefulWidget {
 class _PeopleListState extends State<PeopleList> {
   List<FollowersFollowingItem> following = [];
   final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
   List<Map<String, dynamic>> foundUsers = [];
   bool fetched = false;
@@ -80,6 +84,17 @@ class _PeopleListState extends State<PeopleList> {
                 return Column(
                   children: [
                     ListTile(
+                      onTap: () async {
+                        UserAbout otherUserData = (await (userService
+                            .getUserAbout(item["username"])))!;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileScreen(otherUserData, 'other'),
+                          ),
+                        );
+                      },
                       tileColor: Colors.white,
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(item["profile_picture"]!),
@@ -115,7 +130,7 @@ class _PeopleListState extends State<PeopleList> {
                                   : const SizedBox(),
                               Text(
                                 '${createdAt.day}-${createdAt.month}-${createdAt.year}',
-                                style:  TextStyle(
+                                style: TextStyle(
                                     color: Colors.grey[600], fontSize: 10),
                               ),
                             ],

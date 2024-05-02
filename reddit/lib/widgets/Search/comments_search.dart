@@ -14,7 +14,6 @@ class CommentsSearch extends StatefulWidget {
 }
 
 class _CommentsSearchState extends State<CommentsSearch> {
-  List<FollowersFollowingItem> following = [];
   final UserController userController = GetIt.instance.get<UserController>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
   List<Map<String, dynamic>> foundComments = [];
@@ -89,7 +88,8 @@ List<Map<String, dynamic>> original = [
       "title": "Test8",
       "description": "ff",
       "created_at": "2024-04-21T09:47:58.302Z",
-      "community_name": "Thiel___Wolff",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
       "comments_count": 4,
       "upvotes_count": 1,
       "user_id": "661ed9a12b42f5ea45ed7f6e",
@@ -99,9 +99,130 @@ List<Map<String, dynamic>> original = [
     "user_id": "662516de07f00cce3c42352a",
     "username": "malak",
     "created_at": "2024-04-29T15:36:13.653Z",
-    "description": "test reply2 notcountttttttttttt",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
     "comment_in_community_flag": false,
-    "community_name": "Thiel___Wolff",
+    "community_name": "Legros_LLC",
+    "upvotes_count": 1,
+  },
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
+    "comment_in_community_flag": false,
+    "community_name": "Legros_LLC",
+    "upvotes_count": 1,
+  },
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
+    "comment_in_community_flag": false,
+    "community_name": "Legros_LLC",
+    "upvotes_count": 1,
+  },
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
+    "comment_in_community_flag": false,
+    "community_name": "Legros_LLC",
+    "upvotes_count": 1,
+  },
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
+    "comment_in_community_flag": false,
+    "community_name": "Legros_LLC",
+    "upvotes_count": 1,
+  },
+  {
+    "_id": "662fbe6d0cec85af670cbbd8",
+    "post_id": {
+      "_id": "6624e0ceb67f43e82ce56df5",
+      "title": "Test8",
+      "description": "ff",
+      "created_at": "2024-04-21T09:47:58.302Z",
+      "nsfw_flag": true,
+      "community_name": "Legros_LLC",
+      "comments_count": 4,
+      "upvotes_count": 1,
+      "user_id": "661ed9a12b42f5ea45ed7f6e",
+      "username": "m",
+      "__v": 7
+    },
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+    "created_at": "2024-04-29T15:36:13.653Z",
+    "description":
+        "test reply2 notcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n\n\n aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaanotcounttttttttttttaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabadr",
+    "comment_in_community_flag": false,
+    "community_name": "Legros_LLC",
     "upvotes_count": 1,
   },
 ];
