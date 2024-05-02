@@ -28,6 +28,7 @@ class UserController {
     accountSettings = await userService.getAccountSettings(username);
     notificationsSettings =
         await userService.getNotificationsSettings(username);
+    profileSettings = await userService.getProfileSettings(username);
   }
 
   Future<NotificationsSettingsItem?> getNotificationsSettings(
@@ -41,6 +42,11 @@ class UserController {
 
   Future<void> getProfileSettings(String username) async {
     profileSettings = (await userService.getProfileSettings(username))!;
+  }
+
+  Future<void> updateAllowFollowers(bool value) async {
+    await userService.updateAllowFollowers(value);
+    profileSettings!.allowFollowers = value;
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
