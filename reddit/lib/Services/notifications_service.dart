@@ -23,8 +23,7 @@ class NotificationsService with ChangeNotifier {
       List<dynamic> notificationsJson = data['content'];
       return Future.wait(notificationsJson
           .map((json) => NotificationItem.fromJson(json))
-          .toList()
-          .reversed);
+          .toList());
     } else {
       throw Exception('Failed to load notifications');
     }

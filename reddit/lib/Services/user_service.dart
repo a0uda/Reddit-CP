@@ -823,6 +823,8 @@ class UserService {
           'blocked_username': blockedUsername,
         }),
       );
+      print(blockedUsername);
+      print(response.body);
 
       if (response.statusCode == 200) {
         print('User unblocked successfully.');
@@ -1168,7 +1170,7 @@ class UserService {
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body)['comments'];
+        List<dynamic> body = jsonDecode(response.body)['content']['comments'];
         print(body);
         return Future.wait(
             body.map((dynamic item) async => Comments.fromJson(item)));

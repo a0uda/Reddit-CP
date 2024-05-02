@@ -67,7 +67,10 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
                 return ListTile(
                   leading: CircleAvatar(
                     radius: 15,
-                    backgroundImage: AssetImage(blockedUser.profilePicture),
+                    backgroundImage: (blockedUser.profilePicture != '')
+                        ? NetworkImage(blockedUser.profilePicture)
+                        : const NetworkImage(
+                            "https://static-00.iconduck.com/assets.00/reddit-icon-icon-2048x2048-fdxpdoih.png"),
                   ),
                   title: Align(
                     alignment: Alignment.centerLeft,
