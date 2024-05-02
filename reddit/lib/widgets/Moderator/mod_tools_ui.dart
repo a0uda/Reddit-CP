@@ -22,26 +22,14 @@ import 'package:reddit/widgets/Moderator/scheduled_list.dart';
 
 const bool isMobile = true;
 
-var desktopModTools = [
-  const ModCommName(),
-  const ModDescription(),
-  const CommunityType(),
-  const PostTypes(),
-  const ModeratorsList(),
-  const ApprovedUserList(),
-  const BannedUsersList(),
-  const MutedUsersList(),
-  const ModQueues(),
-  const ModRulesList(isEditMode: false,),
-  const ScheduledPostsList()
-];
+
 
 var mobileModTools = [
   const ModCommName(),
   const ModDescription(),
   const CommunityType(),
   const PostTypes(),
-  const Moderators(),
+  Moderators(),
   const ApprovedUsers(),
   const BannedUsers(),
   const MutedUsers(),

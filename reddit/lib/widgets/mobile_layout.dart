@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
+import 'package:reddit/widgets/messages_list.dart';
 import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -30,10 +31,13 @@ class _MobileLayoutState extends State<MobileLayout> {
     });
   }
 
+  bool isInbox = false;
+
   @override
   Widget build(BuildContext context) {
     final bool userLoggedIn = userController.userAbout != null;
     // print('mobile layout: ${userController.userAbout?.username}');
+    print(isInbox);
     final drawers = [
       DrawerReddit(
         indexOfPage: widget.mobilePageMode,
@@ -52,17 +56,40 @@ class _MobileLayoutState extends State<MobileLayout> {
       const CreatePost(),
       ChatIntro(),
     
-      MobileHomePage(
-        widgetIndex: 0, //Inbox page here
+      //Inbox
+      DefaultTabController(
+        length: 2,
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 40,
+              color: Colors.white,
+              child: const TabBar(
+                indicatorColor: Color.fromARGB(255, 24, 82, 189),
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                tabs: [
+                  Tab(text: 'Notifications'),
+                  Tab(text: 'Messages'),
+                ],
+              ),
+            ),
+            const Expanded(
+              child: TabBarView(
+                children: [
+                  Center(child: Text("stay tuned")), //todo: notifications
+                  MessagesPage(),
+                ],
+              ),
+            ),
+          ],
+        ),
       )
     ];
     var selectedScreen = screens[selectedIndexPage];
     var selectedDrawer = drawers[selectedIndexPage == 0 ? 0 : 1];
-
     return Scaffold(
-        appBar: MobileAppBar(
-          logoTapped: logoTapped,
-        ),
+        appBar: MobileAppBar(logoTapped: logoTapped, isInbox: isInbox),
         endDrawer: userLoggedIn ? EndDrawerReddit() : Container(),
         drawer: selectedDrawer,
         bottomNavigationBar: BottomNavigationBar(
@@ -136,11 +163,24 @@ class _MobileLayoutState extends State<MobileLayout> {
                       builder: (context) => const CreatePost(),
                     ))
                   }
-                  else {
+                else
+                  {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const LoginPage(),
                     ))
                   }
+              },
+            if (value == 4)
+              {
+                setState(() {
+                  isInbox = true;
+                })
+              }
+            else
+              {
+                setState(() {
+                  isInbox = false;
+                })
               }
           },
         ),

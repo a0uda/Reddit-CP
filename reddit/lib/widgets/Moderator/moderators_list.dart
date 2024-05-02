@@ -10,7 +10,9 @@ import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_modderator.dart';
 
 class ModeratorsList extends StatefulWidget {
-  const ModeratorsList({
+  bool isInvite;
+  ModeratorsList({
+    this.isInvite = false,
     super.key,
   });
 
@@ -59,6 +61,74 @@ class _ModeratorsListState extends State<ModeratorsList>
     foundUsers = moderatorController.moderators;
     foundeditableUsers = editableMods;
     editable = false;
+    if (widget.isInvite &&
+        foundUsers.any((element) =>
+                element["username"] == userController.userAbout!.username) ==
+            false) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Invitation'),
+              content: const Text(
+                "To accept being a moderator, choose accept",
+              ),
+              actions: <Widget>[
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.33,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'CANCEL',
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.33,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                    onPressed: () async {
+                      await moderatorController.addAsMod(
+                          userController.userAbout!.username,
+                          userController.userAbout!.profilePicture!,
+                          moderatorController.communityName);
+                      Navigator.pop(context);
+                      setState(() {});
+                    },
+                    child: const Text(
+                      'ACCEPT',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    }
   }
 
   void searchUsers(String search) {

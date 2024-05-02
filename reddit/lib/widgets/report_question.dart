@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class Question extends StatefulWidget {
   final String? type;
   final String? postId;
+  final bool isUser;
+  final String Username;
 
-  const Question({super.key, required this.type,required this.postId});
+  const Question(
+      {super.key,
+      required this.type,
+      required this.postId,
+      this.isUser = false,
+      this.Username = ''});
   @override
   QuestionScreen createState() => QuestionScreen();
 }
@@ -14,12 +22,15 @@ class Question extends StatefulWidget {
 class QuestionScreen extends State<Question> {
   String selectedAnswer = '';
   final postService = GetIt.instance.get<PostService>();
+  final userService = GetIt.instance.get<UserService>();
 
   @override
   Widget build(BuildContext context) {
-     var width = MediaQuery.of(context).size.width;
+    var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
+    bool isUser = widget.isUser;
+    String username = widget.Username;
     return Column(
       children: [
         if (widget.type == 'Harassment')
@@ -245,7 +256,8 @@ class QuestionScreen extends State<Question> {
                 ),
               ),
               RadioListTile<String>(
-                title: const Text('yours or an individual or entity you represent'),
+                title: const Text(
+                    'yours or an individual or entity you represent'),
                 value: 'yours or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -309,7 +321,8 @@ class QuestionScreen extends State<Question> {
                 ),
               ),
               RadioListTile<String>(
-                title: const Text('you or an individual or entity you represent'),
+                title:
+                    const Text('you or an individual or entity you represent'),
                 value: 'you or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -341,7 +354,8 @@ class QuestionScreen extends State<Question> {
                 ),
               ),
               RadioListTile<String>(
-                title: const Text('yours or an individual or entity you represent'),
+                title: const Text(
+                    'yours or an individual or entity you represent'),
                 value: 'yours or an individual or entity you represent',
                 groupValue: selectedAnswer,
                 onChanged: (value) {
@@ -367,31 +381,72 @@ class QuestionScreen extends State<Question> {
             if (selectedAnswer != "")
               {
                 ///// TODO SUBMIT REPORTTT
-                                  postService.submitReport(widget.postId,widget.type!+' '+selectedAnswer),
+                isUser
+                    ? userService.reportUser(
+                        username, widget.type! + ' ' + selectedAnswer)
+                    : postService.submitReport(
+                        widget.postId, widget.type! + ' ' + selectedAnswer),
                 Navigator.of(context).pop(),
-                if(!ismobile)
-                {
-            /// send report TODO
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      scrollable: true,
-                      title: const Text('Submit a report'),
-                      content: Builder(
-                        builder: ((context) {
+                if (!ismobile)
+                  {
+                    /// send report TODO
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          scrollable: true,
+                          title: const Text('Submit a report'),
+                          content: Builder(
+                            builder: ((context) {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.7,
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                child: const Column(
+                                  children: [
+                                    Icon(
+                                      Icons.verified,
+                                      color: Colors.blue,
+                                      size: 30.0,
+                                    ),
+                                    Text('Thanks for your report'),
+                                    Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Text(
+                                          'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }),
+                          ),
+                        );
+                      },
+                    )
+                  }
+                else
+                  {
+                    //submit report Todo
+                    isUser
+                        ? userService.reportUser(
+                            username, widget.type! + ' ' + selectedAnswer)
+                        : postService.submitReport(
+                            widget.postId, widget.type! + ' ' + selectedAnswer),
+
+                    showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
                           return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.7,
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            height: heigth * 0.5,
+                            width: width,
                             child: const Column(
                               children: [
                                 Icon(
-                                  Icons
-                                      .verified, 
-                                  color: Colors
-                                      .blue, 
-                                  size: 30.0, 
+                                  Icons.verified,
+                                  color: Colors.blue,
+                                  size: 30.0,
                                 ),
                                 Text('Thanks for your report'),
                                 Padding(
@@ -402,44 +457,9 @@ class QuestionScreen extends State<Question> {
                               ],
                             ),
                           );
-                        }),
-                      ),
-                    );
-                  },
-                )
-                }else
-                {
-                  //submit report Todo
-                                  postService.submitReport(widget.postId,widget.type!+' '+selectedAnswer),
-
-                               showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return SizedBox(
-                              height: heigth * 0.5,
-                              width: width,
-                              child: const Column(
-                                children: [
-                                  Icon(
-                                    Icons.verified,
-                                    color: Colors.blue,
-                                    size: 30.0,
-                                  ),
-                                  Text('Thanks for your report'),
-                                  Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Text(
-                                        'Thanks again for your report and for looking out for yourself and fellow redditors. Your reporting helps make reddit a better, safer, and more welcoming place for everyone; and it means alot to us '),
-                                  )
-                                ],
-                              ),
-                            );
-                          })
-
-                }
+                        })
+                  }
               }
-
           },
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {

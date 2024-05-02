@@ -15,11 +15,12 @@ import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
+import '../Models/message_item.dart';
 import '../test_files/test_users.dart';
+import '../test_files/test_messages.dart';
 import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
-
 
 class UserService {
   void addUser() {
@@ -53,7 +54,7 @@ class UserService {
       print(username);
 
       print(response.statusCode);
-      print(jsonDecode(response.body));
+      print(jsonDecode(response.body)['content']['moderatedCommunities']);
       print(UserAbout.fromJson(jsonDecode(response.body)['content'])
           .moderatedCommunities);
       return UserAbout.fromJson(jsonDecode(response.body)['content']);
@@ -136,15 +137,15 @@ class UserService {
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
-      
+
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json',
-         'Authorization': token!,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
         },
         body: json.encode({
           "other_username": username,
-          
         }),
       );
     }
@@ -163,14 +164,15 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json',
-                'Authorization': token!,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
         },
         body: json.encode({
           'other_username': username,
@@ -181,10 +183,16 @@ class UserService {
 
   Future<int> getFollowersCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
-          .followers!
-          .length;
+          .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -208,9 +216,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -235,10 +250,16 @@ class UserService {
 
   Future<int> getFollowingCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
-          .following!
-          .length;
+          .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -262,9 +283,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -287,9 +315,16 @@ class UserService {
 
   Future<List<Comments>?> getcomments(String username) async {
     if (testing) {
-      return users
+      List<Comments> comments = users
           .firstWhere((element) => element.userAbout.username == username)
           .comments!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      comments.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return comments;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -518,6 +553,163 @@ class UserService {
       socialLink.displayText = displayText;
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
+    }
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Future<List<Messages>?> getMessages(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      messages.removeWhere((element) => blockedUsers.any((blockedUser) =>
+          blockedUser.username == element.senderUsername ||
+          blockedUser.username == element.receiverUsername));
+      return messages;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/read-all-messages');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get messages');
+      print(response.statusCode);
+      //print(jsonDecode(response.body)['messages']);
+      List<dynamic> body = jsonDecode(response.body)['messages'];
+      print('dh el body');
+      print(body);
+      List<Messages>? messages = await Future.wait(
+        body
+            .where((item) => item != null)
+            .map((dynamic item) async => Messages.fromJson(item)),
+      );
+      messages.removeWhere(
+          (element) => element.deletedAt != null || element.deletedAt != '');
+      return messages;
+    }
+  }
+
+  Future<bool> replyMessage(String parentid, String senderUsername,
+      String receiverUsername, String receiverType, String message) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .usermessages;
+      userMessages?.add(Messages(
+        id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+            .toString(),
+        senderUsername: senderUsername,
+        senderType: 'user',
+        receiverUsername: receiverUsername,
+        receiverType: receiverType,
+        senderVia: null,
+        message: message,
+        createdAt: DateTime.now().toString(),
+        deletedAt: null,
+        unreadFlag: false,
+        isSent: true,
+        isReply: false,
+        parentMessageId: parentid,
+        subject: null,
+        isInvitation: false,
+      ));
+      return true;
+    } else {
+      // todo: reply to message in database
+      return false;
+    }
+  }
+
+  Future<bool> sendNewMessage(String senderUsername, String receiverUsername,
+      String message, String subject) async {
+    if (testing) {
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .safetySettings!
+          .blockedUsers;
+      if (users.any((element) =>
+                  element.userAbout.username == receiverUsername) ==
+              false ||
+          (blockedUsers
+                  .any((element) => element.username == receiverUsername) ==
+              true)) {
+        return false;
+      } else {
+        List<Messages>? userMessages = users
+            .firstWhere(
+                (element) => element.userAbout.username == senderUsername)
+            .usermessages;
+        userMessages?.add(Messages(
+          id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+              .toString(),
+          senderUsername: senderUsername,
+          senderType: 'user',
+          receiverUsername: receiverUsername,
+          receiverType: 'user',
+          senderVia: null,
+          message: message,
+          createdAt: DateTime.now().toString(),
+          deletedAt: null,
+          unreadFlag: true,
+          isSent: true,
+          isReply: false,
+          parentMessageId: null,
+          subject: subject,
+          isInvitation: false,
+        ));
+        print('message added tmm mn add msg function');
+        for (var msg in userMessages!) {
+          print(msg.id);
+          print(msg.receiverUsername);
+        }
+
+        return true;
+      }
+    } else {
+      // todo: add new message to database
+      return false;
+    }
+  }
+
+  Future<void> markoneMessageRead(String username, String id) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      userMessages?.firstWhere((element) => element.id == id).unreadFlag =
+          false;
+    } else {}
+  }
+
+  Future<void> markAllMessagesRead(String username) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      for (var msg in userMessages!) {
+        msg.unreadFlag = false;
+      }
+    } else {
+      // todo: mark all messages read in database
+    }
+  }
+
+  Future<void> reportUser(String username, String reason) async {
+    if (testing) {
+      //to be implemented
+    } else {
+      // todo: report user in database
     }
   }
 
@@ -1156,7 +1348,6 @@ class UserService {
 
   Future<NotificationsSettingsItem>? getNotificationsSettings(
       String username) async {
-        
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url =

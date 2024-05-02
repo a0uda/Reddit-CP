@@ -101,7 +101,13 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => PostSettingsProvider(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BlockUnblockUser(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => MessagesOperations(),
+      ),
     ],
     child: const MyApp(),
   ));

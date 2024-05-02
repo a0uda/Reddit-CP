@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import '../Services/user_service.dart';
 import '../Models/user_about.dart';
 import '../Models/comments.dart';
@@ -11,93 +13,99 @@ class TabBarComments extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Comments>?>(
-      future: userService.getcomments(userData!.username),
-      builder: (BuildContext context, AsyncSnapshot<List<Comments>?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            color: Colors.white,
-            child: const SizedBox(
-              height: 30,
-              width: 30,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          List<Comments> comments = snapshot.data!;
-          return comments.isEmpty 
-              ? const Center(
-                  child: Text('No comments yet!'),
-                )
-              : ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: comments.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Comments comment = comments[index];
-                    return ListTile(
-                      tileColor: Colors.white,
-                      title: Text(
-                        comment.username ?? '',
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.black),
-                      ),
-                      subtitle: Column(
-                        children: <Widget>[
-                          Row(
+    return Consumer<BlockUnblockUser>(
+      builder: (context, BlockUnblockUser, child) {
+        return FutureBuilder<List<Comments>?>(
+          future: userService.getcomments(userData!.username),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Comments>?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                color: Colors.white,
+                child: const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              List<Comments> comments = snapshot.data!;
+              return comments.isEmpty
+                  ? const Center(
+                      child: Text('No comments yet!'),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: comments.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Comments comment = comments[index];
+                        return ListTile(
+                          tileColor: Colors.white,
+                          title: Text(
+                            comment.username ?? '',
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.black),
+                          ),
+                          subtitle: Column(
                             children: <Widget>[
-                              Text(
-                                'r/${comment.subredditName} • ${getDateTimeDifferenceWithLabel(comment.createdAt ?? '')} • ${comment.upvotesCount == 0 ? '' : comment.upvotesCount}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color.fromARGB(255, 156, 156, 156),
-                                ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    'r/${comment.subredditName} • ${getDateTimeDifferenceWithLabel(comment.createdAt ?? '')} • ${comment.upvotesCount == 0 ? '' : comment.upvotesCount}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromARGB(255, 156, 156, 156),
+                                    ),
+                                  ),
+                                  comment.upvotesCount != 0
+                                      ? const Icon(
+                                          Icons.arrow_upward_outlined,
+                                          size: 16,
+                                        )
+                                      : Container(),
+                                  Text(
+                                    ' ${comment.downvotesCount == 0 ? '' : comment.downvotesCount}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromARGB(255, 156, 156, 156),
+                                    ),
+                                  ),
+                                  comment.downvotesCount != 0
+                                      ? const Icon(
+                                          Icons.arrow_downward_outlined,
+                                          size: 16,
+                                        )
+                                      : Container(),
+                                ],
                               ),
-                              comment.upvotesCount != 0
-                                  ? const Icon(
-                                      Icons.arrow_upward_outlined,
-                                      size: 16,
-                                    )
-                                  : Container(),
-                              Text(
-                                ' ${comment.downvotesCount == 0 ? '' : comment.downvotesCount}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color.fromARGB(255, 156, 156, 156),
-                                ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    comment.description ?? '',
+                                    style: const TextStyle(
+                                        fontSize: 14, color: Colors.black),
+                                  ),
+                                ],
                               ),
-                              comment.downvotesCount != 0
-                                  ? const Icon(
-                                      Icons.arrow_downward_outlined,
-                                      size: 16,
-                                    )
-                                  : Container(),
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                comment.description ?? '',
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider(
+                          color: Color.fromARGB(255, 223, 222, 222),
+                          height:
+                              1, // Adjust the height of the divider as needed
+                        );
+                      },
                     );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider(
-                      color: Color.fromARGB(255, 223, 222, 222),
-                      height: 1, // Adjust the height of the divider as needed
-                    );
-                  },
-                );
-        }
+            }
+          },
+        );
       },
     );
   }
@@ -141,6 +149,6 @@ String getDateTimeDifferenceWithLabel(String dateFromDatabaseString) {
 
   // If all differences are 0, return '0 s'
   else {
-    return '0s';
+    return 'now';
   }
 }
