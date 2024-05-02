@@ -40,8 +40,8 @@ class SearchBarClass extends SearchDelegate {
       icon: const Icon(Icons.arrow_back),
     );
   }
-
 // third overwrite to show query result
+int index = 0;
   @override
   Widget buildResults(BuildContext context) {
     // List<String> matchQuery = [];
@@ -52,10 +52,14 @@ class SearchBarClass extends SearchDelegate {
     // }
     double size = MediaQuery.of(context).size.width;
     return DefaultTabController(
+      initialIndex: index,
       length: 4,
       child: Column(
         children: [
           TabBar(
+            onTap: (value) => {
+              index = value
+            },
             tabAlignment: TabAlignment.start,
             isScrollable: true,
             dividerColor: Colors.grey,
