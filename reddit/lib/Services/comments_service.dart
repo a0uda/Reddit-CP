@@ -99,6 +99,32 @@ class CommentsService {
     }
   }
 
+  Future<void> EditComment(String id, String editedText) async {
+    if (testing) {
+    } else {
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/edit-text');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json
+            .encode({"id": id, "edited_text": editedText, "is_post": false}),
+      );
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        print('comment edited');
+      }
+    }
+  }
+
   Future<void> upVoteComment(String commentId) async {
     if (testing) {
       for (var comment in comments) {

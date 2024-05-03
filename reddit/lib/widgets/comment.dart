@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -276,6 +275,71 @@ class _CommentState extends State<Comment> {
                                     ],
                                   ),
                                 ),
+                          PopupMenuItem(
+                            value: 2,
+                            child: const Row(
+                              children: [
+                                Icon(Icons.flag),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text("Edit")
+                              ],
+                            ),
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  var editedTextController =
+                                      TextEditingController(
+                                          text: widget.comment.description);
+                                  return Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(
+                                            'Edit your comment',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.deepOrange[400]),
+                                          ),
+                                          TextFormField(
+                                            controller: editedTextController,
+                                            minLines: 10,
+                                            maxLines: null,
+                                            decoration: const InputDecoration(
+                                              border: OutlineInputBorder(),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.deepOrange[400],
+                                            ),
+                                            child: const Text('Save'),
+                                            onPressed: () async {
+                                              await commentService.EditComment(
+                                                  widget.comment.id!,
+                                                  editedTextController.text);
+                                              setState(() {
+                                                widget.comment.description =
+                                                    editedTextController.text;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ],
                       );
                     },
