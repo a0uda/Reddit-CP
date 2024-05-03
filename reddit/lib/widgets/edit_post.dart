@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 
 class EditPost extends StatefulWidget {
@@ -22,6 +24,7 @@ class _EditPostState extends State<EditPost> {
   @override
   Widget build(BuildContext context) {
     TextEditingController bodyController = TextEditingController();
+    var postController = context.read<Edit>();
     return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -68,8 +71,10 @@ class _EditPostState extends State<EditPost> {
                       backgroundColor: Color.fromARGB(255, 253, 119, 10)),
                   onPressed: () {
               
-                      postService.EditPost(widget.postId, bodyController.text);
+                      postController.EditPost(widget.postId, bodyController.text);
+        postController.shouldRefresh=true;
                      Navigator.of(context).pop();
+          
          
                   },
                   icon: Icon(Icons.edit, color: Colors.white),

@@ -105,6 +105,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => NotificationsService(),
       ),
+            ChangeNotifierProvider(
+        create: (context) => Edit(),
+      )
     ],
     child: const MyApp(),
   ));

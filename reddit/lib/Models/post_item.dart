@@ -36,7 +36,7 @@ class PostItem {
   final UserDetails? userDetails;
   final int vote;
   final String originalPostID;
-
+// final bool  isRemoved;
   PostItem({
     required this.id,
     required this.userId,
@@ -66,6 +66,7 @@ class PostItem {
     required this.lockedFlag,
     required this.allowrepliesFlag,
     required this.vote,
+    // required this.isRemoved,
     this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,

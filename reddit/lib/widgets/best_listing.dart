@@ -24,7 +24,7 @@ class BestListing extends StatefulWidget {
 
 class BestListingBuild extends State<BestListing> {
   ScrollController controller = ScrollController();
-  int page = 0;
+  int page=1;
   // List of items in our dropdown menu
   bool? isMyPost;
 
@@ -59,7 +59,9 @@ class BestListingBuild extends State<BestListing> {
   }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+
+
+    if (controller.position.maxScrollExtent*0.9 < controller.offset) {
       print('LOAD MORE');
       fetchdata();
       // load more data here

@@ -24,7 +24,7 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-  int page = 0;
+  int page=1;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
   // List of items in our dropdown menu
@@ -56,7 +56,7 @@ class TopListingBuild extends State<TopListing> {
   }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+    if (controller.position.maxScrollExtent*0.9 < controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
