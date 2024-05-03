@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
+import 'package:reddit/Services/user_service.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/best_listing.dart';
+import 'package:reddit/widgets/comments_desktop.dart';
 
 class CommentUI extends StatefulWidget {
   final dynamic comment;
@@ -10,47 +19,77 @@ class CommentUI extends StatefulWidget {
 
 class _CommentUIState extends State<CommentUI> {
   late dynamic comment;
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  String formatDateTime(String dateTimeString) {
+    final DateTime now = DateTime.now();
+    final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+    final Duration difference = now.difference(parsedDateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}sec';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays}d';
+    } else {
+      final int months = now.month -
+          parsedDateTime.month +
+          (now.year - parsedDateTime.year) * 12;
+      if (months < 12) {
+        return '$months mth';
+      } else {
+        final int years = now.year - parsedDateTime.year;
+        return '$years yrs';
+      }
+    }
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     comment = widget.comment;
   }
-
-  // {
-  //   "_id": "662fbe6d0cec85af670cbbd8",
-  //   "post_id": {
-  //     "_id": "6624e0ceb67f43e82ce56df5",
-  //     "title": "Test8",
-  //     "description": "ff",
-  //     "created_at": "2024-04-21T09:47:58.302Z",
-  //     "community_name": "Thiel___Wolff",
-  //     "comments_count": 4,
-  //     "upvotes_count": 1,
-  //     "user_id": "661ed9a12b42f5ea45ed7f6e",
-  //     "username": "m",
-  //     "__v": 7
-  //   },
-  //   "user_id": "662516de07f00cce3c42352a",
-  //   "username": "malak",
-  //   "created_at": "2024-04-29T15:36:13.653Z",
-  //   "description": "test reply2 notcountttttttttttt",
-  //   "comment_in_community_flag": false,
-  //   "community_name": "Thiel___Wolff",
-  //   "upvotes_count": 1,
-  // },
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CommentsDesktop(
+              postId: comment["post_id"]["_id"],
+            ),
+          ),
+        );
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              bool isMod = userController.userAbout!.moderatedCommunities!.any(
+                  (element) =>
+                      element.name == comment["post_id"]["community_name"]);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => (CommunityLayout(
+                    desktopLayout: DesktopCommunityPage(
+                        isMod: isMod,
+                        communityName: comment["post_id"]["community_name"]),
+                    mobileLayout: MobileCommunityPage(
+                      isMod: isMod,
+                      communityName: comment["post_id"]["community_name"],
+                    ),
+                  )),
+                ),
+              );
+            },
             child: Row(
               children: [
                 CircleAvatar(
@@ -64,10 +103,17 @@ class _CommentUIState extends State<CommentUI> {
                 Text(
                   "r/${comment["post_id"]["community_name"]}",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 11),
+                      fontWeight: FontWeight.bold, fontSize: 11 , fontFamily: 'Roboto'),
                 ),
                 Text(
-                  " · ${comment["post_id"]["created_at"]}",
+                  " · ",
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  formatDateTime(comment["post_id"]["created_at"]),
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
               ],
@@ -76,10 +122,34 @@ class _CommentUIState extends State<CommentUI> {
           const SizedBox(
             height: 5,
           ),
+          Row(children: [
+            comment["post_id"]["nsfw_flag"]
+                ? const Icon(
+                    Icons.dangerous_sharp,
+                    color: Color(0xFFE00096),
+                    size: 12,
+                  )
+                : const SizedBox(),
+            comment["post_id"]["nsfw_flag"]
+                ? const Padding(
+                    padding: EdgeInsets.only(right: 8.0),
+                    child: Text(
+                      "NSFW",
+                      style: TextStyle(
+                          color: Color(0xFFE00096),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
+                    ),
+                  )
+                : const SizedBox(),
+          ]),
+          const SizedBox(
+            height: 5,
+          ),
           Text(comment["post_id"]["title"]),
           Container(
-            margin: const EdgeInsets.fromLTRB(0, 10, 15, 8),
-            color: Color.fromARGB(255, 241, 241, 241),
+            margin: const EdgeInsets.fromLTRB(0, 8, 15, 8),
+            color: const Color.fromARGB(255, 241, 241, 241),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -95,23 +165,75 @@ class _CommentUIState extends State<CommentUI> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text(
-                        "u/${comment["username"]}",
-                        style: TextStyle(color: Colors.grey[600], fontSize: 11),
-                      ),
-                      Text(
-                        " · ${comment["created_at"]}",
-                        style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                      GestureDetector(
+                        onTap: () async {
+                          UserAbout otherUserData = (await (userService
+                              .getUserAbout(comment["username"])))!;
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfileScreen(otherUserData, 'other'),
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              "u/${comment["username"]}",
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 11),
+                            ),
+                            Text(
+                              " · ",
+                              style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              " ${formatDateTime(comment["created_at"])}",
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 11),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  Text(
-                    "${comment["description"]}",
-                    style: const TextStyle(fontFamily: "Roboto", fontSize: 12),
+                  Container(
+                    constraints:
+                        const BoxConstraints(maxHeight: 140, minHeight: 0),
+                    child: ShaderMask(
+                      shaderCallback: (Rect bounds) {
+                        return LinearGradient(
+                          colors: const [Colors.black, Colors.transparent],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: bounds.height > 135
+                              ? [0.8, 1.0]
+                              : [1, 1], // Adjust to control where fading starts
+                        ).createShader(
+                            Rect.fromLTRB(0, 0, bounds.width, bounds.height));
+                      },
+                      blendMode: BlendMode.dstIn,
+                      child: Text(
+                        comment["description"].length > 600
+                            ? "${comment["description"].substring(0, 600)}"
+                            : "${comment["description"]}",
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontFamily: "Roboto",
+                            fontSize: 12),
+                      ),
+                    ),
                   ),
-                  Text(
-                    "${comment["upvotes_count"]} upvotes",
-                    style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "${comment["upvotes_count"]} upvotes",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                    ),
                   ),
                 ],
               ),
@@ -121,15 +243,18 @@ class _CommentUIState extends State<CommentUI> {
             children: [
               Text(
                 "${comment["post_id"]["upvotes_count"]} upvotes",
-                style: TextStyle(color: Colors.grey[600] , fontSize: 11),
+                style: TextStyle(color: Colors.grey[600], fontSize: 11),
               ),
               Text(
                 " · ",
-                style: TextStyle(color: Colors.grey[600] , fontSize: 14  , fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
               ),
               Text(
                 "${comment["post_id"]["comments_count"]} comments",
-                style: TextStyle(color: Colors.grey[600] , fontSize: 11),
+                style: TextStyle(color: Colors.grey[600], fontSize: 11),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Search/comments_search.dart';
 import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
+import 'package:reddit/widgets/Search/post_search.dart';
 
 class SearchBarClass extends SearchDelegate {
 // Demo list to show querying
@@ -40,8 +41,8 @@ class SearchBarClass extends SearchDelegate {
       icon: const Icon(Icons.arrow_back),
     );
   }
-
 // third overwrite to show query result
+int index = 0;
   @override
   Widget buildResults(BuildContext context) {
     // List<String> matchQuery = [];
@@ -52,10 +53,14 @@ class SearchBarClass extends SearchDelegate {
     // }
     double size = MediaQuery.of(context).size.width;
     return DefaultTabController(
+      initialIndex: index,
       length: 4,
       child: Column(
         children: [
           TabBar(
+            onTap: (value) => {
+              index = value
+            },
             tabAlignment: TabAlignment.start,
             isScrollable: true,
             dividerColor: Colors.grey,
@@ -73,11 +78,7 @@ class SearchBarClass extends SearchDelegate {
             child: TabBarView(
               children: [
                 // Content for Array 1
-                Container(
-                  child: Center(
-                    child: Text('Content for Array 1'),
-                  ),
-                ),
+                PostSearch(searchFor: query),
                 // Content for Array 2
                 CommunitiesSearch(searchFor: query),
                 // Content for Array 3
