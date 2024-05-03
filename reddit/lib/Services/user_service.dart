@@ -597,12 +597,14 @@ class UserService {
             .where((item) => item != null)
             .map((dynamic item) async => Messages.fromJson(item)),
       );
+      print('get messages');
       for (var msg in messages) {
         print(msg.id);
         print(msg.senderType);
         print(msg.senderUsername);
         print(msg.receiverType);
         print(msg.receiverUsername);
+        print(msg.isSent);
         print(msg.message);
       }
       return messages;
@@ -734,6 +736,7 @@ class UserService {
       print("in send new message");
       print(senderUsername);
       print(receiverUsername);
+      print(message);
       print(response.body);
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return true;
