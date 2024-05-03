@@ -42,7 +42,7 @@ class PostService {
           id: (posts.length + 1).toString(),
           userId: userId!,
           username: username!,
-          isRemoved: false,
+          // isRemoved: false,
           title: title,
           description: description,
           createdAt: DateTime.now(),

@@ -6,7 +6,7 @@ import 'package:reddit/Models/report.dart';
 
 final List<PostItem> posts = [
   PostItem(
-    isRemoved: false,
+    // isRemoved: false,
         vote: 0,
     id: "1",
     userId: users[1].userAbout.id!,
@@ -40,7 +40,7 @@ final List<PostItem> posts = [
     originalPostID: '',
   ),
   PostItem(
-        isRemoved: false,
+        // isRemoved: false,
         vote: 0,
     id: "2",
     userId: users[1].userAbout.id!,
@@ -84,7 +84,7 @@ final List<PostItem> posts = [
 
 final List<PostItem> popularPosts = [
   PostItem(
-        isRemoved: false,
+        // isRemoved: false,
         vote: 0,
             isReposted: false,
     originalPostID: '',
@@ -125,7 +125,7 @@ final List<PostItem> popularPosts = [
     userDetails: null,
   ),
   PostItem(
-        isRemoved: false,
+        // isRemoved: false,
         vote: 0,
             isReposted: false,
     originalPostID: '',
