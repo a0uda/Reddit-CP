@@ -24,7 +24,7 @@ class NewListing extends StatefulWidget {
 
 class NewListingBuild extends State<NewListing> {
   List<PostItem> posts = [];
-  int page = 0;
+  int page = 1;
   late Future<void> _dataFuture;
   bool loading = false;
   ScrollController controller = ScrollController();
@@ -57,7 +57,7 @@ class NewListingBuild extends State<NewListing> {
   }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+    if (controller.position.maxScrollExtent*0.9  < controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);

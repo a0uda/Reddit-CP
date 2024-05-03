@@ -37,7 +37,7 @@ class PostItem {
   final UserDetails? userDetails;
   final int vote;
   final String originalPostID;
-
+final bool  isRemoved;
   PostItem({
     required this.id,
     required this.userId,
@@ -67,6 +67,7 @@ class PostItem {
     required this.lockedFlag,
     required this.allowrepliesFlag,
     required this.vote,
+    required this.isRemoved,
     this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,
@@ -85,7 +86,7 @@ class PostItem {
         originalPostID: "662bc4861980ada1a43262ac", //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
         id: json['_id'],
         userId: json['user_id'],
-        description: json['description'],
+        description:(json['description']!=null)? json['description']:'',
         username: (json['username']!=null)?(json['username']):'SHIKA',
         title: json['title'],
         createdAt: DateTime.parse(json['created_at']),
@@ -105,6 +106,8 @@ class PostItem {
         setSuggestedSort: json['set_suggeested_sort'],
         vote: (json['vote']!=null)?(json['vote']):0,
         images: (imagelist.isNotEmpty)? imagelist:null,
+        isRemoved: json['deleted']
+      
         );
 
   }
