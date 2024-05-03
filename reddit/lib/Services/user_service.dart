@@ -631,7 +631,7 @@ class UserService {
         },
       );
       print('in get messages');
-      print(response.statusCode);
+      print(response.body);
       List<dynamic> body = jsonDecode(response.body)['messages'];
       List<Messages>? messages = await Future.wait(
         body

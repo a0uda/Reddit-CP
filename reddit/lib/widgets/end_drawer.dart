@@ -30,18 +30,11 @@ class EndDrawerReddit extends StatelessWidget {
                           radius: 40,
                           backgroundImage: AssetImage('images/Greddit.png'),
                         )
-                      : File(userController.userAbout!.profilePicture!)
-                              .existsSync()
-                          ? CircleAvatar(
-                              radius: 40,
-                              backgroundImage: FileImage(File(
-                                  userController.userAbout!.profilePicture!)),
-                            )
-                          : CircleAvatar(
-                              radius: 40,
-                              backgroundImage: AssetImage(
-                                  userController.userAbout!.profilePicture!),
-                            ),
+                      : CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage(
+                              userController.userAbout!.profilePicture!),
+                        ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(userController.userAbout!.username,
@@ -80,7 +73,7 @@ class EndDrawerReddit extends StatelessWidget {
             title: const Text("History"),
             onTap: () {
               //Navigate to History
-                    Navigator.push(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const History()),
               );

@@ -136,8 +136,14 @@ class NotificationCardState extends State<NotificationCard> {
                         widget.notificationItem.sendingUserUsername!),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                        return Container(
+                          color: Colors.white,
+                          child: const SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              )),
                         );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
