@@ -159,11 +159,13 @@ class LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            await canLaunchUrl(Uri.parse(
-                                    'https://redditech.me/backend/users/signup-google'))
-                                ? await launchUrl(Uri.parse(
-                                    'https://redditech.me/backend/users/signup-google'))
-                                : throw 'Could not launch https://redditech.me/backend/users/signup-google';
+                            // await canLaunchUrl(Uri.parse(
+                            //         'https://redditech.me/backend/users/signup-google'))
+                            //     ? await launchUrl(Uri.parse(
+                            //         'https://redditech.me/backend/users/signup-google'))
+                            //     : throw 'Could not launch https://redditech.me/backend/users/signup-google';
+                            var userService = GetIt.instance.get<UserService>();
+                            userService.loginWithGoogle();
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.all(buttonPadding),

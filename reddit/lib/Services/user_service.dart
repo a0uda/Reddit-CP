@@ -19,6 +19,8 @@ import '../test_files/test_users.dart';
 import '../test_files/test_messages.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:google_sign_in/google_sign_in.dart';
+
 bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
@@ -995,6 +997,38 @@ class UserService {
       } else {
         return 400;
       }
+    }
+  }
+
+  Future<bool> loginWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication? googleSignInAuthentication =
+          await googleSignInAccount?.authentication;
+
+      // The access token can be used to authenticate with your backend
+      var accessToken = googleSignInAuthentication!.accessToken;
+
+      // Send the access token to your backend
+      // ...
+
+      if (accessToken != null) {
+        print('Google login success');
+        print(accessToken);
+
+        // Sign out the user after printing the token
+        await googleSignIn.signOut();
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      print(error);
+      return false;
     }
   }
 
