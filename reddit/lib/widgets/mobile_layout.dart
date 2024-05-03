@@ -141,39 +141,40 @@ class _MobileLayoutState extends State<MobileLayout> {
                 icon: selectedIndexPage == 0
                     ? const Icon(
                         Icons.home,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         Icons.home_outlined,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
-                label: "Home"),
+                label: "Home"
+                ),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 1
                     ? const Icon(
                         CupertinoIcons.group_solid,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         CupertinoIcons.group,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Communities"),
             const BottomNavigationBarItem(
                 icon: Icon(
                   Icons.add,
-                  size: kToolbarHeight * (3 / 5),
+                  size: kToolbarHeight * (3 / 7),
                 ),
                 label: "Create"),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 3
                     ? const Icon(
                         CupertinoIcons.chat_bubble_text_fill,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         CupertinoIcons.chat_bubble_text,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Chat"),
             BottomNavigationBarItem(
@@ -184,7 +185,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                     selectedIndexPage == 4
                         ? Icons.notifications
                         : Icons.notifications_outlined,
-                    size: kToolbarHeight * (3 / 5),
+                    size: kToolbarHeight * (3 / 7),
                   ),
                   // The notification count
                   Consumer<NotificationsService>(
@@ -200,8 +201,8 @@ class _MobileLayoutState extends State<MobileLayout> {
                             shape: BoxShape.circle,
                           ),
                           constraints: BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 15,
+                            minWidth: 12,
+                            minHeight: 12,
                           ),
                           child: Text(
                             userController.unreadNotificationsCount

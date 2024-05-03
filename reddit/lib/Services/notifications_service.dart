@@ -19,6 +19,8 @@ class NotificationsService with ChangeNotifier {
         'Authorization': token!,
       },
     );
+    print("nottttiif");
+    print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       List<dynamic> notificationsJson = data['content'];
@@ -28,7 +30,9 @@ class NotificationsService with ChangeNotifier {
           unreadCount++;
         }
       }
+
       userController.unreadNotificationsCount = unreadCount;
+      // notifyListeners();
       return Future.wait(notificationsJson
           .map((json) => NotificationItem.fromJson(json))
           .toList());
@@ -100,7 +104,7 @@ class NotificationsService with ChangeNotifier {
         'id': notificationId,
       }),
     );
-    userController.unreadNotificationsCount--;
+    // userController.unreadNotificationsCount--;
     if (response.statusCode == 200) {
       notifyListeners();
       return true;
