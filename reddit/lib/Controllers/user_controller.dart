@@ -124,63 +124,52 @@ class SocialLinksController extends ChangeNotifier {
   bool testing = const bool.fromEnvironment('testing');
 
   void getSocialLinks() {
-    if (testing == false) {
-      //todo: to be changed wen databse function is implemented
-      socialLinks = users
-          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
-          .userAbout
-          .socialLinks;
-    } else {
-      socialLinks = userController.userAbout!.socialLinks;
-    }
+    // if (testing == false) {
+    //   //todo: to be changed wen databse function is implemented
+    //   socialLinks = users
+    //       .firstWhere((element) => element.userAbout.username == 'Purple-7544')
+    //       .userAbout
+    //       .socialLinks;
+    // } else {
+    socialLinks = userController.userAbout!.socialLinks;
+    //}
   }
 
   Future<void> removeSocialLink(
       String username, SocialLlinkItem socialLink) async {
-    if (testing == false) {
-      await userService.deleteSocialLink('Purple-7544', socialLink.id);
-      userController.userAbout!.socialLinks!.remove(socialLink);
-      socialLinks!.remove(socialLink);
-      notifyListeners();
-    } else {
-      await userService.deleteSocialLink(username, socialLink.id);
-      userController.userAbout!.socialLinks!.remove(socialLink);
-      socialLinks!.remove(socialLink);
-      notifyListeners();
-    }
+    // if (testing == false) {
+    //   await userService.deleteSocialLink('Purple-7544', socialLink.id);
+    //   userController.userAbout!.socialLinks!.remove(socialLink);
+    //   socialLinks!.remove(socialLink);
+    //   notifyListeners();
+    // } else {
+    await userService.deleteSocialLink(username, socialLink.id);
+    userController.userAbout!.socialLinks!.remove(socialLink);
+    socialLinks!.remove(socialLink);
+    notifyListeners();
+    //}
   }
 
   Future<void> addSocialLink(
       String username, String displayName, String type, String link) async {
-    if (testing == false) {
-      await userService.addSocialLink('Purple-7544', displayName, type, link);
-      getSocialLinks();
-      notifyListeners();
-    } else {
-      await userService.addSocialLink(username, displayName, type, link);
-      await userController.getUserAbout(userController.userAbout!.username);
-      getSocialLinks();
-      notifyListeners();
-    }
+    // if (testing == false) {
+    //   await userService.addSocialLink('Purple-7544', displayName, type, link);
+    //   getSocialLinks();
+    //   notifyListeners();
+    // } else {
+    await userService.addSocialLink(username, displayName, type, link);
+    await userController.getUserAbout(userController.userAbout!.username);
+    getSocialLinks();
+    notifyListeners();
+    //}
   }
 
   Future<void> editSocialLink(
       String username, String id, String displayName, String link) async {
-    if (testing == false) {
-      await userService.editSocialLink('Purple-7544', id, displayName, link);
-      getSocialLinks();
-      notifyListeners();
-    } else {
-      await userService.editSocialLink('Purple-7544', id, displayName, link);
-      userController.userAbout!.socialLinks!
-          .firstWhere((element) => element.id == id)
-          .displayText = displayName;
-      userController.userAbout!.socialLinks!
-          .firstWhere((element) => element.id == id)
-          .customUrl = link;
-      socialLinks = userController.userAbout!.socialLinks;
-      notifyListeners();
-    }
+    await userService.editSocialLink(username, id, displayName, link);
+    await userController.getUserAbout(userController.userAbout!.username);
+    getSocialLinks();
+    notifyListeners();
   }
 }
 
@@ -223,8 +212,8 @@ class ProfilePictureController extends ChangeNotifier {
 class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  List<FollowersFollowingItem> followers=[];
-  List<FollowersFollowingItem> following=[];
+  List<FollowersFollowingItem> followers = [];
+  List<FollowersFollowingItem> following = [];
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     followers = await userService.getFollowers(username);

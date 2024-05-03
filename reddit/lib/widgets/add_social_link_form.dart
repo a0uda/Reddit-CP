@@ -40,7 +40,7 @@ class AddSocialLinkFormState extends State<AddSocialLinkForm> {
     socialLinkItem = widget.socialLinkItem;
     if (isEdit == true) {
       usernameController =
-          TextEditingController(text: socialLinkItem!.username);
+          TextEditingController(text: socialLinkItem!.displayText);
       linkController = TextEditingController(text: socialLinkItem!.customUrl);
     } else {
       usernameController = TextEditingController();
@@ -94,6 +94,8 @@ class AddSocialLinkFormState extends State<AddSocialLinkForm> {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             if (isEdit) {
+                              print('isEdit');
+                              print(isEdit);
                               socialLinksController.editSocialLink(
                                 userController.userAbout!.username,
                                 socialLinkItem!.id,
