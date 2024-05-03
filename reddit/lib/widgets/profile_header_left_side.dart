@@ -44,17 +44,13 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                           radius: 50,
                           backgroundImage: AssetImage('images/Greddit.png'),
                         )
-                      : File(userData.profilePicture!).existsSync()
-                          ? CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  FileImage(File(userData.profilePicture!)),
-                            )
-                          : CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  AssetImage(userData.profilePicture!),
-                            ),
+                      : CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              NetworkImage(userData.profilePicture!),
+                          onBackgroundImageError: (_, __) =>
+                              const AssetImage('images/Greddit.png'),
+                        )
                 ],
               );
             }),

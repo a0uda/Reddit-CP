@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
@@ -62,11 +63,53 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     if (userController.profileSettings == null) {
       await userController.getProfileSettings(userData!.username);
     }
-      contentVisibility = userController.profileSettings!.contentVisibility;
-      activeCommunity = userController.profileSettings!.activeCommunity;
-      setState(() {
-        _dataFetched = true;
-      });
+    contentVisibility = userController.profileSettings!.contentVisibility;
+    activeCommunity = userController.profileSettings!.activeCommunity;
+    setState(() {
+      _dataFetched = true;
+    });
+  }
+
+  Future<void> _pickImage(bool isBanner, bool isCamera) async {
+    var pickedFile;
+    if (isCamera) {
+      pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    } else {
+      pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    }
+    if (pickedFile != null) {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${pickedFile.name}');
+      print(
+          'images/${DateTime.now().microsecondsSinceEpoch}-${pickedFile.name}');
+      print(pickedFile.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(pickedFile.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+      }
+      if (isBanner) {
+        _bannerimagepath = await storageRef.getDownloadURL();
+        print('dh el banner image path');
+        print(_bannerimagepath);
+      } else {
+        _profileImagePath = await storageRef.getDownloadURL();
+        print('dh el profile image path');
+        print(_profileImagePath);
+      }
+    }
   }
 
   selectBannerProfile(bool isBanner) async {
@@ -77,12 +120,17 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ListTile(
-              leading: Icon(
+            ListTile(
+              leading: const Icon(
                 FluentIcons.camera_20_regular,
                 color: Colors.black,
               ),
-              title: Text('Camera'),
+              title: const Text('Camera'),
+              onTap: () async {
+                await _pickImage(isBanner, true);
+                setState(() {});
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               leading: const Icon(
@@ -91,19 +139,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
               ),
               title: const Text('Library'),
               onTap: () async {
-                final picker = ImagePicker();
-                final pickedFile =
-                    await picker.pickImage(source: ImageSource.gallery);
-                if (pickedFile != null) {
-                  selectedImagePath = pickedFile.path;
-                  setState(() {
-                    if (isBanner) {
-                      _bannerimagepath = selectedImagePath;
-                    } else {
-                      _profileImagePath = selectedImagePath;
-                    }
-                  });
-                }
+                await _pickImage(isBanner, false);
+                setState(() {});
                 Navigator.pop(context);
               },
             ),
@@ -237,15 +274,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         children: [
                           _bannerimagepath != null &&
                                   _bannerimagepath!.isNotEmpty
-                              ? File(_bannerimagepath!).existsSync()
-                                  ? Image.file(
-                                      File(_bannerimagepath!),
-                                      fit: BoxFit.fill,
-                                    )
-                                  : Image(
-                                      image: AssetImage(_bannerimagepath!),
-                                      fit: BoxFit.fill,
-                                    )
+                              ? Image.network(
+                                  _bannerimagepath!,
+                                  fit: BoxFit.fill,
+                                )
                               : Container(
                                   color: Colors.grey[300],
                                 ),
@@ -276,26 +308,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               color: Colors.white, // Border color
                               width: 2, // Border width
                             ),
-                            image: _profileImagePath != null
-                                ? (File(_profileImagePath!).existsSync())
-                                    ? DecorationImage(
-                                        image:
-                                            FileImage(File(_profileImagePath!)),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : DecorationImage(
-                                        image: () {
-                                          try {
-                                            return AssetImage(
-                                                _profileImagePath!);
-                                          } catch (e) {
-                                            // The asset doesn't exist, return a default asset
-                                            return const AssetImage(
-                                                'images/Greddit.png'); // Replace with your default asset path
-                                          }
-                                        }(),
-                                        fit: BoxFit.cover,
-                                      )
+                            image: _profileImagePath != null &&
+                                    _profileImagePath!.isNotEmpty
+                                ? DecorationImage(
+                                    image: NetworkImage(_profileImagePath!),
+                                    fit: BoxFit.cover,
+                                  )
                                 : const DecorationImage(
                                     image: AssetImage('images/Greddit.png'),
                                     fit: BoxFit.cover,

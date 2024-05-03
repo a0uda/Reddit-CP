@@ -142,8 +142,8 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                     child: Stack(children: [
                                                       Container(
                                                         decoration: community
-                                                                    .bannerPicture ==
-                                                                ''
+                                                                .bannerPicture
+                                                                .isEmpty
                                                             ? const BoxDecoration(
                                                                 color:
                                                                     Colors.blue,
@@ -156,19 +156,10 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                                             10)),
                                                               )
                                                             : BoxDecoration(
-                                                                image:
-                                                                    DecorationImage(
-                                                                  image: community
-                                                                          .bannerPicture
-                                                                          .isEmpty
-                                                                      ? AssetImage(
-                                                                          community
-                                                                              .bannerPicture)
-                                                                      : const AssetImage(
-                                                                          'images/active_community_default_banner.png'),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                ),
+                                                                image: DecorationImage(
+                                                                    image: NetworkImage(
+                                                                        community
+                                                                            .bannerPicture)),
                                                                 borderRadius: const BorderRadius
                                                                     .only(
                                                                     topLeft: Radius
@@ -195,17 +186,21 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                             shape:
                                                                 BoxShape.circle,
                                                           ),
-                                                          child: CircleAvatar(
-                                                            radius: 25,
-                                                            backgroundImage: community
-                                                                    .profilePicture
-                                                                    .isEmpty
-                                                                ? AssetImage(
-                                                                    community
-                                                                        .profilePicture)
-                                                                : const AssetImage(
-                                                                    'images/Greddit.png'),
-                                                          ),
+                                                          child: community
+                                                                  .profilePicture
+                                                                  .isEmpty
+                                                              ? const CircleAvatar(
+                                                                  radius: 25,
+                                                                  backgroundImage:
+                                                                      AssetImage(
+                                                                          'images/Greddit.png'))
+                                                              : CircleAvatar(
+                                                                  radius: 25,
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          community
+                                                                              .profilePicture),
+                                                                ),
                                                         ),
                                                       )
                                                     ]),

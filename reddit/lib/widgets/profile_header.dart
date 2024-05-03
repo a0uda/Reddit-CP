@@ -16,32 +16,19 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<BannerPictureController>(
         builder: (context, bannerpicturecontroller, child) {
-          if (userType == 'me') {
-                            var userController =
-                                GetIt.instance.get<UserController>();
-                            userData = userController.userAbout!;
-                          }
+      if (userType == 'me') {
+        var userController = GetIt.instance.get<UserController>();
+        userData = userController.userAbout!;
+      }
       return Container(
         width: MediaQuery.of(context).size.width,
         decoration:
             userData.bannerPicture != null && userData.bannerPicture!.isNotEmpty
-                ? (File(userData.bannerPicture!).existsSync())
-                    ? BoxDecoration(
-                        image: DecorationImage(
-                        image: FileImage(File(userData.bannerPicture!)),
-                        fit: BoxFit.cover,
-                      ))
-                    : BoxDecoration(
-                        image: DecorationImage(
-                        image: () {
-                          try {
-                            return AssetImage(userData.bannerPicture!);
-                          } catch (e) {
-                            return const AssetImage('images/Greddit.png');
-                          }
-                        }(),
-                        fit: BoxFit.cover,
-                      ))
+                ? BoxDecoration(
+                    image: DecorationImage(
+                    image: NetworkImage(userData.bannerPicture!),
+                    fit: BoxFit.cover,
+                  ))
                 : const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,

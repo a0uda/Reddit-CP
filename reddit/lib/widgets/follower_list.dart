@@ -62,15 +62,10 @@ class FollowerListState extends State<FollowerList> {
                   ? const CircleAvatar(
                       backgroundImage: AssetImage('images/Greddit.png'),
                     )
-                  : File(followers![index].profilePicture!).existsSync()
-                      ? CircleAvatar(
-                          backgroundImage: FileImage(
-                              File(followers![index].profilePicture!)),
-                        )
-                      : CircleAvatar(
-                          backgroundImage:
-                              AssetImage(followers![index].profilePicture!),
-                        ),
+                  : CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(followers![index].profilePicture!),
+                    ),
               title: Text((followers![index].displayName ??
                   followers![index].username)),
               subtitle: Text('u/${followers![index].username}'),

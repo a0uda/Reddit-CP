@@ -94,18 +94,11 @@ class _MobileAppBarState extends State<MobileAppBar> {
                             radius: 18,
                             backgroundImage: AssetImage('images/Greddit.png'),
                           )
-                        : File(userController.userAbout!.profilePicture!)
-                                .existsSync()
-                            ? CircleAvatar(
-                                radius: 18,
-                                backgroundImage: FileImage(File(
-                                    userController.userAbout!.profilePicture!)),
-                              )
-                            : CircleAvatar(
-                                radius: 18,
-                                backgroundImage: AssetImage(
-                                    userController.userAbout!.profilePicture!),
-                              ),
+                        : CircleAvatar(
+                            radius: 18,
+                            backgroundImage: NetworkImage(
+                                userController.userAbout!.profilePicture!),
+                          ),
                     onTap: () {
                       Scaffold.of(context).openEndDrawer();
                     },
