@@ -148,6 +148,8 @@ class UserService {
           "other_username": username,
         }),
       );
+      print('fi follow user');
+      print(response.body);
     }
   }
 
@@ -178,6 +180,16 @@ class UserService {
           'other_username': username,
         }),
       );
+      await Future.delayed(Duration(seconds: 20));
+      List<FollowersFollowingItem> followings = await getFollowing(follower);
+      print('fi unfollow user');
+      print(username);
+      print(response.body);
+      print('di el following list');
+      for (var following in followings) {
+        print(following.username);
+      }
+      print('end of following list');
     }
   }
 
@@ -305,7 +317,7 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print("ALOOO");
+      print("in get following");
       print(response.body);
       List<dynamic> body = jsonDecode(response.body)['content'];
       return Future.wait(body
