@@ -112,12 +112,33 @@ class FollowerListState extends State<FollowerList> {
               ),
               onTap: () async {
                 var username = followers![index].username.toString();
-                UserAbout otherUserData =
-                    (await (userService.getUserAbout(username)))!;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(otherUserData, 'other'),
+                    builder: (context) => FutureBuilder<UserAbout?>(
+                      future: userService.getUserAbout(username),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            color: Colors.white,
+                            child: const SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                )),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return ProfileScreen(
+                            snapshot.data,
+                            'other',
+                          );
+                        }
+                      },
+                    ),
                   ),
                 );
               });
