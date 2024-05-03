@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
-import '../Controllers/user_controller.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/user_about.dart';
 
@@ -23,6 +22,17 @@ class FollowerListState extends State<FollowerList> {
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
   bool _dataFetched = false;
+
+  void initState() {
+    super.initState();
+    final blockUnblockUser =
+        Provider.of<BlockUnblockUser>(context, listen: false);
+    blockUnblockUser.addListener(() {
+      setState(() {
+        _dataFetched = false;
+      });
+    });
+  }
 
   Widget _buildLoading() {
     return Container(
