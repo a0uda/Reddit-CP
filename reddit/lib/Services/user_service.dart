@@ -88,30 +88,26 @@ class UserService {
             customUrl: customUrl,
           ));
     } else {
-      users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .add(SocialLlinkItem(
-            id: (int.parse(users
-                        .firstWhere(
-                            (element) => element.userAbout.username == username)
-                        .userAbout
-                        .socialLinks![users
-                                .firstWhere((element) =>
-                                    element.userAbout.username == username)
-                                .userAbout
-                                .socialLinks!
-                                .length -
-                            1]
-                        .id) +
-                    1)
-                .toString(),
-            username: displayText,
-            displayText: displayText,
-            type: type,
-            customUrl: customUrl,
-          ));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-social-link');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "username": displayText,
+          "display_text": displayText,
+          "custom_url": customUrl,
+          "type": type.toLowerCase(),
+        }),
+      );
+      print('in add social link');
+      print(response.body);
     }
   }
 
@@ -553,11 +549,21 @@ class UserService {
           .socialLinks!
           .removeWhere((element) => element.id == id);
     } else {
-      users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .removeWhere((element) => element.id == id);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/delete-social-link');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({"id": id}),
+      );
+      print('in edit social link');
+      print(response.body);
     }
   }
 
@@ -573,14 +579,26 @@ class UserService {
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
     } else {
-      var socialLink = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .firstWhere((element) => element.id == id);
-      socialLink.displayText = displayText;
-      socialLink.username = displayText;
-      socialLink.customUrl = customUrl;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/edit-social-link');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "username": displayText,
+          "display_text": displayText,
+          "custom_url": customUrl,
+          "id": id
+        }),
+      );
+      print('in edit social link');
+      print(response.body);
     }
   }
 
@@ -627,6 +645,7 @@ class UserService {
         print(msg.receiverType);
         print(msg.receiverUsername);
         print(msg.isSent);
+        print(msg.isInvitation);
         print(msg.message);
       }
       return messages;
