@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/messages_list.dart';
 import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
@@ -65,13 +67,48 @@ class _MobileLayoutState extends State<MobileLayout> {
             Container(
               height: 40,
               color: Colors.white,
-              child: const TabBar(
+              child: TabBar(
                 indicatorColor: Color.fromARGB(255, 24, 82, 189),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 tabs: [
-                  Tab(text: 'Notifications'),
-                  Tab(text: 'Messages'),
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Notifications'),
+                        const SizedBox(width: 5),
+                        Consumer<NotificationsService>(
+                            builder: (context, notificationsService, child) {
+                          if (userController.unreadNotificationsCount > 0) {
+                            return Container(
+                              padding: const EdgeInsets.all(1),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 15,
+                                minHeight: 15,
+                              ),
+                              child: Text(
+                                userController.unreadNotificationsCount
+                                    .toString(), // Replace this with your variable
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
+                  const Tab(text: 'Messages'),
                 ],
               ),
             ),
@@ -79,7 +116,6 @@ class _MobileLayoutState extends State<MobileLayout> {
               child: TabBarView(
                 children: [
                   ListingNotifications(),
-                  //Center(child: Text("stay tuned")), //todo: notifications
                   MessagesPage(),
                 ],
               ),
@@ -141,14 +177,54 @@ class _MobileLayoutState extends State<MobileLayout> {
                       ),
                 label: "Chat"),
             BottomNavigationBarItem(
-                icon: selectedIndexPage == 4
-                    ? const Icon(
-                        Icons.notifications,
-                        size: kToolbarHeight * (3 / 5),
-                      )
-                    : const Icon(Icons.notifications_outlined,
-                        size: kToolbarHeight * (3 / 5)),
-                label: "Inbox")
+              icon: Stack(
+                children: [
+                  // The icon
+                  Icon(
+                    selectedIndexPage == 4
+                        ? Icons.notifications
+                        : Icons.notifications_outlined,
+                    size: kToolbarHeight * (3 / 5),
+                  ),
+                  // The notification count
+                  Consumer<NotificationsService>(
+                      builder: (context, notificationsService, child) {
+                    if (userController.unreadNotificationsCount > 0) {
+                      return Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 15,
+                            minHeight: 15,
+                          ),
+                          child: Text(
+                            userController.unreadNotificationsCount
+                                .toString(), // Replace this with your variable
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Container(
+                        height: 0,
+                        width: 0,
+                      );
+                    }
+                  }),
+                ],
+              ),
+              label: "Inbox",
+            )
           ],
           onTap: (value) => {
             if (value != 2)
