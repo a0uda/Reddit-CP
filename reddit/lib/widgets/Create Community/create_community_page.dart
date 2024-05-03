@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/widgets/Moderator/community_type.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
 
 class CreateCommunity extends StatefulWidget {
   const CreateCommunity({super.key});
@@ -45,8 +47,6 @@ class _CreateCommunityState extends State<CreateCommunity> {
   Future<void> fetchCommunityNames() async {
     //to be implemented to check on community names
   }
-
-  void checkAvailablity() {}
 
   final RegExp _regex = RegExp(r'^[a-zA-Z0-9_]*$');
 
@@ -107,9 +107,39 @@ class _CreateCommunityState extends State<CreateCommunity> {
     }
   }
 
+  Future<void> checkAvailibleName() async {
+    var createCommunityProvider = context.read<CreateCommunityProvider>();
+    var addProfilePictuireProvider = context.read<UpdateProfilePicture>();
+    int validation = await createCommunityProvider.createCommuntiy(
+        communityName: inputController.text,
+        communityType: chosenCommunityType,
+        communityFlag: initCommunityFlag);
+    if (validation == 400) {
+      setState(() {
+        notAvailable = true;
+      });
+    } else {
+      notAvailable = false;
+      addProfilePictuireProvider.updateProfilePicture(communityName: inputController.text, pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => (CommunityLayout(
+            desktopLayout: DesktopCommunityPage(
+                isMod: true, communityName: inputController.text),
+            mobileLayout: MobileCommunityPage(
+              isMod: true,
+              communityName: inputController.text,
+            ),
+          )),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var createCommunityProvider = context.read<CreateCommunityProvider>();
+//    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
 
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -147,7 +177,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -184,9 +214,9 @@ class _CreateCommunityState extends State<CreateCommunity> {
                                 border: InputBorder.none,
                               ),
                               onChanged: ((value) {
+                                notAvailable = false;
                                 updateCharachterCounter();
                                 checkViolation();
-                                checkAvailablity();
                                 checkTyping();
                                 checkIfFinished();
                                 showClearButton = value.isNotEmpty;
@@ -211,6 +241,9 @@ class _CreateCommunityState extends State<CreateCommunity> {
                                         inputController.clear();
                                         startedTyping = false;
                                         updateCharachterCounter();
+                                        checkViolation();
+                                        checkTyping();
+                                        checkIfFinished();
                                       });
                                     },
                                     child: const Icon(
@@ -239,7 +272,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                       ? Text(
                           "Sorry, ${inputController.text} is taken. Try another.",
                           style: const TextStyle(
-                            color: Color.fromARGB(255, 101, 101, 101),
+                            color: Color.fromARGB(255, 255, 0, 0),
                             fontSize: 12,
                           ),
                         )
@@ -251,7 +284,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -415,12 +448,12 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        createCommunityProvider.createCommuntiy(
-                            communityName: inputController.text,
-                            communityType: chosenCommunityType,
-                            communityFlag: initCommunityFlag);
-                      
+                      onPressed: () async {
+                        // print('Mohy bey test el create community button');
+                        // print(inputController.text);
+                        // print(chosenCommunityType);
+                        // print(initCommunityFlag);
+                        await checkAvailibleName();
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: isFinished

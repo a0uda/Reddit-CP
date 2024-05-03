@@ -331,15 +331,18 @@ class CreateCommunityProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  Future<void> createCommuntiy(
+  Future<int> createCommuntiy(
       {required String communityName,
       required String communityType,
       required bool communityFlag}) async {
-    await moderatorService.createCommunity(
+    int validation = await moderatorService.createCommunity(
         communityName: communityName,
         communityType: communityType,
         communityFlag: communityFlag);
+
     notifyListeners();
+    //print(validation);
+    return validation;
   }
 }
 
@@ -347,8 +350,10 @@ class UpdateProfilePicture extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  Future<void> updateProfilePicture ({required String communityName, required String pictureUrl}) async {
-    await moderatorService.addProfilePicture(communityName: communityName, pictureURL: pictureUrl);
+  Future<void> updateProfilePicture(
+      {required String communityName, required String pictureUrl}) async {
+    await moderatorService.addProfilePicture(
+        communityName: communityName, pictureURL: pictureUrl);
     moderatorController.profilePictureURL = pictureUrl;
     notifyListeners();
   }

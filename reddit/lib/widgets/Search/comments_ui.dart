@@ -22,31 +22,31 @@ class _CommentUIState extends State<CommentUI> {
   final UserService userService = GetIt.instance.get<UserService>();
 
   String formatDateTime(String dateTimeString) {
-  final DateTime now = DateTime.now();
-  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+    final DateTime now = DateTime.now();
+    final DateTime parsedDateTime = DateTime.parse(dateTimeString);
 
-  final Duration difference = now.difference(parsedDateTime);
+    final Duration difference = now.difference(parsedDateTime);
 
-  if (difference.inSeconds < 60) {
-    return '${difference.inSeconds}sec';
-  } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes}m';
-  } else if (difference.inHours < 24) {
-    return '${difference.inHours}h';
-  } else if (difference.inDays < 30) {
-    return '${difference.inDays}d';
-  } else {
-    final int months = now.month -
-        parsedDateTime.month +
-        (now.year - parsedDateTime.year) * 12;
-    if (months < 12) {
-      return '$months mth';
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}sec';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays}d';
     } else {
-      final int years = now.year - parsedDateTime.year;
-      return '$years yrs';
+      final int months = now.month -
+          parsedDateTime.month +
+          (now.year - parsedDateTime.year) * 12;
+      if (months < 12) {
+        return '$months mth';
+      } else {
+        final int years = now.year - parsedDateTime.year;
+        return '$years yrs';
+      }
     }
   }
-}
 
   @override
   void initState() {
@@ -103,10 +103,17 @@ class _CommentUIState extends State<CommentUI> {
                 Text(
                   "r/${comment["post_id"]["community_name"]}",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 11),
+                      fontWeight: FontWeight.bold, fontSize: 11 , fontFamily: 'Roboto'),
                 ),
                 Text(
-                  " · ${formatDateTime(comment["post_id"]["created_at"])}",
+                  " · ",
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  formatDateTime(comment["post_id"]["created_at"]),
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
               ],

@@ -74,7 +74,6 @@ class _CreatePostState extends State<CreatePost> {
   bool isSaved = false;
 
   void setSelectedDate(DateTime date, TimeOfDay time, String selectedRepeat) {
-    print(selectedRepeat);
     if (selectedRepeat == "") {
       //hour , day , week , month
       selectedDate = date;
@@ -269,17 +268,12 @@ class _CreatePostState extends State<CreatePost> {
                     },
                     icon: const Icon(Icons.more_horiz_outlined))
                 : const SizedBox(),
-            isSaved
-                ? Text(
-                    "Schedule",
-                    style: TextStyle(color: Colors.blue[900]),
-                  )
-                : const SizedBox(),
-            IconButton(
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ElevatedButton(
                 onPressed: (() async => {
                       if (titleController.text.isEmpty)
                         {
-                          //print(selectedCommunity),
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -294,8 +288,8 @@ class _CreatePostState extends State<CreatePost> {
                                         },
                                         child: const Text(
                                           'OK',
-                                          style: TextStyle(
-                                              color: Colors.deepOrange),
+                                          style:
+                                              TextStyle(color: Colors.deepOrange),
                                         )),
                                   ],
                                 );
@@ -378,7 +372,22 @@ class _CreatePostState extends State<CreatePost> {
                             }
                         }
                     }),
-                icon: Icon(Icons.check, color: Colors.blue[900])),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 55, 146),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  surfaceTintColor: const Color.fromARGB(255, 3, 55, 146),
+                  padding: const EdgeInsets.all(5),
+                ),
+                child: isSaved
+                    ? const Text(
+                        "Schedule",
+                      )
+                    : const Text(
+                        "Post",
+                      ),
+              ),
+            ),
           ],
           title: const Text('Create Post'),
           titleTextStyle: TextStyle(

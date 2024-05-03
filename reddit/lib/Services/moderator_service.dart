@@ -174,8 +174,8 @@ class ModeratorMockService {
       final List<dynamic> decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> approvedUsers =
           List<Map<String, dynamic>>.from(decodedData);
-      print("ALOOOOOOO");
-      print(response.body);
+      //print("ALOOOOOOO");
+      // print(response.body);
       return approvedUsers; //badrrr
     }
   }
@@ -547,9 +547,9 @@ class ModeratorMockService {
           },
         }),
       );
-      print("MOOOOODDD");
-      print(communityName);
-      print(response.body);
+      //print("MOOOOODDD");
+      //print(communityName);
+      //print(response.body);
     }
   }
 
@@ -629,7 +629,7 @@ class ModeratorMockService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
-      print(response.body);
+      //print(response.body);
       final String membersCount =
           json.decode(response.body)["members_count"].toString();
 
@@ -790,14 +790,14 @@ class ModeratorMockService {
     }
   }
 
-  Future<void> createCommunity(
+  Future<int> createCommunity(
       {required String communityName,
       required bool communityFlag,
       required String communityType}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    final url = Uri.parse(
-        'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
+    final url =
+        Uri.parse('https://redditech.me/backend/communities/add-community');
     final response = await http.post(
       url,
       headers: {
@@ -812,6 +812,13 @@ class ModeratorMockService {
         },
       ),
     );
+    //print('Mohy beyshoof el response');
+    //print(response.statusCode);
+    if (response.statusCode == 201) {
+      return 200;
+    } else {
+      return 400;
+    }
   }
 
   Future<Map<String, dynamic>> getCommunityInfo(

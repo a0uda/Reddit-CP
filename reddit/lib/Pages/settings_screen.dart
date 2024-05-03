@@ -29,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         title: const Text('Account Settings'),
       ),
       body: SafeArea(

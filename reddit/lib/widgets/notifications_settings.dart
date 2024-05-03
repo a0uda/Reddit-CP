@@ -24,6 +24,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         title: const Text('Notifications'),
       ),
       body: ListView(

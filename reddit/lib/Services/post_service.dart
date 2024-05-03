@@ -115,7 +115,7 @@ class PostService {
                 ]
               : [],
           "polls_voting_length": poll != null ? poll.votes.length : 0,
-          "community_name": "",
+          "community_name": communityName,
           "post_in_community_flag": postInCommunityFlag,
           "oc_flag": ocFlag,
           "spoiler_flag": spoilerFlag,

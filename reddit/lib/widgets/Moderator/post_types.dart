@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
@@ -14,9 +15,10 @@ class PostTypes extends StatelessWidget {
       future: fetchCommunityPostComments(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(), 
+              child: LoadingAnimationWidget.twoRotatingArc(
+                  color: const Color.fromARGB(255, 172, 172, 172), size: 20),
             ),
           );
         } else if (snapshot.hasError) {
@@ -69,7 +71,6 @@ class _PostTypesState extends State<PostTypesContent> {
   bool isOptionsTypeVisible = false;
   bool isVideoImageVisible = true;
   bool toggleOptionsTypeVisiblity = false;
-
 
   @override
   void initState() {
@@ -204,6 +205,8 @@ class _PostTypesState extends State<PostTypesContent> {
               setState(() {
                 doneSaved = true;
               });
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
             },
             child: Text(
               'Save',
@@ -358,11 +361,19 @@ class _PostTypesState extends State<PostTypesContent> {
                 ),
                 onTap: () {
                   showModalBottomSheet<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return OptionsWidget(changeTextShown: changeTextShown, chooseAny: chooseAny, chooseLink: chooseLink, chooseText: chooseText, isAnyIconPressed: isAnyIconPressed, isLinkOnlyIconPressed: isLinkOnlyIconPressed, isTextOnlyIconPressed: isTextOnlyIconPressed, falseVideoImageVisiblity: falseVideoImageVisiblity, trueVideoImageVisibility: trueVideoImageVisiblity);
-                    }
-                  );
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OptionsWidget(
+                            changeTextShown: changeTextShown,
+                            chooseAny: chooseAny,
+                            chooseLink: chooseLink,
+                            chooseText: chooseText,
+                            isAnyIconPressed: isAnyIconPressed,
+                            isLinkOnlyIconPressed: isLinkOnlyIconPressed,
+                            isTextOnlyIconPressed: isTextOnlyIconPressed,
+                            falseVideoImageVisiblity: falseVideoImageVisiblity,
+                            trueVideoImageVisibility: trueVideoImageVisiblity);
+                      });
                 },
               ),
               //Image Posts
