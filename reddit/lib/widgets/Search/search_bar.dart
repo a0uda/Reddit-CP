@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/widgets/Search/comments_search.dart';
 import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
+import 'package:reddit/widgets/Search/post_search.dart';
 
 class SearchBarClass extends SearchDelegate {
 // Demo list to show querying
@@ -77,11 +78,7 @@ int index = 0;
             child: TabBarView(
               children: [
                 // Content for Array 1
-                Container(
-                  child: Center(
-                    child: Text('Content for Array 1'),
-                  ),
-                ),
+                PostSearch(searchFor: query),
                 // Content for Array 2
                 CommunitiesSearch(searchFor: query),
                 // Content for Array 3

@@ -4,6 +4,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Search/comments_ui.dart';
+import 'package:reddit/widgets/Search/post_ui.dart';
 
 class PostSearch extends StatefulWidget {
   final String searchFor;
@@ -62,7 +63,7 @@ class _CommentsSearchState extends State<PostSearch> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: CommentUI(comment: item),
+                      child: PostUI(post: item),
                     ),
                     Divider(
                       color: Colors.grey[300],
@@ -83,8 +84,10 @@ class _CommentsSearchState extends State<PostSearch> {
 List<Map<String, dynamic>> originalposts = [
   {
     "_id": "6633921be1b754c2c9163cad",
-    "title": "fvfvv vestigium voluntarius ater audax admitto ",
-    "description": "ff",
+    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "profile_picture":
+        "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
     "created_at": "2024-05-02T13:16:12.804Z",
     "type": "url",
     "link_url": "https://www.youtuddbej.com",
@@ -96,18 +99,61 @@ List<Map<String, dynamic>> originalposts = [
     "community_name": "malaktest2",
     "comments_count": 0,
     "upvotes_count": 1,
-    "downvotes_count": 0,
-    "oc_flag": false,
     "spoiler_flag": false,
-    "nsfw_flag": false,
-    "locked_flag": false,
-    "allowreplies_flag": true,
-    "set_suggested_sort": "None (Recommended)",
-    "scheduled_flag": false,
+    "nsfw_flag": true,
     "is_reposted_flag": false,
     "community_id": "6631dd3e6c674a78abcebbc3",
     "user_id": "662516de07f00cce3c42352a",
     "username": "malak",
-    "__v": 0
-  }
+  },
+  {
+    "_id": "6633921be1b754c2c9163cad",
+    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "profile_picture":
+        "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    "created_at": "2024-05-02T13:16:12.804Z",
+    "type": "url",
+    "link_url": "https://www.youtuddbej.com",
+    "images": [],
+    "polls": [],
+    "polls_voting_length": 3,
+    "polls_voting_is_expired_flag": false,
+    "post_in_community_flag": true,
+    "community_name": "malaktest2",
+    "comments_count": 0,
+    "upvotes_count": 1,
+    "spoiler_flag": false,
+    "nsfw_flag": true,
+    "is_reposted_flag": false,
+    "community_id": "6631dd3e6c674a78abcebbc3",
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+  },
+  {
+    "_id": "6633921be1b754c2c9163cad",
+    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "profile_picture":
+        "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    "created_at": "2024-05-02T13:16:12.804Z",
+    "type": "url",
+    "link_url": "https://www.youtuddbej.com",
+    "images": [],
+    "polls": [],
+    "polls_voting_length": 3,
+    "polls_voting_is_expired_flag": false,
+    "post_in_community_flag": true,
+    "community_name": "malaktest2",
+    "comments_count": 0,
+    "upvotes_count": 1,
+    "spoiler_flag": false,
+    "nsfw_flag": true,
+    "is_reposted_flag": true,
+    "community_id": "6631dd3e6c674a78abcebbc3",
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+  },
+
+
 ];
