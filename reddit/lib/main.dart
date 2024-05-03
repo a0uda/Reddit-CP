@@ -27,6 +27,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  GetIt.instance
+      .registerSingleton<NotificationsService>(NotificationsService());
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
   GetIt.instance.registerSingleton<SearchService>(SearchService());
@@ -108,7 +110,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => UpdateProfilePicture(),
       ),
-            ChangeNotifierProvider(
+      ChangeNotifierProvider(
         create: (context) => Edit(),
       )
     ],

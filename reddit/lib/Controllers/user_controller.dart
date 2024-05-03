@@ -8,12 +8,14 @@ import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/test_files/test_users.dart';
 
 class UserController {
   final userService = GetIt.instance.get<UserService>();
+  final notificationService = GetIt.instance.get<NotificationsService>();
 
   UserAbout? userAbout;
   List<BlockedUsersItem>? blockedUsers;
@@ -23,6 +25,7 @@ class UserController {
   List<CommunityBackend>? userCommunities;
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
+  int unreadNotificationsCount = 0;
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -31,6 +34,7 @@ class UserController {
     notificationsSettings =
         await userService.getNotificationsSettings(username);
     profileSettings = await userService.getProfileSettings(username);
+    unreadNotificationsCount = await getUnreadNotificationsCount();
   }
 
   // Future<NotificationsSettingsItem?> getNotificationsSettings(
@@ -114,6 +118,12 @@ class UserController {
 
   Future<void> getUserCommunities() async {
     userCommunities = await userService.getUserCommunities();
+  }
+
+  Future<int> getUnreadNotificationsCount() async {
+    unreadNotificationsCount =
+        await notificationService.getUnreadNotificationsCount();
+    return unreadNotificationsCount;
   }
 }
 
