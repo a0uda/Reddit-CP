@@ -109,7 +109,10 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => CreateCommunityProvider(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => UpdateProfilePicture(),
+      ),
     ],
     child: const MyApp(),
   ));
