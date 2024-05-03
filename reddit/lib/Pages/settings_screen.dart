@@ -29,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         title: const Text('Account Settings'),
       ),
       body: SafeArea(
@@ -36,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             SettingsGroup(
               title: 'BASIC SETTINGS',
-              titleTextStyle: TextStyle(
+              titleTextStyle: TextStyle( 
                   height: 2,
                   fontWeight: FontWeight.bold,
                   fontSize: 12.0,
@@ -93,6 +94,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+}
+
+void handleUpdateAllowFollowers(String setting, bool value) {
+  final UserController userController = GetIt.instance.get<UserController>();
+  userController.updateAllowFollowers(value);
 }
 
 Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
@@ -181,15 +187,11 @@ Widget buildManageBlockedAccounts(context) => CustomSettingsTile(
     );
 
 Widget buildAllowPeopleToFollowYou() => CustomStatefulSettingsTile(
-      switchValue: true,
+      switchValue: userController.profileSettings!.allowFollowers!,
       title: 'Allow people to follow you',
       subtitle:
           'Followers will be notified about posts you make to your profile and see them in their home feed.',
       leading: const Icon(Icons.account_circle_outlined),
-      // onChanged: (value) {
-      //   // Callback for switch toggle
-      // },
-      onTap: () {
-        // Callback for tile tap
-      },
+      onChanged: handleUpdateAllowFollowers,
+      onTap: () {},
     );

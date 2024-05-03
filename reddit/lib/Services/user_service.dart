@@ -9,7 +9,6 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
-import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -148,6 +147,8 @@ class UserService {
           "other_username": username,
         }),
       );
+      print('fi follow user');
+      print(response.body);
     }
   }
 
@@ -178,6 +179,8 @@ class UserService {
           'other_username': username,
         }),
       );
+      print('in unfollow user');
+      print(response.body);
     }
   }
 
@@ -305,11 +308,13 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print("ALOOO");
+      print("in get following");
       print(response.body);
       List<dynamic> body = jsonDecode(response.body)['content'];
-      return Future.wait(body
+      List<FollowersFollowingItem> following = await Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
+      print(following);
+      return following;
     }
   }
 
@@ -419,6 +424,29 @@ class UserService {
       print("in update profile settings");
       print(response.body);
     }
+  }
+
+  Future<void> updateAllowFollowers(bool allowFollowers) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/change-profile-settings');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode({
+        'profile_settings': {
+          'allow_followers': allowFollowers,
+        }
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('updated allow followers flag');
+    }
+    print(response.body);
   }
 
   Future<void> addBannerPicture(String username, String bannerPicture) async {
@@ -585,23 +613,33 @@ class UserService {
       );
       print('in get messages');
       print(response.statusCode);
-      //print(jsonDecode(response.body)['messages']);
       List<dynamic> body = jsonDecode(response.body)['messages'];
-      print('dh el body');
-      print(body);
       List<Messages>? messages = await Future.wait(
         body
             .where((item) => item != null)
             .map((dynamic item) async => Messages.fromJson(item)),
       );
-      messages.removeWhere(
-          (element) => element.deletedAt != null || element.deletedAt != '');
+      for (var msg in messages) {
+        print(msg.id);
+        print(msg.senderType);
+        print(msg.senderUsername);
+        print(msg.receiverType);
+        print(msg.receiverUsername);
+        print(msg.message);
+      }
       return messages;
     }
   }
 
-  Future<bool> replyMessage(String parentid, String senderUsername,
-      String receiverUsername, String receiverType, String message) async {
+  Future<bool> replyMessage(
+      String parentid,
+      String senderUsername,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,
+      String subject) async {
     if (testing) {
       List<Messages>? userMessages = users
           .firstWhere((element) => element.userAbout.username == senderUsername)
@@ -610,13 +648,12 @@ class UserService {
         id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
             .toString(),
         senderUsername: senderUsername,
-        senderType: 'user',
+        senderType: senderType,
         receiverUsername: receiverUsername,
         receiverType: receiverType,
-        senderVia: null,
+        senderVia: senderVia,
         message: message,
         createdAt: DateTime.now().toString(),
-        deletedAt: null,
         unreadFlag: false,
         isSent: true,
         isReply: false,
@@ -626,8 +663,34 @@ class UserService {
       ));
       return true;
     } else {
-      // todo: reply to message in database
-      return false;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/reply');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": senderType,
+            "receiver_username": receiverUsername,
+            "receiver_type": receiverType,
+            "subject": subject,
+            "message": message,
+            "senderVia": senderVia,
+            "parent_message_id": parentid
+          }
+        }),
+      );
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -660,7 +723,6 @@ class UserService {
           senderVia: null,
           message: message,
           createdAt: DateTime.now().toString(),
-          deletedAt: null,
           unreadFlag: true,
           isSent: true,
           isReply: false,
@@ -668,17 +730,38 @@ class UserService {
           subject: subject,
           isInvitation: false,
         ));
-        print('message added tmm mn add msg function');
-        for (var msg in userMessages!) {
-          print(msg.id);
-          print(msg.receiverUsername);
-        }
-
         return true;
       }
     } else {
-      // todo: add new message to database
-      return false;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/compose');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": "user",
+            "receiver_username": receiverUsername,
+            "receiver_type": "user",
+            "subject": subject,
+            "message": message
+          }
+        }),
+      );
+      print("in send new message");
+      print(senderUsername);
+      print(receiverUsername);
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -689,7 +772,23 @@ class UserService {
           .usermessages;
       userMessages?.firstWhere((element) => element.id == id).unreadFlag =
           false;
-    } else {}
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({"_id": id}),
+      );
+      print('in mark one message read');
+      print(response.body);
+    }
   }
 
   Future<void> markAllMessagesRead(String username) async {
@@ -709,7 +808,22 @@ class UserService {
     if (testing) {
       //to be implemented
     } else {
-      // todo: report user in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/report-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "reported_username": username,
+        }),
+      );
+      print('in report user');
+      print(response.body);
     }
   }
 
@@ -913,12 +1027,13 @@ class UserService {
           'Authorization': token!,
         },
       );
+      // print(response.body);
 
       if (response.statusCode == 200) {
-        print('get block success');
+        print('get notifications success');
         var data = jsonDecode(response.body);
-        Map<String, dynamic> blockedUsersJson = data['blocked_users'];
-        return Future.wait(blockedUsersJson.values
+        List<dynamic> blockedUsersJson = data['content'];
+        return Future.wait(blockedUsersJson
             .map((json) => BlockedUsersItem.fromJson(json))
             .toList());
       } else {
@@ -991,6 +1106,8 @@ class UserService {
           'blocked_username': blockedUsername,
         }),
       );
+      print(blockedUsername);
+      print(response.body);
 
       if (response.statusCode == 200) {
         print('User unblocked successfully.');
@@ -1076,6 +1193,7 @@ class UserService {
 
       print("in change email");
       print(response.statusCode);
+
       return response.statusCode == 200 ? true : false;
     }
   }
@@ -1098,20 +1216,18 @@ class UserService {
           "Authorization": token!,
         },
         body: jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
+          "current_password": currentPassword,
+          "new_password": newPassword,
+          "verified_new_password": verifiedNewPassword,
         }),
       );
       print(token);
       print(response.statusCode);
-      print(
-        jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
-        }),
-      );
+      print(jsonEncode({
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "verified_new_password": verifiedNewPassword,
+      }));
       return response.isRedirect;
     }
   }
@@ -1336,7 +1452,7 @@ class UserService {
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body)['comments'];
+        List<dynamic> body = jsonDecode(response.body)['content']['comments'];
         print(body);
         return Future.wait(
             body.map((dynamic item) async => Comments.fromJson(item)));
@@ -1386,7 +1502,7 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             'mentions': notificationsSettingsItem.mentions,
             'comments': notificationsSettingsItem.comments,
             'upvotes_posts': notificationsSettingsItem.upvotesPosts,
@@ -1415,6 +1531,45 @@ class UserService {
             'private_messages': notificationsSettingsItem.privateMessages,
             'chat_messages': notificationsSettingsItem.chatMessages,
             'chat_requests': notificationsSettingsItem.chatRequests,
+          }
+        }),
+      );
+      print(response.statusCode);
+      print(response.body);
+      if (response.statusCode == 200) {
+        print('notification settings updated successfully');
+      } else {
+        print('failed to update notification settings');
+      }
+    }
+  }
+
+  Future<void> updateSingleNotificationSetting(
+      String username, String notificationType, bool value) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/change-notification-settings');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'notifications_settings': {
+            notificationType: value,
+          }
+        }),
+      );
+      print(token);
+      print(
+        jsonEncode({
+          'notifications_settings': {
+            notificationType: value,
           }
         }),
       );

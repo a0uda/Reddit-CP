@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,7 @@ import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
+import 'package:reddit/widgets/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
@@ -60,6 +63,7 @@ class _CreatePostState extends State<CreatePost> {
   VideoPlayerController? _videoPlayerController;
   String? url;
   String? imageUrl;
+  String? videoUrl;
   List<CommunityBackend> userCommunities = [];
   bool communitiesFetched = false;
   bool isMod = false;
@@ -98,15 +102,47 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _image = pickedFile;
-        imageSelected = true;
-        showLinkField = false;
-        videoSelected = false;
-        pollSelected = false;
-        type = 'image';
+        type = 'image_and_videos';
       });
 
       //TODO: FIREBASE
       //saveImage();
+      // try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print('images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print(_image!.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(_image!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
+
+      imageUrl = await storageRef.getDownloadURL();
+      print(imageUrl);
+      setState(() {
+        imageSelected = true;
+        showLinkField = false;
+        videoSelected = false;
+        pollSelected = false;
+        type = 'image_and_videos';
+      });
+      // } catch (e) {
+      //   print(e);
+      // }
     }
   }
 
@@ -122,7 +158,7 @@ class _CreatePostState extends State<CreatePost> {
       showLinkField = false;
       imageSelected = false;
       videoSelected = false;
-      type = 'poll';
+      type = 'polls';
     });
   }
 
@@ -132,11 +168,11 @@ class _CreatePostState extends State<CreatePost> {
     fetchUserCommunities();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _videoPlayerController?.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _videoPlayerController?.dispose();
+  // }
 
   Future<void> _pickVideo() async {
     final pickedFile =
@@ -144,17 +180,38 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _video = pickedFile;
-        videoSelected = true;
-        showLinkField = false;
-        imageSelected = false;
-        pollSelected = false;
-        type = 'video';
       });
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('videos')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_video!.name}');
+      print(_video!.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(_video!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
 
-      _videoPlayerController = VideoPlayerController.file(File(_video!.path))
-        ..initialize().then((_) {
-          setState(() {});
-        });
+      videoUrl = await storageRef.getDownloadURL();
+      print(videoUrl);
+      setState(() {
+        showLinkField = false;
+        videoSelected = true;
+        pollSelected = false;
+        imageSelected = false;
+        type = 'image_and_videos';
+      });
     }
   }
 
@@ -165,7 +222,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
-  String type = 'type';
+  String type = 'text';
   String selectedCommunity = "Select Community";
   String communityDescription = "Select Community";
 
@@ -256,7 +313,7 @@ class _CreatePostState extends State<CreatePost> {
                               videoSelected
                                   ? [
                                       VideoItem(
-                                          path: _video!.path, link: 'linkUrl')
+                                          path: _video!.path, link: videoUrl!)
                                     ]
                                   : null,
                               pollSelected
@@ -474,6 +531,7 @@ class _CreatePostState extends State<CreatePost> {
                                     onPressed: () {
                                       setState(() {
                                         showLinkField = false;
+                                        type = 'text';
                                       });
                                     },
                                   ),
@@ -494,7 +552,8 @@ class _CreatePostState extends State<CreatePost> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     image: DecorationImage(
-                                      image: FileImage(File(_image!.path)),
+                                      // image: FileImage(File(_image!.path)),
+                                      image: NetworkImage(imageUrl!),
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -503,18 +562,7 @@ class _CreatePostState extends State<CreatePost> {
                                 ),
                               ),
                             if (videoSelected)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    _videoPlayerController!.value.isInitialized
-                                        ? AspectRatio(
-                                            aspectRatio: _videoPlayerController!
-                                                .value.aspectRatio,
-                                            child: VideoPlayer(
-                                                _videoPlayerController!),
-                                          )
-                                        : Container(),
-                              ),
+                              VideoPlayerWidget(videoPath: videoUrl!),
                             if (pollSelected)
                               Container(
                                 padding: const EdgeInsets.all(10.0),
@@ -640,7 +688,7 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () {
                         setState(() {
                           showLinkField = true;
-                          type = 'link';
+                          type = 'url';
                           if (imageSelected) {
                             setState(() => imageSelected = false);
                           }

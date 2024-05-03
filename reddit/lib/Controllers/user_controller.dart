@@ -26,10 +26,11 @@ class UserController {
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
-    // blockedUsers = await userService.getBlockedUsers(username);
-    // accountSettings = await userService.getAccountSettings(username);
-    // notificationsSettings =
-    //     await userService.getNotificationsSettings(username);
+    blockedUsers = await userService.getBlockedUsers(username);
+    accountSettings = await userService.getAccountSettings(username);
+    notificationsSettings =
+        await userService.getNotificationsSettings(username);
+    profileSettings = await userService.getProfileSettings(username);
   }
 
   // Future<NotificationsSettingsItem?> getNotificationsSettings(
@@ -43,6 +44,11 @@ class UserController {
 
   Future<void> getProfileSettings(String username) async {
     profileSettings = (await userService.getProfileSettings(username))!;
+  }
+
+  Future<void> updateAllowFollowers(bool value) async {
+    await userService.updateAllowFollowers(value);
+    profileSettings!.allowFollowers = value;
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
@@ -74,6 +80,7 @@ class UserController {
   }
 
   Future<void> changeCountry(String username, String country) {
+    userAbout!.country = country;
     return userService.changeCountry(username, country);
   }
 
@@ -93,11 +100,17 @@ class UserController {
     return userService.getSavedComments(username);
   }
 
-  // Future<void> updateNotificationSettings() async {
-  //   await userService.updateNotificationSettings(
-  //       userAbout!.username, notificationsSettings!);
-  //   await userService.getNotificationsSettings(userAbout!.username);
-  // }
+  Future<void> updateNotificationSettings() async {
+    await userService.updateNotificationSettings(
+        userAbout!.username, notificationsSettings!);
+    await userService.getNotificationsSettings(userAbout!.username);
+  }
+
+  Future<void> updateSingleNotificationSetting(
+      String username, String type, bool value) async {
+    await userService.updateSingleNotificationSetting(username, type, value);
+    await userService.getNotificationsSettings(username);
+  }
 
   Future<void> getUserCommunities() async {
     userCommunities = await userService.getUserCommunities();
@@ -210,19 +223,19 @@ class ProfilePictureController extends ChangeNotifier {
 class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  List<FollowersFollowingItem>? followers;
-  List<FollowersFollowingItem>? following;
+  List<FollowersFollowingItem> followers=[];
+  List<FollowersFollowingItem> following=[];
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     followers = await userService.getFollowers(username);
     userController.followers = followers;
-    return followers!;
+    return followers;
   }
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     following = await userService.getFollowing(username);
     userController.following = following;
-    return following!;
+    return following;
   }
 
   Future<void> followUser(String username) async {
@@ -234,6 +247,8 @@ class FollowerFollowingController extends ChangeNotifier {
   }
 
   Future<void> unfollowUser(String username) async {
+    print('unfollowing');
+    print(username);
     await userService.unfollowUser(
         username, userController.userAbout!.username);
     following =
@@ -290,7 +305,7 @@ class ChangeEmail extends ChangeNotifier {
 
   Future<bool> changeEmail(
       String username, String email, String password) async {
-    Future<bool> result = userService.changeEmail(username, email, password);
+    bool result = await userService.changeEmail(username, email, password);
     await userController.getUserAbout(username);
     notifyListeners();
     return result;
@@ -320,14 +335,23 @@ class MessagesOperations extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
 
-  Future<bool> replyToMessage(String parentMessageId, String receiverUsername,
-      String receiverType, String message) async {
+  Future<bool> replyToMessage(
+      String parentMessageId,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,
+      subject) async {
     bool success = await userService.replyMessage(
         parentMessageId,
         userController.userAbout!.username,
         receiverUsername,
         receiverType,
-        message);
+        senderType,
+        senderVia,
+        message,
+        subject);
     if (success) {
       notifyListeners();
     }

@@ -38,8 +38,8 @@ class BestListingBuild extends State<BestListing> {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
-        post = await postService.getPosts(user, "hot",page);
-             page=page+1;
+        post = await postService.getPosts(user, "hot", page);
+        page = page + 1;
       } else {
         posts = postService.fetchPosts();
       }
@@ -58,9 +58,10 @@ class BestListingBuild extends State<BestListing> {
     });
   }
 
-
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+
+
+    if (controller.position.maxScrollExtent*0.9 < controller.offset) {
       print('LOAD MORE');
       fetchdata();
       // load more data here
@@ -70,19 +71,19 @@ class BestListingBuild extends State<BestListing> {
   }
 
   @override
- void initState() {
+  void initState() {
     super.initState();
-    _dataFuture = fetchdata(); 
+    _dataFuture = fetchdata();
     controller.addListener(HandleScrolling);
-    
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-           return Container(
+          return Container(
             color: Colors.white,
             child: const Center(
               child: SizedBox(
@@ -98,20 +99,19 @@ class BestListingBuild extends State<BestListing> {
         } else {
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
-              
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
-                      var imageurl=null;
-                  if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
+                  var imageurl = null;
+                  if (posts[index].images != null) {
+                    imageurl = posts[index].images?[0].link;
                   }
-                    print(posts[index].isReposted);
+                  print(posts[index].isReposted);
                   if (posts[index].isReposted) {
                     return Repost(
                         id: posts[index].id,
-                        description: posts[index].description!,
+                        description: posts[index].description ?? '',
                         name: posts[index].username,
                         title: posts[index].title,
                         originalID: posts[index].originalPostID,
@@ -149,8 +149,8 @@ class BestListingBuild extends State<BestListing> {
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl:imageurl,
-                    videoUrl: posts[index].videos?[0].path,
+                    imageUrl: imageurl,
+                    videoUrl: posts[index].videos?[0].link,
                     poll: posts[index].poll,
                     id: posts[index].id,
                     communityName: posts[index].communityName,

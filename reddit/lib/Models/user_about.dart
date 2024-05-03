@@ -63,12 +63,15 @@ class UserAbout {
           ? 'images/Greddit.png'
           : jsonDecode['profile_picture'],
       bannerPicture: jsonDecode['banner_picture'],
-      country: jsonDecode['country'],
+      country: jsonDecode['country'] == ''
+          ? 'Choose your location'
+          : jsonDecode['country'],
       gender: jsonDecode['gender'],
       connectedGoogle: jsonDecode['connected_google'],
       moderatedCommunities: jsonDecode['moderatedCommunities'] != null
           ? List<CommunityBackend>.from(jsonDecode['moderatedCommunities']
-              .map((community) => CommunityBackend.fromJson(community))).toList()
+                  .map((community) => CommunityBackend.fromJson(community)))
+              .toList()
           : null,
     );
   }

@@ -28,11 +28,11 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
     bool isloading=false;
-  Future<void> fetchdata() async {
+  Future<List<PostItem>> fetchdata() async {
         isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    
+   
       final String username = widget.userData!.username;
       post = await postService.getMyPosts(username);
       print(username);
@@ -42,10 +42,11 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
     setState(() {
       posts.addAll(post);
     });
+    return post;
   }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+    if (controller.position.maxScrollExtent*0.9  < controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
@@ -66,7 +67,15 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
 
   @override
    Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return Consumer<Edit>(
+        builder: (context,edit, child) {
+          print('trigerred provider');
+        if (edit.shouldRefresh) {
+          posts=[];
+          fetchdata();
+          edit.resetRefresh(); // Reset the edit flag after fetching data
+        }
+   return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,15 +106,14 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
           );
           }
           else{
-          return Consumer<LockPost>(
-            builder: (context, lockPost, child) {
+      
               return ListView.builder(
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
                       var imageurl=null;
                   if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
+                    imageurl=  posts[index].images?[0].link;
                   }
                     print(posts[index].isReposted);
                   if (posts[index].isReposted) {
@@ -123,8 +131,8 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                         isLocked: posts[index].lockedFlag,
                         vote: posts[index].vote);
                   }
-                  if (posts[index].nsfwFlag == true ||
-                      posts[index].spoilerFlag == true) {
+                  if ((posts[index].nsfwFlag == true ||
+                      posts[index].spoilerFlag == true)) {
                     return CollapsePost(
                       id: posts[index].id,
                       // profileImageUrl: posts[index].profilePic!,
@@ -137,6 +145,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                       isSpoiler: posts[index].spoilerFlag,
                     );
                   }
+                  // if( !posts[index].isRemoved)
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
@@ -150,7 +159,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
                     imageUrl: imageurl,
-                    videoUrl: posts[index].videos?[0].path,
+                    videoUrl: posts[index].videos?[0].link,
                     poll: posts[index].poll,
                     id: posts[index].id,
                     communityName: posts[index].communityName,
@@ -158,11 +167,13 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                   );
                 },
               );
-            },
-          );
+     
           }
         }
       },
+    );
+    }
+
     );
   }
 }
