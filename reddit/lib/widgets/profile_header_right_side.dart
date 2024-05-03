@@ -51,6 +51,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   }
 
   Widget _buildProfileHeaderRightSide() {
+    _dataFetched = false;
     var followerFollowingController =
         context.read<FollowerFollowingController>();
     return SizedBox(

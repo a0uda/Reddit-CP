@@ -210,19 +210,19 @@ class ProfilePictureController extends ChangeNotifier {
 class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  List<FollowersFollowingItem>? followers;
-  List<FollowersFollowingItem>? following;
+  List<FollowersFollowingItem> followers=[];
+  List<FollowersFollowingItem> following=[];
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     followers = await userService.getFollowers(username);
     userController.followers = followers;
-    return followers!;
+    return followers;
   }
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     following = await userService.getFollowing(username);
     userController.following = following;
-    return following!;
+    return following;
   }
 
   Future<void> followUser(String username) async {
@@ -234,6 +234,8 @@ class FollowerFollowingController extends ChangeNotifier {
   }
 
   Future<void> unfollowUser(String username) async {
+    print('unfollowing');
+    print(username);
     await userService.unfollowUser(
         username, userController.userAbout!.username);
     following =
@@ -326,7 +328,8 @@ class MessagesOperations extends ChangeNotifier {
       String receiverType,
       String senderType,
       String? senderVia,
-      String message,subject) async {
+      String message,
+      subject) async {
     bool success = await userService.replyMessage(
         parentMessageId,
         userController.userAbout!.username,
@@ -334,7 +337,8 @@ class MessagesOperations extends ChangeNotifier {
         receiverType,
         senderType,
         senderVia,
-        message,subject);
+        message,
+        subject);
     if (success) {
       notifyListeners();
     }

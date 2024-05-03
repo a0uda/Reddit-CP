@@ -26,13 +26,18 @@ class FollowerListState extends State<FollowerList> {
 
   Widget _buildLoading() {
     return Container(
-      color: Colors.transparent,
+      color: Colors.white,
+      child: const Center(
+        child: SizedBox(
+          height: 30,
+          width: 30,
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 
   Widget _buildFollowersList() {
-    var followerfollowingcontroller =
-        context.read<FollowerFollowingController>();
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -77,39 +82,32 @@ class FollowerListState extends State<FollowerList> {
                           .where((element) =>
                               element.username == followers![index].username)
                           .isNotEmpty) {
-                        await followerFollowingController.unfollowUser(
-                            followerfollowingcontroller
-                                .followers![index].username);
+                        print('unfollow fi followers list');
+                        print(followers![index].username);
+                        await followerFollowingController
+                            .unfollowUser(followers![index].username);
                       } else {
-                        await followerFollowingController.followUser(
-                            followerfollowingcontroller
-                                .followers![index].username);
+                        print('follow fi followers list');
+                        print(followers![index].username);
+                        await followerFollowingController
+                            .followUser(followers![index].username);
                       }
-                      followers = followerfollowingcontroller.followers;
-                      following = followerfollowingcontroller.following;
-                      print('followers list');
-                      for (var follower in followers!) {
-                        print(follower.username);
-                      }
-                      print('following list');
-                      for (var user in following!) {
-                        print(user.username);
-                      }
+                      setState(() {
+                        _dataFetched = false;
+                      });
                     },
                     child: Text(
-                      (following!
-                              .where((element) =>
+                      (following!.any((element) =>
                                   element.username ==
-                                  followers![index].username)
-                              .isNotEmpty)
+                                  followers![index].username) ==
+                              true)
                           ? 'Following'
                           : 'Follow',
                       style: TextStyle(
-                        color: (following!
-                                .where((element) =>
+                        color: (following!.any((element) =>
                                     element.username ==
-                                    followers![index].username)
-                                .isNotEmpty)
+                                    followers![index].username) ==
+                                true)
                             ? const Color.fromARGB(255, 110, 110, 110)
                             : Colors.blue,
                       ),
@@ -146,10 +144,18 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void loadingData() async {
-    followers =
-        await userService.getFollowers(userController.userAbout!.username);
-    following =
-        await userService.getFollowing(userController.userAbout!.username);
+    if (userController.followers == null) {
+      followers =
+          await userService.getFollowers(userController.userAbout!.username);
+    } else {
+      followers = userController.followers;
+    }
+    if (userController.following == null) {
+      following =
+          await userService.getFollowing(userController.userAbout!.username);
+    } else {
+      following = userController.following;
+    }
     setState(() {
       _dataFetched = true;
     });

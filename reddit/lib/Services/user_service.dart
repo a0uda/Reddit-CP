@@ -180,16 +180,8 @@ class UserService {
           'other_username': username,
         }),
       );
-      await Future.delayed(Duration(seconds: 20));
-      List<FollowersFollowingItem> followings = await getFollowing(follower);
-      print('fi unfollow user');
-      print(username);
+      print('in unfollow user');
       print(response.body);
-      print('di el following list');
-      for (var following in followings) {
-        print(following.username);
-      }
-      print('end of following list');
     }
   }
 
@@ -320,8 +312,10 @@ class UserService {
       print("in get following");
       print(response.body);
       List<dynamic> body = jsonDecode(response.body)['content'];
-      return Future.wait(body
+      List<FollowersFollowingItem> following = await Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
+      print(following);
+      return following;
     }
   }
 
