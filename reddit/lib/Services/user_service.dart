@@ -15,7 +15,9 @@ import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/comments.dart';
+import '../Models/message_item.dart';
 import '../test_files/test_users.dart';
+import '../test_files/test_messages.dart';
 import 'package:http/http.dart' as http;
 
 bool testing = const bool.fromEnvironment('testing');
@@ -131,15 +133,22 @@ class UserService {
             username: username,
           ));
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
+
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
         body: json.encode({
-          'other_username': username,
+          "other_username": username,
         }),
       );
+      print('fi follow user');
       print(response.body);
     }
   }
@@ -157,25 +166,37 @@ class UserService {
           .following!
           .removeWhere((element) => element.username == username);
     } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/users/follow-unfollow-user');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
         body: json.encode({
           'other_username': username,
         }),
       );
+      print('in unfollow user');
       print(response.body);
     }
   }
 
   Future<int> getFollowersCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
-          .followers!
-          .length;
+          .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -199,9 +220,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      followers.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return followers;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -226,10 +254,16 @@ class UserService {
 
   Future<int> getFollowingCount(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
-          .following!
-          .length;
+          .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following.length;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -253,9 +287,16 @@ class UserService {
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     if (testing) {
-      return users
+      List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      following.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return following;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -268,19 +309,28 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print(response.statusCode);
+      print("in get following");
+      print(response.body);
       List<dynamic> body = jsonDecode(response.body)['content'];
-      print(body);
-      return Future.wait(body
+      List<FollowersFollowingItem> following = await Future.wait(body
           .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
+      print(following);
+      return following;
     }
   }
 
   Future<List<Comments>?> getcomments(String username) async {
     if (testing) {
-      return users
+      List<Comments> comments = users
           .firstWhere((element) => element.userAbout.username == username)
           .comments!;
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      comments.removeWhere((element) => blockedUsers
+          .any((blockedUser) => blockedUser.username == element.username));
+      return comments;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -509,6 +559,249 @@ class UserService {
       socialLink.displayText = displayText;
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
+    }
+  }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Future<List<Messages>?> getMessages(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      messages.removeWhere((element) => blockedUsers.any((blockedUser) =>
+          blockedUser.username == element.senderUsername ||
+          blockedUser.username == element.receiverUsername));
+      return messages;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/read-all-messages');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get messages');
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['messages'];
+      List<Messages>? messages = await Future.wait(
+        body
+            .where((item) => item != null)
+            .map((dynamic item) async => Messages.fromJson(item)),
+      );
+      for (var msg in messages) {
+        print(msg.id);
+        print(msg.senderType);
+        print(msg.senderUsername);
+        print(msg.receiverType);
+        print(msg.receiverUsername);
+        print(msg.message);
+      }
+      return messages;
+    }
+  }
+
+  Future<bool> replyMessage(
+      String parentid,
+      String senderUsername,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,
+      String subject) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .usermessages;
+      userMessages?.add(Messages(
+        id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+            .toString(),
+        senderUsername: senderUsername,
+        senderType: senderType,
+        receiverUsername: receiverUsername,
+        receiverType: receiverType,
+        senderVia: senderVia,
+        message: message,
+        createdAt: DateTime.now().toString(),
+        unreadFlag: false,
+        isSent: true,
+        isReply: false,
+        parentMessageId: parentid,
+        subject: null,
+        isInvitation: false,
+      ));
+      return true;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/reply');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": senderType,
+            "receiver_username": receiverUsername,
+            "receiver_type": receiverType,
+            "subject": subject,
+            "message": message,
+            "senderVia": senderVia,
+            "parent_message_id": parentid
+          }
+        }),
+      );
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future<bool> sendNewMessage(String senderUsername, String receiverUsername,
+      String message, String subject) async {
+    if (testing) {
+      List<BlockedUsersItem> blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == senderUsername)
+          .safetySettings!
+          .blockedUsers;
+      if (users.any((element) =>
+                  element.userAbout.username == receiverUsername) ==
+              false ||
+          (blockedUsers
+                  .any((element) => element.username == receiverUsername) ==
+              true)) {
+        return false;
+      } else {
+        List<Messages>? userMessages = users
+            .firstWhere(
+                (element) => element.userAbout.username == senderUsername)
+            .usermessages;
+        userMessages?.add(Messages(
+          id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+              .toString(),
+          senderUsername: senderUsername,
+          senderType: 'user',
+          receiverUsername: receiverUsername,
+          receiverType: 'user',
+          senderVia: null,
+          message: message,
+          createdAt: DateTime.now().toString(),
+          unreadFlag: true,
+          isSent: true,
+          isReply: false,
+          parentMessageId: null,
+          subject: subject,
+          isInvitation: false,
+        ));
+        return true;
+      }
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/messages/compose');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "data": {
+            "sender_type": "user",
+            "receiver_username": receiverUsername,
+            "receiver_type": "user",
+            "subject": subject,
+            "message": message
+          }
+        }),
+      );
+      print("in send new message");
+      print(senderUsername);
+      print(receiverUsername);
+      print(response.body);
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future<void> markoneMessageRead(String username, String id) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      userMessages?.firstWhere((element) => element.id == id).unreadFlag =
+          false;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({"_id": id}),
+      );
+      print('in mark one message read');
+      print(response.body);
+    }
+  }
+
+  Future<void> markAllMessagesRead(String username) async {
+    if (testing) {
+      List<Messages>? userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+      for (var msg in userMessages!) {
+        msg.unreadFlag = false;
+      }
+    } else {
+      // todo: mark all messages read in database
+    }
+  }
+
+  Future<void> reportUser(String username, String reason) async {
+    if (testing) {
+      //to be implemented
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/report-user');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "reported_username": username,
+        }),
+      );
+      print('in report user');
+      print(response.body);
     }
   }
 

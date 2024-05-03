@@ -8,7 +8,8 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/inbox_options.dart';
-import 'package:reddit/widgets/search_bar.dart';
+import 'package:reddit/widgets/Search/search_bar.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
@@ -32,6 +33,14 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
     final bool userLoggedIn = userController.userAbout != null;
     isInbox = widget.isInbox;
     return AppBar(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0), // height of the divider
+        child: Divider(
+          height: 1.0, // You can set this to control divider's thickness
+          thickness: 1.0, // Actual thickness of the line
+          color: Colors.grey[300], // Color of the divider
+        ),
+      ),
       backgroundColor: Colors.white,
       shadowColor: Colors.black,
       scrolledUnderElevation: 0,
@@ -82,7 +91,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                   style: TextStyle(color: Colors.black, fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.152),
+                const Spacer(),
                 const InboxOptions()
               ],
             ),
@@ -94,6 +103,9 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 child: IconButton(
                   onPressed: () {
                     //Navigate to chattt
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChatIntro(),
+                    ));
                   },
                   icon: const Icon(CupertinoIcons.chat_bubble_text),
                 ),

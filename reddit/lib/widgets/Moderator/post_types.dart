@@ -6,7 +6,7 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 
 //Hena fel page deeh el mafrood te3ml boolean bey-save el state beta3t el community w yeshoof law etghayret wala laa law etghayret yeb2a hatghayr isSaved
 class PostTypes extends StatelessWidget {
-  const PostTypes({Key? key}) : super(key: key);
+  const PostTypes({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class PostTypes extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(), // or any loading indicator
+              child: CircularProgressIndicator(), 
             ),
           );
         } else if (snapshot.hasError) {
@@ -26,7 +26,7 @@ class PostTypes extends StatelessWidget {
             ),
           );
         } else {
-          return PostTypesContent();
+          return const PostTypesContent();
         }
       },
     );
@@ -70,10 +70,6 @@ class _PostTypesState extends State<PostTypesContent> {
   bool isVideoImageVisible = true;
   bool toggleOptionsTypeVisiblity = false;
 
-  Future<void> fetchCommunityPostComments() async {
-    await moderatorController
-        .getPostTypesAndOptions(moderatorController.communityName);
-  }
 
   @override
   void initState() {
@@ -361,10 +357,11 @@ class _PostTypesState extends State<PostTypesContent> {
                   ]),
                 ),
                 onTap: () {
-                  setState(
-                    () {
-                      isOptionsTypeVisible = !isOptionsTypeVisible;
-                    },
+                  showModalBottomSheet<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return OptionsWidget(changeTextShown: changeTextShown, chooseAny: chooseAny, chooseLink: chooseLink, chooseText: chooseText, isAnyIconPressed: isAnyIconPressed, isLinkOnlyIconPressed: isLinkOnlyIconPressed, isTextOnlyIconPressed: isTextOnlyIconPressed, falseVideoImageVisiblity: falseVideoImageVisiblity, trueVideoImageVisibility: trueVideoImageVisiblity);
+                    }
                   );
                 },
               ),

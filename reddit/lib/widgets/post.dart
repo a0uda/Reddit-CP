@@ -4,6 +4,8 @@ import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
+import 'package:reddit/widgets/search_community_list.dart';
+import 'package:reddit/widgets/share_post.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/poll_widget.dart';
@@ -12,6 +14,34 @@ import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
+import 'package:reddit/widgets/add_text_share.dart';
+
+String formatDateTime(String dateTimeString) {
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
 
 //for merging
 class Post extends StatefulWidget {
@@ -31,24 +61,23 @@ class Post extends StatefulWidget {
   final bool isLocked;
   final int vote;
 
-  Post({
-    super.key,
-    required this.id,
-    // required this.profileImageUrl,
-    required this.name,
-    required this.title,
-    required this.postContent,
-    required this.date,
-    required this.likes,
-    required this.commentsCount,
-    this.imageUrl,
-    this.linkUrl,
-    this.videoUrl,
-    this.poll,
-    required this.communityName,
-    required this.isLocked,
-    required this.vote
-  });
+  Post(
+      {super.key,
+      required this.id,
+      // required this.profileImageUrl,
+      required this.name,
+      required this.title,
+      required this.postContent,
+      required this.date,
+      required this.likes,
+      required this.commentsCount,
+      this.imageUrl,
+      this.linkUrl,
+      this.videoUrl,
+      this.poll,
+      required this.communityName,
+      required this.isLocked,
+      required this.vote});
 
   @override
   PostState createState() => PostState();
@@ -67,6 +96,7 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+
   // bool isMyPost = postService.isMyPost(widget.postId!, username);
 
   void incrementCounter() {
@@ -83,7 +113,7 @@ class PostState extends State<Post> {
         }
         widget.likes++;
       } else {
-        postService.downVote(widget.id);
+        postService.upVote(widget.id);
         upVoteColor = Colors.black;
         widget.likes--;
       }
@@ -106,7 +136,7 @@ class PostState extends State<Post> {
         }
         widget.likes--;
       } else {
-        postService.upVote(widget.id);
+        postService.downVote(widget.id);
         downVoteColor = Colors.black;
         widget.likes++;
       }
@@ -114,16 +144,28 @@ class PostState extends State<Post> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.vote == 1) {
+      upVote = true;
+    } else if (widget.vote == -1) {
+      downVote = true;
+    }
+  }
   // List of items in our dropdown menu
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var heigth = MediaQuery.of(context).size.height;
+    bool ismobile = (width < 700) ? true : false;
     upVoteColor = upVote ? Colors.blue : Colors.black;
     downVoteColor = downVote ? Colors.red : Colors.black;
     if (userController.userAbout != null) {
       String username = userController.userAbout!.username;
-      //todo saved posts 
-
+      //todo saved posts
     }
 
     String userType;
@@ -132,7 +174,6 @@ class PostState extends State<Post> {
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
         onTap: () => {
-          
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -160,100 +201,155 @@ class PostState extends State<Post> {
                 ),
                 title: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () => {
-                          //TODO: go to community
-                          communityController
-                              .getCommunity(widget.communityName),
+                    Row(children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: (widget.communityName != "")
+                            ? InkWell(
+                                onTap: () => {
+                                  //TODO: go to community
+                                  communityController
+                                      .getCommunity(widget.communityName),
 
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => (CommunityPage(
-                                    communityName: widget.communityName,
-                                    communityMembersNo: communityController
-                                        .communityItem!.communityMembersNo,
-                                    communityProfilePicturePath:
-                                        communityController.communityItem!
-                                            .communityProfilePicturePath,
-                                  )))),
-                        },
-                        onHover: (hover) {
-                          setState(() {
-                            isHovering = hover;
-                          });
-                        },
-                        child: Text(
-                          (widget.communityName) == "Select Community"
-                              ? widget.name
-                              : widget.communityName,
-                          style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Arial'),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        if (widget.communityName != "Select Community")
-                          InkWell(
-                            onTap: () => {
-                              userType = userController.userAbout!.username ==
-                                      widget.name
-                                  ? 'me'
-                                  : 'other',
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FutureBuilder<UserAbout?>(
-                                    future:
-                                        userService.getUserAbout(widget.name),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        print(widget.name);
-                                        print(snapshot.data);
-                                        return Text('Error: ${snapshot.error}');
-                                      } else {
-
-                                        print(widget.name);
-                                        print(snapshot.data);
-                                        return ProfileScreen(
-                                          snapshot.data,
-                                          userType,
-                                        );
-                                      }
-                                    },
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => (CommunityPage(
+                                            communityName: widget.communityName,
+                                            communityDescription:
+                                                communityController
+                                                    .communityItem!
+                                                    .general
+                                                    .communityDescription,
+                                            communityMembersNo:
+                                                communityController
+                                                    .communityItem!
+                                                    .communityMembersNo,
+                                            communityProfilePicturePath:
+                                                communityController
+                                                    .communityItem!
+                                                    .communityProfilePicturePath,
+                                          )))),
+                                },
+                                onHover: (hover) {
+                                  setState(() {
+                                    isHovering = hover;
+                                  });
+                                },
+                                child: Text(
+                                  (widget.communityName) == "Select Community"
+                                      ? widget.name
+                                      : widget.communityName,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Arial'),
+                                ),
+                              )
+                            : InkWell(
+                                onTap: () => {
+                                  userType =
+                                      userController.userAbout!.username ==
+                                              widget.name
+                                          ? 'me'
+                                          : 'other',
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FutureBuilder<UserAbout?>(
+                                        future: userService
+                                            .getUserAbout(widget.name),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            print(widget.name);
+                                            print(snapshot.data);
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            print(widget.name);
+                                            print(snapshot.data);
+                                            return ProfileScreen(
+                                              snapshot.data,
+                                              userType,
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
                                   ),
+                                },
+                                onHover: (hover) {
+                                  setState(() {
+                                    isHovering = hover;
+                                  });
+                                },
+                                child: Text(
+                                  widget.name,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Arial'),
                                 ),
                               ),
-                            },
-                            onHover: (hover) {
-                              setState(() {
-                                isHovering = hover;
-                              });
-                            },
-                            child: Text(
-                              widget.name,
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w200,
-                                  fontFamily: 'Arial'),
+                      ),
+                      Text(
+                        '  • ${formatDateTime(widget.date)}',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 117, 116, 115)),
+                      ),
+                    ]),
+                    if (widget.communityName != "")
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: InkWell(
+                          onTap: () => {
+                            userType = userController.userAbout!.username ==
+                                    widget.name
+                                ? 'me'
+                                : 'other',
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FutureBuilder<UserAbout?>(
+                                  future: userService.getUserAbout(widget.name),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasError) {
+                                      print(widget.name);
+                                      print(snapshot.data);
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      print(widget.name);
+                                      print(snapshot.data);
+                                      return ProfileScreen(
+                                        snapshot.data,
+                                        userType,
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
                             ),
+                          },
+                          onHover: (hover) {
+                            setState(() {
+                              isHovering = hover;
+                            });
+                          },
+                          child: Text(
+                            widget.name,
+                            style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w200,
+                                fontFamily: 'Arial'),
                           ),
-                        const Padding(padding: EdgeInsets.all(0)),
-                        Text(
-                          '  • ${widget.date.substring(0, 10)}',
-                          style: const TextStyle(
-                              fontSize: 12,
-                              color: Color.fromARGB(255, 117, 116, 115)),
                         ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
                 trailing: SizedBox(
@@ -273,6 +369,7 @@ class PostState extends State<Post> {
                                 saved: issaved,
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
+                                username: widget.name,
                               )
                             : Container(),
                       ),
@@ -466,7 +563,204 @@ class PostState extends State<Post> {
                       ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        //shareee
+                        if (!ismobile) {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                scrollable: true,
+                                content: Builder(
+                                  builder: ((context) {
+                                    return Container(
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.28,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
+                                        child: Column(
+                                          children: [
+                                            ListTile(
+                                              leading: Text(
+                                                "Share to",
+                                                style: TextStyle(
+                                                    fontSize: 32,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(
+                                                Icons.mediation_sharp,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                              ),
+                                              title: const Text(
+                                                  "Share to Community"),
+                                              onTap: () => {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.5,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                            child:
+                                                                SearchCommunityList(
+                                                                    postId:
+                                                                        widget
+                                                                            .id),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              },
+                                            ),
+                                            ListTile(
+                                              leading: const Icon(
+                                                Icons.person,
+                                                color: Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                              ),
+                                              title: const Text(
+                                                  "Share to profile"),
+                                              onTap: () => {
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible: true,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      scrollable: true,
+                                                      content: Builder(
+                                                        builder: ((context) {
+                                                          return SizedBox(
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.5,
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                            child: AddtextShare(
+                                                              comName: "",
+                                                              postId: widget.id,
+                                                            ),
+                                                          );
+                                                        }),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              return Container(
+                                decoration: BoxDecoration(color: Colors.white),
+                                height: heigth * 0.4,
+                                width: width,
+                                padding: const EdgeInsets.all(16.0),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      leading: Text(
+                                        "Share to",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.mediation_sharp,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to Community"),
+                                      onTap: () => {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (BuildContext context) {
+                                            return Container(
+                                              color: Colors.white,
+                                              height: heigth * 0.9,
+                                              width: width,
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
+                                              child: SearchCommunityList(
+                                                postId: widget.id,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const Icon(
+                                        Icons.person,
+                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      ),
+                                      title: const Text("Share to profile"),
+                                      onTap: () => {
+                                        showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white),
+                                                height: heigth * 0.8,
+                                                width: width,
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: AddtextShare(
+                                                  comName: "",
+                                                  postId: widget.id,
+                                                ),
+                                              );
+                                            })
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                       icon: Icon(Icons.file_upload_outlined,
                           color: Theme.of(context).colorScheme.secondary),

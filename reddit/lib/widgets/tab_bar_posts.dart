@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 
-import 'package:reddit/widgets/listing.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -217,10 +217,13 @@ class TabBarPostsState extends State<TabBarPosts> {
                     ),
                   ),
                   SliverFillRemaining(
-                    child: Listing(
-                      type: "profile",
-                      userData: userData,
-                    ),
+                    child: Consumer<BlockUnblockUser>(
+                        builder: (context, BlockUnblockUser, child) {
+                      return ListingCertainUser(
+                    
+                        userData: userData,
+                      );
+                    }), 
                   ),
                 ],
               );

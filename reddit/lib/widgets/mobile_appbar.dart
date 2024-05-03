@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/inbox_options.dart';
-import 'package:reddit/widgets/search_bar.dart';
+import 'package:reddit/widgets/Search/search_bar.dart';
 
 class MobileAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;

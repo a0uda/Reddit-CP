@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 
 class ApprovedUserList extends StatefulWidget {
@@ -17,6 +20,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
   bool usersFetched = false;
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
+  final UserService userService = GetIt.instance.get<UserService>();
 
   Future<void> fetchApprovedUsers() async {
     if (!usersFetched) {
@@ -175,8 +179,21 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                                       const Icon(Icons.person),
                                                   title: const Text(
                                                       "View Profile"),
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     //navigate to profile of this user Badrr
+                                                    UserAbout otherUserData =
+                                                        (await (userService
+                                                            .getUserAbout(item[
+                                                                "username"])))!;
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ProfileScreen(
+                                                                otherUserData,
+                                                                'other'),
+                                                      ),
+                                                    );
                                                   },
                                                 ),
                                                 ListTile(
@@ -193,7 +210,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                                       usersFetched = true;
                                                       foundUsers =
                                                           moderatorController
-                                                              .mutedUsers;
+                                                              .approvedUsers;
                                                     });
                                                     Navigator.of(context).pop();
                                                   },

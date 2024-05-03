@@ -119,7 +119,7 @@ void handleNotificationSettingChange(String setting, bool value) {
     // Add cases for other notification settings
   }
   // Call the function to update settings on the server
-  userController.updateNotificationSettings();
+  //userController.updateNotificationSettings();
 }
 
 Widget buildPrivateMessages() {

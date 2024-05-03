@@ -1,23 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
+import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
   const DesktopCommunityPage({
     super.key,
     required this.communityName,
+    required this.isMod,
   });
 
   final String communityName;
+  final bool isMod;
 
   @override
   State<DesktopCommunityPage> createState() => _DesktopCommunityPageState();
@@ -31,6 +36,11 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
+  double descriptionOffset = 0.0;
+
+  bool membersFetched = false;
+  bool generalSettingsFetched = false;
+
   @override
   void initState() {
     if (isJoined) {
@@ -38,7 +48,14 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
     } else {
       buttonState = 'Join';
     }
+    moderatorController.communityName = widget.communityName;
     super.initState();
+  }
+
+  void updateDescriptionOffset(double offset) {
+    setState(() {
+      descriptionOffset = offset;
+    });
   }
 
   void setButton() {
@@ -122,7 +139,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 242, 242, 242),
+      backgroundColor: const Color.fromARGB(255, 251, 251, 251),
       appBar: MediaQuery.of(context).size.width > 700
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -157,21 +174,55 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
               child: CustomScrollView(
                 slivers: <Widget>[
                   SliverToBoxAdapter(
-                    child: Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: DesktopCommunityPageBar(
-                        communityName: widget.communityName,
-                        setButtonFunction: setButton,
-                        buttonState: buttonState!,
-                        isJoined: isJoined,
+                    child: Padding(
+                      padding:
+                          const EdgeInsetsDirectional.symmetric(horizontal: 24),
+                      child: Column(
+                        children: [
+                          Container(
+                            color: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: DesktopCommunityPageBar(
+                              communityName: widget.communityName,
+                              setButtonFunction: setButton,
+                              //buttonState: buttonState!,
+                              isJoined: isJoined,
+                              isMod: widget.isMod,
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: 24,
+                      color: const Color.fromARGB(255, 251, 251, 251),
+                    ),
+                  ),
+                  SliverFillRemaining(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          flex: 3,
+                          child: Listing(type: 'home'),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          flex: 1,
+                          child: DescriptionWidget(
+                            communityName: widget.communityName,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -183,14 +234,16 @@ class DesktopCommunityPageBar extends StatefulWidget {
   const DesktopCommunityPageBar({
     super.key,
     required this.communityName,
-    required this.buttonState,
+    //required this.buttonState,
     required this.isJoined,
     required this.setButtonFunction,
+    required this.isMod,
   });
 
   final String communityName;
-  final String buttonState;
+  //final String buttonState;
   final bool isJoined;
+  final bool isMod;
 
   final Function() setButtonFunction;
   @override
@@ -203,16 +256,26 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
       GetIt.instance.get<ModeratorController>();
   bool membersFetched = false;
   bool generalSettingsFetched = false;
+  bool communityInfoFetched = false;
 
-  Future<void> fetchGeneralSettings() async {
-    if (!generalSettingsFetched) {
-      await moderatorController.getGeneralSettings(widget.communityName);
+  Future<void> fetchCommunityInfo() async {
+    if (!communityInfoFetched) {
+      await moderatorController.getCommunityInfo(widget.communityName);
+      communityInfoFetched = true;
     }
   }
+
+  // Future<void> fetchGeneralSettings() async {
+  //   if (!generalSettingsFetched) {
+  //     await moderatorController.getGeneralSettings(widget.communityName);
+  //     generalSettingsFetched = true;
+  //   }
+  // }
 
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
+      membersFetched = true;
     }
   }
 
@@ -228,15 +291,30 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
               children: [
                 Column(
                   children: [
-                    Container(
-                      height: 128,
-                      decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage("images/reddit-banner-image.jpg"),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                    FutureBuilder(
+                      future: fetchCommunityInfo(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return Container(
+                            height: 128,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    moderatorController.bannerPictureURL),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -281,20 +359,70 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                             borderColor: Colors.black,
                           ),
                           SizedBox(width: screenWidth * 0.01),
-                          OutlineButtonWidget(
-                            widget.buttonState,
-                            () {
-                              widget.setButtonFunction();
-                            },
-                            backgroundColour: widget.isJoined
-                                ? Colors.white
-                                : const Color.fromARGB(255, 69, 72, 78),
-                            borderColor: widget.isJoined
-                                ? Colors.black
-                                : Colors.transparent,
-                            foregroundColour:
-                                widget.isJoined ? Colors.black : Colors.white,
-                          )
+                          widget.isMod
+                              ? OutlineButtonWidget(
+                                  'Mod Tools',
+                                  () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ModResponsive(
+                                          mobileLayout: MobileModTools(
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                          desktopLayout: DesktopModTools(
+                                            index: 0,
+                                            communityName: moderatorController
+                                                .communityName,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  borderColor: Colors.transparent,
+                                  backgroundColour:
+                                      const Color.fromARGB(255, 0, 69, 172),
+                                  foregroundColour: Colors.white,
+                                )
+                              : FutureBuilder(
+                                  future: fetchCommunityInfo(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else {
+                                      return OutlineButtonWidget(
+                                        moderatorController.joinedFlag
+                                            ? 'Joined'
+                                            : 'Join',
+                                        () {
+                                          setState(() {
+                                            moderatorController.joinedFlag =
+                                                !moderatorController.joinedFlag;
+                                          });
+                                        },
+                                        backgroundColour:
+                                            moderatorController.joinedFlag
+                                                ? Colors.white
+                                                : const Color.fromARGB(
+                                                    255, 69, 72, 78),
+                                        borderColor:
+                                            moderatorController.joinedFlag
+                                                ? Colors.black
+                                                : Colors.transparent,
+                                        foregroundColour:
+                                            moderatorController.joinedFlag
+                                                ? Colors.black
+                                                : Colors.white,
+                                      );
+                                    }
+                                  },
+                                ),
                         ],
                       ),
                     ),
@@ -303,19 +431,31 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                 Positioned(
                   top: 90,
                   left: screenWidth * 0.01,
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 4),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage(
-                        "images/pp.jpg",
-                      ),
-                    ),
+                  child: FutureBuilder(
+                    future: fetchCommunityInfo(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 4),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                                moderatorController.profilePictureURL),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
               ],

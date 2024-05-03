@@ -3,6 +3,7 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
+import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -173,6 +174,8 @@ class ModeratorMockService {
       final List<dynamic> decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> approvedUsers =
           List<Map<String, dynamic>>.from(decodedData);
+      print("ALOOOOOOO");
+      print(response.body);
       return approvedUsers; //badrrr
     }
   }
@@ -357,8 +360,6 @@ class ModeratorMockService {
           },
         }),
       );
-      print("NADRXS");
-      print(response.body);
     }
   }
 
@@ -546,6 +547,45 @@ class ModeratorMockService {
           },
         }),
       );
+      print("MOOOOODDD");
+      print(communityName);
+      print(response.body);
+    }
+  }
+
+//Rawan: add moderator to the community
+  Future<void> addModUser(
+      String username, String profilePicture, String communityName) async {
+    if (testing) {
+      communities
+          .firstWhere((community) => community.communityName == communityName)
+          .moderators
+          .add({
+        "everything": true,
+        "manage_users": true,
+        "manage_settings": true,
+        "manage_posts_and_comments": true,
+        "username": username,
+        "profile_picture": profilePicture,
+        "moderator_since": DateTime.now().toString(),
+      });
+    } else {
+      // todo: add moderator to the community
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      // final url = Uri.parse(
+      //     'https://redditech.me/backend/communities/remove-moderator');
+      // final response = await http.post(
+      //   url,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     'Authorization': token!,
+      //   },
+      //   body: json.encode({
+      //     'community_name': communityName,
+      //     'username': username,
+      //   }),
+      // );
     }
   }
 
@@ -589,6 +629,7 @@ class ModeratorMockService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
+      print(response.body);
       final String membersCount =
           json.decode(response.body)["members_count"].toString();
 
@@ -728,17 +769,6 @@ class ModeratorMockService {
       String? token = prefs.getString('token');
       final url = Uri.parse(
           'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
-      print("BEFOREEEEEE");
-      print(
-        json.encode(
-          {
-            "post_type_options": postTypes,
-            "allow_image_uploads_and_links_to_image_hosting_sites": allowImages,
-            "allow_polls": allowPolls,
-            "allow_videos": allowVideos,
-          },
-        ),
-      );
       final response = await http.post(
         url,
         headers: {
@@ -757,9 +787,132 @@ class ModeratorMockService {
           },
         ),
       );
-
-      print("AFTERRRRRRR");
-      print(response.body);
     }
+  }
+
+  Future<void> createCommunity(
+      {required String communityName,
+      required bool communityFlag,
+      required String communityType}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/change-posts-and-comments/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "name": communityName,
+          "type": communityType,
+          "nsfw_flag": communityFlag,
+        },
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> getCommunityInfo(
+      {required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/get-community-view/$communityName');
+    final response = await http.get(
+      url,
+      headers: {'Content-Type': 'application/json', 'Authorization': token!},
+    );
+    final Map<String, dynamic> decodedInfo = json.decode(response.body);
+    return {
+      "communityDescription": decodedInfo["description"],
+      "communityTitle": decodedInfo["title"],
+      "communityType": decodedInfo["type"],
+      "communityFlag": decodedInfo["nsfw_flag"],
+      "communityProfilePicture": decodedInfo["profile_picture"],
+      "communityBannerPicture": decodedInfo["banner_picture"],
+      "communityJoined": decodedInfo["joined_flag"],
+    };
+  }
+
+  Future<void> addProfilePicture(
+      {required String communityName, required String pictureURL}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/add-profile-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+          "profile_picture": pictureURL,
+        },
+      ),
+    );
+  }
+
+  Future<void> addBannerPicture(
+      {required String communityName, required String pictureURL}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/add-banner-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+          "banner_picture": pictureURL,
+        },
+      ),
+    );
+  }
+
+  Future<void> deleteProfilePicture({required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/delete-profile-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+        },
+      ),
+    );
+  }
+
+  Future<void> deleteBannerPicture({required String communityName}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/delete-banner-picture');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+        },
+      ),
+    );
   }
 }

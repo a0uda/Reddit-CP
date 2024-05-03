@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/report_question.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:get_it/get_it.dart';
@@ -7,8 +8,12 @@ String selectedreport = "";
 
 class ReportOptions extends StatefulWidget {
   final String? postId;
-  const ReportOptions({
+  bool isUser;
+  String username;
+  ReportOptions({
     required this.postId,
+    this.isUser = false,
+    this.username = '',
     super.key,
   });
 
@@ -33,12 +38,15 @@ class Report extends State<ReportOptions> {
   ];
   var selectedreport = "";
   final postService = GetIt.instance.get<PostService>();
+  final userService = GetIt.instance.get<UserService>();
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
+    bool isUser = widget.isUser;
+    String username = widget.username;
     return Column(children: [
       Wrap(
         children: reportOptions.map(
@@ -109,7 +117,10 @@ class Report extends State<ReportOptions> {
                                         MediaQuery.of(context).size.width * 0.5,
                                     child: Column(
                                       children: [
-                                        Question(type: selectedreport,postId: widget.postId,),
+                                        Question(
+                                          type: selectedreport,
+                                          postId: widget.postId,
+                                        ),
                                       ],
                                     ),
                                   );
@@ -122,7 +133,10 @@ class Report extends State<ReportOptions> {
                     else
                       {
                         /// TODO REPORT SUBMIT
-                        postService.submitReport(widget.postId, selectedreport),
+                        isUser
+                            ? userService.reportUser(username, selectedreport)
+                            : postService.submitReport(
+                                widget.postId, selectedreport),
                         showDialog(
                           context: context,
                           barrierDismissible: true,
@@ -182,14 +196,17 @@ class Report extends State<ReportOptions> {
                                       style: TextStyle(fontSize: 20),
                                     ),
                                   ),
-                                  Question(type: selectedreport,postId: widget.postId,),
+                                  Question(
+                                    type: selectedreport,
+                                    postId: widget.postId,
+                                  ),
                                 ]));
                           })
                     }
                   else
                     {
                       ///Todo submit report
-                       postService.submitReport(widget.postId, selectedreport),
+                      isUser?userService.reportUser(username, selectedreport): postService.submitReport(widget.postId, selectedreport),
 
                       showModalBottomSheet(
                           context: context,

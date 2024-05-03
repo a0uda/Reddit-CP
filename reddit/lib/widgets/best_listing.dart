@@ -5,6 +5,7 @@ import 'package:reddit/widgets/collapse_post.dart';
 
 import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
 
 import 'package:reddit/Models/post_item.dart';
@@ -23,7 +24,7 @@ class BestListing extends StatefulWidget {
 
 class BestListingBuild extends State<BestListing> {
   ScrollController controller = ScrollController();
-  int page=0;
+  int page=1;
   // List of items in our dropdown menu
   bool? isMyPost;
 
@@ -102,6 +103,26 @@ class BestListingBuild extends State<BestListing> {
                 itemCount: posts.length,
                 controller: controller,
                 itemBuilder: (context, index) {
+                      var imageurl=null;
+                  if (posts[index].images != null ) {
+                    imageurl=  posts[index].images?[0].path;
+                  }
+                    print(posts[index].isReposted);
+                  if (posts[index].isReposted) {
+                    return Repost(
+                        id: posts[index].id,
+                        description: posts[index].description!,
+                        name: posts[index].username,
+                        title: posts[index].title,
+                        originalID: posts[index].originalPostID,
+                        date: posts[index].createdAt.toString(),
+                        likes: posts[index].upvotesCount -
+                            posts[index].downvotesCount,
+                        commentsCount: posts[index].commentsCount,
+                        communityName: posts[index].communityName,
+                        isLocked: posts[index].lockedFlag,
+                        vote: posts[index].vote);
+                  }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
                     return CollapsePost(
@@ -128,7 +149,7 @@ class BestListingBuild extends State<BestListing> {
                         posts[index].upvotesCount - posts[index].downvotesCount,
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
-                    imageUrl: posts[index].images?[0].path,
+                    imageUrl:imageurl,
                     videoUrl: posts[index].videos?[0].path,
                     poll: posts[index].poll,
                     id: posts[index].id,

@@ -21,6 +21,8 @@ class UserController {
   ProfileSettings? profileSettings;
   NotificationsSettingsItem? notificationsSettings;
   List<CommunityBackend>? userCommunities;
+  List<FollowersFollowingItem>? followers;
+  List<FollowersFollowingItem>? following;
 
   Future<void> getUser(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -30,10 +32,10 @@ class UserController {
         await userService.getNotificationsSettings(username);
   }
 
-  Future<NotificationsSettingsItem?> getNotificationsSettings(
-      String username) async {
-    return await userService.getNotificationsSettings(username);
-  }
+  // Future<NotificationsSettingsItem?> getNotificationsSettings(
+  //     String username) async {
+  //   return await userService.getNotificationsSettings(username);
+  // }
 
   Future<void>? getUserAbout(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -213,31 +215,37 @@ class ProfilePictureController extends ChangeNotifier {
 class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  List<FollowersFollowingItem>? followers;
-  List<FollowersFollowingItem>? following;
+  List<FollowersFollowingItem> followers=[];
+  List<FollowersFollowingItem> following=[];
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     followers = await userService.getFollowers(username);
-    return followers!;
+    userController.followers = followers;
+    return followers;
   }
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
     following = await userService.getFollowing(username);
-    return following!;
+    userController.following = following;
+    return following;
   }
 
   Future<void> followUser(String username) async {
     await userService.followUser(username, userController.userAbout!.username);
     following =
         await userService.getFollowing(userController.userAbout!.username);
+    userController.following = following;
     notifyListeners();
   }
 
   Future<void> unfollowUser(String username) async {
+    print('unfollowing');
+    print(username);
     await userService.unfollowUser(
         username, userController.userAbout!.username);
     following =
         await userService.getFollowing(userController.userAbout!.username);
+    userController.following = following;
     notifyListeners();
   }
 }
@@ -293,5 +301,67 @@ class ChangeEmail extends ChangeNotifier {
     await userController.getUserAbout(username);
     notifyListeners();
     return result;
+  }
+}
+
+class BlockUnblockUser extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<void> blockUser(String username) async {
+    await userService.blockUser(userController.userAbout!.username, username);
+    userController.blockedUsers =
+        await userService.getBlockedUsers(userController.userAbout!.username);
+    notifyListeners();
+  }
+
+  Future<void> unblockUser(String username) async {
+    await userService.unblockUser(userController.userAbout!.username, username);
+    userController.blockedUsers =
+        await userService.getBlockedUsers(userController.userAbout!.username);
+    notifyListeners();
+  }
+}
+
+class MessagesOperations extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<bool> replyToMessage(
+      String parentMessageId,
+      String receiverUsername,
+      String receiverType,
+      String senderType,
+      String? senderVia,
+      String message,
+      subject) async {
+    bool success = await userService.replyMessage(
+        parentMessageId,
+        userController.userAbout!.username,
+        receiverUsername,
+        receiverType,
+        senderType,
+        senderVia,
+        message,
+        subject);
+    if (success) {
+      notifyListeners();
+    }
+    return success;
+  }
+
+  Future<bool> sendMessage(
+      String receiverUsername, String message, String subject) async {
+    bool success = await userService.sendNewMessage(
+        userController.userAbout!.username, receiverUsername, message, subject);
+    if (success) {
+      notifyListeners();
+    }
+    return success;
+  }
+
+  Future<void> markallAsRead() async {
+    await userService.markAllMessagesRead(userController.userAbout!.username);
+    notifyListeners();
   }
 }

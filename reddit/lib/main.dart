@@ -12,16 +12,20 @@ import 'package:reddit/Pages/community_page.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Create%20Community/create_community_page.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/Moderator/queues.dart';
+import 'package:reddit/widgets/Moderator/scheduled.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
@@ -34,6 +38,7 @@ void main() async {
   // await Firebase.initializeApp(); //TODO : FIREBASE
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
+  GetIt.instance.registerSingleton<SearchService>(SearchService());
 
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
@@ -44,6 +49,9 @@ void main() async {
   GetIt.instance
       .registerSingleton<ModeratorMockService>(ModeratorMockService());
   GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
+
+  GetIt.instance.registerSingleton<ChatsService>(ChatsService());
+
 
   runApp(MultiProvider(
     providers: [
@@ -97,6 +105,13 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => NotificationsService(),
+      ),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BlockUnblockUser(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => MessagesOperations(),
       ),
     ],
     child: const MyApp(),

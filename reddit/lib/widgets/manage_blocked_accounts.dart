@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
-import 'package:reddit/widgets/search_bar.dart';
+import 'package:reddit/widgets/Search/search_bar.dart';
 
 class ManageBlockedAccounts extends StatefulWidget {
   const ManageBlockedAccounts({super.key});
