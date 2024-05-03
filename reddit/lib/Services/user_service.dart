@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
@@ -850,16 +851,30 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  Future<List<CommunityItem>?> getActiveCommunities(String username) async {
+  Future<List<ActiveCommunities>?> getActiveCommunities(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .activecommunities!;
     } else {
-      //todo: get active communities from database
-      return users
-          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
-          .activecommunities!;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/active-communities');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get active communities');
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['content'];
+      print(body);
+      return List<ActiveCommunities>.from(
+          body.map((community) => ActiveCommunities.fromJson(community)));
     }
   }
 
