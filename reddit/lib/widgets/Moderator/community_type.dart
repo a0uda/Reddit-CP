@@ -128,6 +128,8 @@ class _CommunityTypeState extends State<CommunityType> {
               setState(() {
                 doneSaved = true;
               });
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
             },
             child: Text(
               'Save',

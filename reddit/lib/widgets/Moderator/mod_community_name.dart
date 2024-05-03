@@ -4,7 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
-import 'package:reddit/test_files/test_communities.dart';
 
 class ModCommName extends StatefulWidget {
   const ModCommName({
@@ -91,6 +90,8 @@ class _ModCommNameState extends State<ModCommName> {
               setState(() {
                 doneSaved = true;
               });
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
             },
             child: Text(
               'Save',

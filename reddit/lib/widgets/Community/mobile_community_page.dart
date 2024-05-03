@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
@@ -264,8 +265,10 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                     future: fetchCommunityInfo(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                        return Center(
+                          child: LoadingAnimationWidget.twoRotatingArc(
+                              color: const Color.fromARGB(255, 172, 172, 172),
+                              size: 20),
                         );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
@@ -299,10 +302,13 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                             case ConnectionState.none:
                               return const Text('none');
                             case ConnectionState.waiting:
-                              return const Center(
+                              return Center(
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: 30.0),
-                                  child: CircularProgressIndicator(),
+                                  padding: const EdgeInsets.only(top: 30.0),
+                                  child: LoadingAnimationWidget.twoRotatingArc(
+                                      color:
+                                          const Color.fromARGB(255, 172, 172, 172),
+                                      size: 20),
                                 ),
                               );
                             case ConnectionState.done:

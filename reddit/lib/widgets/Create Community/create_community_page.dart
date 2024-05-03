@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/widgets/Moderator/community_type.dart';
+import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
 
 class CreateCommunity extends StatefulWidget {
   const CreateCommunity({super.key});
@@ -110,6 +113,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
   @override
   Widget build(BuildContext context) {
     var createCommunityProvider = context.read<CreateCommunityProvider>();
+    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
 
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -147,7 +151,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -211,6 +215,10 @@ class _CreateCommunityState extends State<CreateCommunity> {
                                         inputController.clear();
                                         startedTyping = false;
                                         updateCharachterCounter();
+                                        checkViolation();
+                                        checkAvailablity();
+                                        checkTyping();
+                                        checkIfFinished();
                                       });
                                     },
                                     child: const Icon(
@@ -251,7 +259,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -415,12 +423,30 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        createCommunityProvider.createCommuntiy(
+                      onPressed: () async {
+                        print('Mohy bey test el create community button');
+                        print(inputController.text);
+                        print(chosenCommunityType);
+                        print(initCommunityFlag);
+                        await createCommunityProvider.createCommuntiy(
                             communityName: inputController.text,
                             communityType: chosenCommunityType,
                             communityFlag: initCommunityFlag);
-                      
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => (CommunityLayout(
+                              desktopLayout: DesktopCommunityPage(
+                                  isMod: true,
+                                  communityName: inputController.text),
+                              mobileLayout: MobileCommunityPage(
+                                isMod: true,
+                                communityName: inputController.text,
+                              ),
+                            )),
+                          ),
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: isFinished

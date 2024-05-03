@@ -174,8 +174,8 @@ class ModeratorMockService {
       final List<dynamic> decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> approvedUsers =
           List<Map<String, dynamic>>.from(decodedData);
-      print("ALOOOOOOO");
-      print(response.body);
+      //print("ALOOOOOOO");
+      // print(response.body);
       return approvedUsers; //badrrr
     }
   }
@@ -547,9 +547,9 @@ class ModeratorMockService {
           },
         }),
       );
-      print("MOOOOODDD");
-      print(communityName);
-      print(response.body);
+      //print("MOOOOODDD");
+      //print(communityName);
+      //print(response.body);
     }
   }
 
@@ -629,7 +629,7 @@ class ModeratorMockService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
-      print(response.body);
+      //print(response.body);
       final String membersCount =
           json.decode(response.body)["members_count"].toString();
 

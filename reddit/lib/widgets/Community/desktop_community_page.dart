@@ -13,6 +13,7 @@ import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class DesktopCommunityPage extends StatefulWidget {
   const DesktopCommunityPage({
@@ -202,22 +203,28 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                     ),
                   ),
                   SliverFillRemaining(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 3,
-                          child: Listing(type: 'home'),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 1,
-                          child: DescriptionWidget(
-                            communityName: widget.communityName,
+                    child: Padding(
+                      padding:
+                          const EdgeInsetsDirectional.symmetric(horizontal: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            flex: 3,
+                            child: Listing(type: 'home'),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 16),
+                          Expanded(
+                            flex: 1,
+                            child: SingleChildScrollView(
+                              child: DescriptionWidget(
+                                communityName: widget.communityName,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -296,9 +303,11 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(
+                              child: LoadingAnimationWidget.twoRotatingArc(
+                                  color:
+                                      const Color.fromARGB(255, 172, 172, 172),
+                                  size: 30));
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -390,9 +399,12 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
+                                      return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30));
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else {
@@ -435,9 +447,10 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                     future: fetchCommunityInfo(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return Center(
+                            child: LoadingAnimationWidget.twoRotatingArc(
+                                color: const Color.fromARGB(255, 172, 172, 172),
+                                size: 30));
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {

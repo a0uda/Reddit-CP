@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
@@ -34,10 +35,28 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
 
   Future<void> fetchModerators() async {
     if (!userFetched) {
-      await moderatorController
-          .getModerators(widget.communityName);
+      await moderatorController.getModerators(widget.communityName);
+      userFetched=true;
     }
   }
+  //   Future<void> fetchModerators() async {
+  //   if (!userFetched) {
+  //     await moderatorController
+  //         .getModerators(moderatorController.communityName);
+  //     startIndex = moderatorController.moderators.indexWhere(
+  //         (mod) => mod["username"] == userController.userAbout?.username);
+  //     //print(moderatorController.moderators);
+  //     editableMods = startIndex! >= 0
+  //         ? moderatorController.moderators.sublist(startIndex!)
+  //         : [];
+  //     usernameController.text = "";
+  //     setState(() {
+  //       foundUsers = moderatorController.moderators;
+  //       foundeditableUsers = editableMods;
+  //       userFetched = true;
+  //     });
+  //   }
+  // }
 
   Future<void> fetchGeneralSettings() async {
     if (!generalSettingsFetched) {
@@ -112,8 +131,12 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
+                                      return Center(
+                                        child: LoadingAnimationWidget
+                                            .twoRotatingArc(
+                                                color: const Color.fromARGB(
+                                                    255, 172, 172, 172),
+                                                size: 20),
                                       );
                                     } else if (snapshot.hasError) {
                                       return const Text('');
@@ -141,8 +164,12 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
+                                      return Center(
+                                        child: LoadingAnimationWidget
+                                            .twoRotatingArc(
+                                                color: const Color.fromARGB(
+                                                    255, 172, 172, 172),
+                                                size: 20),
                                       );
                                     } else if (snapshot.hasError) {
                                       return const Text('');
@@ -176,9 +203,16 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                            return Center(
+                                              child: LoadingAnimationWidget
+                                                  .twoRotatingArc(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              172,
+                                                              172,
+                                                              172),
+                                                      size: 20),
                                             );
                                           } else if (snapshot.hasError) {
                                             return const Text('0');
@@ -248,8 +282,12 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
+                                    return Center(
+                                      child:
+                                          LoadingAnimationWidget.twoRotatingArc(
+                                              color: const Color.fromARGB(
+                                                  255, 172, 172, 172),
+                                              size: 20),
                                     );
                                   } else if (snapshot.hasError) {
                                     return const Text('');
@@ -321,8 +359,12 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
+                                    return Center(
+                                      child:
+                                          LoadingAnimationWidget.twoRotatingArc(
+                                              color: const Color.fromARGB(
+                                                  255, 172, 172, 172),
+                                              size: 20),
                                     );
                                   } else if (snapshot.hasError) {
                                     return const Text('');
@@ -332,7 +374,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       itemCount:
-                                          moderatorController.rules.length,
+                                          moderatorController.moderators.length,
                                       itemBuilder: (context, index) {
                                         return Column(
                                           children: [
@@ -433,8 +475,7 @@ class RuleTileState extends State<RuleTile> {
             child: Visibility(
               visible: isExpanded,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4.0),
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Text(
                   widget.rule.ruleDescription ?? "",
                   style: const TextStyle(
