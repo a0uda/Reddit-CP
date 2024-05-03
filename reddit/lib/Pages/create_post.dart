@@ -12,6 +12,7 @@ import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
+import 'package:reddit/widgets/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
@@ -60,6 +61,7 @@ class _CreatePostState extends State<CreatePost> {
   VideoPlayerController? _videoPlayerController;
   String? url;
   String? imageUrl;
+  String? videoUrl;
   List<CommunityBackend> userCommunities = [];
 
   List<String> rules = [];
@@ -141,11 +143,11 @@ class _CreatePostState extends State<CreatePost> {
     fetchUserCommunities();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _videoPlayerController?.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _videoPlayerController?.dispose();
+  // }
 
   Future<void> _pickVideo() async {
     final pickedFile =
@@ -153,17 +155,38 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _video = pickedFile;
-        videoSelected = true;
+      });
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('videos')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_video!.name}');
+      print(_video!.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(_video!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
+
+      videoUrl = await storageRef.getDownloadURL();
+      print(videoUrl);
+      setState(() {
         showLinkField = false;
-        imageSelected = false;
+        videoSelected = true;
         pollSelected = false;
+        imageSelected = false;
         type = 'image_and_videos';
       });
-
-      _videoPlayerController = VideoPlayerController.file(File(_video!.path))
-        ..initialize().then((_) {
-          setState(() {});
-        });
     }
   }
 
@@ -244,7 +267,7 @@ class _CreatePostState extends State<CreatePost> {
                               videoSelected
                                   ? [
                                       VideoItem(
-                                          path: _video!.path, link: 'linkUrl')
+                                          path: _video!.path, link: videoUrl!)
                                     ]
                                   : null,
                               pollSelected
@@ -460,18 +483,7 @@ class _CreatePostState extends State<CreatePost> {
                                 ),
                               ),
                             if (videoSelected)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    _videoPlayerController!.value.isInitialized
-                                        ? AspectRatio(
-                                            aspectRatio: _videoPlayerController!
-                                                .value.aspectRatio,
-                                            child: VideoPlayer(
-                                                _videoPlayerController!),
-                                          )
-                                        : Container(),
-                              ),
+                              VideoPlayerWidget(videoPath: videoUrl!),
                             if (pollSelected)
                               Container(
                                 padding: const EdgeInsets.all(10.0),

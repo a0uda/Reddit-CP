@@ -18,27 +18,27 @@ class ListingCertainUser extends StatefulWidget {
   final UserAbout? userData;
   const ListingCertainUser({super.key, this.userData});
   @override
-  State<ListingCertainUser> createState() =>ListingCertainUserScreen();
+  State<ListingCertainUser> createState() => ListingCertainUserScreen();
 }
 
 class ListingCertainUserScreen extends State<ListingCertainUser> {
   List<PostItem> posts = [];
-  int page=0;
+  int page = 0;
   late Future<void> _dataFuture;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
-    bool isloading=false;
+  bool isloading = false;
   Future<void> fetchdata() async {
-        isloading=true;
+    isloading = true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    
-      final String username = widget.userData!.username;
-      post = await postService.getMyPosts(username);
-      print(username);
-      // Remove objects from list1 if their IDs match any in list2
-    
-  isloading=false;
+
+    final String username = widget.userData!.username;
+    post = await postService.getMyPosts(username);
+    print(username);
+    // Remove objects from list1 if their IDs match any in list2
+
+    isloading = false;
     setState(() {
       posts.addAll(post);
     });
@@ -49,28 +49,28 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
-      
+
       print('LOAD MORE');
       // load more data here
 
       //setState(() {});
     }
   }
+
   @override
- void initState() {
+  void initState() {
     super.initState();
-    _dataFuture = fetchdata(); 
+    _dataFuture = fetchdata();
     controller.addListener(HandleScrolling);
-    
   }
 
   @override
-   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-           return Container(
+          return Container(
             color: Colors.white,
             child: const Center(
               child: SizedBox(
@@ -83,83 +83,81 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          if (isloading)
-          {
-      return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
+          if (isloading) {
+            return Container(
+              color: Colors.white,
+              child: const Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            ),
-          );
-          }
-          else{
-          return Consumer<LockPost>(
-            builder: (context, lockPost, child) {
-              return ListView.builder(
-                itemCount: posts.length,
-                controller: controller,
-                itemBuilder: (context, index) {
-                      var imageurl=null;
-                  if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].link;
-                  }
+            );
+          } else {
+            return Consumer<LockPost>(
+              builder: (context, lockPost, child) {
+                return ListView.builder(
+                  itemCount: posts.length,
+                  controller: controller,
+                  itemBuilder: (context, index) {
+                    var imageurl;
+                    if (posts[index].images != null) {
+                      imageurl = posts[index].images?[0].link;
+                    }
                     print(posts[index].isReposted);
-                  if (posts[index].isReposted) {
-                    return Repost(
+                    if (posts[index].isReposted) {
+                      return Repost(
                           description: posts[index].description,
+                          id: posts[index].id,
+                          name: posts[index].username,
+                          title: posts[index].title,
+                          originalID: posts[index].originalPostID,
+                          date: posts[index].createdAt.toString(),
+                          likes: posts[index].upvotesCount -
+                              posts[index].downvotesCount,
+                          commentsCount: posts[index].commentsCount,
+                          communityName: posts[index].communityName,
+                          isLocked: posts[index].lockedFlag,
+                          vote: posts[index].vote);
+                    }
+                    if (posts[index].nsfwFlag == true ||
+                        posts[index].spoilerFlag == true) {
+                      return CollapsePost(
                         id: posts[index].id,
+                        // profileImageUrl: posts[index].profilePic!,
                         name: posts[index].username,
                         title: posts[index].title,
-                        originalID: posts[index].originalPostID,
                         date: posts[index].createdAt.toString(),
-                        likes: posts[index].upvotesCount -
-                            posts[index].downvotesCount,
-                        commentsCount: posts[index].commentsCount,
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
-                        vote: posts[index].vote);
-                  }
-                  if (posts[index].nsfwFlag == true ||
-                      posts[index].spoilerFlag == true) {
-                    return CollapsePost(
-                      id: posts[index].id,
+                        isNSFW: posts[index].nsfwFlag,
+                        isSpoiler: posts[index].spoilerFlag,
+                      );
+                    }
+                    return Post(
                       // profileImageUrl: posts[index].profilePic!,
                       name: posts[index].username,
+                      vote: posts[index].vote,
+
                       title: posts[index].title,
+                      postContent: posts[index].description,
                       date: posts[index].createdAt.toString(),
+                      likes: posts[index].upvotesCount -
+                          posts[index].downvotesCount,
+                      commentsCount: posts[index].commentsCount,
+                      linkUrl: posts[index].linkUrl,
+                      imageUrl: imageurl,
+                      videoUrl: posts[index].videos?[0].link,
+                      poll: posts[index].poll,
+                      id: posts[index].id,
                       communityName: posts[index].communityName,
                       isLocked: posts[index].lockedFlag,
-                      isNSFW: posts[index].nsfwFlag,
-                      isSpoiler: posts[index].spoilerFlag,
                     );
-                  }
-                  return Post(
-                    // profileImageUrl: posts[index].profilePic!,
-                    name: posts[index].username,
-                     vote: posts[index].vote,
-
-                    title: posts[index].title,
-                    postContent: posts[index].description,
-                    date: posts[index].createdAt.toString(),
-                    likes:
-                        posts[index].upvotesCount - posts[index].downvotesCount,
-                    commentsCount: posts[index].commentsCount,
-                    linkUrl: posts[index].linkUrl,
-                    imageUrl: imageurl,
-                    videoUrl: posts[index].videos?[0].path,
-                    poll: posts[index].poll,
-                    id: posts[index].id,
-                    communityName: posts[index].communityName,
-                    isLocked: posts[index].lockedFlag,
-                  );
-                },
-              );
-            },
-          );
+                  },
+                );
+              },
+            );
           }
         }
       },

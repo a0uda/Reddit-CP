@@ -24,7 +24,7 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-  int page=0;
+  int page = 0;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
   // List of items in our dropdown menu
@@ -35,8 +35,8 @@ class TopListingBuild extends State<TopListing> {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
-        post = await postService.getPosts(user, "top",page);
-        page=page+1;
+        post = await postService.getPosts(user, "top", page);
+        page = page + 1;
       } else {
         posts = postService.fetchPosts();
       }
@@ -55,7 +55,6 @@ class TopListingBuild extends State<TopListing> {
     });
   }
 
-
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
@@ -70,12 +69,12 @@ class TopListingBuild extends State<TopListing> {
   }
 
   @override
- void initState() {
+  void initState() {
     super.initState();
-    _dataFuture = fetchdata(); 
+    _dataFuture = fetchdata();
     controller.addListener(HandleScrolling);
-    
   }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -96,32 +95,31 @@ class TopListingBuild extends State<TopListing> {
           return Text('Error: ${snapshot.error}');
         } else {
           return Consumer<LockPost>(builder: (context, lockPost, child) {
-            
             return ListView.builder(
               itemCount: posts.length,
               controller: controller,
               itemBuilder: (context, index) {
-                    var imageurl=null;
-                  if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
-                  }
+                var imageurl = null;
+                if (posts[index].images != null) {
+                  imageurl = posts[index].images?[0].link;
+                }
 
-                    print(posts[index].isReposted);
-                  if (posts[index].isReposted) {
-                    return Repost(
-                          description: posts[index].description,
-                        id: posts[index].id,
-                        name: posts[index].username,
-                        title: posts[index].title,
-                        originalID: posts[index].originalPostID,
-                        date: posts[index].createdAt.toString(),
-                        likes: posts[index].upvotesCount -
-                            posts[index].downvotesCount,
-                        commentsCount: posts[index].commentsCount,
-                        communityName: posts[index].communityName,
-                        isLocked: posts[index].lockedFlag,
-                        vote: posts[index].vote);
-                  }
+                print(posts[index].isReposted);
+                if (posts[index].isReposted) {
+                  return Repost(
+                      description: posts[index].description,
+                      id: posts[index].id,
+                      name: posts[index].username,
+                      title: posts[index].title,
+                      originalID: posts[index].originalPostID,
+                      date: posts[index].createdAt.toString(),
+                      likes: posts[index].upvotesCount -
+                          posts[index].downvotesCount,
+                      commentsCount: posts[index].commentsCount,
+                      communityName: posts[index].communityName,
+                      isLocked: posts[index].lockedFlag,
+                      vote: posts[index].vote);
+                }
                 if (posts[index].nsfwFlag == true ||
                     posts[index].spoilerFlag == true) {
                   return CollapsePost(
@@ -149,7 +147,7 @@ class TopListingBuild extends State<TopListing> {
                   commentsCount: posts[index].commentsCount,
                   linkUrl: posts[index].linkUrl,
                   imageUrl: imageurl,
-                  videoUrl: posts[index].videos?[0].path,
+                  videoUrl: posts[index].videos?[0].link,
                   poll: posts[index].poll,
                   id: posts[index].id,
                   communityName: posts[index].communityName,

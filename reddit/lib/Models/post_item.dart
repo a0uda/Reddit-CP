@@ -4,7 +4,6 @@ import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/comments.dart';
 import 'dart:convert';
 
-
 class PostItem {
   final String id;
   final String userId;
@@ -74,39 +73,44 @@ class PostItem {
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
     print(json);
-    final List<dynamic> jsonlist = json['images'];
-      final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
-        return ImageItem.fromJson(jsonitem);
-      }).toList();
+    final List<dynamic> jsonlist = json['images']??[];
+    final List<ImageItem> imagelist =  jsonlist.map((jsonitem) {
+      return ImageItem.fromJson(jsonitem);
+    }).toList();
+    final List<dynamic> jsonlist2 = json['videos']??[];
+    final List<VideoItem> videolist = jsonlist2.map((jsonitem) {
+      return VideoItem.fromJson(jsonitem);
+    }).toList();
     return PostItem(
-
-        ///todo
-        isReposted: json['is_reposted_flag'],
-        originalPostID: "662bc4861980ada1a43262ac", //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
-        id: json['_id'],
-        userId: json['user_id'],
-        description: json['description'],
-        username: (json['username']!=null)?(json['username']):'SHIKA',
-        title: json['title'],
-        createdAt: DateTime.parse(json['created_at']),
-        type: json['type'],
-        communityId: json['community_id'],
-        communityName:(json['community_name']!=null)?(json['community_name']):'',
-        commentsCount: json['comments_count'],
-        viewsCount: json['views_count'],
-        sharesCount: json['shares_count'],
-        upvotesCount: json['upvotes_count'],
-        downvotesCount: json['downvotes_count'],
-        ocFlag: json['oc_flag'],
-        spoilerFlag: json['spoiler_flag'],
-        nsfwFlag: json['nsfw_flag'],
-        lockedFlag: json['locked_flag'],
-        allowrepliesFlag: json['allowreplies_flag'],
-        setSuggestedSort: json['set_suggeested_sort'],
-        vote: (json['vote']!=null)?(json['vote']):0,
-        images: (imagelist.isNotEmpty)? imagelist:null,
-        );
-
+      ///todo
+      isReposted: json['is_reposted_flag'],
+      originalPostID:
+          "662bc4861980ada1a43262ac", //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
+      id: json['_id'],
+      userId: json['user_id'],
+      description: json['description'],
+      username: (json['username'] != null) ? (json['username']) : 'SHIKA',
+      title: json['title'],
+      createdAt: DateTime.parse(json['created_at']),
+      type: json['type'],
+      communityId: json['community_id'],
+      communityName:
+          (json['community_name'] != null) ? (json['community_name']) : '',
+      commentsCount: json['comments_count'],
+      viewsCount: json['views_count'],
+      sharesCount: json['shares_count'],
+      upvotesCount: json['upvotes_count'],
+      downvotesCount: json['downvotes_count'],
+      ocFlag: json['oc_flag'],
+      spoilerFlag: json['spoiler_flag'],
+      nsfwFlag: json['nsfw_flag'],
+      lockedFlag: json['locked_flag'],
+      allowrepliesFlag: json['allowreplies_flag'],
+      setSuggestedSort: json['set_suggeested_sort'],
+      vote: (json['vote'] != null) ? (json['vote']) : 0,
+      images: (imagelist.isNotEmpty) ? imagelist : null,
+      videos: (videolist.isNotEmpty) ? videolist : null,
+    );
   }
 }
 
