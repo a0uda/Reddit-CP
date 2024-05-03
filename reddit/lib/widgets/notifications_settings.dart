@@ -24,6 +24,7 @@ class _NotificationsSettingsState extends State<NotificationsSettings> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         title: const Text('Notifications'),
       ),
       body: ListView(
@@ -92,7 +93,7 @@ void handleNotificationSettingChange(String setting, bool value) {
     case 'Private messages':
       userController.notificationsSettings!.privateMessages = value;
       break;
-    case 'chat messages':
+    case 'Chat messages':
       userController.notificationsSettings!.chatMessages = value;
       break;
     case 'Chat requests':
@@ -133,7 +134,7 @@ Widget buildPrivateMessages() {
 
 Widget buildChatMessages() {
   return CustomStatefulSettingsTile(
-      switchValue: userController.notificationsSettings!.privateMessages,
+      switchValue: userController.notificationsSettings!.chatMessages,
       title: 'Chat messages',
       leading: const Icon(Icons.chat_outlined),
       onTap: () {},

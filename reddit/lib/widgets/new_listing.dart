@@ -57,7 +57,7 @@ class NewListingBuild extends State<NewListing> {
   }
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent == controller.offset) {
+    if (controller.position.maxScrollExtent*0.9  < controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
@@ -103,7 +103,7 @@ class NewListingBuild extends State<NewListing> {
                 itemBuilder: (context, index) {
                   var imageurl = null;
                   if (posts[index].images != null) {
-                    imageurl = posts[index].images?[0].path;
+                    imageurl = posts[index].images?[0].link;
                   }
                   print(posts[index].isReposted);
                   if (posts[index].isReposted) {
@@ -148,7 +148,7 @@ class NewListingBuild extends State<NewListing> {
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
                     imageUrl: imageurl,
-                    videoUrl: posts[index].videos?[0].path,
+                    videoUrl: posts[index].videos?[0].link,
                     poll: posts[index].poll,
                     id: posts[index].id,
                     communityName: posts[index].communityName,

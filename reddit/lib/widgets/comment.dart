@@ -11,15 +11,45 @@ import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+String formatDateTime(String dateTimeString) {
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
+
 class Comment extends StatefulWidget {
   final Comments comment;
+  int likes;
   bool isSaved;
   bool isComingFromSaved;
-  Comment(
-      {super.key,
-      required this.comment,
-      required this.isSaved,
-      this.isComingFromSaved = false});
+  Comment({
+    super.key,
+    required this.comment,
+    required this.isSaved,
+    this.isComingFromSaved = false,
+    required this.likes,
+  });
 
   @override
   State<Comment> createState() => _CommentState();
@@ -60,12 +90,14 @@ class _CommentState extends State<Comment> {
         if (downVote == true) {
           commentService.upVoteComment(commentId);
           downVoteColor = Colors.black;
-
+          widget.likes++;
           downVote = false;
         }
+        widget.likes++;
       } else {
         commentService.downVoteComment(commentId);
         upVoteColor = Colors.black;
+        widget.likes--;
       }
       upVote = !upVote;
     });
@@ -81,10 +113,13 @@ class _CommentState extends State<Comment> {
           commentService.downVoteComment(commentId);
           upVoteColor = Colors.black;
           upVote = false;
+          widget.likes--;
         }
+        widget.likes--;
       } else {
         commentService.upVoteComment(commentId);
         downVoteColor = Colors.black;
+        widget.likes++;
       }
       downVote = !downVote;
     });
@@ -136,10 +171,18 @@ class _CommentState extends State<Comment> {
                             backgroundImage: AssetImage('images/Greddit.png'),
                           );
                         } else {
-                          return CircleAvatar(
-                            radius: 15,
-                            backgroundImage:
-                                FileImage(File(snapshot.data!.profilePicture!)),
+                          return 
+                            File(snapshot.data!.profilePicture!).existsSync()
+                                ? CircleAvatar(
+                                    backgroundImage: FileImage(
+                                        File(snapshot.data!.profilePicture!)),
+                                        radius: 15,
+                                  )
+                                : const CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage("images/Greddit.png"),
+                                        radius: 15,
+                                  
                           );
                         }
                       }
@@ -161,13 +204,10 @@ class _CommentState extends State<Comment> {
                     width: 10,
                   ),
                   Text(
-                    widget.comment.createdAt!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Arial',
-                    ),
+                    '  • ${formatDateTime(widget.comment.createdAt!)}',
+                    style: const TextStyle(
+                        fontSize: 12,
+                        color: Color.fromARGB(255, 117, 116, 115)),
                   ),
                 ],
               ),
@@ -257,9 +297,7 @@ class _CommentState extends State<Comment> {
                     },
                   ),
                   Text(
-                    (widget.comment.upvotesCount -
-                            widget.comment.downvotesCount)
-                        .toString(),
+                    (widget.likes).toString(),
                     style: const TextStyle(
                       fontSize: 13,
                     ),

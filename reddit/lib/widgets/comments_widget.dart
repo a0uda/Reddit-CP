@@ -56,7 +56,6 @@ class CommentsWidgetState extends State<CommentsWidget> {
                   width: double.infinity,
                   child: Post(
                     vote: post!.vote,
-
                     name: post!.username,
                     title: post!.title,
                     postContent: post!.description ?? '',
@@ -64,8 +63,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     likes: post!.upvotesCount - post!.downvotesCount,
                     commentsCount: post!.commentsCount,
                     linkUrl: post!.linkUrl,
-                    imageUrl: post!.images?[0].path,
-                    videoUrl: post!.videos?[0].path,
+                    imageUrl: post!.images?[0].link,
+                    videoUrl: post!.videos?[0].link,
                     poll: post!.poll,
                     id: post!.id,
                     communityName: post!.communityName,
@@ -78,7 +77,11 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       itemCount: comments?.length,
                       itemBuilder: (context, index) {
                         final comment = comments![index];
-                        return Comment(comment: comment, isSaved: false);
+                        return Comment(
+                          comment: comment,
+                          isSaved: false,
+                          likes: comment.upvotesCount - comment.downvotesCount,
+                        );
                       },
                     ),
                   ),
@@ -126,6 +129,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       commentController.text,
                       userController.userAbout!.username,
                       userController.userAbout?.id ?? '');
+                  print(status);
                   if (status == 200) {
                     loadComments();
                     commentController.clear();

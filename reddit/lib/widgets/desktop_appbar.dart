@@ -10,6 +10,8 @@ import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
 import 'package:reddit/widgets/chat_intro.dart';
+import 'package:reddit/widgets/chat_intro.dart';
+import 'package:reddit/widgets/listing_notifications.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
@@ -133,6 +135,9 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
             ? IconButton(
                 onPressed: () {
                   //Navigate to Inbox
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const ListingNotifications(),
+                  ));
                 },
                 icon: const Icon(CupertinoIcons.bell),
               )

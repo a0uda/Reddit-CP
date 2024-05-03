@@ -201,27 +201,38 @@ class _MessageContentState extends State<MessageContent> {
                                     String? receiverType = messages[0].isSent
                                         ? messages[0].receiverType
                                         : messages[0].senderType;
+                                    String? senderType = messages[0].isSent
+                                        ? messages[0].senderType
+                                        : messages[0].receiverType;
+                                    String? senderVia;
+                                    if (senderType != 'user') {
+                                      senderVia = messages[0].isSent
+                                          ? messages[0].senderVia
+                                          : messages[0].receiverUsername;
+                                    }
                                     bool success = await context
                                         .read<MessagesOperations>()
                                         .replyToMessage(
                                           messages[0].id,
                                           receiverUsername!,
                                           receiverType!,
+                                          senderType!,
+                                          senderVia,
                                           messageContentController.text,
+                                          messages[0].subject
                                         );
                                     if (success) {
                                       messages.add(Messages(
                                         id: (messages.length + 1).toString(),
                                         senderUsername:
                                             userController.userAbout!.username,
-                                        senderType: "user",
+                                        senderType: senderType,
                                         receiverUsername: receiverUsername,
                                         receiverType: receiverType,
-                                        senderVia: null,
+                                        senderVia: senderVia,
                                         message: messageContentController.text,
                                         createdAt:
                                             DateTime.now().toIso8601String(),
-                                        deletedAt: null,
                                         unreadFlag: false,
                                         isSent: true,
                                         isReply: true,
