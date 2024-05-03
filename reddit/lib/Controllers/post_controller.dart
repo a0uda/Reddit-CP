@@ -20,6 +20,27 @@ class SavePost extends ChangeNotifier {
     notifyListeners();
   }
 }
+class Edit extends ChangeNotifier {
+  final postService = GetIt.instance.get<PostService>();
+  bool refresh=false;
+  bool get shouldRefresh => refresh;
+ set shouldRefresh(bool value)
+{
+refresh=value;
+}  
+
+  void EditPost(String id, String caption) {
+    postService.EditPost(id,caption);
+    print('ana geet provider');
+    Future.delayed(Duration(seconds: 2));
+    notifyListeners();
+  }
+
+  void resetRefresh() {
+    refresh=false;
+  }
+}
+
 
 class LockPost extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();

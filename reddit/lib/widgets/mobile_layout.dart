@@ -56,7 +56,7 @@ class _MobileLayoutState extends State<MobileLayout> {
       const CommunitiesMobile(), //Communities Page here
       const CreatePost(),
       ChatIntro(),
-    
+
       //Inbox
       DefaultTabController(
         length: 2,

@@ -81,6 +81,7 @@ class _AddtextShareState extends State<AddtextShare> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color.fromARGB(255, 253, 119, 10)),
                   onPressed: () {
+
                     if (widget.comName != "") {
                       postService.SharePost(widget.postId, name, bodyController.text, true);
                     } else {
@@ -88,6 +89,7 @@ class _AddtextShareState extends State<AddtextShare> {
 
 
                     }
+                    Navigator.of(context).pop();
                   },
                   icon: Icon(Icons.file_upload_outlined, color: Colors.white),
                   label: Text(

@@ -9,7 +9,6 @@ import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/Services/comments_service.dart';
-import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
@@ -425,6 +424,29 @@ class UserService {
       print("in update profile settings");
       print(response.body);
     }
+  }
+
+  Future<void> updateAllowFollowers(bool allowFollowers) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/change-profile-settings');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode({
+        'profile_settings': {
+          'allow_followers': allowFollowers,
+        }
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('updated allow followers flag');
+    }
+    print(response.body);
   }
 
   Future<void> addBannerPicture(String username, String bannerPicture) async {
@@ -1087,6 +1109,8 @@ class UserService {
           'blocked_username': blockedUsername,
         }),
       );
+      print(blockedUsername);
+      print(response.body);
 
       if (response.statusCode == 200) {
         print('User unblocked successfully.');
@@ -1172,6 +1196,7 @@ class UserService {
 
       print("in change email");
       print(response.statusCode);
+
       return response.statusCode == 200 ? true : false;
     }
   }
@@ -1194,20 +1219,18 @@ class UserService {
           "Authorization": token!,
         },
         body: jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
+          "current_password": currentPassword,
+          "new_password": newPassword,
+          "verified_new_password": verifiedNewPassword,
         }),
       );
       print(token);
       print(response.statusCode);
-      print(
-        jsonEncode({
-          'current_password': currentPassword,
-          'new_password': newPassword,
-          'verified_new_password': verifiedNewPassword,
-        }),
-      );
+      print(jsonEncode({
+        "current_password": currentPassword,
+        "new_password": newPassword,
+        "verified_new_password": verifiedNewPassword,
+      }));
       return response.isRedirect;
     }
   }
@@ -1432,7 +1455,7 @@ class UserService {
       print(response.statusCode);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body)['comments'];
+        List<dynamic> body = jsonDecode(response.body)['content']['comments'];
         print(body);
         return Future.wait(
             body.map((dynamic item) async => Comments.fromJson(item)));
@@ -1482,7 +1505,7 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             'mentions': notificationsSettingsItem.mentions,
             'comments': notificationsSettingsItem.comments,
             'upvotes_posts': notificationsSettingsItem.upvotesPosts,
@@ -1540,14 +1563,15 @@ class UserService {
           'Authorization': token!,
         },
         body: jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             notificationType: value,
           }
         }),
       );
+      print(token);
       print(
         jsonEncode({
-          'notification_settings': {
+          'notifications_settings': {
             notificationType: value,
           }
         }),
