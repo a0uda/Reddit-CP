@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -205,8 +207,8 @@ class _PostUIState extends State<PostUI> {
                   ],
                 ),
               ),
-              (post.containsKey("profile_picture") &&
-                      post["profile_picture"] != "")
+              (post.containsKey("images") &&
+                      post["images"] != [])
                   ? Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Column(
@@ -221,9 +223,12 @@ class _PostUIState extends State<PostUI> {
                               child: Container(
                                 width: 80.0 * desktopFactor,
                                 height: 60.0 * desktopFactor,
-                                child: Image.network(
-                                  post["profile_picture"],
-                                  fit: BoxFit.cover,
+                                child: ImageFiltered(
+                                  imageFilter: post["nsfw_flag"] ? ImageFilter.blur(sigmaX: 5, sigmaY: 5) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                                  child: Image.network(
+                                    post["images"][0],
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
@@ -383,8 +388,8 @@ class _PostUIState extends State<PostUI> {
                           ],
                         ),
                       ),
-                      (post.containsKey("profile_picture") &&
-                              post["profile_picture"] != "")
+                      (post.containsKey("images") &&
+                              post["images"] != [])
                           ? Padding(
                               padding: const EdgeInsets.only(left: 5.0),
                               child: Column(
@@ -399,9 +404,12 @@ class _PostUIState extends State<PostUI> {
                                       child: Container(
                                         width: 80.0 * desktopFactor,
                                         height: 60.0 * desktopFactor,
-                                        child: Image.network(
-                                          post["profile_picture"],
-                                          fit: BoxFit.cover,
+                                        child: ImageFiltered(
+                                          imageFilter: post["nsfw_flag"] ? ImageFilter.blur(sigmaX: 5, sigmaY: 5) : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                                          child: Image.network(
+                                            post["images"][0],
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),

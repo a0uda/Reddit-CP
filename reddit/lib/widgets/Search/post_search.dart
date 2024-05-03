@@ -84,14 +84,46 @@ class _CommentsSearchState extends State<PostSearch> {
 List<Map<String, dynamic>> originalposts = [
   {
     "_id": "6633921be1b754c2c9163cad",
-    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
-    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
-    "profile_picture":
+    "title":
+        "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description":
+        "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "community_profile_picture":
         "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
     "created_at": "2024-05-02T13:16:12.804Z",
     "type": "url",
     "link_url": "https://www.youtuddbej.com",
-    "images": [],
+    "images": [
+      "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    ],
+    "polls": [],
+    "polls_voting_length": 3,
+    "polls_voting_is_expired_flag": false,
+    "post_in_community_flag": true,
+    "community_name": "malaktest2",
+    "comments_count": 0,
+    "upvotes_count": 1,
+    "spoiler_flag": false,
+    "nsfw_flag": false,
+    "is_reposted_flag": false,
+    "community_id": "6631dd3e6c674a78abcebbc3",
+    "user_id": "662516de07f00cce3c42352a",
+    "username": "malak",
+  },
+  {
+    "_id": "6633921be1b754c2c9163cad",
+    "title":
+        "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description":
+        "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "community_profile_picture":
+        "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    "created_at": "2024-05-02T13:16:12.804Z",
+    "type": "url",
+    "link_url": "https://www.youtuddbej.com",
+    "images": [
+      "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    ],
     "polls": [],
     "polls_voting_length": 3,
     "polls_voting_is_expired_flag": false,
@@ -108,38 +140,18 @@ List<Map<String, dynamic>> originalposts = [
   },
   {
     "_id": "6633921be1b754c2c9163cad",
-    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
-    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
-    "profile_picture":
+    "title":
+        "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
+    "description":
+        "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
+    "community_profile_picture":
         "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
     "created_at": "2024-05-02T13:16:12.804Z",
     "type": "url",
     "link_url": "https://www.youtuddbej.com",
-    "images": [],
-    "polls": [],
-    "polls_voting_length": 3,
-    "polls_voting_is_expired_flag": false,
-    "post_in_community_flag": true,
-    "community_name": "malaktest2",
-    "comments_count": 0,
-    "upvotes_count": 1,
-    "spoiler_flag": false,
-    "nsfw_flag": true,
-    "is_reposted_flag": false,
-    "community_id": "6631dd3e6c674a78abcebbc3",
-    "user_id": "662516de07f00cce3c42352a",
-    "username": "malak",
-  },
-  {
-    "_id": "6633921be1b754c2c9163cad",
-    "title": "saciubqwibcewevufvukevvasjbviebjhadbvksberhjvblebrugabbcvkerjhablueabvhjbrwbvshbvabejhvrblasbvrhjvbbalebvrebrvjhbvbrjhb",
-    "description": "jdhsvhbdsjbiewsdkjnsjnxjns dwkcnsdjkb s dvbweknvsdkjbkdj \n cdsbjd zk \n",
-    "profile_picture":
-        "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
-    "created_at": "2024-05-02T13:16:12.804Z",
-    "type": "url",
-    "link_url": "https://www.youtuddbej.com",
-    "images": [],
+    "images": [
+      "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w600/2023/10/free-images.jpg",
+    ],
     "polls": [],
     "polls_voting_length": 3,
     "polls_voting_is_expired_flag": false,
@@ -154,6 +166,4 @@ List<Map<String, dynamic>> originalposts = [
     "user_id": "662516de07f00cce3c42352a",
     "username": "malak",
   },
-
-
 ];
