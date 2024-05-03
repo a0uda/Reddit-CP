@@ -79,7 +79,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                         final comment = comments![index];
                         return Comment(
                           comment: comment,
-                          isSaved: false,
+                          isSaved: comment.saved ?? false,
                           likes: comment.upvotesCount - comment.downvotesCount,
                         );
                       },

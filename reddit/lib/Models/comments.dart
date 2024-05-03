@@ -20,6 +20,7 @@ class Comments {
   ModeratorDetails? moderatorDetails;
   bool? spoilerFlag;
   bool? commentInCommunityFlag;
+  bool? saved;
 
   Comments({
     this.id,
@@ -43,12 +44,14 @@ class Comments {
     this.moderatorDetails,
     this.spoilerFlag,
     this.commentInCommunityFlag,
+    this.saved,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
     return Comments(
       id: json['_id'],
       postId: json['post_id'],
+      saved: json['saved'],
       userId: json['user_id'],
       username: json['username'],
       parentId: json['parent_id'],

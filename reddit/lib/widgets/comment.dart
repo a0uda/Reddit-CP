@@ -171,19 +171,18 @@ class _CommentState extends State<Comment> {
                             backgroundImage: AssetImage('images/Greddit.png'),
                           );
                         } else {
-                          return 
-                            File(snapshot.data!.profilePicture!).existsSync()
-                                ? CircleAvatar(
-                                    backgroundImage: FileImage(
-                                        File(snapshot.data!.profilePicture!)),
-                                        radius: 15,
-                                  )
-                                : const CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage("images/Greddit.png"),
-                                        radius: 15,
-                                  
-                          );
+                          return File(snapshot.data!.profilePicture!)
+                                  .existsSync()
+                              ? CircleAvatar(
+                                  backgroundImage: FileImage(
+                                      File(snapshot.data!.profilePicture!)),
+                                  radius: 15,
+                                )
+                              : const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage("images/Greddit.png"),
+                                  radius: 15,
+                                );
                         }
                       }
                     },
