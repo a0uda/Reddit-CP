@@ -17,6 +17,7 @@ import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/firebase_options.dart';
 import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -30,12 +31,14 @@ import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
 //TODO : FIREBASE
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   // Registering MockService with GetIt
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); //TODO : FIREBASE
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
   GetIt.instance.registerSingleton<SearchService>(SearchService());
@@ -111,6 +114,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => MessagesOperations(),
       ),
+            ChangeNotifierProvider(
+        create: (context) => Edit(),
+      )
     ],
     child: const MyApp(),
   ));

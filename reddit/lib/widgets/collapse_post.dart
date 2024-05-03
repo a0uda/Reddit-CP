@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
+String formatDateTime(String dateTimeString) {
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
 class CollapsePost extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
@@ -61,7 +87,12 @@ class _CollapsePostState extends State<CollapsePost> {
             ),
             title: Text(widget.communityName),
             subtitle: Text(widget.name),
-            trailing: Text(widget.date.substring(0, 10)),
+            trailing: Text(
+                        ' ${formatDateTime(widget.date)}',
+                        style: const TextStyle(
+                            fontSize: 12,
+                            color: Color.fromARGB(255, 117, 116, 115)),
+                      ),
             onTap: () => {
               // open this post TODO
               Navigator.push(

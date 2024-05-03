@@ -42,6 +42,7 @@ class PostService {
           id: (posts.length + 1).toString(),
           userId: userId!,
           username: username!,
+          // isRemoved: false,
           title: title,
           description: description,
           createdAt: DateTime.now(),
@@ -68,9 +69,17 @@ class PostService {
           originalPostID: '',
         ),
       );
-      
     } else {
       // add post to database
+      print("images: " +
+          (images
+                  ?.map((image) => {
+                        "path": image.path,
+                        "caption": image.caption ?? "",
+                        "link": image.link
+                      })
+                  .toList())
+              .toString());
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -83,8 +92,8 @@ class PostService {
         },
         body: json.encode({
           "title": title,
-          "description": description,
-          "type": "text",
+          "description": description ?? '',
+          "type": type,
           "link_url": linkUrl,
           "images": images
               ?.map((image) => {
@@ -113,41 +122,22 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-  
-      // print(json.encode({
-      //   "title": title,
-      //   "description": description,
-      //   "type": type,
-      //   "link_url": linkUrl,
-      //   "images": images
-      //       ?.map((image) => {
-      //             "path": image.path,
-      //             "caption": image.caption ?? "",
-      //             "link": image.link
-      //           })
-      //       .toList(),
-      //   "videos": videos
-      //       ?.map((video) => {
-      //             "path": video.path,
-      //             "caption": video.caption ?? "",
-      //             "link": video.link
-      //           })
-      //       .toList(),
-      //   "polls": poll != null
-      //       ? [
-      //           {"options": poll.options}
-      //         ]
-      //       : [],
-      //   "polls_voting_length": poll != null ? poll.votes.length : 0,
-      //   "community_name": communityName,
-      //   "post_in_community_flag": postInCommunityFlag,
-      //   // "oc_flag": ocFlag,
-      //   // "spoiler_flag": spoilerFlag,
-      //   // "nsfw_flag": nsfwFlag
-      // }));
-      // if (response.statusCode >= 400) {
-      //   return 400;
-      // }
+      print("images: " +
+          (images
+                  ?.map((image) => {
+                        "path": image.path,
+                        "caption": image.caption ?? "",
+                        "link": image.link
+                      })
+                  .toList())
+              .toString());
+
+      print(response.body);
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        return 400;
+      }
     }
     return 200;
   }
@@ -176,9 +166,10 @@ class PostService {
         'page': page.toString(),
         'pageSize': '10'
       };
-    
-  
-      var url = Uri.parse('https://redditech.me/backend/listing/posts/best').replace(queryParameters:queryparams);
+
+      print(queryparams.toString());
+      var url = Uri.parse('https://redditech.me/backend/listing/posts/best')
+          .replace(queryParameters: queryparams);
 
       if (sortingType == "best") {
         url = Uri.parse('https://redditech.me/backend/listing/posts/best')
@@ -193,8 +184,10 @@ class PostService {
         url = Uri.parse('https://redditech.me/backend/listing/posts/top')
             .replace(queryParameters: queryparams);
       } else if (sortingType == "random") {
-       url = Uri.parse('https://redditech.me/backend/listing/posts/random').replace(queryParameters:queryparams);
-  
+        url = Uri.parse('https://redditech.me/backend/listing/posts/random')
+            .replace(queryParameters: queryparams);
+        print(url);
+        print(page);
       }
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -206,19 +199,16 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-   print(response.body);
-      if(response.statusCode==200)
-      {
-      final List<dynamic> jsonlist = json.decode(response.body)['content'];
-      final List<PostItem> postsItem = jsonlist.map((jsonitem) {
-        return PostItem.fromJson(jsonitem);
-      }).toList();
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonlist = json.decode(response.body)['content'];
+        final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+          return PostItem.fromJson(jsonitem);
+        }).toList();
 
-      return postsItem;
-      }
-      else
-      {
-        List<PostItem> nullPost=[];
+        return postsItem;
+      } else {
+        List<PostItem> nullPost = [];
         return nullPost;
       }
     }
@@ -238,7 +228,7 @@ class PostService {
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
-   
+      print(username);
       final url =
           Uri.parse('https://redditech.me/backend/users/posts/$username');
 
@@ -251,7 +241,7 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-  
+
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<PostItem> postsItem = jsonlist.map((jsonitem) {
         return PostItem.fromJson(jsonitem);
@@ -290,8 +280,8 @@ class PostService {
       final post = posts.firstWhere((element) => element.id == id);
       post.upvotesCount++;
     } else {
-
-        final url =
+      print(id);
+      final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -320,7 +310,7 @@ class PostService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-    
+
       final response = await http.post(
         url,
         headers: {
@@ -419,7 +409,8 @@ class PostService {
         );
         print(response.body);
         if (response.statusCode == 200) {
-          final List<dynamic> jsonlist = json.decode(response.body)['posts'];
+          final List<dynamic> jsonlist =
+              json.decode(response.body)['content']['posts'];
           final List<PostItem> postsItem = jsonlist.map((jsonitem) {
             return PostItem.fromJson(jsonitem);
           }).toList();
@@ -543,27 +534,31 @@ class PostService {
     }
   }
 
-Future<void> SharePost(String id,String comName,String caption,bool flag)async{
+  Future<void> SharePost(
+      String id, String comName, String caption, bool flag) async {
     if (testing) {
-      
     } else {
       print(id);
-         print(comName);
-            print(caption);
-               print(flag);
-        final url =
-          Uri.parse('https://redditech.me/backend/posts/share-post');
+      print(comName);
+      print(caption);
+      print(flag);
+      final url = Uri.parse('https://redditech.me/backend/posts/share-post');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-    
+
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString()
         },
-        body: json.encode({"id": id,"community_name":comName,"caption":caption,"post_in_community_flag":flag}),
+        body: json.encode({
+          "id": id,
+          "community_name": comName,
+          "caption": caption,
+          "post_in_community_flag": flag
+        }),
       );
       print(response.body);
 
@@ -571,25 +566,22 @@ Future<void> SharePost(String id,String comName,String caption,bool flag)async{
     }
   }
 
-
-Future<void> EditPost(String id,String caption)async{
+  Future<void> EditPost(String id, String caption) async {
     if (testing) {
-      
     } else {
- 
-        final url =
+      final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/edit-text');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-    
+
       final response = await http.patch(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString()
         },
-        body: json.encode({"id": id,"edited_text":caption,"is_post":true}),
+        body: json.encode({"id": id, "edited_text": caption, "is_post": true}),
       );
       print(response.body);
 
@@ -597,106 +589,25 @@ Future<void> EditPost(String id,String caption)async{
     }
   }
 
-
-Future<void> DeletePost(String id)async{
+  Future<void> DeletePost(String id) async {
     if (testing) {
-      
     } else {
- 
-        final url =
-          Uri.parse('https://redditech.me/backend/posts/remove');
+      final url = Uri.parse('https://redditech.me/backend/posts/remove');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-    
+
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString()
         },
-        body: json.encode({"id": id,}),
+        body: json.encode({
+          "id": id,
+        }),
       );
       print(response.body);
-
-
     }
   }
-
-
-
-
 }
-
-
-
-
-// '''
-// New_Post:
-//       type: object
-//       required:
-//         - title
-//         - community-name
-//       properties:
-//         title:
-//           type: string
-//         description:
-//           type: string
-//         type:
-//           type: string
-//           enum:
-//             - image_and_videos
-//             - polls
-//             - url
-//             - text
-//             - hybrid
-//         link_url:
-//           type: string
-//         images:
-//           type: array
-//           items:
-//             type: object
-//             properties:
-//               path:
-//                 type: string
-//               caption:
-//                 type: string
-//               link:
-//                 type: string
-//             additionalProperties: false
-//         videos:
-//           type: array
-//           items:
-//             type: object
-//             properties:
-//               path:
-//                 type: string
-//               caption:
-//                 type: string
-//               link:
-//                 type: string
-//             additionalProperties: false
-//         poll:
-//           type: object
-//           properties:
-//             options:
-//               type: array
-//               items:
-//                 type: string
-//             votes:
-//               type: array
-//               items:
-//                 type: number
-//           additionalProperties: false
-//         community_id:
-//           type: string
-//           format: objectId
-//         community-name:
-//           type: string
-//         oc_flag:
-//           type: boolean
-//         spoiler_flag:
-//           type: boolean
-//         nsfw_flag:
-//           type: boolean
-// '''

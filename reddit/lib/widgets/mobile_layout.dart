@@ -55,8 +55,9 @@ class _MobileLayoutState extends State<MobileLayout> {
       ),
       const CommunitiesMobile(), //Communities Page here
       const CreatePost(),
-      ChatIntro(),
-    
+      MobileHomePage(
+        widgetIndex: 0, //Chat page here
+      ),
       //Inbox
       DefaultTabController(
         length: 2,
@@ -86,7 +87,12 @@ class _MobileLayoutState extends State<MobileLayout> {
             ),
           ],
         ),
-      )
+      ),
+      ChatIntro(),
+    
+      // MobileHomePage(
+      //   widgetIndex: 0, //Inbox page here
+      // )
     ];
     var selectedScreen = screens[selectedIndexPage];
     var selectedDrawer = drawers[selectedIndexPage == 0 ? 0 : 1];

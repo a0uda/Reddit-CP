@@ -77,8 +77,8 @@ class NotificationsService with ChangeNotifier {
   Future<bool> markAllAsRead() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    final url =
-        Uri.parse('https://redditech.me/backend/notifications/mark-all-as-read');
+    final url = Uri.parse(
+        'https://redditech.me/backend/notifications/mark-all-as-read');
     final response = await http.patch(
       url,
       headers: {

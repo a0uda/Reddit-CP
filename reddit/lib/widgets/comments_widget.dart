@@ -63,8 +63,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                     likes: post!.upvotesCount - post!.downvotesCount,
                     commentsCount: post!.commentsCount,
                     linkUrl: post!.linkUrl,
-                    imageUrl: post!.images?[0].path,
-                    videoUrl: post!.videos?[0].path,
+                    imageUrl: post!.images?[0].link,
+                    videoUrl: post!.videos?[0].link,
                     poll: post!.poll,
                     id: post!.id,
                     communityName: post!.communityName,
@@ -77,7 +77,11 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       itemCount: comments?.length,
                       itemBuilder: (context, index) {
                         final comment = comments![index];
-                        return Comment(comment: comment, isSaved: false);
+                        return Comment(
+                          comment: comment,
+                          isSaved: false,
+                          likes: comment.upvotesCount - comment.downvotesCount,
+                        );
                       },
                     ),
                   ),

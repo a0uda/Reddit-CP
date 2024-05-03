@@ -30,6 +30,7 @@ class UserController {
     accountSettings = await userService.getAccountSettings(username);
     notificationsSettings =
         await userService.getNotificationsSettings(username);
+    profileSettings = await userService.getProfileSettings(username);
   }
 
   // Future<NotificationsSettingsItem?> getNotificationsSettings(
@@ -43,6 +44,11 @@ class UserController {
 
   Future<void> getProfileSettings(String username) async {
     profileSettings = (await userService.getProfileSettings(username))!;
+  }
+
+  Future<void> updateAllowFollowers(bool value) async {
+    await userService.updateAllowFollowers(value);
+    profileSettings!.allowFollowers = value;
   }
 
   Future<AccountSettings>? getAccountSettings(String username) {
@@ -74,6 +80,7 @@ class UserController {
   }
 
   Future<void> changeCountry(String username, String country) {
+    userAbout!.country = country;
     return userService.changeCountry(username, country);
   }
 
@@ -99,7 +106,8 @@ class UserController {
     await userService.getNotificationsSettings(userAbout!.username);
   }
 
-  Future<void>updateSingleNotificationSetting(String username, String type, bool value) async {
+  Future<void> updateSingleNotificationSetting(
+      String username, String type, bool value) async {
     await userService.updateSingleNotificationSetting(username, type, value);
     await userService.getNotificationsSettings(username);
   }
@@ -297,7 +305,7 @@ class ChangeEmail extends ChangeNotifier {
 
   Future<bool> changeEmail(
       String username, String email, String password) async {
-    Future<bool> result = userService.changeEmail(username, email, password);
+    bool result = await userService.changeEmail(username, email, password);
     await userController.getUserAbout(username);
     notifyListeners();
     return result;
