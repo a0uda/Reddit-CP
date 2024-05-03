@@ -52,7 +52,6 @@ void main() async {
 
   GetIt.instance.registerSingleton<ChatsService>(ChatsService());
 
-
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
@@ -105,7 +104,6 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => NotificationsService(),
-      ),
       ),
       ChangeNotifierProvider(
         create: (context) => BlockUnblockUser(),
