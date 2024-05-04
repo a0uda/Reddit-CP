@@ -37,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             SettingsGroup(
               title: 'BASIC SETTINGS',
-              titleTextStyle: TextStyle( 
+              titleTextStyle: TextStyle(
                   height: 2,
                   fontWeight: FontWeight.bold,
                   fontSize: 12.0,
@@ -51,8 +51,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
-                const GenderTile(),
-                const CountryTile(),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const GenderTile();
+                  },
+                ),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const CountryTile();
+                  },
+                ),
               ],
             ),
             SettingsGroup(

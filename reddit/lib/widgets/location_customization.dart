@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 
 class LocationCustomization extends StatefulWidget {
@@ -44,6 +45,8 @@ class _LocationCustomizationState extends State<LocationCustomization> {
 
   @override
   Widget build(BuildContext context) {
+    final AccountSettingsController accountSettingsController =
+        context.read<AccountSettingsController>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Location'),
@@ -61,8 +64,7 @@ class _LocationCustomizationState extends State<LocationCustomization> {
                 setState(() {
                   selectedLocation = value!;
                 });
-                  await userController.changeCountry(
-                      userController.userAbout!.username, value!);
+                await accountSettingsController.changeCountry(value!);
               },
             ),
           );

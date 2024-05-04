@@ -64,9 +64,10 @@ class UserController {
   }
 
   Future<bool> changePassword(String username, String currentPassword,
-      String newPassword, String verifiedNewPassword) {
-    return userService.changePassword(
+      String newPassword, String verifiedNewPassword) async {
+    bool flag = await userService.changePassword(
         username, currentPassword, newPassword, verifiedNewPassword);
+    return flag;
   }
 
   Future<void> blockUser(UserAbout userData, String username) async {
@@ -79,14 +80,14 @@ class UserController {
     blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
-  Future<bool> changeGender(String username, String gender) {
-    return userService.changeGender(username, gender);
-  }
+  // Future<bool> changeGender(String username, String gender) {
+  //   return userService.changeGender(username, gender);
+  // }
 
-  Future<void> changeCountry(String username, String country) {
-    userAbout!.country = country;
-    return userService.changeCountry(username, country);
-  }
+  // Future<void> changeCountry(String username, String country) {
+  //   userAbout!.country = country;
+  //   return userService.changeCountry(username, country);
+  // }
 
   void connectToGoogle(String username) {
     userService.connectToGoogle(username);
@@ -124,6 +125,27 @@ class UserController {
     unreadNotificationsCount =
         await notificationService.getUnreadNotificationsCount();
     return unreadNotificationsCount;
+  }
+}
+
+class AccountSettingsController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<void> changeCountry(String country) async {
+    await userService.changeCountry(
+        userController.userAbout!.username, country);
+    userController.accountSettings!.country = country;
+    userController.userAbout!.country = country;
+    notifyListeners();
+  }
+
+  Future<bool> changeGender(String gender) async {
+    bool flag = await userService.changeGender(
+        userController.userAbout!.username, gender);
+    userController.accountSettings!.gender = gender;
+    notifyListeners();
+    return flag;
   }
 }
 
