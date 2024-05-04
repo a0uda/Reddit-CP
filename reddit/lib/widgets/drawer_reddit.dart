@@ -33,6 +33,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
   Future<void> fetchUserCommunities() async {
     if (!communitiesFetched) {
       await userController.getUserCommunities();
+      print(userController.userCommunities!.length);
     }
     communitiesFetched = true;
   }
@@ -83,6 +84,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                         title: const Text("Home"),
                         onTap: () {
                           if (widget.indexOfPage == 0) {
+                            communitiesFetched = false;
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
                               builder: (context) => const ResponsiveLayout(
@@ -94,6 +96,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                                   )),
                             ));
                           } else {
+                            communitiesFetched = false;
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const ResponsiveLayout(
                                   mobileLayout: MobileLayout(
@@ -120,6 +123,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                         title: const Text("Popular"),
                         onTap: () {
                           if (widget.indexOfPage == 1) {
+                            communitiesFetched = false;
                             Navigator.of(context)
                                 .pushReplacement(MaterialPageRoute(
                               builder: (context) => const ResponsiveLayout(
@@ -131,6 +135,7 @@ class _DrawerRedditState extends State<DrawerReddit> {
                                   )),
                             ));
                           } else {
+                            communitiesFetched = false;
                             Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => const ResponsiveLayout(
                                   mobileLayout: MobileLayout(

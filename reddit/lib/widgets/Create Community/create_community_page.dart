@@ -147,24 +147,22 @@ class _CreateCommunityState extends State<CreateCommunity> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
-      appBar: screenWidth < 700
-          ? AppBar(
-              title: const Text(
-                'Create a community',
-                style: TextStyle(
-                  fontSize: 17,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            )
-          : null,
+      appBar: AppBar(
+        title: const Text(
+          'Create a community',
+          style: TextStyle(
+            fontSize: 17,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Container(
         color: Colors.white,
         child: Container(
