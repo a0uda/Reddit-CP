@@ -42,7 +42,6 @@ class _ModeratorsListState extends State<ModeratorsList>
           .getModerators(moderatorController.communityName);
       startIndex = moderatorController.moderators.indexWhere(
           (mod) => mod["username"] == userController.userAbout?.username);
-      //print(moderatorController.moderators);
       editableMods = startIndex! >= 0
           ? moderatorController.moderators.sublist(startIndex!)
           : [];

@@ -1,6 +1,7 @@
 class Comments {
   String? id;
   String? postId;
+  String? postTitle;
   String? userId;
   String? username;
   String? parentId;
@@ -21,29 +22,29 @@ class Comments {
   bool? spoilerFlag;
   bool? commentInCommunityFlag;
 
-  Comments({
-    this.id,
-    this.postId,
-    this.userId,
-    this.username,
-    this.parentId,
-    this.subredditId,
-    this.subredditName,
-    this.repliesCommentsIds,
-    this.createdAt,
-    this.editedAt,
-    this.deletedAt,
-    this.description,
-    required this.upvotesCount,
-    required this.downvotesCount,
-    this.allowrepliesFlag,
-    this.spamFlag,
-    this.lockedFlag,
-    this.showCommentFlag,
-    this.moderatorDetails,
-    this.spoilerFlag,
-    this.commentInCommunityFlag,
-  });
+  Comments(
+      {this.id,
+      this.postId,
+      this.userId,
+      this.username,
+      this.parentId,
+      this.subredditId,
+      this.subredditName,
+      this.repliesCommentsIds,
+      this.createdAt,
+      this.editedAt,
+      this.deletedAt,
+      this.description,
+      required this.upvotesCount,
+      required this.downvotesCount,
+      this.allowrepliesFlag,
+      this.spamFlag,
+      this.lockedFlag,
+      this.showCommentFlag,
+      this.moderatorDetails,
+      this.spoilerFlag,
+      this.commentInCommunityFlag,
+      this.postTitle});
 
   factory Comments.fromJson(Map<String, dynamic> json) {
     return Comments(
@@ -52,10 +53,11 @@ class Comments {
       userId: json['user_id'],
       username: json['username'],
       parentId: json['parent_id'],
+      postTitle: json['post_title'] ?? '',
       repliesCommentsIds: (json['replies_comments_ids'] as List<dynamic>)
           .map((item) => item.toString())
           .toList(),
-      createdAt: json['created_at'].substring(0, 10),
+      createdAt: json['created_at'],
       editedAt: json['edited_at'],
       deletedAt: json['deleted_at'],
       description: json['description'],

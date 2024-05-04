@@ -112,37 +112,33 @@ class _MobileLayoutState extends State<MobileLayout> {
                       children: [
                         const Text('Messages'),
                         const SizedBox(width: 5),
-                        Consumer<MessagesOperations>(
-                            builder: (context, messagesOperations, child) {
-                          return Consumer<GetMessagesController>(
-                            builder: (context, getMessagesController, child) {
-                              if (userController.unreadMessagesCount > 0) {
-                                return Container(
-                                  padding: const EdgeInsets.all(1),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
+                        Consumer<GetMessagesController>(
+                          builder: (context, getMessagesController, child) {
+                            if (userController.unreadMessagesCount > 0) {
+                              return Container(
+                                padding: const EdgeInsets.all(1),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 15,
+                                  minHeight: 15,
+                                ),
+                                child: Text(
+                                  userController.unreadMessagesCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
                                   ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 15,
-                                    minHeight: 15,
-                                  ),
-                                  child: Text(
-                                    userController.unreadMessagesCount
-                                        .toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                );
-                              } else {
-                                return const SizedBox.shrink();
-                              }
-                            },
-                          );
-                        }),
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -226,43 +222,40 @@ class _MobileLayoutState extends State<MobileLayout> {
                   // The notification+messages count
                   Consumer<NotificationsService>(
                       builder: (context, notificationsService, child) {
-                    return Consumer<MessagesOperations>(
-                        builder: (context, messagesOperations, child) {
-                      return Consumer<GetMessagesController>(
-                          builder: (context, getMessagesController, child) {
-                        if (userController.unreadNotificationsCount +
-                                userController.unreadMessagesCount >
-                            0) {
-                          return Positioned(
-                            right: 0,
-                            top: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(1),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 12,
-                                minHeight: 12,
-                              ),
-                              child: Text(
-                                '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                    return Consumer<GetMessagesController>(
+                        builder: (context, getMessagesController, child) {
+                      if (userController.unreadNotificationsCount +
+                              userController.unreadMessagesCount >
+                          0) {
+                        return Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
                             ),
-                          );
-                        } else {
-                          return const SizedBox(
-                            height: 0,
-                            width: 0,
-                          );
-                        }
-                      });
+                            constraints: const BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const SizedBox(
+                          height: 0,
+                          width: 0,
+                        );
+                      }
                     });
                   }),
                 ],

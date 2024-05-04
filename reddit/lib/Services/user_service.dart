@@ -638,18 +638,6 @@ class UserService {
             .where((item) => item != null)
             .map((dynamic item) async => Messages.fromJson(item)),
       );
-      print('get messages');
-      for (var msg in messages) {
-        print(msg.id);
-        print(msg.unreadFlag);
-        print(msg.senderType);
-        print(msg.senderUsername);
-        print(msg.receiverType);
-        print(msg.receiverUsername);
-        print(msg.isSent);
-        print(msg.isInvitation);
-        print(msg.message);
-      }
       return messages;
     }
   }
