@@ -25,6 +25,8 @@ class UserController {
   List<FollowersFollowingItem>? following;
 
   Future<void> getUser(String username) async {
+    print('getting user');
+    print(username);
     userAbout = await userService.getUserAbout(username);
     blockedUsers = await userService.getBlockedUsers(username);
     accountSettings = await userService.getAccountSettings(username);
@@ -223,8 +225,8 @@ class ProfilePictureController extends ChangeNotifier {
 class FollowerFollowingController extends ChangeNotifier {
   final UserController userController = GetIt.instance.get<UserController>();
   final UserService userService = GetIt.instance.get<UserService>();
-  List<FollowersFollowingItem> followers=[];
-  List<FollowersFollowingItem> following=[];
+  List<FollowersFollowingItem> followers = [];
+  List<FollowersFollowingItem> following = [];
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
     followers = await userService.getFollowers(username);

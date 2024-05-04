@@ -127,7 +127,7 @@ class _CommentState extends State<Comment> {
   @override
   Widget build(BuildContext context) {
     String username = userController.userAbout!.username;
-    bool isMyPost = (username == widget.comment.username) ? true : false;
+    bool isMyComment = (username == widget.comment.username) ? true : false;
     return Card(
       borderOnForeground: true,
       shadowColor: Colors.white,
@@ -277,7 +277,7 @@ class _CommentState extends State<Comment> {
                                     ],
                                   ),
                                 ),
-                          if (isMyPost)
+                          if (isMyComment)
                             PopupMenuItem(
                               value: 2,
                               child: const Row(

@@ -8,7 +8,6 @@ import 'package:reddit/widgets/responsive_layout.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
 import '../Controllers/user_controller.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -67,8 +66,6 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Display error message for unsuccessful login
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -159,13 +156,34 @@ class LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            // await canLaunchUrl(Uri.parse(
-                            //         'https://redditech.me/backend/users/signup-google'))
-                            //     ? await launchUrl(Uri.parse(
-                            //         'https://redditech.me/backend/users/signup-google'))
-                            //     : throw 'Could not launch https://redditech.me/backend/users/signup-google';
                             var userService = GetIt.instance.get<UserService>();
-                            userService.loginWithGoogle();
+                            bool connected =
+                                (await userService.loginWithGoogle());
+                            if (connected) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Logged in successfully! Redirecting to home page...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.deepOrange[400],
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const ResponsiveLayout(
+                                    mobileLayout: MobileLayout(
+                                      mobilePageMode: 0,
+                                    ),
+                                    desktopLayout: DesktopHomePage(
+                                      indexOfPage: 0,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.all(buttonPadding),
