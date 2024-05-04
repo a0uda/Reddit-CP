@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -98,6 +99,20 @@ class NotificationCardState extends State<NotificationCard> {
       isPost = false;
     }
     title += ' • ${formatDateTime(widget.notificationItem.createdAt!)}';
+
+    if (widget.notificationItem.unreadFlag == true) {
+      var count = 0;
+
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: count,
+          channelKey: 'basic_channel',
+          title: title,
+          body: subtitle,
+        ),
+      );
+      count++;
+    }
 
     return ListTile(
       onTap: isPost
