@@ -120,7 +120,9 @@ class _CreateCommunityState extends State<CreateCommunity> {
       });
     } else {
       notAvailable = false;
-      addProfilePictuireProvider.updateProfilePicture(communityName: inputController.text, pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
+      addProfilePictuireProvider.updateProfilePicture(
+          communityName: inputController.text,
+          pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
       // ignore: use_build_context_synchronously
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -331,10 +333,12 @@ class _CreateCommunityState extends State<CreateCommunity> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('Community Type',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                  'Community Type',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ],
                             ),
                             ListTile(
@@ -448,13 +452,11 @@ class _CreateCommunityState extends State<CreateCommunity> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () async {
-                        // print('Mohy bey test el create community button');
-                        // print(inputController.text);
-                        // print(chosenCommunityType);
-                        // print(initCommunityFlag);
-                        await checkAvailibleName();
-                      },
+                      onPressed: (isViolated || inputController.text.isEmpty)
+                          ? null
+                          : () async {
+                              await checkAvailibleName();
+                            },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: isFinished
                             ? const Color.fromARGB(255, 0, 110, 200)

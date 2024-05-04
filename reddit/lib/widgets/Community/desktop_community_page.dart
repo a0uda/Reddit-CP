@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
@@ -67,6 +68,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               content: const Text(
                 'Are you sure you want to leave this community?',
                 style: TextStyle(
@@ -311,17 +313,20 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
-                          return Container(
-                            height: 128,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    moderatorController.bannerPictureURL),
-                                fit: BoxFit.cover,
+                          return Consumer<UpdateProfilePicture>(
+                              builder: (context, updateProfilePicture, child) {
+                            return Container(
+                              height: 128,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                      moderatorController.bannerPictureURL),
+                                  fit: BoxFit.fill,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          );
+                            );
+                          });
                         }
                       },
                     ),
@@ -454,19 +459,22 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
-                        return Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white, width: 4),
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundImage: NetworkImage(
-                                moderatorController.profilePictureURL),
-                          ),
-                        );
+                        return Consumer<UpdateProfilePicture>(
+                            builder: (context, updateProfilePicture, child) =>
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.white, width: 4),
+                                    borderRadius: BorderRadius.circular(40),
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(
+                                        moderatorController.profilePictureURL),
+                                  ),
+                                ));
                       }
                     },
                   ),

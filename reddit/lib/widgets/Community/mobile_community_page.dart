@@ -59,6 +59,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               content: const Text(
                 'Are you sure you want to leave this community?',
                 style: TextStyle(
@@ -306,8 +307,8 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 30.0),
                                   child: LoadingAnimationWidget.twoRotatingArc(
-                                      color:
-                                          const Color.fromARGB(255, 172, 172, 172),
+                                      color: const Color.fromARGB(
+                                          255, 172, 172, 172),
                                       size: 20),
                                 ),
                               );

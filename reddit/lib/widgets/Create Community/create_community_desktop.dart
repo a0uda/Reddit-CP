@@ -431,9 +431,11 @@ class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () async {
-                        await checkAvailibleName();
-                      },
+                      onPressed: (isViolated || inputController.text.isEmpty)
+                          ? null
+                          : () async {
+                              await checkAvailibleName();
+                            },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: isFinished
                             ? const Color.fromARGB(255, 0, 110, 200)
