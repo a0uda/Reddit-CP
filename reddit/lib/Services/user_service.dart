@@ -641,6 +641,7 @@ class UserService {
       print('get messages');
       for (var msg in messages) {
         print(msg.id);
+        print(msg.unreadFlag);
         print(msg.senderType);
         print(msg.senderUsername);
         print(msg.receiverType);
@@ -650,6 +651,33 @@ class UserService {
         print(msg.message);
       }
       return messages;
+    }
+  }
+
+  Future<int> getUnreadMessagesCount(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      int count = 0;
+      count = messages.where((element) => element.unreadFlag == true).length;
+      return count;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/unread-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get unread messages count');
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body)['count'];
     }
   }
 
@@ -823,7 +851,20 @@ class UserService {
         msg.unreadFlag = false;
       }
     } else {
-      // todo: mark all messages read in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-all-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in mark all messages as read');
+      print(response.body);
     }
   }
 

@@ -154,7 +154,7 @@ class _MessageContentState extends State<MessageContent> {
                                     text: TextSpan(
                                       children: message.isInvitation!
                                           ? _parseInvitationMessage(
-                                              message.message!)
+                                              message.message!, message.id)
                                           : _parseMessage(message.message!),
                                       style: const TextStyle(
                                         fontSize: 15,
@@ -329,7 +329,7 @@ class _MessageContentState extends State<MessageContent> {
     );
   }
 
-  List<TextSpan> _parseInvitationMessage(String message) {
+  List<TextSpan> _parseInvitationMessage(String message, String msgID) {
     final List<TextSpan> spans = [];
 
     final RegExp regex = RegExp(
@@ -362,11 +362,15 @@ class _MessageContentState extends State<MessageContent> {
             context,
             MaterialPageRoute(
               builder: (context) => ModResponsive(
-                  mobileLayout: Moderators(isInvite: true),
+                  mobileLayout: Moderators(
+                    isInvite: true,
+                    msgID: msgID,
+                  ),
                   desktopLayout: DesktopModTools(
                     index: 4,
                     communityName: moderatorController.communityName,
                     isInvite: true,
+                    msgID: msgID,
                   )),
             ),
           );
