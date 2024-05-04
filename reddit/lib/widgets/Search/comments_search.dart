@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Search/comments_ui.dart';
 
 class CommentsSearch extends StatefulWidget {
   final String searchFor;
-  const CommentsSearch({super.key, required this.searchFor});
+  final String name;
+  final bool inComm;
+  const CommentsSearch(
+      {super.key,
+      required this.searchFor,
+      required this.inComm,
+      this.name = ""});
 
   @override
   State<CommentsSearch> createState() => _CommentsSearchState();
@@ -15,17 +24,66 @@ class CommentsSearch extends StatefulWidget {
 
 class _CommentsSearchState extends State<CommentsSearch> {
   final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
   final SearchService searchService = GetIt.instance.get<SearchService>();
+  final ModeratorMockService moderatorService =
+      GetIt.instance.get<ModeratorMockService>();
+  String selectedOption = "relevance";
   List<Map<String, dynamic>> foundComments = [];
-  bool fetched = false;
-  String searchFor = "";
+  List<Map<String, dynamic>> temp = [];
 
-  Future<void> fetchPeople() async {
-    if (!fetched) {
-      searchFor = widget.searchFor;
-      foundComments = original;
-      fetched = true;
+  String searchFor = "";
+  int pageNum = 1;
+  ScrollController scrollController = ScrollController();
+  bool isLoading = false;
+
+  Future<void> fetchComments() async {
+    searchFor = widget.searchFor;
+    setState(() {
+      isLoading = true;
+    });
+    if (widget.inComm) {
+      temp = await searchService.getCommentsInCommunity(
+          searchFor, pageNum, selectedOption, widget.name);
+    } else {
+      temp = await searchService.getSearchComments(
+          searchFor, pageNum, selectedOption);
     }
+    //getcommunity->pp
+    temp.forEach(
+      (comment) async {
+        if (comment["post_id"]["post_in_community_flag"]) {
+          Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+              communityName: comment["post_id"]["community_name"]);
+          comment["community_profile_picture"] =
+              comm["communityProfilePicture"];
+        } else {
+          ProfileSettings? userInPost = await userService
+              .getProfileSettings(comment["post_id"]["username"]);
+          if (userInPost != null) {
+            comment["community_profile_picture"] = userInPost.profilePicture!;
+          }
+        }
+        //getprofilesettings -> pp
+        ProfileSettings? userInComment =
+            await userService.getProfileSettings(comment["username"]);
+        if (userInComment != null) {
+          comment["profile_picture"] = userInComment.profilePicture!;
+        }
+      },
+    );
+
+    foundComments.addAll(temp);
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -33,50 +91,242 @@ class _CommentsSearchState extends State<CommentsSearch> {
     // TODO: implement initState
     super.initState();
     searchFor = widget.searchFor;
+    fetchComments();
+    scrollController.addListener(scrollListener);
+  }
+
+  void scrollListener() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      print("tab ehh");
+      pageNum++;
+      fetchComments();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: fetchPeople(),
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return const Text('none');
-          case ConnectionState.waiting:
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 30.0),
+    if (foundComments.isNotEmpty) {
+      return ListView.builder(
+        controller: scrollController,
+        itemCount: foundComments.length + (isLoading ? 1 : 0),
+        itemBuilder: (BuildContext context, int index) {
+          if (index < foundComments.length) {
+            final item = foundComments[index];
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                index == 0
+                    ? Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10.0, top: 10, bottom: 10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              backgroundColor: Colors.white,
+                              context: context,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20.0),
+                                ),
+                              ),
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return Container(
+                                      color: Colors.white,
+                                      padding: const EdgeInsets.all(13),
+                                      child: IntrinsicHeight(
+                                        child: Column(
+                                          children: [
+                                            const ListTile(
+                                              title: Text('Sort by'),
+                                            ),
+                                            RadioListTile(
+                                              title:
+                                                  const Text('Most relevant'),
+                                              value: 'relevance',
+                                              activeColor: Colors.black,
+                                              groupValue: selectedOption,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedOption = value!;
+                                                });
+                                                Navigator.of(context).pop();
+                                                foundComments = [];
+                                                fetchComments();
+                                                //fetch tany
+                                              },
+                                            ),
+                                            RadioListTile(
+                                              title: const Text('New'),
+                                              value: 'new',
+                                              groupValue: selectedOption,
+                                              activeColor: Colors.black,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedOption = value!;
+                                                });
+                                                Navigator.of(context).pop();
+                                                foundComments = [];
+                                                fetchComments();
+                                              },
+                                            ),
+                                            RadioListTile(
+                                              title: const Text('Top'),
+                                              value: 'top',
+                                              groupValue: selectedOption,
+                                              activeColor: Colors.black,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedOption = value!;
+                                                });
+                                                Navigator.of(context).pop();
+                                                foundComments = [];
+                                                fetchComments();
+                                              },
+                                            ),
+                                            const SizedBox(height: 20),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.grey[300],
+                              surfaceTintColor: Colors.grey[300]),
+                          child: const Text(
+                            "Sort",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: CommentUI(comment: item),
+                ),
+                Divider(
+                  color: Colors.grey[300],
+                  height: 2,
+                )
+              ],
+            );
+          } else {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
                 child: CircularProgressIndicator(),
               ),
             );
-          case ConnectionState.done:
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-            return ListView.builder(
-              itemCount: foundComments.length,
-              itemBuilder: (BuildContext context, int index) {
-                final item = foundComments[index];
-                return Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: CommentUI(comment: item),
+          }
+        },
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 10.0, top: 10, bottom: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Colors.white,
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20.0),
                     ),
-                    Divider(
-                      color: Colors.grey[300],
-                      height: 2,
-                    )
-                  ],
+                  ),
+                  builder: (BuildContext context) {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.all(13),
+                          child: IntrinsicHeight(
+                            child: Column(
+                              children: [
+                                const ListTile(
+                                  title: Text('Sort by'),
+                                ),
+                                RadioListTile(
+                                  title: const Text('Most relevant'),
+                                  value: 'relevance',
+                                  activeColor: Colors.black,
+                                  groupValue: selectedOption,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = value!;
+                                    });
+                                    Navigator.of(context).pop();
+                                    foundComments = [];
+                                    fetchComments();
+                                    //fetch tany
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: const Text('New'),
+                                  value: 'new',
+                                  groupValue: selectedOption,
+                                  activeColor: Colors.black,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = value!;
+                                    });
+                                    Navigator.of(context).pop();
+                                    foundComments = [];
+                                    fetchComments();
+                                  },
+                                ),
+                                RadioListTile(
+                                  title: const Text('Top'),
+                                  value: 'top',
+                                  groupValue: selectedOption,
+                                  activeColor: Colors.black,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedOption = value!;
+                                    });
+                                    Navigator.of(context).pop();
+                                    foundComments = [];
+                                    fetchComments();
+                                  },
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 );
               },
-            );
-          default:
-            return const Text('badr');
-        }
-      },
-    );
+              style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  elevation: 0,
+                  shadowColor: Colors.transparent,
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.grey[300],
+                  surfaceTintColor: Colors.grey[300]),
+              child: const Text(
+                "Sort",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
 

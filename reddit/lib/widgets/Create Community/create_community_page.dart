@@ -120,8 +120,11 @@ class _CreateCommunityState extends State<CreateCommunity> {
       });
     } else {
       notAvailable = false;
-      addProfilePictuireProvider.updateProfilePicture(communityName: inputController.text, pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
+      addProfilePictuireProvider.updateProfilePicture(
+          communityName: inputController.text,
+          pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
       // ignore: use_build_context_synchronously
+      moderatorController.communityName = inputController.text;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => (CommunityLayout(

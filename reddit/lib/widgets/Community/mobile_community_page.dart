@@ -136,11 +136,19 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
       appBar: MediaQuery.of(context).size.width > 700
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: DesktopAppBar(logoTapped: logoTapped),
+              child: DesktopAppBar(
+                logoTapped: logoTapped,
+                communityName: widget.communityName,
+                isInCommunity: true,
+              ),
             )
           : PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: MobileAppBar(logoTapped: logoTapped),
+              child: MobileAppBar(
+                logoTapped: logoTapped,
+                communityName: widget.communityName,
+                isInCommunity: true,
+              ),
             ),
       drawer: MediaQuery.of(context).size.width < 700
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
@@ -306,8 +314,8 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 30.0),
                                   child: LoadingAnimationWidget.twoRotatingArc(
-                                      color:
-                                          const Color.fromARGB(255, 172, 172, 172),
+                                      color: const Color.fromARGB(
+                                          255, 172, 172, 172),
                                       size: 20),
                                 ),
                               );

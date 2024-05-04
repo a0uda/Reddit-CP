@@ -175,17 +175,26 @@ class _DrawerRedditState extends State<DrawerReddit> {
                           children: [
                             DrawerTile(
                               tileTitle: "COMMUNITIES",
-                              lists: userController.userCommunities!,
+                              lists: userController.userCommunities ?? [],
                               isMod: false,
                             ),
-                            const Divider(
-                              color: Colors.grey,
-                              height: 30,
-                              indent: 30,
-                              endIndent: 30,
-                            ),
-                            userController.userAbout?.moderatedCommunities !=
-                                    null
+                            (userController.userAbout?.moderatedCommunities !=
+                                        null &&
+                                    userController
+                                            .userAbout?.moderatedCommunities !=
+                                        [])
+                                ? const Divider(
+                                    color: Colors.grey,
+                                    height: 30,
+                                    indent: 30,
+                                    endIndent: 30,
+                                  )
+                                : const SizedBox(),
+                            (userController.userAbout?.moderatedCommunities !=
+                                        null &&
+                                    userController
+                                            .userAbout?.moderatedCommunities !=
+                                        [])
                                 ? DrawerTile(
                                     tileTitle: "MODERATION",
                                     lists: userController

@@ -31,6 +31,8 @@ class PostItem {
   final bool nsfwFlag;
   bool lockedFlag;
   bool allowrepliesFlag;
+  bool? inCommunityFlag;
+  String? profilePicture;
   final String? setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;
@@ -54,6 +56,8 @@ class PostItem {
     this.videos,
     this.poll,
     this.communityId,
+    this.inCommunityFlag,
+    this.profilePicture,
     required this.communityName,
     required this.commentsCount,
     required this.viewsCount,
@@ -74,11 +78,11 @@ class PostItem {
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
     print(json);
-    final List<dynamic> jsonlist = json['images']??[];
-    final List<ImageItem> imagelist =  jsonlist.map((jsonitem) {
+    final List<dynamic> jsonlist = json['images'] ?? [];
+    final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
       return ImageItem.fromJson(jsonitem);
     }).toList();
-    final List<dynamic> jsonlist2 = json['videos']??[];
+    final List<dynamic> jsonlist2 = json['videos'] ?? [];
     final List<VideoItem> videolist = jsonlist2.map((jsonitem) {
       return VideoItem.fromJson(jsonitem);
     }).toList();
@@ -111,6 +115,7 @@ class PostItem {
       vote: (json['vote'] != null) ? (json['vote']) : 0,
       images: (imagelist.isNotEmpty) ? imagelist : null,
       videos: (videolist.isNotEmpty) ? videolist : null,
+      inCommunityFlag: json["post_in_community_flag"],
     );
   }
 }

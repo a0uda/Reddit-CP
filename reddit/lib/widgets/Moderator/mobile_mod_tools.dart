@@ -20,7 +20,6 @@ class _MobileModToolsState extends State<MobileModTools> {
   @override
   void initState() {
     super.initState();
-    moderatorController.getCommunity(widget.communityName);
   }
 
   @override

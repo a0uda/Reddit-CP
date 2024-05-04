@@ -209,6 +209,7 @@ class ModeratorMockService {
           'username': username,
         }),
       );
+      print(response.body);
     }
   }
 
@@ -498,6 +499,8 @@ class ModeratorMockService {
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
+      print("badr");
+      print(response.body);
       return moderators.reversed.toList(); //badrrr
     }
   }
@@ -547,9 +550,6 @@ class ModeratorMockService {
           },
         }),
       );
-      //print("MOOOOODDD");
-      //print(communityName);
-      //print(response.body);
     }
   }
 
@@ -812,8 +812,8 @@ class ModeratorMockService {
         },
       ),
     );
-    //print('Mohy beyshoof el response');
-    //print(response.statusCode);
+    print('Mohy beyshoof el response');
+    print(response.body);
     if (response.statusCode == 201) {
       return 200;
     } else {
