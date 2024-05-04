@@ -921,4 +921,23 @@ class ModeratorMockService {
       ),
     );
   }
+  Future<void> joinCommunity ({required String communityName, required bool isJoined}) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/users/join-community');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "community_name": communityName,
+          "leave": isJoined,
+        },
+      ),
+    );
+  }
 }

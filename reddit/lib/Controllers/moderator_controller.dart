@@ -365,3 +365,16 @@ class UpdateProfilePicture extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class IsJoinedProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> joinCommunity(
+      {required String communityName, required bool isJoined}) async {
+    await moderatorService.joinCommunity(
+        communityName: communityName, isJoined: isJoined);
+    moderatorController.joinedFlag = isJoined;
+    notifyListeners();
+  }
+}

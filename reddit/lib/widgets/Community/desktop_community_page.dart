@@ -45,7 +45,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
 
   @override
   void initState() {
-    if (isJoined) {
+    if (moderatorController.joinedFlag) {
       buttonState = 'Joined';
     } else {
       buttonState = 'Join';
