@@ -23,29 +23,6 @@ class Comments {
   bool? commentInCommunityFlag;
   bool? saved;
 
-  Comments(
-      {this.id,
-      this.postId,
-      this.userId,
-      this.username,
-      this.parentId,
-      this.subredditId,
-      this.subredditName,
-      this.repliesCommentsIds,
-      this.createdAt,
-      this.editedAt,
-      this.deletedAt,
-      this.description,
-      required this.upvotesCount,
-      required this.downvotesCount,
-      this.allowrepliesFlag,
-      this.spamFlag,
-      this.lockedFlag,
-      this.showCommentFlag,
-      this.moderatorDetails,
-      this.spoilerFlag,
-      this.commentInCommunityFlag,
-      this.postTitle});
   Comments({
     this.id,
     this.postId,
@@ -69,6 +46,7 @@ class Comments {
     this.spoilerFlag,
     this.commentInCommunityFlag,
     this.saved,
+    this.postTitle,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
