@@ -68,45 +68,54 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             },
           ),
           userType == 'me'
-              ? FutureBuilder<int>(
-                  future: userService.getFollowersCount(userData.username),
-                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox.shrink();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      int followersCount = snapshot.data!;
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            '$followersCount followers',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          IconButton(
-                            padding: const EdgeInsets.only(top: 26),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const FollowerList(),
+              ? Consumer<BlockUnblockUser>(
+                  builder: (context, blockUnblockUser, child) {
+                  return FutureBuilder<int>(
+                      future: userService.getFollowersCount(userData.username),
+                      builder:
+                          (BuildContext context, AsyncSnapshot<int> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox.shrink();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          int followersCount = snapshot.data!;
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                '$followersCount followers',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              );
-                            },
-                            icon: const Icon(Icons.arrow_forward_ios_rounded),
-                            color: Colors.white,
-                            iconSize: 13,
-                          )
-                        ],
-                      );
-                    }
-                  })
+                              ),
+                              followersCount > 0
+                                  ? IconButton(
+                                      padding: const EdgeInsets.only(top: 26),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const FollowerList(),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(
+                                          Icons.arrow_forward_ios_rounded),
+                                      color: Colors.white,
+                                      iconSize: 13,
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          );
+                        }
+                      });
+                })
               : Container(),
           Flexible(
             child: Text(

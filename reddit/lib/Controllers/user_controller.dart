@@ -338,7 +338,7 @@ class MessagesOperations extends ChangeNotifier {
         message,
         subject);
     if (success) {
-      userController.getUnreadMessagesCount();
+      //userController.getUnreadMessagesCount();
       notifyListeners();
     }
     return success;
@@ -349,7 +349,7 @@ class MessagesOperations extends ChangeNotifier {
     bool success = await userService.sendNewMessage(
         userController.userAbout!.username, receiverUsername, message, subject);
     if (success) {
-      userController.getUnreadMessagesCount();
+      //userController.getUnreadMessagesCount();
       notifyListeners();
     }
     return success;
@@ -361,10 +361,12 @@ class MessagesOperations extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> markonAsRead(String messageId) async {
-    await userService.markoneMessageRead(
-        userController.userAbout!.username, messageId);
-    userController.getUnreadMessagesCount();
+  Future<void> markonAsRead(List<Messages> messages) async {
+    for (var message in messages) {
+      await userService.markoneMessageRead(
+          userController.userAbout!.username, message.id);
+    }
+    //await userController.getUnreadMessagesCount();
     notifyListeners();
   }
 }
@@ -376,11 +378,8 @@ class GetMessagesController extends ChangeNotifier {
   Future<List<Messages>> getUserMessages() async {
     List<Messages>? messages =
         await userService.getMessages(userController.userAbout!.username);
-    userController.unreadMessagesCount = messages!
-        .where((element) => element.unreadFlag == true)
-        .toList()
-        .length;
+    await userController.getUnreadMessagesCount();
     notifyListeners();
-    return messages;
+    return messages!;
   }
 }

@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
@@ -12,6 +14,7 @@ import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/message_content.dart';
+import 'package:social_media_flutter/widgets/icons.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({
@@ -98,8 +101,6 @@ class MessagesState extends State<MessagesPage> {
                                       : message.senderType;
                                   return ListTile(
                                     onTap: () async {
-                                      messagesOperations
-                                          .markonAsRead(message.id);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -109,105 +110,119 @@ class MessagesState extends State<MessagesPage> {
                                           )),
                                         ),
                                       );
-                                      setState(() {
-                                        message.unreadFlag = false;
-                                      });
+                                      await messagesOperations
+                                          .markonAsRead(replies);
                                     },
                                     tileColor: Colors.white,
                                     title: Row(
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            if (receiverType == 'user') {
-                                              var userType = userController
-                                                          .userAbout!
-                                                          .username ==
-                                                      messageReceiver
-                                                  ? 'me'
-                                                  : 'other';
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FutureBuilder<UserAbout?>(
-                                                    future: userService
-                                                        .getUserAbout(
-                                                            messageReceiver!),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .waiting) {
-                                                        return Container(
-                                                          color: Colors.white,
-                                                          child: const SizedBox(
-                                                              height: 30,
-                                                              width: 30,
-                                                              child: Center(
-                                                                child:
-                                                                    CircularProgressIndicator(),
-                                                              )),
-                                                        );
-                                                      } else if (snapshot
-                                                          .hasError) {
-                                                        return Text(
-                                                            'Error: ${snapshot.error}');
-                                                      } else {
-                                                        return ProfileScreen(
-                                                          snapshot.data,
-                                                          userType,
-                                                        );
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              );
-                                            } else {
-                                              List<CommunityBackend>
-                                                  moderatedCammunities =
-                                                  userController.userAbout!
-                                                      .moderatedCommunities!;
-                                              bool isMod = false;
-                                              if (moderatedCammunities.any(
-                                                      (element) =>
-                                                          element.name ==
-                                                          messageReceiver) ==
-                                                  true) {
-                                                isMod = true;
-                                              } else {
-                                                isMod = false;
-                                              }
-                                              Navigator.of(context).push(
+                                            if (messageReceiver != 'reddit') {
+                                              if (receiverType == 'user') {
+                                                var userType = userController
+                                                            .userAbout!
+                                                            .username ==
+                                                        messageReceiver
+                                                    ? 'me'
+                                                    : 'other';
+                                                Navigator.push(
+                                                  context,
                                                   MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          (CommunityLayout(
-                                                            desktopLayout:
-                                                                DesktopCommunityPage(
-                                                                    isMod:
-                                                                        isMod,
-                                                                    communityName:
-                                                                        messageReceiver!),
-                                                            mobileLayout:
-                                                                MobileCommunityPage(
-                                                              isMod: isMod,
-                                                              communityName:
-                                                                  messageReceiver,
-                                                            ),
-                                                          ))));
+                                                    builder: (context) =>
+                                                        FutureBuilder<
+                                                            UserAbout?>(
+                                                      future: userService
+                                                          .getUserAbout(
+                                                              messageReceiver!),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          return Container(
+                                                            color: Colors.white,
+                                                            child:
+                                                                const SizedBox(
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(),
+                                                                    )),
+                                                          );
+                                                        } else if (snapshot
+                                                            .hasError) {
+                                                          return Text(
+                                                              'Error: ${snapshot.error}');
+                                                        } else {
+                                                          return ProfileScreen(
+                                                            snapshot.data,
+                                                            userType,
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              } else {
+                                                List<CommunityBackend>
+                                                    moderatedCammunities =
+                                                    userController.userAbout!
+                                                        .moderatedCommunities!;
+                                                bool isMod = false;
+                                                if (moderatedCammunities.any(
+                                                        (element) =>
+                                                            element.name ==
+                                                            messageReceiver) ==
+                                                    true) {
+                                                  isMod = true;
+                                                } else {
+                                                  isMod = false;
+                                                }
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            (CommunityLayout(
+                                                              desktopLayout:
+                                                                  DesktopCommunityPage(
+                                                                      isMod:
+                                                                          isMod,
+                                                                      communityName:
+                                                                          messageReceiver!),
+                                                              mobileLayout:
+                                                                  MobileCommunityPage(
+                                                                isMod: isMod,
+                                                                communityName:
+                                                                    messageReceiver,
+                                                              ),
+                                                            ))));
+                                              }
                                             }
                                           },
                                           child: Text(
                                             "${message.isSent ? message.receiverType == 'user' ? message.receiverUsername ?? '' : 'r/${message.receiverUsername}' : message.senderType == 'user' ? message.senderUsername : 'r/${message.senderVia}'}",
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: message.unreadFlag
-                                                    ? Colors.black
-                                                    : const Color.fromARGB(
-                                                        255, 112, 112, 112),
+                                                color: messageReceiver ==
+                                                        'reddit'
+                                                    ? Colors.orange[900]
+                                                    : message.unreadFlag &&
+                                                            !message.isSent
+                                                        ? Colors.black
+                                                        : const Color.fromARGB(
+                                                            255, 112, 112, 112),
                                                 fontWeight: FontWeight.bold),
                                           ),
                                         ),
+                                        messageReceiver == 'reddit'
+                                            ? Brand(
+                                                Brands.reddit,
+                                                size: 20,
+                                              )
+                                            : const SizedBox.shrink(),
                                         Text(
                                           ' • ${getDateTimeDifferenceWithLabel(message.createdAt ?? '')}',
                                           style: const TextStyle(
@@ -231,7 +246,11 @@ class MessagesState extends State<MessagesPage> {
                                                         messageReceiver) &&
                                                     messageReceiver !=
                                                         userController
-                                                            .userAbout!.username
+                                                            .userAbout!
+                                                            .username &&
+                                                    messageReceiver !=
+                                                        'reddit' &&
+                                                    receiverType == 'user'
                                                 ? GestureDetector(
                                                     onTap: () =>
                                                         showMoreOptionsDialog(
@@ -240,7 +259,9 @@ class MessagesState extends State<MessagesPage> {
                                                             userController),
                                                     child: Icon(
                                                       Icons.more_horiz,
-                                                      color: message.unreadFlag
+                                                      color: message
+                                                                  .unreadFlag &&
+                                                              !message.isSent
                                                           ? const Color
                                                               .fromARGB(
                                                               255, 92, 92, 92)
@@ -267,7 +288,8 @@ class MessagesState extends State<MessagesPage> {
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                   fontSize: 14,
-                                                  color: message.unreadFlag
+                                                  color: message.unreadFlag &&
+                                                          !message.isSent
                                                       ? Colors.black
                                                       : const Color.fromARGB(
                                                           255, 156, 156, 156),
@@ -275,12 +297,15 @@ class MessagesState extends State<MessagesPage> {
                                               )
                                             : const SizedBox.shrink(),
                                         Text(
-                                          message.message ?? '',
+                                          messageReceiver != 'reddit'
+                                              ? message.message ?? ''
+                                              : 'Tips to get started ➡️',
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: message.unreadFlag
+                                            color: message.unreadFlag &&
+                                                    !message.isSent
                                                 ? Colors.black
                                                 : const Color.fromARGB(
                                                     255, 156, 156, 156),
@@ -333,20 +358,21 @@ class MessagesState extends State<MessagesPage> {
   List<Messages> processAllMessage(List<Messages> messagesList) {
     List<Messages> processedMessages = [];
     List<Messages> messages = List.from(messagesList);
-    while (messages.isNotEmpty) {
-      Messages message = messages.removeAt(0);
-      List<Messages> replies = messagesList
-          .where((msg) => msg.parentMessageId == message.id)
-          .toList();
-      messages.removeWhere((msg) => replies.contains(msg));
-      replies.add(message);
-      replies.sort((a, b) {
-        DateTime dateA = DateTime.parse(a.createdAt!);
-        DateTime dateB = DateTime.parse(b.createdAt!);
-        return dateA.compareTo(dateB);
-      });
-      replies.last.subject = replies.first.subject;
-      processedMessages.add(replies.last);
+    for (var message in messagesList) {
+      if (message.parentMessageId == null) {
+        List<Messages> replies =
+            messages.where((msg) => msg.parentMessageId == message.id).toList();
+        replies.add(message);
+
+        messages.removeWhere((msg) => replies.contains(msg));
+        replies.sort((a, b) {
+          DateTime dateA = DateTime.parse(a.createdAt!);
+          DateTime dateB = DateTime.parse(b.createdAt!);
+          return dateA.compareTo(dateB);
+        });
+        replies.last.subject = replies.first.subject;
+        processedMessages.add(replies.last);
+      }
     }
     processedMessages.sort((a, b) {
       DateTime dateA = DateTime.parse(a.createdAt!);
