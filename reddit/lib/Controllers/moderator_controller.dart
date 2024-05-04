@@ -27,18 +27,6 @@ class ModeratorController {
   String bannerPictureURL = "images/reddit-banner-image.jpg";
   CommunityItem? communityItem;
 
-  Future<void> getCommunity(String communityName) async {
-    this.communityName = communityName;
-    approvedUsers = await moderatorService.getApprovedUsers(communityName);
-    bannedUsers = await moderatorService.getBannedUsers(communityName);
-    mutedUsers = await moderatorService.getMutedUsers(communityName);
-    moderators = await moderatorService.getModerators(communityName);
-    rules = await moderatorService.getRules(communityName);
-    generalSettings =
-        await moderatorService.getCommunityGeneralSettings(communityName);
-    postTypesAndOptions = moderatorService.getPostTypesAndOptions(communityName)
-        as Map<String, dynamic>;
-  }
 
   Future<void> getCommunityInfo(String communityName) async {
     Map<String, dynamic> info =
@@ -299,7 +287,6 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
             nsfwFlag: general.nsfwFlag));
     moderatorController.generalSettings =
         await moderatorService.getCommunityGeneralSettings(communityName);
-
     notifyListeners();
   }
 }

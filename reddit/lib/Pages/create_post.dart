@@ -773,26 +773,28 @@ class ModalForRules extends StatelessWidget {
               style: TextStyle(color: Colors.grey),
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: moderatorController.rules.length,
-            itemBuilder: (BuildContext context, int index) {
-              final item = moderatorController.rules[index];
-              return Column(
-                children: [
-                  ListTile(
-                    leading: Text("${index + 1}."),
-                    title: Text(item.ruleTitle),
-                  ),
-                  Divider(
-                    endIndent: 25,
-                    indent: 25,
-                    color: Colors.grey[300],
-                    height: 1,
-                  ),
-                ],
-              );
-            },
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: moderatorController.rules.length,
+              itemBuilder: (BuildContext context, int index) {
+                final item = moderatorController.rules[index];
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Text("${index + 1}."),
+                      title: Text(item.ruleTitle),
+                    ),
+                    Divider(
+                      endIndent: 25,
+                      indent: 25,
+                      color: Colors.grey[300],
+                      height: 1,
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ],
       ),

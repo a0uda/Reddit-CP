@@ -60,7 +60,6 @@ class _DesktopModToolsState extends State<DesktopModTools> {
         isEditMode: false,
       ),
       const ScheduledPostsList(),
-
     ];
   }
 
@@ -88,7 +87,11 @@ class _DesktopModToolsState extends State<DesktopModTools> {
   Widget build(BuildContext context) {
     var approvedUserProvider = context.read<ApprovedUserProvider>();
     return Scaffold(
-      appBar: DesktopAppBar(logoTapped: logoTapped),
+      appBar: DesktopAppBar(
+        logoTapped: logoTapped,
+        communityName: widget.communityName,
+        isInCommunity: true,
+      ),
       body: Column(
         children: [
           const Divider(

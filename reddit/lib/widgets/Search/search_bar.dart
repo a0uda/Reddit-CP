@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Search/Suggestions.dart';
 import 'package:reddit/widgets/Search/comments_search.dart';
 import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
@@ -41,8 +44,9 @@ class SearchBarClass extends SearchDelegate {
       icon: const Icon(Icons.arrow_back),
     );
   }
+
 // third overwrite to show query result
-int index = 0;
+  int index = 0;
   @override
   Widget buildResults(BuildContext context) {
     // List<String> matchQuery = [];
@@ -58,9 +62,7 @@ int index = 0;
       child: Column(
         children: [
           TabBar(
-            onTap: (value) => {
-              index = value
-            },
+            onTap: (value) => {index = value},
             tabAlignment: TabAlignment.start,
             isScrollable: true,
             dividerColor: Colors.grey,
@@ -78,11 +80,17 @@ int index = 0;
             child: TabBarView(
               children: [
                 // Content for Array 1
-                PostSearch(searchFor: query),
+                PostSearch(
+                  searchFor: query,
+                  inCommunity: false,
+                ),
                 // Content for Array 2
                 CommunitiesSearch(searchFor: query),
                 // Content for Array 3
-                CommentsSearch(searchFor: query),
+                CommentsSearch(
+                  searchFor: query,
+                  inComm: false,
+                ),
                 PeopleList(
                   searchFor: query,
                 ),
@@ -94,24 +102,33 @@ int index = 0;
     );
   }
 
-// last overwrite to show the
-// querying process at the runtime
+  @override
+  String get searchFieldLabel => 'Search Reddit';
+
+
+
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
-      if (fruit.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(fruit);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SuggestCommunities(search: query),
+          Divider(
+            height: 0.5,
+            color: Colors.grey[200],
+          ),
+          query.isNotEmpty
+              ? Text(
+                  'Search for "$query"',
+                  style: const TextStyle(
+                      color: Color.fromARGB(255, 3, 55, 146),
+                      fontWeight: FontWeight.bold),
+                )
+              : const SizedBox()
+        ],
+      ),
     );
   }
 }

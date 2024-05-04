@@ -146,11 +146,11 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
       appBar: MediaQuery.of(context).size.width > 700
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: DesktopAppBar(logoTapped: logoTapped),
+              child: DesktopAppBar(logoTapped: logoTapped , communityName: widget.communityName, isInCommunity: true,),
             )
           : PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: MobileAppBar(logoTapped: logoTapped),
+              child: MobileAppBar(logoTapped: logoTapped , communityName: widget.communityName, isInCommunity: true,),
             ),
       drawer: MediaQuery.of(context).size.width < 700
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
