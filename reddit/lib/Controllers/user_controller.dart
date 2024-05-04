@@ -67,6 +67,11 @@ class UserController {
         username, currentPassword, newPassword, verifiedNewPassword);
   }
 
+  Future<bool> addPassword(
+      String username, String password, String verifiedPassword) async {
+    return await userService.addPassword(username, password, verifiedPassword);
+  }
+
   Future<void> blockUser(UserAbout userData, String username) async {
     await userService.blockUser(userData.username, username);
     blockedUsers = await userService.getBlockedUsers(userData.username);
@@ -86,12 +91,12 @@ class UserController {
     return userService.changeCountry(username, country);
   }
 
-  void connectToGoogle(String username) {
-    userService.connectToGoogle(username);
+  Future<bool> connectToGoogle(String username) async {
+    return userService.connectToGoogle(username);
   }
 
-  void disconnectFromGoogle(String username) {
-    userService.disconnectFromGoogle(username);
+  Future<int> disconnectFromGoogle(String username, String password) async {
+    return userService.disconnectFromGoogle(username, password);
   }
 
   Future<void> saveComment(String username, String commentId) async {

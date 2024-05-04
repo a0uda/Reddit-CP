@@ -1298,6 +1298,33 @@ class UserService {
     }
   }
 
+  Future<bool> addPassword(
+      String username, String newPassword, String verifiedNewPassword) async {
+    if (testing) {
+      return true;
+    } else {
+      var url = Uri.parse('https://redditech.me/backend/users/reset-password');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      var response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token!,
+        },
+        body: jsonEncode({
+          "new_password": newPassword,
+          "verified_password": verifiedNewPassword,
+        }),
+      );
+
+      print(response.body);
+      print(response.statusCode);
+
+      return response.statusCode == 200;
+    }
+  }
+
   Future<bool> changePassword(String username, String currentPassword,
       String newPassword, String verifiedNewPassword) async {
     if (testing) {
@@ -1434,27 +1461,97 @@ class UserService {
     }
   }
 
-  void connectToGoogle(String username) {
+  Future<bool> connectToGoogle(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .accountSettings
           ?.connectedGoogle = true;
+      return true;
     } else {
-      // toggle connect to google in db
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      try {
+        await googleSignIn.signOut();
+        final GoogleSignInAccount? googleSignInAccount =
+            await googleSignIn.signIn();
+        final GoogleSignInAuthentication? googleSignInAuthentication =
+            await googleSignInAccount?.authentication;
+
+        // The access token can be used to authenticate with your backend
+        var accessToken = googleSignInAuthentication!.accessToken;
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('token');
+
+        final url =
+            Uri.parse('https://redditech.me/backend/users/connect-to-google');
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token!,
+          },
+          body: jsonEncode({
+            'access_token': accessToken,
+          }),
+        );
+        await googleSignIn.signOut();
+        print(response.body);
+        if (response.statusCode == 200) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        print(error);
+        return false;
+      }
     }
   }
 
-  void disconnectFromGoogle(String username) {
+  Future<int> disconnectFromGoogle(String username, String password) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .accountSettings
           ?.connectedGoogle = false;
+      return 200;
     } else {
-      // toggle disconnect from google in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final url =
+          Uri.parse('https://redditech.me/backend/users/disconnect-google');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'password': password,
+        }),
+      );
+      print(response.body);
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['error']['message'] ==
+            'User must set his password first') {
+          return 2;
+        }
+        return response.statusCode;
+      }
     }
   }
+
+  // toggle disconnect from google in db
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
