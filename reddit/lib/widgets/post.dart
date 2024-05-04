@@ -262,7 +262,16 @@ class PostState extends State<Post> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
+                                            return Container(
+                                              color: Colors.white,
+                                              child: const SizedBox(
+                                                  height: 30,
+                                                  width: 30,
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  )),
+                                            );
                                           } else if (snapshot.hasError) {
                                             print(widget.name);
                                             print(snapshot.data);
@@ -319,7 +328,16 @@ class PostState extends State<Post> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
+                                      return Container(
+                                        color: Colors.white,
+                                        child: const SizedBox(
+                                            height: 30,
+                                            width: 30,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )),
+                                      );
                                     } else if (snapshot.hasError) {
                                       print(widget.name);
                                       print(snapshot.data);

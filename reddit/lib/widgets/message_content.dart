@@ -9,7 +9,6 @@ import 'package:reddit/Models/message_item.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
 import 'package:reddit/widgets/Moderator/moderators.dart';
-import 'package:reddit/widgets/Moderator/moderators_list.dart';
 import 'package:reddit/widgets/report_options.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,7 +16,8 @@ class MessageContent extends StatefulWidget {
   final List<Messages> messages;
   final List<FollowersFollowingItem> following;
 
-  const MessageContent({required this.messages, required this.following});
+  const MessageContent(
+      {super.key, required this.messages, required this.following});
 
   @override
   _MessageContentState createState() => _MessageContentState();
@@ -154,7 +154,7 @@ class _MessageContentState extends State<MessageContent> {
                                     text: TextSpan(
                                       children: message.isInvitation!
                                           ? _parseInvitationMessage(
-                                              message.message!)
+                                              message.message!, message.id)
                                           : _parseMessage(message.message!),
                                       style: const TextStyle(
                                         fontSize: 15,
@@ -213,14 +213,13 @@ class _MessageContentState extends State<MessageContent> {
                                     bool success = await context
                                         .read<MessagesOperations>()
                                         .replyToMessage(
-                                          messages[0].id,
-                                          receiverUsername!,
-                                          receiverType!,
-                                          senderType!,
-                                          senderVia,
-                                          messageContentController.text,
-                                          messages[0].subject
-                                        );
+                                            messages[0].id,
+                                            receiverUsername!,
+                                            receiverType!,
+                                            senderType!,
+                                            senderVia,
+                                            messageContentController.text,
+                                            messages[0].subject);
                                     if (success) {
                                       messages.add(Messages(
                                         id: (messages.length + 1).toString(),
@@ -330,11 +329,11 @@ class _MessageContentState extends State<MessageContent> {
     );
   }
 
-  List<TextSpan> _parseInvitationMessage(String message) {
+  List<TextSpan> _parseInvitationMessage(String message, String msgID) {
     final List<TextSpan> spans = [];
 
     final RegExp regex = RegExp(
-      r'(moderators page for \/r\/\S+)',
+      r'(r\/\S+)',
       caseSensitive: false,
     );
 
@@ -363,11 +362,15 @@ class _MessageContentState extends State<MessageContent> {
             context,
             MaterialPageRoute(
               builder: (context) => ModResponsive(
-                  mobileLayout: Moderators(isInvite: true),
+                  mobileLayout: Moderators(
+                    isInvite: true,
+                    msgID: msgID,
+                  ),
                   desktopLayout: DesktopModTools(
                     index: 4,
                     communityName: moderatorController.communityName,
                     isInvite: true,
+                    msgID: msgID,
                   )),
             ),
           );

@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/mobile_homepage.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/messages_list.dart';
 import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/communities_mobile.dart';
@@ -37,8 +39,6 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     final bool userLoggedIn = userController.userAbout != null;
-    // print('mobile layout: ${userController.userAbout?.username}');
-    print(isInbox);
     final drawers = [
       DrawerReddit(
         indexOfPage: widget.mobilePageMode,
@@ -65,13 +65,87 @@ class _MobileLayoutState extends State<MobileLayout> {
             Container(
               height: 40,
               color: Colors.white,
-              child: const TabBar(
-                indicatorColor: Color.fromARGB(255, 24, 82, 189),
+              child: TabBar(
+                indicatorColor: const Color.fromARGB(255, 24, 82, 189),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 tabs: [
-                  Tab(text: 'Notifications'),
-                  Tab(text: 'Messages'),
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Notifications'),
+                        const SizedBox(width: 5),
+                        Consumer<NotificationsService>(
+                            builder: (context, notificationsService, child) {
+                          if (userController.unreadNotificationsCount > 0) {
+                            return Container(
+                              padding: const EdgeInsets.all(1),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 15,
+                                minHeight: 15,
+                              ),
+                              child: Text(
+                                userController.unreadNotificationsCount
+                                    .toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Messages'),
+                        const SizedBox(width: 5),
+                        Consumer<MessagesOperations>(
+                            builder: (context, messagesOperations, child) {
+                          return Consumer<GetMessagesController>(
+                            builder: (context, getMessagesController, child) {
+                              if (userController.unreadMessagesCount > 0) {
+                                return Container(
+                                  padding: const EdgeInsets.all(1),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 15,
+                                    minHeight: 15,
+                                  ),
+                                  child: Text(
+                                    userController.unreadMessagesCount
+                                        .toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -79,7 +153,6 @@ class _MobileLayoutState extends State<MobileLayout> {
               child: TabBarView(
                 children: [
                   ListingNotifications(),
-                  //Center(child: Text("stay tuned")), //todo: notifications
                   MessagesPage(),
                 ],
               ),
@@ -105,50 +178,97 @@ class _MobileLayoutState extends State<MobileLayout> {
                 icon: selectedIndexPage == 0
                     ? const Icon(
                         Icons.home,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         Icons.home_outlined,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Home"),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 1
                     ? const Icon(
                         CupertinoIcons.group_solid,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         CupertinoIcons.group,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Communities"),
             const BottomNavigationBarItem(
                 icon: Icon(
                   Icons.add,
-                  size: kToolbarHeight * (3 / 5),
+                  size: kToolbarHeight * (3 / 7),
                 ),
                 label: "Create"),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 3
                     ? const Icon(
                         CupertinoIcons.chat_bubble_text_fill,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       )
                     : const Icon(
                         CupertinoIcons.chat_bubble_text,
-                        size: kToolbarHeight * (3 / 5),
+                        size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Chat"),
             BottomNavigationBarItem(
-                icon: selectedIndexPage == 4
-                    ? const Icon(
-                        Icons.notifications,
-                        size: kToolbarHeight * (3 / 5),
-                      )
-                    : const Icon(Icons.notifications_outlined,
-                        size: kToolbarHeight * (3 / 5)),
-                label: "Inbox")
+              icon: Stack(
+                children: [
+                  // The icon
+                  Icon(
+                    selectedIndexPage == 4
+                        ? Icons.notifications
+                        : Icons.notifications_outlined,
+                    size: kToolbarHeight * (3 / 7),
+                  ),
+                  // The notification+messages count
+                  Consumer<NotificationsService>(
+                      builder: (context, notificationsService, child) {
+                    return Consumer<MessagesOperations>(
+                        builder: (context, messagesOperations, child) {
+                      return Consumer<GetMessagesController>(
+                          builder: (context, getMessagesController, child) {
+                        if (userController.unreadNotificationsCount +
+                                userController.unreadMessagesCount >
+                            0) {
+                          return Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(1),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 12,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox(
+                            height: 0,
+                            width: 0,
+                          );
+                        }
+                      });
+                    });
+                  }),
+                ],
+              ),
+              label: "Inbox",
+            )
           ],
           onTap: (value) => {
             if (value != 2)

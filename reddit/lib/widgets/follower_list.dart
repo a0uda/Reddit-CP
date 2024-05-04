@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
-import '../Controllers/user_controller.dart';
 import '../Models/followers_following_item.dart';
 import '../Models/user_about.dart';
 
@@ -23,6 +22,18 @@ class FollowerListState extends State<FollowerList> {
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
   bool _dataFetched = false;
+  bool _firstTime = true;
+
+  void initState() {
+    super.initState();
+    final blockUnblockUser =
+        Provider.of<BlockUnblockUser>(context, listen: false);
+    blockUnblockUser.addListener(() {
+      setState(() {
+        _dataFetched = false;
+      });
+    });
+  }
 
   Widget _buildLoading() {
     return Container(
@@ -62,15 +73,10 @@ class FollowerListState extends State<FollowerList> {
                   ? const CircleAvatar(
                       backgroundImage: AssetImage('images/Greddit.png'),
                     )
-                  : File(followers![index].profilePicture!).existsSync()
-                      ? CircleAvatar(
-                          backgroundImage: FileImage(
-                              File(followers![index].profilePicture!)),
-                        )
-                      : CircleAvatar(
-                          backgroundImage:
-                              AssetImage(followers![index].profilePicture!),
-                        ),
+                  : CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(followers![index].profilePicture!),
+                    ),
               title: Text((followers![index].displayName ??
                   followers![index].username)),
               subtitle: Text('u/${followers![index].username}'),
@@ -82,13 +88,9 @@ class FollowerListState extends State<FollowerList> {
                           .where((element) =>
                               element.username == followers![index].username)
                           .isNotEmpty) {
-                        print('unfollow fi followers list');
-                        print(followers![index].username);
                         await followerFollowingController
                             .unfollowUser(followers![index].username);
                       } else {
-                        print('follow fi followers list');
-                        print(followers![index].username);
                         await followerFollowingController
                             .followUser(followers![index].username);
                       }
@@ -117,12 +119,33 @@ class FollowerListState extends State<FollowerList> {
               ),
               onTap: () async {
                 var username = followers![index].username.toString();
-                UserAbout otherUserData =
-                    (await (userService.getUserAbout(username)))!;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(otherUserData, 'other'),
+                    builder: (context) => FutureBuilder<UserAbout?>(
+                      future: userService.getUserAbout(username),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            color: Colors.white,
+                            child: const SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                )),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return ProfileScreen(
+                            snapshot.data,
+                            'other',
+                          );
+                        }
+                      },
+                    ),
                   ),
                 );
               });
@@ -144,16 +167,14 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void loadingData() async {
-    if (userController.followers == null) {
+    if (_firstTime) {
       followers =
           await userService.getFollowers(userController.userAbout!.username);
-    } else {
-      followers = userController.followers;
-    }
-    if (userController.following == null) {
       following =
           await userService.getFollowing(userController.userAbout!.username);
+      _firstTime = false;
     } else {
+      followers = userController.followers;
       following = userController.following;
     }
     setState(() {

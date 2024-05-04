@@ -33,6 +33,7 @@ class ListingNotificationsState extends State<ListingNotifications> {
                   onRefresh: () async {
                     setState(() {
                       notificationsService.getNotifications();
+                      notificationsService.getUnreadNotificationsCount();
                     });
                   },
                   child: ListView.builder(

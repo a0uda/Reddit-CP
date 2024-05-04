@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
@@ -90,30 +91,26 @@ class UserService {
             customUrl: customUrl,
           ));
     } else {
-      users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .add(SocialLlinkItem(
-            id: (int.parse(users
-                        .firstWhere(
-                            (element) => element.userAbout.username == username)
-                        .userAbout
-                        .socialLinks![users
-                                .firstWhere((element) =>
-                                    element.userAbout.username == username)
-                                .userAbout
-                                .socialLinks!
-                                .length -
-                            1]
-                        .id) +
-                    1)
-                .toString(),
-            username: displayText,
-            displayText: displayText,
-            type: type,
-            customUrl: customUrl,
-          ));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/add-social-link');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "username": displayText,
+          "display_text": displayText,
+          "custom_url": customUrl,
+          "type": type.toLowerCase(),
+        }),
+      );
+      print('in add social link');
+      print(response.body);
     }
   }
 
@@ -555,11 +552,21 @@ class UserService {
           .socialLinks!
           .removeWhere((element) => element.id == id);
     } else {
-      users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .removeWhere((element) => element.id == id);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/delete-social-link');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({"id": id}),
+      );
+      print('in edit social link');
+      print(response.body);
     }
   }
 
@@ -575,14 +582,26 @@ class UserService {
       socialLink.username = displayText;
       socialLink.customUrl = customUrl;
     } else {
-      var socialLink = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .userAbout
-          .socialLinks!
-          .firstWhere((element) => element.id == id);
-      socialLink.displayText = displayText;
-      socialLink.username = displayText;
-      socialLink.customUrl = customUrl;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/edit-social-link');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          "username": displayText,
+          "display_text": displayText,
+          "custom_url": customUrl,
+          "id": id
+        }),
+      );
+      print('in edit social link');
+      print(response.body);
     }
   }
 
@@ -614,7 +633,7 @@ class UserService {
         },
       );
       print('in get messages');
-      print(response.statusCode);
+      print(response.body);
       List<dynamic> body = jsonDecode(response.body)['messages'];
       List<Messages>? messages = await Future.wait(
         body
@@ -624,14 +643,43 @@ class UserService {
       print('get messages');
       for (var msg in messages) {
         print(msg.id);
+        print(msg.unreadFlag);
         print(msg.senderType);
         print(msg.senderUsername);
         print(msg.receiverType);
         print(msg.receiverUsername);
         print(msg.isSent);
+        print(msg.isInvitation);
         print(msg.message);
       }
       return messages;
+    }
+  }
+
+  Future<int> getUnreadMessagesCount(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      int count = 0;
+      count = messages.where((element) => element.unreadFlag == true).length;
+      return count;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/unread-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get unread messages count');
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body)['count'];
     }
   }
 
@@ -805,7 +853,20 @@ class UserService {
         msg.unreadFlag = false;
       }
     } else {
-      // todo: mark all messages read in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-all-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in mark all messages as read');
+      print(response.body);
     }
   }
 
@@ -833,16 +894,30 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  Future<List<CommunityItem>?> getActiveCommunities(String username) async {
+  Future<List<ActiveCommunities>?> getActiveCommunities(String username) async {
     if (testing) {
       return users
           .firstWhere((element) => element.userAbout.username == username)
           .activecommunities!;
     } else {
-      //todo: get active communities from database
-      return users
-          .firstWhere((element) => element.userAbout.username == 'Purple-7544')
-          .activecommunities!;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/active-communities');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get active communities');
+      print(response.statusCode);
+      List<dynamic> body = jsonDecode(response.body)['content'];
+      print(body);
+      return List<ActiveCommunities>.from(
+          body.map((community) => ActiveCommunities.fromJson(community)));
     }
   }
 

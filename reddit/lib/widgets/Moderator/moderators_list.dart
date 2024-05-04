@@ -10,8 +10,10 @@ import 'package:reddit/widgets/Moderator/add_modderator.dart';
 
 class ModeratorsList extends StatefulWidget {
   bool isInvite;
+  String msgID;
   ModeratorsList({
     this.isInvite = false,
+    this.msgID = '',
     super.key,
   });
 
@@ -109,7 +111,8 @@ class _ModeratorsListState extends State<ModeratorsList>
                       await moderatorController.addAsMod(
                           userController.userAbout!.username,
                           userController.userAbout!.profilePicture!,
-                          moderatorController.communityName);
+                          moderatorController.communityName,
+                          widget.msgID);
                       Navigator.pop(context);
                       setState(() {});
                     },

@@ -555,7 +555,7 @@ class ModeratorMockService {
 
 //Rawan: add moderator to the community
   Future<void> addModUser(
-      String username, String profilePicture, String communityName) async {
+      String username, String profilePicture, String communityName, String msgId) async {
     if (testing) {
       communities
           .firstWhere((community) => community.communityName == communityName)
@@ -570,23 +570,21 @@ class ModeratorMockService {
         "moderator_since": DateTime.now().toString(),
       });
     } else {
-      // todo: add moderator to the community
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // String? token = prefs.getString('token');
-      // final url = Uri.parse(
-      //     'https://redditech.me/backend/communities/remove-moderator');
-      // final response = await http.post(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': token!,
-      //   },
-      //   body: json.encode({
-      //     'community_name': communityName,
-      //     'username': username,
-      //   }),
-      // );
-    }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/accept-moderator-invitation');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({"_id": msgId}),
+      );
+      print('in addModUser');
+      print(response.body);
+     }
   }
 
   Future<void> removeAsMod(String username, String communityName) async {

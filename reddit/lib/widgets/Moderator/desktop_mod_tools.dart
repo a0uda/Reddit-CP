@@ -25,11 +25,13 @@ class DesktopModTools extends StatefulWidget {
   final int index;
   final String communityName;
   bool isInvite;
+  String msgID;
   DesktopModTools(
       {super.key,
       required this.index,
       required this.communityName,
-      this.isInvite = false});
+      this.isInvite = false,
+      this.msgID = ""});
 
   @override
   State<DesktopModTools> createState() => _DesktopModToolsState();
@@ -51,7 +53,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
       const ChangeProfilePicture(),
       const CommunityType(),
       const PostTypes(),
-      ModeratorsList(isInvite: widget.isInvite),
+      ModeratorsList(isInvite: widget.isInvite, msgID: widget.msgID),
       const ApprovedUserList(),
       const BannedUsersList(),
       const MutedUsersList(),
@@ -60,7 +62,6 @@ class _DesktopModToolsState extends State<DesktopModTools> {
         isEditMode: false,
       ),
       const ScheduledPostsList(),
-
     ];
   }
 
