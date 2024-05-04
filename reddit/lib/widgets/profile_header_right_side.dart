@@ -67,8 +67,8 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: IconButton(
                 icon: const Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
-                  const link =
-                      'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
+                  var link =
+                      'https://redditech.me/user/${userData.username}/saved';
                   await Share.share('Check out this profile on Reddit: $link');
                 },
               ),
