@@ -29,302 +29,284 @@ class MessagesState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     var followerfollowingcontroller =
         context.read<FollowerFollowingController>();
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<getMessages>(
-          create: (context) => getMessages(),
-        ),
-      ],
-      child: Consumer<MessagesOperations>(
-        builder: (context, messagesOperations, child) {
-          return FutureBuilder<List<dynamic>>(
-            future: Future.wait([
-              userService.getMessages(userController.userAbout!.username),
-              followerfollowingcontroller
-                  .getFollowing(userController.userAbout!.username)
-            ]),
-            builder:
-                (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  color: Colors.white,
-                  child: const SizedBox(
-                    height: 30,
-                    width: 30,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+
+    return Consumer<MessagesOperations>(
+      builder: (context, messagesOperations, child) {
+        return FutureBuilder<List<dynamic>>(
+          future: Future.wait([
+            messagesOperations.getMessages(),
+            followerfollowingcontroller
+                .getFollowing(userController.userAbout!.username)
+          ]),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                color: Colors.white,
+                child: const SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return Consumer<BlockUnblockUser>(
-                  builder: (context, blockUnblockUser, child) {
-                    List<Messages> messagesList = snapshot.data![0];
-                    List<FollowersFollowingItem>? following =
-                        followerfollowingcontroller.following;
-                    List<Messages> originalMessagesList =
-                        List.from(messagesList);
-                    if (messagesList.isNotEmpty) {
-                      messagesList = processAllMessage(messagesList);
-                    }
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        var myProvider = context.read<getMessages>();
-                        messagesList = await myProvider.getUserMessages();
-                        following = followerfollowingcontroller.following;
-                        originalMessagesList = List.from(messagesList);
-                        if (messagesList.isNotEmpty) {
-                          messagesList = processAllMessage(messagesList);
-                        }
-                      },
-                      child: Consumer<getMessages>(
-                        builder: (context, getUserMessages, child) {
-                          return messagesList.isEmpty
-                              ? const Center(
-                                  child: Text('No messages yet!'),
-                                )
-                              : ListView.separated(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: messagesList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    Messages message = messagesList[index];
-                                    List<Messages> replies = processMessage(
-                                        originalMessagesList, message);
-                                    String? messageReceiver = message.isSent
-                                        ? (message.receiverType == 'user'
-                                            ? message.receiverUsername ?? ''
-                                            : message.receiverUsername)
-                                        : (message.senderType == 'user'
-                                            ? message.senderUsername
-                                            : message.senderVia);
-                                    String? receiverType = message.isSent
-                                        ? message.receiverType
-                                        : message.senderType;
-                                    return ListTile(
-                                      onTap: () async {
-                                        userService.markoneMessageRead(
-                                            userController.userAbout!.username,
-                                            message.id);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                (MessageContent(
-                                              messages: replies,
-                                              following: following!,
-                                            )),
-                                          ),
-                                        );
-                                        setState(() {
-                                          message.unreadFlag = false;
-                                        });
-                                      },
-                                      tileColor: Colors.white,
-                                      title: Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              if (receiverType == 'user') {
-                                                var userType = userController
-                                                            .userAbout!
-                                                            .username ==
-                                                        messageReceiver
-                                                    ? 'me'
-                                                    : 'other';
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FutureBuilder<
-                                                            UserAbout?>(
-                                                      future: userService
-                                                          .getUserAbout(
-                                                              messageReceiver!),
-                                                      builder:
-                                                          (context, snapshot) {
-                                                        if (snapshot
-                                                                .connectionState ==
-                                                            ConnectionState
-                                                                .waiting) {
-                                                          return Container(
-                                                            color: Colors.white,
-                                                            child:
-                                                                const SizedBox(
-                                                                    height: 30,
-                                                                    width: 30,
-                                                                    child:
-                                                                        Center(
-                                                                      child:
-                                                                          CircularProgressIndicator(),
-                                                                    )),
-                                                          );
-                                                        } else if (snapshot
-                                                            .hasError) {
-                                                          return Text(
-                                                              'Error: ${snapshot.error}');
-                                                        } else {
-                                                          return ProfileScreen(
-                                                            snapshot.data,
-                                                            userType,
-                                                          );
-                                                        }
-                                                      },
-                                                    ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Consumer<BlockUnblockUser>(
+                builder: (context, blockUnblockUser, child) {
+                  List<Messages> messagesList = snapshot.data![0];
+                  List<FollowersFollowingItem>? following =
+                      followerfollowingcontroller.following;
+                  List<Messages> originalMessagesList = List.from(messagesList);
+                  if (messagesList.isNotEmpty) {
+                    messagesList = processAllMessage(messagesList);
+                  }
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      var myProvider = context.read<GetMessagesController>();
+                      messagesList = await myProvider.getUserMessages();
+                      following = followerfollowingcontroller.following;
+                      originalMessagesList = List.from(messagesList);
+                      if (messagesList.isNotEmpty) {
+                        messagesList = processAllMessage(messagesList);
+                      }
+                    },
+                    child: Consumer<GetMessagesController>(
+                      builder: (context, getUserMessages, child) {
+                        return messagesList.isEmpty
+                            ? const Center(
+                                child: Text('No messages yet!'),
+                              )
+                            : ListView.separated(
+                                padding: EdgeInsets.zero,
+                                itemCount: messagesList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  Messages message = messagesList[index];
+                                  List<Messages> replies = processMessage(
+                                      originalMessagesList, message);
+                                  String? messageReceiver = message.isSent
+                                      ? (message.receiverType == 'user'
+                                          ? message.receiverUsername ?? ''
+                                          : message.receiverUsername)
+                                      : (message.senderType == 'user'
+                                          ? message.senderUsername
+                                          : message.senderVia);
+                                  String? receiverType = message.isSent
+                                      ? message.receiverType
+                                      : message.senderType;
+                                  return ListTile(
+                                    onTap: () async {
+                                      messagesOperations
+                                          .markonAsRead(message.id);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => (MessageContent(
+                                            messages: replies,
+                                            following: following!,
+                                          )),
+                                        ),
+                                      );
+                                      setState(() {
+                                        message.unreadFlag = false;
+                                      });
+                                    },
+                                    tileColor: Colors.white,
+                                    title: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (receiverType == 'user') {
+                                              var userType = userController
+                                                          .userAbout!
+                                                          .username ==
+                                                      messageReceiver
+                                                  ? 'me'
+                                                  : 'other';
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      FutureBuilder<UserAbout?>(
+                                                    future: userService
+                                                        .getUserAbout(
+                                                            messageReceiver!),
+                                                    builder:
+                                                        (context, snapshot) {
+                                                      if (snapshot
+                                                              .connectionState ==
+                                                          ConnectionState
+                                                              .waiting) {
+                                                        return Container(
+                                                          color: Colors.white,
+                                                          child: const SizedBox(
+                                                              height: 30,
+                                                              width: 30,
+                                                              child: Center(
+                                                                child:
+                                                                    CircularProgressIndicator(),
+                                                              )),
+                                                        );
+                                                      } else if (snapshot
+                                                          .hasError) {
+                                                        return Text(
+                                                            'Error: ${snapshot.error}');
+                                                      } else {
+                                                        return ProfileScreen(
+                                                          snapshot.data,
+                                                          userType,
+                                                        );
+                                                      }
+                                                    },
                                                   ),
-                                                );
+                                                ),
+                                              );
+                                            } else {
+                                              List<CommunityBackend>
+                                                  moderatedCammunities =
+                                                  userController.userAbout!
+                                                      .moderatedCommunities!;
+                                              bool isMod = false;
+                                              if (moderatedCammunities.any(
+                                                      (element) =>
+                                                          element.name ==
+                                                          messageReceiver) ==
+                                                  true) {
+                                                isMod = true;
                                               } else {
-                                                List<CommunityBackend>
-                                                    moderatedCammunities =
-                                                    userController.userAbout!
-                                                        .moderatedCommunities!;
-                                                bool isMod = false;
-                                                if (moderatedCammunities.any(
-                                                        (element) =>
-                                                            element.name ==
-                                                            messageReceiver) ==
-                                                    true) {
-                                                  isMod = true;
-                                                } else {
-                                                  isMod = false;
-                                                }
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            (CommunityLayout(
-                                                              desktopLayout:
-                                                                  DesktopCommunityPage(
-                                                                      isMod:
-                                                                          isMod,
-                                                                      communityName:
-                                                                          messageReceiver!),
-                                                              mobileLayout:
-                                                                  MobileCommunityPage(
-                                                                isMod: isMod,
-                                                                communityName:
-                                                                    messageReceiver,
-                                                              ),
-                                                            ))));
+                                                isMod = false;
                                               }
-                                            },
-                                            child: Text(
-                                              "${message.isSent ? message.receiverType == 'user' ? message.receiverUsername ?? '' : 'r/${message.receiverUsername}' : message.senderType == 'user' ? message.senderUsername : 'r/${message.senderVia}'}",
-                                              style: TextStyle(
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          (CommunityLayout(
+                                                            desktopLayout:
+                                                                DesktopCommunityPage(
+                                                                    isMod:
+                                                                        isMod,
+                                                                    communityName:
+                                                                        messageReceiver!),
+                                                            mobileLayout:
+                                                                MobileCommunityPage(
+                                                              isMod: isMod,
+                                                              communityName:
+                                                                  messageReceiver,
+                                                            ),
+                                                          ))));
+                                            }
+                                          },
+                                          child: Text(
+                                            "${message.isSent ? message.receiverType == 'user' ? message.receiverUsername ?? '' : 'r/${message.receiverUsername}' : message.senderType == 'user' ? message.senderUsername : 'r/${message.senderVia}'}",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: message.unreadFlag
+                                                    ? Colors.black
+                                                    : const Color.fromARGB(
+                                                        255, 112, 112, 112),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Text(
+                                          ' • ${getDateTimeDifferenceWithLabel(message.createdAt ?? '')}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Color.fromARGB(
+                                                255, 174, 174, 174),
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Consumer<FollowerFollowingController>(
+                                          builder: (context,
+                                              followerFollowingController,
+                                              child) {
+                                            following =
+                                                followerFollowingController
+                                                    .following;
+                                            return message.receiverType ==
+                                                        'user' &&
+                                                    !following!.any((element) =>
+                                                        element.username ==
+                                                        messageReceiver) &&
+                                                    messageReceiver !=
+                                                        userController
+                                                            .userAbout!.username
+                                                ? GestureDetector(
+                                                    onTap: () =>
+                                                        showMoreOptionsDialog(
+                                                            context,
+                                                            messageReceiver,
+                                                            userController),
+                                                    child: Icon(
+                                                      Icons.more_horiz,
+                                                      color: message.unreadFlag
+                                                          ? const Color
+                                                              .fromARGB(
+                                                              255, 92, 92, 92)
+                                                          : const Color
+                                                              .fromARGB(255,
+                                                              156, 156, 156),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        message.subject != null
+                                            ? Text(
+                                                message.subject ?? '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
                                                   fontSize: 14,
                                                   color: message.unreadFlag
                                                       ? Colors.black
                                                       : const Color.fromARGB(
-                                                          255, 112, 112, 112),
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                                          255, 156, 156, 156),
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
+                                        Text(
+                                          message.message ?? '',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: message.unreadFlag
+                                                ? Colors.black
+                                                : const Color.fromARGB(
+                                                    255, 156, 156, 156),
                                           ),
-                                          Text(
-                                            ' • ${getDateTimeDifferenceWithLabel(message.createdAt ?? '')}',
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Color.fromARGB(
-                                                  255, 174, 174, 174),
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Consumer<FollowerFollowingController>(
-                                            builder: (context,
-                                                followerFollowingController,
-                                                child) {
-                                              following =
-                                                  followerFollowingController
-                                                      .following;
-                                              return message.receiverType ==
-                                                          'user' &&
-                                                      !following!.any(
-                                                          (element) =>
-                                                              element
-                                                                  .username ==
-                                                              messageReceiver) &&
-                                                      messageReceiver !=
-                                                          userController
-                                                              .userAbout!
-                                                              .username
-                                                  ? GestureDetector(
-                                                      onTap: () =>
-                                                          showMoreOptionsDialog(
-                                                              context,
-                                                              messageReceiver,
-                                                              userController),
-                                                      child: Icon(
-                                                        Icons.more_horiz,
-                                                        color: message
-                                                                .unreadFlag
-                                                            ? const Color
-                                                                .fromARGB(
-                                                                255, 92, 92, 92)
-                                                            : const Color
-                                                                .fromARGB(255,
-                                                                156, 156, 156),
-                                                      ),
-                                                    )
-                                                  : const SizedBox.shrink();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                      subtitle: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          message.subject != null
-                                              ? Text(
-                                                  message.subject ?? '',
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: message.unreadFlag
-                                                        ? Colors.black
-                                                        : const Color.fromARGB(
-                                                            255, 156, 156, 156),
-                                                  ),
-                                                )
-                                              : const SizedBox.shrink(),
-                                          Text(
-                                            message.message ?? '',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: message.unreadFlag
-                                                  ? Colors.black
-                                                  : const Color.fromARGB(
-                                                      255, 156, 156, 156),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return const Divider(
-                                      color: Color.fromARGB(0, 255, 255, 255),
-                                      height: 1,
-                                    );
-                                  },
-                                );
-                        },
-                      ),
-                    );
-                  },
-                );
-              }
-            },
-          );
-        },
-      ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return const Divider(
+                                    color: Color.fromARGB(0, 255, 255, 255),
+                                    height: 1,
+                                  );
+                                },
+                              );
+                      },
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        );
+      },
     );
   }
 
@@ -484,17 +466,6 @@ class MessagesState extends State<MessagesPage> {
             ],
           );
         });
-  }
-}
-
-class getMessages extends ChangeNotifier {
-  final userService = GetIt.instance.get<UserService>();
-  final userController = GetIt.instance.get<UserController>();
-  Future<List<Messages>> getUserMessages() async {
-    List<Messages>? messages =
-        await userService.getMessages(userController.userAbout!.username);
-    notifyListeners();
-    return messages!;
   }
 }
 

@@ -24,7 +24,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   // Registering MockService with GetIt
-    AwesomeNotifications().initialize(
+  AwesomeNotifications().initialize(
       null,
       [
         NotificationChannel(
@@ -125,7 +125,10 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => Edit(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => GetMessagesController(),
+      ),
     ],
     child: const MyApp(),
   ));
