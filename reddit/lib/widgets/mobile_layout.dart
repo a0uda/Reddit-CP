@@ -39,8 +39,6 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     final bool userLoggedIn = userController.userAbout != null;
-    // print('mobile layout: ${userController.userAbout?.username}');
-    print(isInbox);
     final drawers = [
       DrawerReddit(
         indexOfPage: widget.mobilePageMode,
@@ -68,7 +66,7 @@ class _MobileLayoutState extends State<MobileLayout> {
               height: 40,
               color: Colors.white,
               child: TabBar(
-                indicatorColor: Color.fromARGB(255, 24, 82, 189),
+                indicatorColor: const Color.fromARGB(255, 24, 82, 189),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 tabs: [
@@ -195,19 +193,19 @@ class _MobileLayoutState extends State<MobileLayout> {
                         right: 0,
                         top: 0,
                         child: Container(
-                          padding: EdgeInsets.all(1),
-                          decoration: BoxDecoration(
+                          padding:const EdgeInsets.all(1),
+                          decoration: const BoxDecoration(
                             color: Colors.red,
                             shape: BoxShape.circle,
                           ),
-                          constraints: BoxConstraints(
+                          constraints:const BoxConstraints(
                             minWidth: 12,
                             minHeight: 12,
                           ),
                           child: Text(
                             userController.unreadNotificationsCount
                                 .toString(), // Replace this with your variable
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 10,
                             ),
@@ -216,7 +214,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                         ),
                       );
                     } else {
-                      return Container(
+                      return const SizedBox(
                         height: 0,
                         width: 0,
                       );
