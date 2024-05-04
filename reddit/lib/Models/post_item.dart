@@ -74,7 +74,8 @@ final bool  isRemoved;
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
-    print(json);
+    print(json['reposted']);
+    Map<String, dynamic> data = json['reposted']!=null?json['reposted']:{};
     final List<dynamic> jsonlist = json['images'];
       final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
         return ImageItem.fromJson(jsonitem);
@@ -83,7 +84,7 @@ final bool  isRemoved;
 
         ///todo
         isReposted: json['is_reposted_flag'],
-        originalPostID: "662bc4861980ada1a43262ac", //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
+        originalPostID: (data['original_post_id']!=null)?(data['original_post_id']!):'',
         id: json['_id'],
         userId: json['user_id'],
         description:(json['description']!=null)? json['description']:'',

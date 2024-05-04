@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 
 class DeletePost extends StatefulWidget {
@@ -22,6 +24,7 @@ class _DeletePostState extends State<DeletePost> {
 
   @override
   Widget build(BuildContext context) {
+        var postController = context.read<Edit>();
     return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -72,8 +75,10 @@ class _DeletePostState extends State<DeletePost> {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Color.fromARGB(255, 253, 119, 10)),
                     onPressed: () {
-                      postService.DeletePost(widget.postId);
+              postController.DeletePost(widget.postId);
+        postController.shouldRefresh=true;
                       Navigator.of(context).pop();
+
                     },
                     icon: Icon(Icons.delete, color: Colors.white),
                     label: Text(

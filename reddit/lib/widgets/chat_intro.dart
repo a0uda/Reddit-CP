@@ -17,6 +17,7 @@ class _ChatIntroState extends State<ChatIntro> {
 
   Future<void> fetchChats() async {
     chatUsers = await chatService.getChats();
+    print(chatUsers);
   }
 
   @override

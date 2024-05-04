@@ -35,6 +35,12 @@ refresh=value;
     Future.delayed(Duration(seconds: 2));
     notifyListeners();
   }
+    void DeletePost(String id) {
+    postService.DeletePost(id);
+    print('ana geet provider');
+    Future.delayed(Duration(seconds: 2));
+    notifyListeners();
+  }
 
   void resetRefresh() {
     refresh=false;

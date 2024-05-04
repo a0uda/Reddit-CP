@@ -22,7 +22,8 @@ class TrendState extends State<TrendingPost> {
       width: MediaQuery.of(context).size.width * 0.35,
       child: InkWell(
         onTap: () => {
-          // search for trend
+          // search for trend to do badr 
+
         },
         child: Card(
           child: Container(

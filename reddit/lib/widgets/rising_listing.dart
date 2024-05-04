@@ -36,7 +36,7 @@ class RisingListingBuild extends State<RisingListing> {
     isloading=true;
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    if (widget.type == "home") {
+       if (widget.type == "home" || widget.type=="popular") {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
@@ -45,8 +45,7 @@ class RisingListingBuild extends State<RisingListing> {
       } else {
         posts = postService.fetchPosts();
       }
-    } else if (widget.type == "popular") {
-      posts = await postService.getPopularPosts();
+
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
@@ -54,6 +53,7 @@ class RisingListingBuild extends State<RisingListing> {
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
+    post.removeWhere((item1) => item1.isRemoved==true);
     isloading=false;
     setState(() {
       posts.addAll(post);
@@ -125,6 +125,7 @@ class RisingListingBuild extends State<RisingListing> {
                     imageurl=  posts[index].images?[0].path;
                   }
                     print(posts[index].isReposted);
+                   {
                   if (posts[index].isReposted) {
                     return Repost(
                           description: posts[index].description,
@@ -173,7 +174,9 @@ class RisingListingBuild extends State<RisingListing> {
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
                   );
+                         }
                 },
+                
               );
             },
           );

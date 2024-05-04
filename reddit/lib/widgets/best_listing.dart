@@ -34,7 +34,7 @@ class BestListingBuild extends State<BestListing> {
   Future<void> fetchdata() async {
     final postService = GetIt.instance.get<PostService>();
     List<PostItem> post = [];
-    if (widget.type == "home") {
+      if (widget.type == "home" || widget.type=="popular") {
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
@@ -43,16 +43,11 @@ class BestListingBuild extends State<BestListing> {
       } else {
         posts = postService.fetchPosts();
       }
-    } else if (widget.type == "popular") {
-      posts = await postService.getPopularPosts();
-    } else if (widget.type == "profile") {
-      final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
-      print(username);
+
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
-
+post.removeWhere((item1) => item1.isRemoved==true);
     setState(() {
       posts.addAll(post);
     });
@@ -110,6 +105,7 @@ class BestListingBuild extends State<BestListing> {
                     imageurl=  posts[index].images?[0].path;
                   }
                     print(posts[index].isReposted);
+                  {
                   if (posts[index].isReposted) {
                     return Repost(
                         id: posts[index].id,
@@ -158,6 +154,7 @@ class BestListingBuild extends State<BestListing> {
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
                   );
+                         }
                 },
               );
             },

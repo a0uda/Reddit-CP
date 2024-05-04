@@ -222,11 +222,31 @@ class PostService {
     }
   }
 
-  List<TrendingItem> getTrendingPosts() {
+ Future< List<TrendingItem>> getTrendingPosts() async{
     if (testing) {
       return trendingPosts;
     } else {
-      return trendingPosts;
+
+
+           final url =
+          Uri.parse('https://redditech.me/backend/posts/trending');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+ final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+
+      final List<dynamic> jsonlist = json.decode(response.body)['content'];
+      final List<TrendingItem> postsItem = jsonlist.map((jsonitem) {
+        return TrendingItem.fromJson(jsonitem);
+      }).toList();
+
+      return postsItem;
     }
   }
 
@@ -600,7 +620,7 @@ Future<void> DeletePost(String id)async{
     } else {
  
         final url =
-          Uri.parse('https://redditech.me/backend/posts/remove');
+          Uri.parse('https://redditech.me/backend/posts/delete');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
