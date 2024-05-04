@@ -20,6 +20,21 @@ class SavePost extends ChangeNotifier {
     notifyListeners();
   }
 }
+class RefreshHome extends ChangeNotifier{
+   bool refresh=false;
+  bool get shouldRefresh => refresh;
+ set shouldRefresh(bool value)
+{
+refresh=value;
+}  
+ void Refresh() {
+  
+    notifyListeners();
+  }
+  void resetRefresh() {
+    refresh=false;
+  }
+}
 class Edit extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();
   bool refresh=false;
@@ -41,6 +56,9 @@ refresh=value;
     Future.delayed(Duration(seconds: 2));
     notifyListeners();
   }
+
+   
+
 
   void resetRefresh() {
     refresh=false;

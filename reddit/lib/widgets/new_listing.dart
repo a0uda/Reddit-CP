@@ -26,11 +26,12 @@ class NewListingBuild extends State<NewListing> {
   List<PostItem> posts = [];
   int page = 1;
   late Future<void> _dataFuture;
-  bool loading = false;
+  bool isloading = false;
   ScrollController controller = ScrollController();
   // List of items in our dropdown menu
   Future<void> fetchdata() async {
     final postService = GetIt.instance.get<PostService>();
+    isloading=true;
     List<PostItem> post = [];
     if (widget.type == "home" || widget.type=="popular"){
       if (userController.userAbout != null) {
@@ -48,6 +49,7 @@ class NewListingBuild extends State<NewListing> {
       print(username);
     }
     // Remove objects from list1 if their IDs match any in list2
+      isloading=false;
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
 post.removeWhere((item1) => item1.isRemoved==true);
     setState(() {
@@ -77,7 +79,15 @@ post.removeWhere((item1) => item1.isRemoved==true);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return  Consumer<RefreshHome>(
+        builder: (context,refresh, child) { 
+            if (refresh.shouldRefresh) {
+          posts=[];
+          fetchdata();
+          refresh.resetRefresh();// Reset the edit flag after fetching data
+        }
+    
+   return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -94,6 +104,20 @@ post.removeWhere((item1) => item1.isRemoved==true);
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+            if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
               return ListView.builder(
@@ -160,7 +184,8 @@ post.removeWhere((item1) => item1.isRemoved==true);
             },
           );
         }
+        }
       },
-    );
+    );});
   }
 }

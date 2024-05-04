@@ -100,6 +100,9 @@ void main() async {
       ),
             ChangeNotifierProvider(
         create: (context) => Edit(),
+      ),
+                 ChangeNotifierProvider(
+        create: (context) => RefreshHome(),
       )
     ],
     child: const MyApp(),

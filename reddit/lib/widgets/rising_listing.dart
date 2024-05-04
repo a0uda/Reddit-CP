@@ -83,7 +83,15 @@ class RisingListingBuild extends State<RisingListing> {
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return Consumer<RefreshHome>(
+        builder: (context,refresh, child) { 
+            if (refresh.shouldRefresh) {
+          posts=[];
+          fetchdata();
+          refresh.resetRefresh(); // Reset the edit flag after fetching data
+        } 
+    
+   return FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -183,6 +191,6 @@ class RisingListingBuild extends State<RisingListing> {
           }
         }
       },
-    );
+    );});
   }
 }

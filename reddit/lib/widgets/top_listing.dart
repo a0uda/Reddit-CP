@@ -27,9 +27,11 @@ class TopListingBuild extends State<TopListing> {
   int page = 1;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
+  bool isloading=false;
   // List of items in our dropdown menu
   Future<void> fetchdata({bool isRefresh = false}) async {
     final postService = GetIt.instance.get<PostService>();
+    isloading=true;
     List<PostItem> post = [];
     if (isRefresh) {
       page = 1; // Reset the page to 1 if it's a refresh
@@ -50,6 +52,7 @@ class TopListingBuild extends State<TopListing> {
       post = await postService.getMyPosts(username);
     }
     // Remove objects from list1 if their IDs match any in list2
+    isloading=false;
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
     post.removeWhere((item1) => item1.isRemoved == true);
 
@@ -83,7 +86,14 @@ class TopListingBuild extends State<TopListing> {
 
   @override
   Widget build(BuildContext context) {
-    return  FutureBuilder<void>(
+    return Consumer<RefreshHome>(
+        builder: (context,refresh, child) { 
+            if (refresh.shouldRefresh) {
+          posts=[];
+          fetchdata();
+          refresh.resetRefresh(); // Reset the edit flag after fetching data
+        }
+     return FutureBuilder<void>(
           future: _dataFuture,
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -100,6 +110,20 @@ class TopListingBuild extends State<TopListing> {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
+               if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
               return Consumer<LockPost>(builder: (context, lockPost, child) {
 
                 return RefreshIndicator(
@@ -174,8 +198,9 @@ class TopListingBuild extends State<TopListing> {
                 ),);
               });
             }
+            }
           },
         
-    );
+    );});
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 import 'package:reddit/widgets/top_listing.dart';
@@ -39,7 +41,7 @@ Future<void> FetchTrendingPosts ()async
 trends=await postService.getTrendingPosts();
     isloading=false;
 }
-
+bool refresh=false;
   // List of items in our dropdown menu
   var items = [
     'Hot',
@@ -59,6 +61,7 @@ trends=await postService.getTrendingPosts();
   }
   @override
   Widget build(BuildContext context) {
+       var postController = context.read<RefreshHome>();
     return 
     Container(
       color: Theme.of(context).colorScheme.background,
@@ -126,7 +129,26 @@ trends=await postService.getTrendingPosts();
               : Container(),
 
 
+
+
           ListTile(
+            trailing: 
+ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                  onPressed: () {
+              
+                      postController.Refresh();
+        postController.shouldRefresh=true;
+                 
+         
+                  },
+                  icon: Icon(Icons.refresh, color: Colors.white),
+                  label: Text(
+                    'refresh',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
             leading: Container(
               // width: 71,
               // height: 70,
