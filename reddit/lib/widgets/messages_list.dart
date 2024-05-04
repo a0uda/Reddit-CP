@@ -29,12 +29,13 @@ class MessagesState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     var followerfollowingcontroller =
         context.read<FollowerFollowingController>();
+    var myProvider = context.read<GetMessagesController>();
 
     return Consumer<MessagesOperations>(
       builder: (context, messagesOperations, child) {
         return FutureBuilder<List<dynamic>>(
           future: Future.wait([
-            messagesOperations.getMessages(),
+            myProvider.getUserMessages(),
             followerfollowingcontroller
                 .getFollowing(userController.userAbout!.username)
           ]),
@@ -65,7 +66,6 @@ class MessagesState extends State<MessagesPage> {
                   }
                   return RefreshIndicator(
                     onRefresh: () async {
-                      var myProvider = context.read<GetMessagesController>();
                       messagesList = await myProvider.getUserMessages();
                       following = followerfollowingcontroller.following;
                       originalMessagesList = List.from(messagesList);
