@@ -1,12 +1,8 @@
-import 'dart:collection';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-
 import 'package:reddit/Controllers/post_controller.dart';
-
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/chat_service.dart';

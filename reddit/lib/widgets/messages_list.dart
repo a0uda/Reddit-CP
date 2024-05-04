@@ -149,7 +149,18 @@ class MessagesState extends State<MessagesPage> {
                                                                 .connectionState ==
                                                             ConnectionState
                                                                 .waiting) {
-                                                          return const CircularProgressIndicator();
+                                                          return Container(
+                                                            color: Colors.white,
+                                                            child:
+                                                                const SizedBox(
+                                                                    height: 30,
+                                                                    width: 30,
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(),
+                                                                    )),
+                                                          );
                                                         } else if (snapshot
                                                             .hasError) {
                                                           return Text(

@@ -59,6 +59,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
           builder: (BuildContext context) {
             return AlertDialog(
               backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
               content: const Text(
                 'Are you sure you want to leave this community?',
                 style: TextStyle(

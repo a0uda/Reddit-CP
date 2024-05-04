@@ -58,10 +58,7 @@ class UserAbout {
           ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['profile_picture'] == null ||
-              jsonDecode['profile_picture'] == "")
-          ? 'images/Greddit.png'
-          : jsonDecode['profile_picture'],
+      profilePicture: jsonDecode['profile_picture'] ?? '',
       bannerPicture: jsonDecode['banner_picture'],
       country: jsonDecode['country'] == ''
           ? 'Choose your location'

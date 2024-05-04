@@ -112,25 +112,29 @@ class _CommunityTypeState extends State<CommunityType> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () async {
-              await settingsProvider.setGeneralSettings(
-                communityName: moderatorController.communityName,
-                general: GeneralSettings(
-                    communityID:
-                        moderatorController.generalSettings.communityID,
-                    communityTitle: moderatorController.generalSettings.communityTitle,
-                    communityDescription: moderatorController
-                        .generalSettings.communityDescription,
-                    communityType:
-                        moderatorController.generalSettings.communityType,
-                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
-              );
-              setState(() {
-                doneSaved = true;
-              });
-              // ignore: use_build_context_synchronously
-              Navigator.pop(context);
-            },
+            onPressed: (!isSaved)
+                ? null
+                : () async {
+                    await settingsProvider.setGeneralSettings(
+                      communityName: moderatorController.communityName,
+                      general: GeneralSettings(
+                          communityID:
+                              moderatorController.generalSettings.communityID,
+                          communityTitle: moderatorController
+                              .generalSettings.communityTitle,
+                          communityDescription: moderatorController
+                              .generalSettings.communityDescription,
+                          communityType:
+                              moderatorController.generalSettings.communityType,
+                          nsfwFlag:
+                              moderatorController.generalSettings.nsfwFlag),
+                    );
+                    setState(() {
+                      doneSaved = true;
+                    });
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
             child: Text(
               'Save',
               style: TextStyle(
@@ -294,10 +298,9 @@ class _CommunityTypeState extends State<CommunityType> {
                         moderatorController.generalSettings.nsfwFlag = newValue;
                         setState(() {
                           if (moderatorController.generalSettings.nsfwFlag !=
-                              initCommunityFlag) {
-                          }
+                              initCommunityFlag) {}
                         });
-                         checkInitState();
+                        checkInitState();
                       },
                       activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
                       inactiveThumbColor: Colors.white,

@@ -1,16 +1,10 @@
 import 'dart:io';
-
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
-import 'package:reddit/Pages/description_widget.dart';
-import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';

@@ -58,7 +58,7 @@ class Repost extends StatefulWidget {
   final String id;
   final String communityName;
   final bool isLocked;
-   String? description;
+  String? description;
   final int vote;
 
   Repost(
@@ -73,7 +73,7 @@ class Repost extends StatefulWidget {
       required this.commentsCount,
       required this.communityName,
       required this.isLocked,
-     this.description,
+      this.description,
       required this.vote});
 
   @override
@@ -88,7 +88,7 @@ class RepostState extends State<Repost> {
   bool upVote = false;
   bool downVote = false;
 
- late Future fetch;
+  late Future fetch;
   CommunityController communityController =
       GetIt.instance.get<CommunityController>();
   bool isHovering = false;
@@ -97,9 +97,7 @@ class RepostState extends State<Repost> {
   Color? downVoteColor;
   PostItem? post;
   Future<void> loadOriginalPost() async {
-
-    post= await postService.getPostById(widget.originalID);
- 
+    post = await postService.getPostById(widget.originalID);
   }
 
   void incrementCounter() {
@@ -150,7 +148,7 @@ class RepostState extends State<Repost> {
   @override
   void initState() {
     super.initState();
- fetch=loadOriginalPost();
+    fetch = loadOriginalPost();
 
     if (widget.vote == 1) {
       upVote = true;
@@ -265,7 +263,16 @@ class RepostState extends State<Repost> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
+                                            return Container(
+                                              color: Colors.white,
+                                              child: const SizedBox(
+                                                  height: 30,
+                                                  width: 30,
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  )),
+                                            );
                                           } else if (snapshot.hasError) {
                                             print(widget.name);
                                             print(snapshot.data);
@@ -322,7 +329,16 @@ class RepostState extends State<Repost> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
+                                      return Container(
+                                        color: Colors.white,
+                                        child: const SizedBox(
+                                            height: 30,
+                                            width: 30,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )),
+                                      );
                                     } else if (snapshot.hasError) {
                                       print(widget.name);
                                       print(snapshot.data);
@@ -369,7 +385,6 @@ class RepostState extends State<Repost> {
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
                             ? Options(
-                              
                                 postId: widget.id,
                                 saved: issaved,
                                 islocked: widget.isLocked,
@@ -396,273 +411,314 @@ class RepostState extends State<Repost> {
                             fontFamily: 'Arial'),
                       ),
                     ),
-  Align(
+                    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         widget.description ?? "",
                         style:
                             const TextStyle(fontSize: 16, fontFamily: 'Arial'),
                       ),
-  ),
+                    ),
 
                     //// future
                     ///
-                    FutureBuilder(future: fetch, 
-                    builder:(context, snapshot) {
-
-                       if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: InkWell(
-                        onTap: () => {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CommentsDesktop(
-                                  postId: post!.id), // pass the post ID here
-                            ),
-                          ),
-                        },
-                        onHover: (value) {
-                          ishovering = value;
-                          setState(() {});
-                        },
-                        child: Card(
-                          color: !ishovering
-                              ? Theme.of(context).colorScheme.background
-                              : Theme.of(context).colorScheme.primary,
-                          shadowColor: Theme.of(context).colorScheme.background,
-                          surfaceTintColor:
-                              Theme.of(context).colorScheme.background,
-                          child: Column(children: <Widget>[
-                            ListTile(
-                              leading: CircleAvatar(
-                                radius: 15,
-                                backgroundImage:
-                                    AssetImage('images/reddit-logo.png'),
+                    FutureBuilder(
+                        future: fetch,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              color: Colors.white,
+                              child: const Center(
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                ),
                               ),
-                              title: Column(
-                                children: [
-                                  Row(children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: (post!.communityName != "")
-                                          ? InkWell(
-                                              onTap: () => {
-                                                //TODO: go to community
-                                                communityController
-                                                    .getCommunity(
-                                                        post!.communityName),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: InkWell(
+                                onTap: () => {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CommentsDesktop(
+                                          postId: post!
+                                              .id), // pass the post ID here
+                                    ),
+                                  ),
+                                },
+                                onHover: (value) {
+                                  ishovering = value;
+                                  setState(() {});
+                                },
+                                child: Card(
+                                  color: !ishovering
+                                      ? Theme.of(context).colorScheme.background
+                                      : Theme.of(context).colorScheme.primary,
+                                  shadowColor:
+                                      Theme.of(context).colorScheme.background,
+                                  surfaceTintColor:
+                                      Theme.of(context).colorScheme.background,
+                                  child: Column(children: <Widget>[
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        radius: 15,
+                                        backgroundImage: AssetImage(
+                                            'images/reddit-logo.png'),
+                                      ),
+                                      title: Column(
+                                        children: [
+                                          Row(children: [
+                                            Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: (post!.communityName != "")
+                                                  ? InkWell(
+                                                      onTap: () => {
+                                                        //TODO: go to community
+                                                        communityController
+                                                            .getCommunity(post!
+                                                                .communityName),
 
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            (CommunityPage(
-                                                              communityName: post!
-                                                                  .communityName,
-                                                              communityDescription:
-                                                                  communityController
-                                                                      .communityItem!
-                                                                      .general
-                                                                      .communityDescription,
-                                                              communityMembersNo:
-                                                                  communityController
-                                                                      .communityItem!
-                                                                      .communityMembersNo,
-                                                              communityProfilePicturePath:
-                                                                  communityController
-                                                                      .communityItem!
-                                                                      .communityProfilePicturePath,
-                                                            )))),
-                                              },
-                                              onHover: (hover) {
-                                                setState(() {
-                                                  isHovering = hover;
-                                                });
-                                              },
-                                              child: Text(
-                                                (post!.communityName) ==
-                                                        "Select Community"
-                                                    ? post!.username
-                                                    :  post!.communityName,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Arial'),
-                                              ),
-                                            )
-                                          : InkWell(
-                                              onTap: () => {
-                                                userType = userController
-                                                            .userAbout!
-                                                            .username ==
-                                                         post!.username
-                                                    ? 'me'
-                                                    : 'other',
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        FutureBuilder<
-                                                            UserAbout?>(
-                                                      future: userService
-                                                          .getUserAbout(
-                                                             post!.username),
-                                                      builder:
-                                                          (context, snapshot) {
-                                                        if (snapshot
-                                                                .connectionState ==
-                                                            ConnectionState
-                                                                .waiting) {
-                                                          return const CircularProgressIndicator();
-                                                        } else if (snapshot
-                                                            .hasError) {
-                                                          print(widget.name);
-                                                          print(snapshot.data);
-                                                          return Text(
-                                                              'Error: ${snapshot.error}');
-                                                        } else {
-                                                          print(widget.name);
-                                                          print(snapshot.data);
-                                                          return ProfileScreen(
-                                                            snapshot.data,
-                                                            userType,
-                                                          );
-                                                        }
+                                                        Navigator.of(context).push(
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        (CommunityPage(
+                                                                          communityName:
+                                                                              post!.communityName,
+                                                                          communityDescription: communityController
+                                                                              .communityItem!
+                                                                              .general
+                                                                              .communityDescription,
+                                                                          communityMembersNo: communityController
+                                                                              .communityItem!
+                                                                              .communityMembersNo,
+                                                                          communityProfilePicturePath: communityController
+                                                                              .communityItem!
+                                                                              .communityProfilePicturePath,
+                                                                        )))),
                                                       },
+                                                      onHover: (hover) {
+                                                        setState(() {
+                                                          isHovering = hover;
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        (post!.communityName) ==
+                                                                "Select Community"
+                                                            ? post!.username
+                                                            : post!
+                                                                .communityName,
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily:
+                                                                'Arial'),
+                                                      ),
+                                                    )
+                                                  : InkWell(
+                                                      onTap: () => {
+                                                        userType = userController
+                                                                    .userAbout!
+                                                                    .username ==
+                                                                post!.username
+                                                            ? 'me'
+                                                            : 'other',
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                FutureBuilder<
+                                                                    UserAbout?>(
+                                                              future: userService
+                                                                  .getUserAbout(
+                                                                      post!
+                                                                          .username),
+                                                              builder: (context,
+                                                                  snapshot) {
+                                                                if (snapshot
+                                                                        .connectionState ==
+                                                                    ConnectionState
+                                                                        .waiting) {
+                                                                  return Container(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    child: const SizedBox(
+                                                                        height: 30,
+                                                                        width: 30,
+                                                                        child: Center(
+                                                                          child:
+                                                                              CircularProgressIndicator(),
+                                                                        )),
+                                                                  );
+                                                                } else if (snapshot
+                                                                    .hasError) {
+                                                                  print(widget
+                                                                      .name);
+                                                                  print(snapshot
+                                                                      .data);
+                                                                  return Text(
+                                                                      'Error: ${snapshot.error}');
+                                                                } else {
+                                                                  print(widget
+                                                                      .name);
+                                                                  print(snapshot
+                                                                      .data);
+                                                                  return ProfileScreen(
+                                                                    snapshot
+                                                                        .data,
+                                                                    userType,
+                                                                  );
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      },
+                                                      onHover: (hover) {
+                                                        setState(() {
+                                                          isHovering = hover;
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        post!.username,
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily:
+                                                                'Arial'),
+                                                      ),
+                                                    ),
+                                            ),
+                                            Text(
+                                              '  • ${formatDateTime(post!.createdAt.toString())}',
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Color.fromARGB(
+                                                      255, 117, 116, 115)),
+                                            ),
+                                          ]),
+                                          if (post!.communityName != "")
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: InkWell(
+                                                onTap: () => {
+                                                  userType = userController
+                                                              .userAbout!
+                                                              .username ==
+                                                          post!.username
+                                                      ? 'me'
+                                                      : 'other',
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FutureBuilder<
+                                                              UserAbout?>(
+                                                        future: userService
+                                                            .getUserAbout(
+                                                                post!.username),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return Container(
+                                                              color:
+                                                                  Colors.white,
+                                                              child:
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          30,
+                                                                      width: 30,
+                                                                      child:
+                                                                          Center(
+                                                                        child:
+                                                                            CircularProgressIndicator(),
+                                                                      )),
+                                                            );
+                                                          } else if (snapshot
+                                                              .hasError) {
+                                                            print(widget.name);
+                                                            print(
+                                                                snapshot.data);
+                                                            return Text(
+                                                                'Error: ${snapshot.error}');
+                                                          } else {
+                                                            print(widget.name);
+                                                            print(
+                                                                snapshot.data);
+                                                            return ProfileScreen(
+                                                              snapshot.data,
+                                                              userType,
+                                                            );
+                                                          }
+                                                        },
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              },
-                                              onHover: (hover) {
-                                                setState(() {
-                                                  isHovering = hover;
-                                                });
-                                              },
-                                              child: Text(
-                                               post!.username,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Arial'),
-                                              ),
-                                            ),
-                                    ),
-                                    Text(
-                                      '  • ${formatDateTime( post!.createdAt.toString())}',
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Color.fromARGB(
-                                              255, 117, 116, 115)),
-                                    ),
-                                  ]),
-                                  if ( post!.communityName != "")
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: InkWell(
-                                        onTap: () => {
-                                          userType = userController
-                                                      .userAbout!.username ==
-                                                  post!.username
-                                              ? 'me'
-                                              : 'other',
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  FutureBuilder<UserAbout?>(
-                                                future: userService
-                                                    .getUserAbout( post!.username),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return const CircularProgressIndicator();
-                                                  } else if (snapshot
-                                                      .hasError) {
-                                                    print(widget.name);
-                                                    print(snapshot.data);
-                                                    return Text(
-                                                        'Error: ${snapshot.error}');
-                                                  } else {
-                                                    print(widget.name);
-                                                    print(snapshot.data);
-                                                    return ProfileScreen(
-                                                      snapshot.data,
-                                                      userType,
-                                                    );
-                                                  }
                                                 },
+                                                onHover: (hover) {
+                                                  setState(() {
+                                                    isHovering = hover;
+                                                  });
+                                                },
+                                                child: Text(
+                                                  post!.username,
+                                                  style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w200,
+                                                      fontFamily: 'Arial'),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        },
-                                        onHover: (hover) {
-                                          setState(() {
-                                            isHovering = hover;
-                                          });
-                                        },
-                                        child: Text(
-                                           post!.username,
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w200,
-                                              fontFamily: 'Arial'),
-                                        ),
+                                        ],
                                       ),
                                     ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Column(children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            post!.title,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Arial'),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            post!.description ?? "",
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'Arial'),
+                                          ),
+                                        ),
+                                      ]),
+                                    ),
+                                  ]),
+                                ),
                               ),
-                             
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: Column(children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    post!.title,
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Arial'),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                 post!.description ?? "",
-                                    style: const TextStyle(
-                                        fontSize: 16, fontFamily: 'Arial'),
-                                  ),
-                                ),
-                              ]),
-                            ),
-                          ]),
-                        ),
-                      ),
-                    );
-                    }}
-                    ),
+                            );
+                          }
+                        }),
                   ],
                 ),
               ),
-
-
-               Padding(
+              Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: <Widget>[

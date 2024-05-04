@@ -3,8 +3,12 @@ import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class DescriptionWidget extends StatefulWidget {
   const DescriptionWidget({
@@ -36,7 +40,7 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
   Future<void> fetchModerators() async {
     if (!userFetched) {
       await moderatorController.getModerators(widget.communityName);
-      userFetched=true;
+      userFetched = true;
     }
   }
   //   Future<void> fetchModerators() async {
@@ -303,21 +307,26 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                         ),
                                       );
                                     } else {
-                                      return ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            moderatorController.rules.length,
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            children: [
-                                              RuleTile(
-                                                rule: moderatorController
-                                                    .rules[index],
-                                                index: index + 1,
-                                              ),
-                                            ],
+                                      return Consumer<RulesProvider>(
+                                        builder:
+                                            (context, addRulesProvider, child) {
+                                          return ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount: moderatorController
+                                                .rules.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                children: [
+                                                  RuleTile(
+                                                    rule: moderatorController
+                                                        .rules[index],
+                                                    index: index + 1,
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           );
                                         },
                                       );
@@ -507,6 +516,9 @@ class ModeratorTile extends StatefulWidget {
 }
 
 class ModeratorTileState extends State<ModeratorTile> {
+  final userController = GetIt.instance.get<UserController>();
+  final userService = GetIt.instance.get<UserService>();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -527,7 +539,40 @@ class ModeratorTileState extends State<ModeratorTile> {
                 color: Color.fromARGB(255, 97, 104, 110),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              String userType =
+                  userController.userAbout!.username == widget.moderatorUsername
+                      ? 'me'
+                      : 'other';
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FutureBuilder<UserAbout?>(
+                    future: userService.getUserAbout(widget.moderatorUsername),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
+                          color: Colors.white,
+                          child: const Center(
+                              child: SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: CircularProgressIndicator(),
+                          )),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        return ProfileScreen(
+                          snapshot.data,
+                          userType,
+                        );
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

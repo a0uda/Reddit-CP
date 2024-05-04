@@ -571,22 +571,21 @@ class ModeratorMockService {
       });
     } else {
       // todo: add moderator to the community
-      // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // String? token = prefs.getString('token');
-      // final url = Uri.parse(
-      //     'https://redditech.me/backend/communities/remove-moderator');
-      // final response = await http.post(
-      //   url,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': token!,
-      //   },
-      //   body: json.encode({
-      //     'community_name': communityName,
-      //     'username': username,
-      //   }),
-      // );
-    }
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   String? token = prefs.getString('token');
+    //   final url = Uri.parse(
+    //       'https://redditech.me/backend/communities/accept-moderator-invitation');
+    //   final response = await http.post(
+    //     url,
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': token!,
+    //     },
+    //     body: json.encode({"_id": communityId}),
+    //   );
+    //   print('in addModUser');
+    //   print(response.body);
+     }
   }
 
   Future<void> removeAsMod(String username, String communityName) async {

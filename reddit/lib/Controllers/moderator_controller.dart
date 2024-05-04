@@ -344,4 +344,11 @@ class UpdateProfilePicture extends ChangeNotifier {
     moderatorController.profilePictureURL = pictureUrl;
     notifyListeners();
   }
+  Future<void> updateBannerPicture(
+      {required String communityName, required String pictureUrl}) async {
+    await moderatorService.addBannerPicture(
+        communityName: communityName, pictureURL: pictureUrl);
+    moderatorController.bannerPictureURL = pictureUrl;
+    notifyListeners();
+  }
 }

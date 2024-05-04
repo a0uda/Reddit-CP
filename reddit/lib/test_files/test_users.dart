@@ -1,4 +1,5 @@
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/safety_settings_item.dart';
@@ -8,7 +9,6 @@ import 'package:reddit/test_files/test_messages.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
-import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
@@ -359,5 +359,45 @@ final List<UserItem> users = [
       communities[3],
     ],
     usermessages: List.from(userMessages[3]),
+  ),
+];
+
+
+List <ActiveCommunities> communities=[
+  ActiveCommunities(
+    id: '0',
+    name: 'Flutter',
+    description: 'Flutter is Google’s UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.',
+    title: 'Flutter',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 5000,
+  ),
+  ActiveCommunities(
+    id: '1',
+    name: 'Dart',
+    description: 'Dart is a client-optimized language for fast apps on any platform',
+    title: 'Dart',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 8000,
+  ),
+  ActiveCommunities(
+    id: '2',
+    name: 'Firebase',
+    description: 'Firebase is a platform developed by Google for creating mobile and web applications.',
+    title: 'Firebase',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 10000,
+  ),
+  ActiveCommunities(
+    id: '3',
+    name: 'Android',
+    description: 'Android is a mobile operating system based on a modified version of the Linux kernel and other open source software.',
+    title: 'Android',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 12000,
   ),
 ];
