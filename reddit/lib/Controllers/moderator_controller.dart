@@ -88,8 +88,8 @@ class ModeratorController {
 
 //Rawan: add moderator
   Future<void> addAsMod(
-      String username, String profilePicture, String communityName) async {
-    await moderatorService.addModUser(username, profilePicture, communityName);
+      String username, String profilePicture, String communityName, String msgId) async {
+    await moderatorService.addModUser(username, profilePicture, communityName, msgId);
     moderators = await moderatorService.getModerators(communityName);
   }
 }
