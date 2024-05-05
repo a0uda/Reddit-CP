@@ -388,8 +388,8 @@ class _PostModQueueState extends State<PostModQueue> {
                   ],
                 ),
                 const Spacer(),
-                widget.post.queuePostImage[0].imagePath != ""
-                    ? Container(
+                widget.post.queuePostImage.isNotEmpty ?
+                    Container(
                         margin: const EdgeInsets.only(right: 10),
                         width: screenSize.width * 0.15,
                         height: screenSize.width < 700

@@ -42,7 +42,6 @@ class _ModQueuesState extends State<ModQueues> {
 
   Future<void> fetchUnmoderatedPosts(
       String timeFilter, String postsOrComments) async {
-
     print('Ana gowa el fetch function');
     print(timeFilter);
     print(postsOrComments);
@@ -50,6 +49,10 @@ class _ModQueuesState extends State<ModQueues> {
         communityName: moderatorController.communityName,
         timeFilter: timeFilter,
         postsOrComments: postsOrComments);
+
+    List<Future<void>> futures =
+        moderatorController.unmoderatedPosts.map((post) => post.getProfilePicture(post.username, moderatorController.communityName)).toList();
+    await Future.wait(futures);
   }
 
   // Msh helw khales el kalam ely ana 3amlo da
@@ -309,7 +312,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
-            
+
             widget.changeNeedsToReviewText(value);
           });
         },
