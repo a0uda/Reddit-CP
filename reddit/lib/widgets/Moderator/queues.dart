@@ -11,8 +11,10 @@ class ModQueues extends StatefulWidget {
 
 class _ModQueuesState extends State<ModQueues> {
   Color greyColor = const Color.fromARGB(255, 247, 247, 247);
-  bool isSaved = false;
-  bool doneSaved = true;
+  bool isReportedFetched = false;
+  bool isRemovedFetched = false;
+  bool isUnmoderatedFetched = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -246,107 +248,6 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
         children: [
           Row(
             children: [
-              OutlinedButton.icon(
-                onPressed: () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Container(
-                        margin:
-                            const EdgeInsets.only(left: 16, top: 16, right: 16),
-                        width: widget.screenWidth,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8),
-                                  child: const Text(
-                                    'Filter by community',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: const Icon(Icons.close))
-                              ],
-                            ),
-                            const Divider(
-                              thickness: 1,
-                              color: Color.fromARGB(255, 213, 213, 213),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8),
-                                  child: const Text(
-                                    'All communities',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: communityNames!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                final Map<String, dynamic> item =
-                                    communityNames![index];
-                                final String title = item.keys.first;
-                                final bool itemBool = item.values.first;
-                                return ListTile(
-                                  title: Text(
-                                    title,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  trailing: Checkbox(
-                                      value: itemBool,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          toggleCheckList(index);
-                                        });
-                                      }),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(
-                  Icons.reddit,
-                  color: Colors.black,
-                ),
-                label: const Text(
-                  'badrbeyeb',
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
-                ),
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: greyColor,
-                  side: BorderSide(color: greyColor),
-                ),
-              ),
               OutlinedButtonClass(
                 buttonText: needReviewDisplay,
                 items: needReviewItems,

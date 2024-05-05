@@ -25,8 +25,38 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
+  QueuesPostItem queuesPostItem = QueuesPostItem(
+    queuePostImage: QueuePostImage(
+      imagePath: "",
+      imageCaption: "",
+      imageLink: "",
+    ),
+    moderatorDetails: ModeratorDetails(
+        approvedFlag: false,
+        approvedDate: "",
+        removedFlag: false,
+        removedBy: "",
+        removedDate: "",
+        removedRemovalReason: "",
+        spammedFlag: false,
+        spammedBy: "",
+        spammedType: "",
+        spammedRemovalReason: "",
+        reportedFlag: false,
+        reportedBy: "",
+        reportedType: ""),
+    postTitle: "",
+    postDescription: "",
+    createdAt: "",
+    editedAt: "",
+    deletedAt: "",
+    isDeleted: false,
+    username: "",
+    communityName: "",
+    nsfwFlag: false,
+    spoilerFlag: false,
+  );
   CommunityItem? communityItem;
-
 
   Future<void> getCommunityInfo(String communityName) async {
     Map<String, dynamic> info =
@@ -79,6 +109,36 @@ class ModeratorController {
       String username, String profilePicture, String communityName) async {
     await moderatorService.addModUser(username, profilePicture, communityName);
     moderators = await moderatorService.getModerators(communityName);
+  }
+
+  Future<void> getRemovedItems(
+      {required String username,
+      required String timeFilter,
+      required String postsOrComments}) async {
+    await moderatorService.getRemovedItems(
+        communityName: communityName,
+        timeFilter: timeFilter,
+        postsOrComments: postsOrComments);
+  }
+
+  Future<void> getReportedItems(
+      {required String username,
+      required String timeFilter,
+      required String postsOrComments}) async {
+    await moderatorService.getReportedItems(
+        communityName: communityName,
+        timeFilter: timeFilter,
+        postsOrComments: postsOrComments);
+  }
+
+  Future<void> getUnmoderatedItems(
+      {required String username,
+      required String timeFilter,
+      required String postsOrComments}) async {
+    await moderatorService.getUnmoderatedItems(
+        communityName: communityName,
+        timeFilter: timeFilter,
+        postsOrComments: postsOrComments);
   }
 }
 
@@ -344,6 +404,7 @@ class UpdateProfilePicture extends ChangeNotifier {
     moderatorController.profilePictureURL = pictureUrl;
     notifyListeners();
   }
+
   Future<void> updateBannerPicture(
       {required String communityName, required String pictureUrl}) async {
     await moderatorService.addBannerPicture(
@@ -360,7 +421,15 @@ class IsJoinedProvider extends ChangeNotifier {
   Future<void> joinCommunity(
       {required String communityName, required bool isJoined}) async {
     await moderatorService.joinCommunity(
-        communityName: communityName, isJoined: isJoined);
+      communityName: communityName,
+    );
+    moderatorController.joinedFlag = isJoined;
+    notifyListeners();
+  }
+
+  Future<void> leaveCommunity(
+      {required String communityName, required bool isJoined}) async {
+    await moderatorService.leaveCommunity(communityName: communityName);
     moderatorController.joinedFlag = isJoined;
     notifyListeners();
   }

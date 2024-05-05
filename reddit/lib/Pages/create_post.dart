@@ -87,6 +87,8 @@ class _CreatePostState extends State<CreatePost> {
     if (!communitiesFetched) {
       await userController.getUserCommunities();
       userCommunities = userController.userCommunities!;
+      print('Mohy beyharab print communities');
+      print(userCommunities);
     }
   }
 

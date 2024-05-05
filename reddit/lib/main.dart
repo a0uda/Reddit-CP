@@ -104,9 +104,12 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => UpdateProfilePicture(),
       ),
-            ChangeNotifierProvider(
+      ChangeNotifierProvider(
         create: (context) => Edit(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => IsJoinedProvider(),
+      ),
     ],
     child: const MyApp(),
   ));
