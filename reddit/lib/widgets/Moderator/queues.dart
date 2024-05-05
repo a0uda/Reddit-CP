@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/post_mod_queue.dart';
-import 'package:reddit/widgets/Moderator/test_badr.dart';
 
 class ModQueues extends StatefulWidget {
   const ModQueues({super.key});
@@ -10,16 +12,74 @@ class ModQueues extends StatefulWidget {
 }
 
 class _ModQueuesState extends State<ModQueues> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  String needReviewTitle = 'Unmoderated';
+  String postsAndCommentsTitle = 'Posts and Comments';
+  String newestFirstTitle = 'Newest First';
+
   Color greyColor = const Color.fromARGB(255, 247, 247, 247);
+
   bool isReportedFetched = false;
   bool isRemovedFetched = false;
   bool isUnmoderatedFetched = false;
 
+  Future<void> fetchRemovedPosts(
+      String timeFilter, String postsOrComments) async {
+    // await moderatorController.getRemovedItems(
+    //     communityName: moderatorController.communityName,
+    //     timeFilter: timeFilter,
+    //     postsOrComments: postsOrComments);
+  }
+
+  Future<void> fetchReportedPosts(
+      String timeFilter, String postsOrComments) async {
+    // await moderatorController.getReportedItems(
+    //     communityName: moderatorController.communityName,
+    //     timeFilter: timeFilter,
+    //     postsOrComments: postsOrComments);
+  }
+
+  Future<void> fetchUnmoderatedPosts(
+      String timeFilter, String postsOrComments) async {
+
+    print('Ana gowa el fetch function');
+    print(timeFilter);
+    print(postsOrComments);
+    await moderatorController.getUnmoderatedItems(
+        communityName: moderatorController.communityName,
+        timeFilter: timeFilter,
+        postsOrComments: postsOrComments);
+  }
+
+  // Msh helw khales el kalam ely ana 3amlo da
+  void changeNeedsToReviewText(String text) {
+    setState(() {
+      needReviewTitle = text;
+    });
+    // print('Mohy betest 1');
+    // print(needReviewTitle);
+  }
+
+  void changePostsAndCommentsText(String text) {
+    setState(() {
+      postsAndCommentsTitle = text;
+    });
+    print('mohy betest 2');
+    print(postsAndCommentsTitle);
+  }
+
+  void changeNewestFirstText(String text) {
+    setState(() {
+      newestFirstTitle = text;
+    });
+    // print('mohy betest 3');
+    // print(newestFirstTitle);
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    //double paddingPercentage = 0.1;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -48,19 +108,105 @@ class _ModQueuesState extends State<ModQueues> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(flex: 1, child: ModQueuesBar(screenWidth: screenWidth)),
+          Expanded(
+              flex: 1,
+              child: ModQueuesBar(
+                  screenWidth: screenWidth,
+                  changeNeedsToReviewText: changeNeedsToReviewText,
+                  changePostsAndCommentsText: changePostsAndCommentsText,
+                  changeNewestFirstText: changeNewestFirstText)),
           Expanded(
             flex: 8,
-            child: ListView.builder(
-              itemCount: modQueueTestPosts.length,
-              itemBuilder: (context, index) {
-                final item = modQueueTestPosts[index];
-                return PostModQueue(
-                  post: item,
-                );
-              },
-            ),
-          ),
+            child: needReviewTitle == "Unmoderated"
+                ? FutureBuilder(
+                    future: fetchUnmoderatedPosts(
+                        newestFirstTitle, postsAndCommentsTitle),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: LoadingAnimationWidget.twoRotatingArc(
+                              color: const Color.fromARGB(255, 172, 172, 172),
+                              size: 30),
+                        );
+                      } else {
+                        print('Mohy beyshoof el unmoderated');
+                        print(moderatorController.unmoderatedPosts);
+                        return ListView.builder(
+                          itemCount:
+                              moderatorController.unmoderatedPosts.length,
+                          itemBuilder: (context, index) {
+                            final item =
+                                moderatorController.unmoderatedPosts[index];
+                            return PostModQueue(
+                              post: item,
+                            );
+                          },
+                        );
+                      }
+                    },
+                  )
+                : needReviewTitle == "Removed"
+                    ? FutureBuilder(
+                        future: fetchRemovedPosts(
+                            newestFirstTitle, postsAndCommentsTitle),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: LoadingAnimationWidget.twoRotatingArc(
+                                  color:
+                                      const Color.fromARGB(255, 172, 172, 172),
+                                  size: 30),
+                            );
+                          } else {
+                            print('Mohy beyshoof el removed posts');
+                            print(moderatorController.removedPosts);
+                            return ListView.builder(
+                              itemCount:
+                                  moderatorController.removedPosts.length,
+                              itemBuilder: (context, index) {
+                                final item =
+                                    moderatorController.removedPosts[index];
+                                return PostModQueue(
+                                  post: item,
+                                );
+                              },
+                            );
+                          }
+                        },
+                      )
+                    : needReviewTitle == "Reported"
+                        ? FutureBuilder(
+                            future: fetchReportedPosts(
+                                newestFirstTitle, postsAndCommentsTitle),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: LoadingAnimationWidget.twoRotatingArc(
+                                      color: const Color.fromARGB(
+                                          255, 172, 172, 172),
+                                      size: 30),
+                                );
+                              } else {
+                                print('Mohy beyshoof el reported');
+                                print(moderatorController.reportedPosts);
+                                return ListView.builder(
+                                  itemCount:
+                                      moderatorController.reportedPosts.length,
+                                  itemBuilder: (context, index) {
+                                    final item = moderatorController
+                                        .reportedPosts[index];
+                                    return PostModQueue(
+                                      post: item,
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                          )
+                        : const SizedBox(),
+          )
         ],
       ),
     );
@@ -69,8 +215,16 @@ class _ModQueuesState extends State<ModQueues> {
 
 // The upper bar
 class ModQueuesBar extends StatefulWidget {
-  const ModQueuesBar({super.key, required this.screenWidth});
+  const ModQueuesBar(
+      {super.key,
+      required this.screenWidth,
+      required this.changeNeedsToReviewText,
+      required this.changePostsAndCommentsText,
+      required this.changeNewestFirstText});
   final double screenWidth;
+  final Function(String) changeNeedsToReviewText;
+  final Function(String) changePostsAndCommentsText;
+  final Function(String) changeNewestFirstText;
 
   @override
   State<ModQueuesBar> createState() => _ModQueuesBarState();
@@ -109,14 +263,6 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
     });
   }
 
-  void toggleCheckList(int index) {
-    if (communityNames != null) {
-      setState(() {
-        communityNames![index]['bool'] = !communityNames![index]['bool']!;
-      });
-    }
-  }
-
   @override
   void initState() {
     needReviewItems = [
@@ -127,6 +273,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
+            widget.changeNeedsToReviewText(value);
           });
         },
         'bool': true
@@ -138,6 +285,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
+            widget.changeNeedsToReviewText(value);
           });
         },
         'bool': false
@@ -149,6 +297,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
+            widget.changeNeedsToReviewText(value);
           });
         },
         'bool': false
@@ -160,6 +309,8 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
+            
+            widget.changeNeedsToReviewText(value);
           });
         },
         'bool': false
@@ -174,6 +325,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               postsAndCommentsDisplay = value;
             });
+            widget.changePostsAndCommentsText("posts and comments");
           });
         },
         'bool': true
@@ -186,6 +338,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               postsAndCommentsDisplay = value;
             });
+            widget.changePostsAndCommentsText(value);
           });
         },
         'bool': false
@@ -198,6 +351,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               postsAndCommentsDisplay = value;
             });
+            widget.changePostsAndCommentsText(value);
           });
         },
         'bool': false
@@ -211,6 +365,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               newestFirstDisplay = value;
             });
+            widget.changeNewestFirstText(value);
           });
         },
         'bool': true
@@ -222,16 +377,11 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               newestFirstDisplay = value;
             });
+            widget.changeNewestFirstText(value);
           });
         },
         'bool': false
       },
-    ];
-    communityNames = [
-      {'badrbeyheb': true},
-      {'ModeratorSw': false},
-      {'Flutter testing': false},
-      {'benhebAbdullah': false}
     ];
     super.initState();
   }

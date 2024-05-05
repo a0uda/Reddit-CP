@@ -1,4 +1,6 @@
+import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/rules_item.dart';
+import 'package:reddit/Services/moderator_service.dart';
 
 class CommunityItem {
   CommunityItem({
@@ -91,27 +93,39 @@ class QueuesPostItem {
     required this.postTitle,
     required this.postDescription,
     required this.createdAt,
-    required this.editedAt,
-    required this.deletedAt,
+    this.editedAt,
+    this.deletedAt,
     required this.isDeleted,
     required this.username,
     required this.communityName,
     required this.nsfwFlag,
     required this.spoilerFlag,
-
   });
   ModeratorDetails moderatorDetails;
-  QueuePostImage queuePostImage;
+  List<dynamic>queuePostImage;
+  List<QueuePostImage>?queuePostImageObject;
   String postTitle;
   String postDescription;
   String createdAt;
-  String editedAt;
-  String deletedAt;
+  String ?editedAt;
+  String ?deletedAt;
   bool isDeleted;
   String username;
   String communityName;
   bool nsfwFlag;
   bool spoilerFlag;
+  String profilePicture = '';
+
+  Future<String> getProfilePicture(
+      String username, String communityName) async {
+    final moderatorService = GetIt.instance.get<ModeratorMockService>();
+
+    Map<String, dynamic> comm =
+        await moderatorService.getCommunityInfo(communityName: communityName);
+    profilePicture = comm["communityProfilePicture"];
+
+    return profilePicture;
+  }
 }
 
 class ModeratorDetails {
@@ -131,22 +145,23 @@ class ModeratorDetails {
     required this.reportedType,
   });
   bool approvedFlag;
-  String approvedDate;
-  bool removedFlag;
-  String removedBy;
-  String removedDate;
+  String?approvedDate;
+  bool ?removedFlag;
+  String ?removedBy;
+  String?removedDate;
   String removedRemovalReason;
   bool spammedFlag;
-  String spammedBy;
-  String spammedType;
-  String spammedRemovalReason;
+  String ?spammedBy;
+  String ?spammedType;
+  String ?spammedRemovalReason;
   bool reportedFlag;
-  String reportedBy;
-  String reportedType;
+  String ?reportedBy;
+  String ?reportedType;
 }
+
 class QueuePostImage {
   QueuePostImage({
-    required this. imagePath,
+    required this.imagePath,
     required this.imageCaption,
     required this.imageLink,
   });
@@ -154,4 +169,3 @@ class QueuePostImage {
   String imageCaption;
   String imageLink;
 }
-

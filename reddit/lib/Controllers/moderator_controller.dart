@@ -25,37 +25,10 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
-  QueuesPostItem queuesPostItem = QueuesPostItem(
-    queuePostImage: QueuePostImage(
-      imagePath: "",
-      imageCaption: "",
-      imageLink: "",
-    ),
-    moderatorDetails: ModeratorDetails(
-        approvedFlag: false,
-        approvedDate: "",
-        removedFlag: false,
-        removedBy: "",
-        removedDate: "",
-        removedRemovalReason: "",
-        spammedFlag: false,
-        spammedBy: "",
-        spammedType: "",
-        spammedRemovalReason: "",
-        reportedFlag: false,
-        reportedBy: "",
-        reportedType: ""),
-    postTitle: "",
-    postDescription: "",
-    createdAt: "",
-    editedAt: "",
-    deletedAt: "",
-    isDeleted: false,
-    username: "",
-    communityName: "",
-    nsfwFlag: false,
-    spoilerFlag: false,
-  );
+  List<QueuesPostItem> removedPosts = [];
+  List<QueuesPostItem> reportedPosts = [];
+  List<QueuesPostItem> unmoderatedPosts = [];
+
   CommunityItem? communityItem;
 
   Future<void> getCommunityInfo(String communityName) async {
@@ -111,34 +84,43 @@ class ModeratorController {
     moderators = await moderatorService.getModerators(communityName);
   }
 
-  Future<void> getRemovedItems(
-      {required String username,
-      required String timeFilter,
-      required String postsOrComments}) async {
-    await moderatorService.getRemovedItems(
-        communityName: communityName,
-        timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
-  }
+  // Future<void> getRemovedItems(
+  //     {required String communityName,
+  //     required String timeFilter,
+  //     required String postsOrComments}) async {
+  //   print('Ana fel controller fel removed');
+  //   removedPosts = await moderatorService.getRemovedItems(
+  //       communityName: communityName,
+  //       timeFilter: timeFilter,
+  //       postsOrComments: postsOrComments);
+  //   print('Mohy beyshoof el removed fel controller');
+  //   print(removedPosts);
+  // }
 
-  Future<void> getReportedItems(
-      {required String username,
-      required String timeFilter,
-      required String postsOrComments}) async {
-    await moderatorService.getReportedItems(
-        communityName: communityName,
-        timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
-  }
+  // Future<void> getReportedItems(
+  //     {required String communityName,
+  //     required String timeFilter,
+  //     required String postsOrComments}) async {
+  //   print('Ana fel controller fel reported');
+  //   reportedPosts = await moderatorService.getReportedItems(
+  //       communityName: communityName,
+  //       timeFilter: timeFilter,
+  //       postsOrComments: postsOrComments);
+  //   print('Mohy beyshoof el reported fel controller');
+  //   print(reportedPosts);
+  // }
 
   Future<void> getUnmoderatedItems(
-      {required String username,
+      {required String communityName,
       required String timeFilter,
       required String postsOrComments}) async {
-    await moderatorService.getUnmoderatedItems(
+    print('Ana fel controller fel unmoderated');
+     await moderatorService.getUnmoderatedItems(
         communityName: communityName,
         timeFilter: timeFilter,
         postsOrComments: postsOrComments);
+    print('Mohy beyshoof el unmoderated fel controller');
+    print(unmoderatedPosts);
   }
 }
 

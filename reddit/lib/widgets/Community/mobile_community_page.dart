@@ -4,6 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Pages/description_widget.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
@@ -505,7 +506,16 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
             },
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DescriptionWidget(
+                    communityName: widget.communityName,
+                  ),
+                ),
+              );
+            },
             style: TextButton.styleFrom(
                 shape: const ContinuousRectangleBorder(),
                 padding: const EdgeInsets.all(0)),
