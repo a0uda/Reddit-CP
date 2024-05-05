@@ -22,6 +22,7 @@ class FollowerListState extends State<FollowerList> {
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
   bool _dataFetched = false;
+  bool _firstTime = true;
 
   void initState() {
     super.initState();
@@ -87,13 +88,9 @@ class FollowerListState extends State<FollowerList> {
                           .where((element) =>
                               element.username == followers![index].username)
                           .isNotEmpty) {
-                        print('unfollow fi followers list');
-                        print(followers![index].username);
                         await followerFollowingController
                             .unfollowUser(followers![index].username);
                       } else {
-                        print('follow fi followers list');
-                        print(followers![index].username);
                         await followerFollowingController
                             .followUser(followers![index].username);
                       }
@@ -170,16 +167,14 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void loadingData() async {
-    if (userController.followers == null) {
+    if (_firstTime) {
       followers =
           await userService.getFollowers(userController.userAbout!.username);
-    } else {
-      followers = userController.followers;
-    }
-    if (userController.following == null) {
       following =
           await userService.getFollowing(userController.userAbout!.username);
+      _firstTime = false;
     } else {
+      followers = userController.followers;
       following = userController.following;
     }
     setState(() {

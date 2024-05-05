@@ -11,6 +11,7 @@ import 'package:reddit/widgets/gender_settings_tile.dart';
 import 'package:reddit/widgets/manage_blocked_accounts.dart';
 import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:reddit/widgets/reset_password.dart';
+import 'package:reddit/widgets/add_password.dart';
 import 'package:reddit/widgets/update_email.dart';
 import '../Controllers/user_controller.dart';
 import 'package:reddit/widgets/location_customization.dart';
@@ -37,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             SettingsGroup(
               title: 'BASIC SETTINGS',
-              titleTextStyle: TextStyle( 
+              titleTextStyle: TextStyle(
                   height: 2,
                   fontWeight: FontWeight.bold,
                   fontSize: 12.0,
@@ -51,8 +52,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
-                const GenderTile(),
-                const CountryTile(),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const GenderTile();
+                  },
+                ),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const CountryTile();
+                  },
+                ),
               ],
             ),
             SettingsGroup(
@@ -115,18 +124,31 @@ Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
       },
     );
 
-Widget buildAddPassword(context) => CustomSettingsTile(
-      title: 'Change password',
-      leading: const Icon(Icons.settings_outlined),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
-      onTap: () {
+Widget buildAddPassword(context) {
+  final UserController userController = GetIt.instance.get<UserController>();
+  bool isSetPass = userController.userAbout!.isPasswordSetFlag!;
+  return CustomSettingsTile(
+    title: isSetPass ? 'Change password' : 'Add password',
+    leading: const Icon(Icons.settings_outlined),
+    trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
+    onTap: () {
+      if (isSetPass) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => const ResetPassword(),
           ),
         );
-      },
-    );
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AddPassword(),
+          ),
+        );
+      }
+    },
+  );
+}
+
 Widget buildManageNotifications(context) => CustomSettingsTile(
       title: 'Manage notifications',
       leading: const Icon(Icons.notifications_none_outlined),

@@ -101,7 +101,7 @@ class ProfileHeaderAddSocialLinkState
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              linkData.displayText,
+                              '${linkData.displayText.isEmpty ? linkData.username : linkData.displayText}',
                               style: TextStyle(
                                 color: notEditProfile
                                     ? Colors.white

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:reddit/Models/notification_item.dart';
+import 'package:reddit/widgets/best_listing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,14 +19,46 @@ class NotificationsService with ChangeNotifier {
         'Authorization': token!,
       },
     );
+    print("nottttiif");
+    print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       List<dynamic> notificationsJson = data['content'];
+      int unreadCount = 0;
+      for (var notification in notificationsJson) {
+        if (notification['unread_flag'] == true) {
+          unreadCount++;
+        }
+      }
+
+      userController.unreadNotificationsCount = unreadCount;
+      // notifyListeners();
       return Future.wait(notificationsJson
           .map((json) => NotificationItem.fromJson(json))
           .toList());
     } else {
       throw Exception('Failed to load notifications');
+    }
+  }
+
+  Future<int> getUnreadNotificationsCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/notifications/unread-count');
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      int unreadCount = data['count'];
+      return unreadCount;
+    } else {
+      return 0;
     }
   }
 
@@ -66,6 +99,7 @@ class NotificationsService with ChangeNotifier {
         'id': notificationId,
       }),
     );
+    // userController.unreadNotificationsCount--;
     if (response.statusCode == 200) {
       notifyListeners();
       return true;
@@ -86,6 +120,7 @@ class NotificationsService with ChangeNotifier {
         'Authorization': token!,
       },
     );
+    userController.unreadNotificationsCount = 0;
     if (response.statusCode == 200) {
       notifyListeners();
       return true;

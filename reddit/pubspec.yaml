@@ -39,6 +39,7 @@ dependencies:
   flutter_settings_screen_ex: ^0.0.1+5
   shared_preferences: ^2.2.3
   uni_links: ^0.5.1
+  google_sign_in: ^6.2.1
   # TODO:FIREBASE
   # firebase_core: "^1.10.5"
   # firebase_storage: "^10.0.4"
@@ -68,12 +69,23 @@ dependencies:
   loading_animation_widget: ^1.2.1
   firebase_core: ^2.30.1
   firebase_storage: ^11.7.4
+  awesome_notifications: ^0.9.3+1
+  easy_rich_text: ^2.1.0
+  flutter_emoji: ^2.5.1
+  socket_io_client: ^2.0.3+1
+  flutter_launcher_icons: ^0.13.1
   
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/app_icon.png"
+  min_sdk_android: 21
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the analysis_options.yaml file located at the root of your

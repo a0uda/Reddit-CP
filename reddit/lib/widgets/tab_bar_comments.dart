@@ -71,16 +71,17 @@ class TabBarComments extends StatelessWidget {
                                 },
                                 tileColor: Colors.white,
                                 title: Text(
-                                  comment.username ?? '',
+                                  comment.postTitle ?? '',
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.black),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 subtitle: Column(
                                   children: <Widget>[
                                     Row(
                                       children: <Widget>[
                                         Text(
-                                          'r/${comment.subredditName} • ${getDateTimeDifferenceWithLabel(comment.createdAt ?? '')} • ${comment.upvotesCount == 0 ? '' : comment.upvotesCount}',
+                                          'r/${comment.subredditName ?? ''} • ${getDateTimeDifferenceWithLabel(comment.createdAt ?? '')} • ${comment.upvotesCount == 0 ? '' : comment.upvotesCount}',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Color.fromARGB(
@@ -91,6 +92,7 @@ class TabBarComments extends StatelessWidget {
                                             ? const Icon(
                                                 Icons.arrow_upward_outlined,
                                                 size: 16,
+                                                color: Colors.red,
                                               )
                                             : Container(),
                                         Text(
@@ -111,11 +113,14 @@ class TabBarComments extends StatelessWidget {
                                     ),
                                     Row(
                                       children: <Widget>[
-                                        Text(
-                                          comment.description ?? '',
-                                          style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black),
+                                        Flexible(
+                                          child: Text(
+                                            comment.description ?? '',
+                                            style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black),
+                                            softWrap: true,
+                                          ),
                                         ),
                                       ],
                                     ),

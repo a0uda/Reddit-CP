@@ -35,6 +35,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                 child: Align(
                   child: ListTile(
                     leading: userController.userAbout!.profilePicture == null ||
+                            (userController.userAbout!.profilePicture!) == '' ||
                             userController.userAbout!.profilePicture!.isEmpty
                         ? const CircleAvatar(
                             radius: 25,

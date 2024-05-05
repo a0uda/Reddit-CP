@@ -28,18 +28,23 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
       {required this.userData, required this.userType});
 
   final UserController userController = GetIt.I.get<UserController>();
+  final userService = GetIt.I.get<UserService>();
 
   List<FollowersFollowingItem>? followingList;
   bool _dataFetched = false;
+  bool _firstTime = true;
 
   void loadFollowingList() async {
     if (userType != 'me') {
-      final userService = GetIt.I.get<UserService>();
-      followingList =
-          await userService.getFollowing(userController.userAbout!.username);
+      if (_firstTime) {
+        followingList =
+            await userService.getFollowing(userController.userAbout!.username);
+        _firstTime = false;
+      } else {
+        followingList = userController.following;
+      }
     }
     setState(() {
-      print('data fetched');
       _dataFetched = true;
     });
   }
@@ -51,7 +56,6 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
   }
 
   Widget _buildProfileHeaderRightSide() {
-    _dataFetched = false;
     var followerFollowingController =
         context.read<FollowerFollowingController>();
     return SizedBox(
@@ -94,7 +98,9 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                       await followerFollowingController
                           .unfollowUser(userData.username);
                     }
-                    setState(() {});
+                    setState(() {
+                      _dataFetched = false;
+                    });
                   }
                 },
                 style: TextButton.styleFrom(

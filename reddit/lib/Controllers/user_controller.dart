@@ -5,15 +5,17 @@ import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
+import 'package:reddit/Models/message_item.dart';
 import 'package:reddit/Models/notifications_settings_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/social_link_item.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Models/user_about.dart';
-import 'package:reddit/test_files/test_users.dart';
 
 class UserController {
   final userService = GetIt.instance.get<UserService>();
+  final notificationService = GetIt.instance.get<NotificationsService>();
 
   UserAbout? userAbout;
   List<BlockedUsersItem>? blockedUsers;
@@ -24,20 +26,21 @@ class UserController {
   List<CommunityBackend>? userModeratedCommunities;
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
+  int unreadNotificationsCount = 0;
+  int unreadMessagesCount = 0;
 
   Future<void> getUser(String username) async {
+    print('getting user');
+    print(username);
     userAbout = await userService.getUserAbout(username);
-    // blockedUsers = await userService.getBlockedUsers(username);
-    // accountSettings = await userService.getAccountSettings(username);
-    // notificationsSettings =
-    //     await userService.getNotificationsSettings(username);
-    // profileSettings = await userService.getProfileSettings(username);
+    blockedUsers = await userService.getBlockedUsers(username);
+    accountSettings = await userService.getAccountSettings(username);
+    notificationsSettings =
+        await userService.getNotificationsSettings(username);
+    profileSettings = await userService.getProfileSettings(username);
+    unreadNotificationsCount = await getUnreadNotificationsCount();
+    await getUnreadMessagesCount();
   }
-
-  // Future<NotificationsSettingsItem?> getNotificationsSettings(
-  //     String username) async {
-  //   return await userService.getNotificationsSettings(username);
-  // }
 
   Future<void>? getUserAbout(String username) async {
     userAbout = await userService.getUserAbout(username);
@@ -61,9 +64,15 @@ class UserController {
   }
 
   Future<bool> changePassword(String username, String currentPassword,
-      String newPassword, String verifiedNewPassword) {
-    return userService.changePassword(
+      String newPassword, String verifiedNewPassword) async {
+    bool flag = await userService.changePassword(
         username, currentPassword, newPassword, verifiedNewPassword);
+    return flag;
+  }
+
+  Future<bool> addPassword(
+      String username, String password, String verifiedPassword) async {
+    return await userService.addPassword(username, password, verifiedPassword);
   }
 
   Future<void> blockUser(UserAbout userData, String username) async {
@@ -76,21 +85,21 @@ class UserController {
     blockedUsers = await userService.getBlockedUsers(userData.username);
   }
 
-  Future<bool> changeGender(String username, String gender) {
-    return userService.changeGender(username, gender);
+  // Future<bool> changeGender(String username, String gender) {
+  //   return userService.changeGender(username, gender);
+  // }
+
+  // Future<void> changeCountry(String username, String country) {
+  //   userAbout!.country = country;
+  //   return userService.changeCountry(username, country);
+  // }
+
+  Future<bool> connectToGoogle(String username) async {
+    return userService.connectToGoogle(username);
   }
 
-  Future<void> changeCountry(String username, String country) {
-    userAbout!.country = country;
-    return userService.changeCountry(username, country);
-  }
-
-  void connectToGoogle(String username) {
-    userService.connectToGoogle(username);
-  }
-
-  void disconnectFromGoogle(String username) {
-    userService.disconnectFromGoogle(username);
+  Future<int> disconnectFromGoogle(String username, String password) async {
+    return userService.disconnectFromGoogle(username, password);
   }
 
   Future<void> saveComment(String username, String commentId) async {
@@ -120,6 +129,38 @@ class UserController {
   Future<void> getUserModerated() async {
     userModeratedCommunities = await userService.getUserModerated();
   }
+
+  Future<int> getUnreadNotificationsCount() async {
+    unreadNotificationsCount =
+        await notificationService.getUnreadNotificationsCount();
+    return unreadNotificationsCount;
+  }
+
+  Future<void> getUnreadMessagesCount() async {
+    unreadMessagesCount =
+        await userService.getUnreadMessagesCount(userAbout!.username);
+  }
+}
+
+class AccountSettingsController extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<void> changeCountry(String country) async {
+    await userService.changeCountry(
+        userController.userAbout!.username, country);
+    userController.accountSettings!.country = country;
+    userController.userAbout!.country = country;
+    notifyListeners();
+  }
+
+  Future<bool> changeGender(String gender) async {
+    bool flag = await userService.changeGender(
+        userController.userAbout!.username, gender);
+    userController.accountSettings!.gender = gender;
+    notifyListeners();
+    return flag;
+  }
 }
 
 class SocialLinksController extends ChangeNotifier {
@@ -129,44 +170,23 @@ class SocialLinksController extends ChangeNotifier {
   bool testing = const bool.fromEnvironment('testing');
 
   void getSocialLinks() {
-    // if (testing == false) {
-    //   //todo: to be changed wen databse function is implemented
-    //   socialLinks = users
-    //       .firstWhere((element) => element.userAbout.username == 'Purple-7544')
-    //       .userAbout
-    //       .socialLinks;
-    // } else {
     socialLinks = userController.userAbout!.socialLinks;
-    //}
   }
 
   Future<void> removeSocialLink(
       String username, SocialLlinkItem socialLink) async {
-    // if (testing == false) {
-    //   await userService.deleteSocialLink('Purple-7544', socialLink.id);
-    //   userController.userAbout!.socialLinks!.remove(socialLink);
-    //   socialLinks!.remove(socialLink);
-    //   notifyListeners();
-    // } else {
     await userService.deleteSocialLink(username, socialLink.id);
     userController.userAbout!.socialLinks!.remove(socialLink);
     socialLinks!.remove(socialLink);
     notifyListeners();
-    //}
   }
 
   Future<void> addSocialLink(
       String username, String displayName, String type, String link) async {
-    // if (testing == false) {
-    //   await userService.addSocialLink('Purple-7544', displayName, type, link);
-    //   getSocialLinks();
-    //   notifyListeners();
-    // } else {
     await userService.addSocialLink(username, displayName, type, link);
     await userController.getUserAbout(userController.userAbout!.username);
     getSocialLinks();
     notifyListeners();
-    //}
   }
 
   Future<void> editSocialLink(
@@ -257,8 +277,6 @@ class FollowerFollowingController extends ChangeNotifier {
   }
 
   Future<void> unfollowUser(String username) async {
-    print('unfollowing');
-    print(username);
     await userService.unfollowUser(
         username, userController.userAbout!.username);
     following =
@@ -363,6 +381,7 @@ class MessagesOperations extends ChangeNotifier {
         message,
         subject);
     if (success) {
+      //userController.getUnreadMessagesCount();
       notifyListeners();
     }
     return success;
@@ -373,6 +392,7 @@ class MessagesOperations extends ChangeNotifier {
     bool success = await userService.sendNewMessage(
         userController.userAbout!.username, receiverUsername, message, subject);
     if (success) {
+      //userController.getUnreadMessagesCount();
       notifyListeners();
     }
     return success;
@@ -380,6 +400,29 @@ class MessagesOperations extends ChangeNotifier {
 
   Future<void> markallAsRead() async {
     await userService.markAllMessagesRead(userController.userAbout!.username);
+    userController.unreadMessagesCount = 0;
     notifyListeners();
+  }
+
+  Future<void> markonAsRead(List<Messages> messages) async {
+    for (var message in messages) {
+      await userService.markoneMessageRead(
+          userController.userAbout!.username, message.id);
+    }
+    //await userController.getUnreadMessagesCount();
+    notifyListeners();
+  }
+}
+
+class GetMessagesController extends ChangeNotifier {
+  final userService = GetIt.instance.get<UserService>();
+  final userController = GetIt.instance.get<UserController>();
+
+  Future<List<Messages>> getUserMessages() async {
+    List<Messages>? messages =
+        await userService.getMessages(userController.userAbout!.username);
+    await userController.getUnreadMessagesCount();
+    notifyListeners();
+    return messages!;
   }
 }

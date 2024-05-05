@@ -119,16 +119,18 @@ class _MessageContentState extends State<MessageContent> {
                                 builder: (context, followerFollowingController,
                                     child) {
                                   if (followerFollowingController
-                                      .following!.isNotEmpty) {
+                                      .following.isNotEmpty) {
                                     following =
-                                        followerFollowingController.following!;
+                                        followerFollowingController.following;
                                   }
-                                  return message.receiverType == 'user' &&
+                                  return message.senderType == 'user' &&
                                           !following.any((element) =>
                                               element.username ==
                                               message.senderUsername) &&
                                           message.senderUsername !=
-                                              userController.userAbout!.username
+                                              userController
+                                                  .userAbout!.username &&
+                                          message.senderUsername != 'reddit'
                                       ? GestureDetector(
                                           onTap: () => {
                                                 showMoreOptionsDialog(
@@ -152,10 +154,15 @@ class _MessageContentState extends State<MessageContent> {
                                   padding: const EdgeInsets.only(left: 17),
                                   child: RichText(
                                     text: TextSpan(
-                                      children: message.isInvitation!
-                                          ? _parseInvitationMessage(
-                                              message.message!)
-                                          : _parseMessage(message.message!),
+                                      children: message.senderUsername ==
+                                              'reddit'
+                                          ? _parseRedditMessage()
+                                          : message.isInvitation!
+                                              ? _parseInvitationMessage(
+                                                  message.message!,
+                                                  message.senderVia!,
+                                                  message.id)
+                                              : _parseMessage(message.message!),
                                       style: const TextStyle(
                                         fontSize: 15,
                                         color: Colors.black,
@@ -170,166 +177,244 @@ class _MessageContentState extends State<MessageContent> {
               );
             },
           ),
-          bottomSheet: Container(
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            padding: const EdgeInsets.only(left: 5, right: 5),
-            child: TextButton(
-              onPressed: () => {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  isDismissible: false,
-                  builder: (BuildContext context) {
-                    return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: Scaffold(
-                        appBar: AppBar(
-                          title: Row(
-                            children: [
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () async {
-                                  if (messageContentController
-                                      .text.isNotEmpty) {
-                                    String? receiverUsername =
-                                        messages[0].isSent
-                                            ? messages[0].receiverUsername
-                                            : messages[0].senderType == 'user'
-                                                ? messages[0].senderUsername
-                                                : messages[0].senderVia;
-                                    String? receiverType = messages[0].isSent
-                                        ? messages[0].receiverType
-                                        : messages[0].senderType;
-                                    String? senderType = messages[0].isSent
-                                        ? messages[0].senderType
-                                        : messages[0].receiverType;
-                                    String? senderVia;
-                                    if (senderType != 'user') {
-                                      senderVia = messages[0].isSent
-                                          ? messages[0].senderVia
-                                          : messages[0].receiverUsername;
-                                    }
-                                    bool success = await context
-                                        .read<MessagesOperations>()
-                                        .replyToMessage(
-                                            messages[0].id,
-                                            receiverUsername!,
-                                            receiverType!,
-                                            senderType!,
-                                            senderVia,
-                                            messageContentController.text,
-                                            messages[0].subject);
-                                    if (success) {
-                                      messages.add(Messages(
-                                        id: (messages.length + 1).toString(),
-                                        senderUsername:
-                                            userController.userAbout!.username,
-                                        senderType: senderType,
-                                        receiverUsername: receiverUsername,
-                                        receiverType: receiverType,
-                                        senderVia: senderVia,
-                                        message: messageContentController.text,
-                                        createdAt:
-                                            DateTime.now().toIso8601String(),
-                                        unreadFlag: false,
-                                        isSent: true,
-                                        isReply: true,
-                                        parentMessageId: messages[0].id,
-                                        subject: null,
-                                        isInvitation: false,
-                                      ));
-                                      showMessageContent.add(false);
-                                      Navigator.pop(context);
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Message is not sent successfully. This User is no longer available.',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: Colors.white,
+          bottomSheet: messages[0].senderUsername == 'reddit'
+              ? const SizedBox.shrink()
+              : Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  padding: const EdgeInsets.only(left: 5, right: 5),
+                  child: TextButton(
+                    onPressed: () => {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        isDismissible: false,
+                        builder: (BuildContext context) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.9,
+                            child: Scaffold(
+                              appBar: AppBar(
+                                title: Row(
+                                  children: [
+                                    const Spacer(),
+                                    TextButton(
+                                      onPressed: () async {
+                                        if (messageContentController
+                                            .text.isNotEmpty) {
+                                          String? receiverUsername = messages[0]
+                                                  .isSent
+                                              ? messages[0].receiverUsername
+                                              : messages[0].senderType == 'user'
+                                                  ? messages[0].senderUsername
+                                                  : messages[0].senderVia;
+                                          String? receiverType =
+                                              messages[0].isSent
+                                                  ? messages[0].receiverType
+                                                  : messages[0].senderType;
+                                          String? senderType =
+                                              messages[0].isSent
+                                                  ? messages[0].senderType
+                                                  : messages[0].receiverType;
+                                          String? senderVia;
+                                          if (senderType != 'user') {
+                                            senderVia = messages[0].isSent
+                                                ? messages[0].senderVia
+                                                : messages[0].receiverUsername;
+                                          }
+                                          bool success = await context
+                                              .read<MessagesOperations>()
+                                              .replyToMessage(
+                                                  messages[0].id,
+                                                  receiverUsername!,
+                                                  receiverType!,
+                                                  senderType!,
+                                                  senderVia,
+                                                  messageContentController.text,
+                                                  messages[0].subject);
+                                          if (success) {
+                                            messages.add(Messages(
+                                              id: (messages.length + 1)
+                                                  .toString(),
+                                              senderUsername: userController
+                                                  .userAbout!.username,
+                                              senderType: senderType,
+                                              receiverUsername:
+                                                  receiverUsername,
+                                              receiverType: receiverType,
+                                              senderVia: senderVia,
+                                              message:
+                                                  messageContentController.text,
+                                              createdAt: DateTime.now()
+                                                  .toIso8601String(),
+                                              unreadFlag: false,
+                                              isSent: true,
+                                              isReply: true,
+                                              parentMessageId: messages[0].id,
+                                              subject: null,
+                                              isInvitation: false,
+                                            ));
+                                            showMessageContent.add(false);
+                                            Navigator.pop(context);
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Message is not sent successfully. This User is no longer available.',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                duration: Duration(seconds: 1),
+                                                backgroundColor: Colors.black,
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Please enter a message.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              duration: Duration(seconds: 1),
+                                              backgroundColor: Colors.black,
                                             ),
-                                          ),
-                                          duration: Duration(seconds: 1),
-                                          backgroundColor: Colors.black,
-                                        ),
-                                      );
-                                    }
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Please enter a message.',
-                                          textAlign: TextAlign.center,
+                                          );
+                                        }
+                                      },
+                                      child: Text("SEND",
                                           style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        duration: Duration(seconds: 1),
-                                        backgroundColor: Colors.black,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Text("SEND",
-                                    style: TextStyle(
-                                      color: Colors.blue[900],
-                                      fontWeight: FontWeight.bold,
-                                    )),
+                                            color: Colors.blue[900],
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                        body: SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: TextField(
-                              controller: messageContentController,
-                              decoration: const InputDecoration(
-                                hintText: 'Your message',
+                              body: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(15),
+                                  child: TextField(
+                                    controller: messageContentController,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Your message',
+                                    ),
+                                    maxLines: null,
+                                  ),
+                                ),
                               ),
-                              maxLines: null,
+                            ),
+                          );
+                        },
+                      ),
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.only(left: 2, right: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Text(
+                            "Reply to the Message",
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 112, 112, 112),
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              },
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.only(left: 2, right: 2),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                backgroundColor: const Color.fromARGB(255, 243, 243, 243),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 5),
-                    child: Text(
-                      "Reply to the Message",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 112, 112, 112),
-                        fontSize: 14,
-                      ),
+                        Spacer(),
+                      ],
                     ),
                   ),
-                  Spacer(),
-                ],
-              ),
-            ),
-          ),
+                ),
         );
       },
     );
   }
 
-  List<TextSpan> _parseInvitationMessage(String message) {
+  List<TextSpan> _parseRedditMessage() {
+    String message =
+        "Tips to get started ➡️\n\nAs a new moderator, you may be unsure about how to get more people to learn about and join your community. That’s natural—but it won’t be that way forever.\n\nHere are few things you can do to set your community up for success:\n\n  1.👋 Create a description that tells your visitors what to expect from the community.\n  2.🖼 Add a community icon to make your community look welcoming.\n  3.✍️ Fill your community with at least 10 posts. This helps visitors understand why they should join and what type of content to post.\n  4.📣 Ask others to post in your community. Use the Reddit search bar and search for your community’s topic. Filter by posts made in the last month and you’ll be able to see recent posts people have made to other communities that may fit yours as well. If you see a great post, you can comment on that post, and kindly ask the person to post it in your community too. People love feeling like you enjoy what they posted.\n\nFor more help, check out 5 Tips for Growing a Community or 3 Biggest Mistakes New Moderators Make, or visit r/ModHelp to connect with and get advice from other moderators.\n\nEnjoy growing your community!\n\nReddit";
+
+    final List<TextSpan> spans = [];
+
+    final RegExp regex = RegExp(
+      r'(3 Biggest Mistakes New Moderators Make|5 Tips for Growing a Community|description|icon)',
+      caseSensitive: false,
+    );
+
+    final Iterable<RegExpMatch> matches = regex.allMatches(message);
+
+    int start = 0;
+
+    for (final match in matches) {
+      final link = match.group(0);
+      if (start < match.start) {
+        spans.add(
+          TextSpan(
+            text: message.substring(start, match.start),
+          ),
+        );
+      }
+
+      final gestureRecognizer = TapGestureRecognizer()
+        ..onTap = () {
+          String launchURL = 'https://www.reddit.com';
+
+          if (link == '3 Biggest Mistakes New Moderators Make') {
+            launchURL =
+                'https://redditforcommunity.com/blog/3-mistakes-new-mods-make';
+          } else if (link == '5 Tips for Growing a Community') {
+            launchURL =
+                'https://redditforcommunity.com/blog/5-tips-for-growing';
+          } else if (link == 'description') {
+            launchURL =
+                'https://support.reddithelp.com/hc/en-us/articles/15484546290068-Community-settings';
+          } else if (link == 'icon') {
+            launchURL =
+                'https://support.reddithelp.com/hc/en-us/articles/15484265952660-Avatar';
+          }
+          _launchURL(launchURL);
+        };
+
+      spans.add(
+        TextSpan(
+          text: link,
+          style: TextStyle(
+            color: Colors.blue[900],
+            decoration: TextDecoration.underline,
+          ),
+          recognizer: gestureRecognizer,
+        ),
+      );
+      start = match.end;
+    }
+
+    if (start < message.length) {
+      spans.add(
+        TextSpan(
+          text: message.substring(start),
+        ),
+      );
+    }
+
+    return spans;
+  }
+
+  List<TextSpan> _parseInvitationMessage(
+      String message, String senderVia, String msgID) {
     final List<TextSpan> spans = [];
 
     final RegExp regex = RegExp(
@@ -355,18 +440,23 @@ class _MessageContentState extends State<MessageContent> {
         ..onTap = () {
           final ModeratorController moderatorController =
               GetIt.instance.get<ModeratorController>();
-          print(link!.split(' ')[3].replaceFirst('/r/', ''));
-          moderatorController.communityName =
-              link.split(' ')[3].replaceFirst('/r/', '');
+
+          moderatorController.communityName = senderVia;
+          print('ana b7awl aro7 community');
+          print(senderVia);
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ModResponsive(
-                  mobileLayout: Moderators(isInvite: true),
+                  mobileLayout: Moderators(
+                    isInvite: true,
+                    msgID: msgID,
+                  ),
                   desktopLayout: DesktopModTools(
-                    index: 4,
+                    index: 5,
                     communityName: moderatorController.communityName,
                     isInvite: true,
+                    msgID: msgID,
                   )),
             ),
           );

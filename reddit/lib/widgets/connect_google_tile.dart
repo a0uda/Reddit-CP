@@ -33,17 +33,94 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
               fontSize: 14.0,
               fontWeight: FontWeight.bold),
         ),
-        onTap: () {
-          setState(() {
-            isConnected = !isConnected;
-            if (isConnected) {
-              userController
-                  .connectToGoogle(userController.userAbout!.username);
-            } else {
-              userController
-                  .disconnectFromGoogle(userController.userAbout!.username);
+        onTap: () async {
+          bool newConnectionStatus = !isConnected;
+          bool connectStatus;
+          int disconnectStatus;
+          if (newConnectionStatus) {
+            connectStatus = await userController
+                .connectToGoogle(userController.userAbout!.username);
+            if (connectStatus) {
+              setState(() {
+                isConnected = newConnectionStatus;
+              });
             }
-          });
+          } else {
+            final TextEditingController passwordController =
+                TextEditingController();
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Enter your password'),
+                  content: TextField(
+                    controller: passwordController,
+                    style: const TextStyle(
+                      color: Colors.black,
+                    ),
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            return Colors.deepOrange[400];
+                          },
+                        ),
+                      ),
+                      child: const Text('Submit'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+            String password = passwordController.text;
+            // Validate the password here
+            disconnectStatus = await userController.disconnectFromGoogle(
+                userController.userAbout!.username, password);
+
+            if (disconnectStatus == 2) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Error'),
+                    content: const Text(
+                        "Your don't have password, Add a password to your account first please"),
+                    actions: <Widget>[
+                      TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              return Colors.deepOrange[400];
+                            },
+                          ),
+                        ),
+                        child: const Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else if (disconnectStatus == 200) {
+              setState(() {
+                isConnected = newConnectionStatus;
+              });
+            }
+          }
         },
       ),
       onTap: () {
