@@ -5,14 +5,22 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/widgets/Search/search_in_community.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
 
 class MobileAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
   final bool isInbox;
-  const MobileAppBar(
-      {super.key, required this.logoTapped, this.isInbox = false});
+  final bool isInCommunity;
+  final String communityName;
+  const MobileAppBar({
+    super.key,
+    required this.logoTapped,
+    this.isInbox = false,
+    this.isInCommunity = false,
+    this.communityName = "",
+  });
 
   @override
   State<MobileAppBar> createState() => _MobileAppBarState();
@@ -49,22 +57,57 @@ class _MobileAppBarState extends State<MobileAppBar> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      showSearch(context: context, delegate: SearchBarClass());
+                      if (widget.isInCommunity) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SearchInCommunity(
+                              communityName: widget.communityName,
+                            ),
+                          ),
+                        );
+                      } else {
+                        showSearch(
+                            context: context, delegate: SearchBarClass());
+                      }
                     },
                     style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.only(left: 8),
                         elevation: 0,
                         backgroundColor: Colors.grey[200],
+                        surfaceTintColor: Colors.grey[200],
                         foregroundColor: Colors.grey,
                         shadowColor: Colors.white,
+                        enableFeedback: false,
+                        disabledMouseCursor: SystemMouseCursors.click,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0))),
-                    child: const Row(children: [
-                      Icon(
-                        Icons.search,
-                        color: Colors.black,
-                      ),
-                      Text("Search...")
-                    ]),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.search,
+                            color: Colors.black,
+                          ),
+                          widget.isInCommunity
+                              ? Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(7, 4, 7, 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[400],
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    child: Text(
+                                      "r/${widget.communityName}",
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          const Text("Search...")
+                        ]),
                   ),
                 ),
               ],

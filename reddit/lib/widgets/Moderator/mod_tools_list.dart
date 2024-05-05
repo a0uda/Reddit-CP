@@ -171,6 +171,19 @@ class ModToolsList extends StatelessWidget {
           },
         ),
         ListTile(
+          leading: const Icon(Icons.close),
+          title: Text(
+            'Removal Reasons',
+            style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+          ),
+          trailing: isMobile
+              ? const Icon(Icons.arrow_forward_rounded)
+              : const SizedBox(),
+          onTap: () {
+            changePage(11);
+          },
+        ),
+        ListTile(
           leading: const Icon(Icons.calendar_month),
           title: Text(
             'Scheduled Posts',
@@ -180,7 +193,7 @@ class ModToolsList extends StatelessWidget {
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
           onTap: () {
-            changePage(11);
+            changePage(12);
           },
         ),
       ],

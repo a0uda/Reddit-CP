@@ -31,6 +31,9 @@ class PostItem {
   final bool nsfwFlag;
   bool lockedFlag;
   bool allowrepliesFlag;
+  bool? inCommunityFlag;
+  Map<String, dynamic>? scheduleDetails;
+  String? profilePicture;
   final String? setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
   final UserDetails? userDetails;
@@ -54,6 +57,9 @@ final bool  isRemoved;
     this.videos,
     this.poll,
     this.communityId,
+    this.scheduleDetails,
+    this.inCommunityFlag,
+    this.profilePicture,
     required this.communityName,
     required this.commentsCount,
     required this.viewsCount,
@@ -79,7 +85,7 @@ final bool  isRemoved;
     final List<ImageItem> imagelist =  jsonlist.map((jsonitem) {
       return ImageItem.fromJson(jsonitem);
     }).toList();
-    final List<dynamic> jsonlist2 = json['videos']??[];
+    final List<dynamic> jsonlist2 = json['videos'] ?? [];
     final List<VideoItem> videolist = jsonlist2.map((jsonitem) {
       return VideoItem.fromJson(jsonitem);
     }).toList();
@@ -111,6 +117,7 @@ final bool  isRemoved;
       vote: (json['vote'] != null) ? (json['vote']) : 0,
       images: (imagelist.isNotEmpty) ? imagelist : null,
       videos: (videolist.isNotEmpty) ? videolist : null,
+      inCommunityFlag: json["post_in_community_flag"],
       isRemoved: json['deleted']
     );
   }

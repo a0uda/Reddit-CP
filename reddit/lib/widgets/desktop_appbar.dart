@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/widgets/Search/search_in_community.dart';
 import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
@@ -17,8 +18,15 @@ import 'package:reddit/widgets/messages_list.dart';
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
   final bool isInbox;
-  const DesktopAppBar(
-      {super.key, required this.logoTapped, this.isInbox = false});
+  final bool isInCommunity;
+  final String communityName;
+  const DesktopAppBar({
+    super.key,
+    required this.logoTapped,
+    this.isInbox = false,
+    this.isInCommunity = false,
+    this.communityName = "",
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -49,9 +57,10 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       scrolledUnderElevation: 0,
       title: !isInbox
           ? Row(
+            mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 75.0),
+                  padding: const EdgeInsets.only(right: 50.0),
                   child: GestureDetector(
                     child: Image.asset(
                       "images/desktop-logo.jpg",
@@ -66,21 +75,50 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      showSearch(context: context, delegate: SearchBarClass());
+                      if (widget.isInCommunity) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SearchInCommunity(
+                              communityName: widget.communityName,
+                            ),
+                          ),
+                        );
+                      } else {
+                        showSearch(
+                            context: context, delegate: SearchBarClass());
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: Colors.grey[200],
+                        surfaceTintColor: Colors.grey[200],
                         foregroundColor: Colors.grey,
                         shadowColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0))),
-                    child: const Row(children: [
-                      Icon(
-                        Icons.search,
+                    child: Row(children: [
+                      const Icon(
+                        CupertinoIcons.search,
                         color: Colors.black,
                       ),
-                      Text("Search...")
+                      widget.isInCommunity
+                          ? Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 8, 15, 8 ),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[400],
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: Text(
+                                  "r/${widget.communityName}",
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            )
+                          : const SizedBox(),
+                      const Text("Search..."),
                     ]),
                   ),
                 ),
@@ -101,18 +139,17 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       actions: [
         userLoggedIn
             ? Padding(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * (1 / 50)),
-                child: IconButton(
-                  onPressed: () {
-                    //Navigate to chattt
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ChatIntro(),
-                    ));
-                  },
-                  icon: const Icon(CupertinoIcons.chat_bubble_text),
-                ),
-              )
+              padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width * 1/50),
+              child: IconButton(
+                onPressed: () {
+                  //Navigate to chattt
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChatIntro(),
+                  ));
+                },
+                icon: const Icon(CupertinoIcons.chat_bubble_text),
+              ),
+            )
             : const SizedBox(),
         userLoggedIn
             ? TextButton(

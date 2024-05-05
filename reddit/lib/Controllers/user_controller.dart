@@ -23,6 +23,7 @@ class UserController {
   ProfileSettings? profileSettings;
   NotificationsSettingsItem? notificationsSettings;
   List<CommunityBackend>? userCommunities;
+  List<CommunityBackend>? userModeratedCommunities;
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
   int unreadNotificationsCount = 0;
@@ -125,6 +126,10 @@ class UserController {
     userCommunities = await userService.getUserCommunities();
   }
 
+  Future<void> getUserModerated() async {
+    userModeratedCommunities = await userService.getUserModerated();
+  }
+
   Future<int> getUnreadNotificationsCount() async {
     unreadNotificationsCount =
         await notificationService.getUnreadNotificationsCount();
@@ -189,6 +194,22 @@ class SocialLinksController extends ChangeNotifier {
     await userService.editSocialLink(username, id, displayName, link);
     await userController.getUserAbout(userController.userAbout!.username);
     getSocialLinks();
+    notifyListeners();
+  }
+}
+
+class CommunityProvider extends ChangeNotifier {
+  final UserController userController = GetIt.instance.get<UserController>();
+  final UserService userService = GetIt.instance.get<UserService>();
+
+  Future<void> getUserCommunities() async {
+    userController.userCommunities = await userService.getUserCommunities();
+    notifyListeners();
+  }
+
+  Future<void> getUserModerated() async {
+    userController.userModeratedCommunities =
+        await userService.getUserModerated();
     notifyListeners();
   }
 }

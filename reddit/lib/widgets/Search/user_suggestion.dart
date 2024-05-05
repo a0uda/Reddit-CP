@@ -23,7 +23,7 @@ class _SuggestUsersState extends State<SuggestUsers> {
   Future<void> fetchCommunities() async {
     if (widget.search != "") {
       print(widget.search.length);
-      foundUsers = await searchService.getSearchUsers(widget.search);
+      foundUsers = await searchService.getSearchUsers(widget.search , 1); //TODO JOMANAA
     }
   }
 

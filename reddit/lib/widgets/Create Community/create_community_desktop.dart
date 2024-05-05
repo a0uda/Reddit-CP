@@ -3,18 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 
-class CreateCommunity extends StatefulWidget {
-  const CreateCommunity({super.key});
+class CreateCommunityPopup extends StatefulWidget {
+  const CreateCommunityPopup({super.key});
 
   @override
-  State<CreateCommunity> createState() => _CreateCommunityState();
+  State<CreateCommunityPopup> createState() => _CreateCommunityPopupState();
 }
 
-class _CreateCommunityState extends State<CreateCommunity> {
+class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
   TextEditingController inputController = TextEditingController();
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
@@ -110,6 +111,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
   Future<void> checkAvailibleName() async {
     var createCommunityProvider = context.read<CreateCommunityProvider>();
     var addProfilePictuireProvider = context.read<UpdateProfilePicture>();
+    var communityProvider = context.read<CommunityProvider>();
     int validation = await createCommunityProvider.createCommuntiy(
         communityName: inputController.text,
         communityType: chosenCommunityType,
@@ -124,7 +126,6 @@ class _CreateCommunityState extends State<CreateCommunity> {
           communityName: inputController.text,
           pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
       // ignore: use_build_context_synchronously
-      moderatorController.communityName = inputController.text;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => (CommunityLayout(
@@ -137,36 +138,21 @@ class _CreateCommunityState extends State<CreateCommunity> {
           )),
         ),
       );
+      communityProvider.getUserModerated();
+      communityProvider.getUserCommunities();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-//    var settingsProvider = context.read<ChangeGeneralSettingsProvider>();
-
     double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
-      appBar: AppBar(
-        title: const Text(
-          'Create a community',
-          style: TextStyle(
-            fontSize: 17,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+    return Dialog(
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      child: Container(
+        width: screenWidth < 700 ? screenWidth * 0.9 : 700,
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -332,12 +318,10 @@ class _CreateCommunityState extends State<CreateCommunity> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text(
-                                  'Community Type',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                Text('Community Type',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
                               ],
                             ),
                             ListTile(

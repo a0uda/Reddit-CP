@@ -3,12 +3,11 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
-import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Create%20Community/create_community_desktop.dart';
 import 'package:reddit/widgets/Create%20Community/create_community_page.dart';
-import 'package:reddit/widgets/comments_desktop.dart';
 
 void navigateToCommunity(Widget communityPage, BuildContext context) {
   Navigator.of(context)
@@ -39,6 +38,8 @@ class _DrawerTileState extends State<DrawerTile> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         ListTile(
@@ -67,8 +68,15 @@ class _DrawerTileState extends State<DrawerTile> {
                         leading: const Icon(Icons.add, color: Colors.black),
                         title: const Text("Create Community"),
                         onTap: () {
-                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const CreateCommunity()));
+                          screenWidth > 700
+                              ? showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const CreateCommunityPopup();
+                                  })
+                              : Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => const CreateCommunity(),
+                                ));
                         },
                       )
                     : const SizedBox(),
@@ -99,7 +107,7 @@ class _DrawerTileState extends State<DrawerTile> {
                                         isMod: widget.isMod,
                                         communityName: item.name),
                                     mobileLayout: MobileCommunityPage(
-                                      isMod : widget.isMod,
+                                      isMod: widget.isMod,
                                       communityName: item.name,
                                     ),
                                   ))));

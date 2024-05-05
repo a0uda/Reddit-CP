@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/community_item.dart';
@@ -28,13 +29,13 @@ class _DrawerRedditState extends State<DrawerReddit> {
       GetIt.instance.get<CommunityController>();
   final UserController userController = GetIt.instance.get<UserController>();
   List<Map<String, dynamic>> communitiesDrawer = [];
-  bool communitiesFetched = false;
 
   Future<void> fetchUserCommunities() async {
-    if (!communitiesFetched) {
-      await userController.getUserCommunities();
-    }
-    communitiesFetched = true;
+    await userController.getUserCommunities();
+    await userController.getUserModerated();
+    print("badr");
+    print(userController.userCommunities!.length);
+    print(userController.userModeratedCommunities!.length);
   }
 
   @override
@@ -171,29 +172,44 @@ class _DrawerRedditState extends State<DrawerReddit> {
                         if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         }
-                        return Column(
-                          children: [
-                            DrawerTile(
-                              tileTitle: "COMMUNITIES",
-                              lists: userController.userCommunities!,
-                              isMod: false,
-                            ),
-                            const Divider(
-                              color: Colors.grey,
-                              height: 30,
-                              indent: 30,
-                              endIndent: 30,
-                            ),
-                            userController.userAbout?.moderatedCommunities !=
-                                    null
-                                ? DrawerTile(
-                                    tileTitle: "MODERATION",
-                                    lists: userController
-                                        .userAbout!.moderatedCommunities!,
-                                    isMod: true,
-                                  )
-                                : const SizedBox(),
-                          ],
+                        return Consumer<CommunityProvider>(
+                          builder: (context, settingsProvider, child) {
+                            return Column(
+                              children: [
+                                DrawerTile(
+                                  tileTitle: "COMMUNITIES",
+                                  lists: userController.userCommunities ?? [],
+                                  isMod: false,
+                                ),
+                                (userController.userAbout
+                                                ?.moderatedCommunities !=
+                                            null &&
+                                        userController.userAbout
+                                                ?.moderatedCommunities !=
+                                            [])
+                                    ? const Divider(
+                                        color: Colors.grey,
+                                        height: 30,
+                                        indent: 30,
+                                        endIndent: 30,
+                                      )
+                                    : const SizedBox(),
+                                (userController.userAbout
+                                                ?.moderatedCommunities !=
+                                            null &&
+                                        userController.userAbout
+                                                ?.moderatedCommunities !=
+                                            [])
+                                    ? DrawerTile(
+                                        tileTitle: "MODERATION",
+                                        lists: userController
+                                            .userModeratedCommunities!,
+                                        isMod: true,
+                                      )
+                                    : const SizedBox(),
+                              ],
+                            );
+                          },
                         );
                       default:
                         return const Text('badr');

@@ -7,63 +7,63 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/post_for_scheduled.dart';
 
-List<Map<String, dynamic>> recurringPosts = [
-  {
-    "username": "badr",
-    "postTitle": "every month",
-    "postContent": "content",
-    "every_month": true,
-    "day": "30",
-    "time": "12:00",
-  },
-  {
-    "username": "badr",
-    "postTitle": "every hour",
-    "postContent": "content",
-    "every_hour": true,
-  },
-  {
-    "username": "badr",
-    "postTitle": "every day",
-    "postContent": "content",
-    "every_day": true,
-    "time": "12:00",
-  },
-  {
-    "username": "badr",
-    "postTitle": "Title",
-    "postContent": "content",
-    "every_week": true,
-    "day_of_the_week": "Monday",
-    "time": "12:00",
-  },
-];
-List<Map<String, dynamic>> scheduledPosts = [
-  {
-    "username": "mohy",
-    "postTitle": "Title",
-    "postContent": "content",
-    "scheduled_day": "4/29",
-    "scheduled_time": "11:00",
-    "recurring": false,
-  },
-  {
-    "username": "mohy",
-    "postTitle": "Title",
-    "postContent": "content",
-    "scheduled_day": "4/29",
-    "scheduled_time": "11:00",
-    "recurring": false,
-  },
-  {
-    "username": "mohy",
-    "postTitle": "Title",
-    "postContent": "content",
-    "scheduled_day": "4/29",
-    "scheduled_time": "11:00",
-    "recurring": false,
-  },
-];
+// List<Map<String, dynamic>> recurringPosts = [
+//   {
+//     "username": "badr",
+//     "postTitle": "every month",
+//     "postContent": "content",
+//     "every_month": true,
+//     "day": "30",
+//     "time": "12:00",
+//   },
+//   {
+//     "username": "badr",
+//     "postTitle": "every hour",
+//     "postContent": "content",
+//     "every_hour": true,
+//   },
+//   {
+//     "username": "badr",
+//     "postTitle": "every day",
+//     "postContent": "content",
+//     "every_day": true,
+//     "time": "12:00",
+//   },
+//   {
+//     "username": "badr",
+//     "postTitle": "Title",
+//     "postContent": "content",
+//     "every_week": true,
+//     "day_of_the_week": "Monday",
+//     "time": "12:00",
+//   },
+// ];
+// List<Map<String, dynamic>> scheduledPosts = [
+//   {
+//     "username": "mohy",
+//     "postTitle": "Title",
+//     "postContent": "content",
+//     "scheduled_day": "4/29",
+//     "scheduled_time": "11:00",
+//     "recurring": false,
+//   },
+//   {
+//     "username": "mohy",
+//     "postTitle": "Title",
+//     "postContent": "content",
+//     "scheduled_day": "4/29",
+//     "scheduled_time": "11:00",
+//     "recurring": false,
+//   },
+//   {
+//     "username": "mohy",
+//     "postTitle": "Title",
+//     "postContent": "content",
+//     "scheduled_day": "4/29",
+//     "scheduled_time": "11:00",
+//     "recurring": false,
+//   },
+// ];
 
 class ScheduledPostsList extends StatefulWidget {
   const ScheduledPostsList({super.key});
@@ -73,34 +73,41 @@ class ScheduledPostsList extends StatefulWidget {
 }
 
 class _ScheduledPostsListState extends State<ScheduledPostsList> {
-  List<Map<String, dynamic>> foundUsers = [];
+  List<Map<String, dynamic>> foundPosts = [];
+  List<Map<String, dynamic>> recurringPosts = [];
+  List<Map<String, dynamic>> scheduledPosts = [];
   final TextEditingController usernameController = TextEditingController();
-  bool usersFetched = false;
+  bool postsFetched = false;
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
-  Future<void> fetchApprovedUsers() async {
-    if (false) {
-      await moderatorController
-          .getApprovedUser(moderatorController.communityName);
-      usernameController.text = "";
+  Future<void> fetchScheduled() async {
+    if (!postsFetched) {
+      await moderatorController.getScheduled(moderatorController.communityName);
       setState(() {
-        foundUsers = moderatorController.approvedUsers;
-        usersFetched = true;
+        foundPosts = moderatorController.approvedUsers;
+        postsFetched = true;
       });
+      foundPosts.map((post) =>  { 
+            if (post["repetition_option"] == "none")
+              {scheduledPosts.add(post)}
+            else
+              {recurringPosts.add(post)}
+          });
     }
   }
 
   @override
   void initState() {
     super.initState();
+    fetchScheduled();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Consumer<ApprovedUserProvider>(
-        builder: (context, approvedUserProvider, child) {
+    return Consumer<ScheduledProvider>(
+        builder: (context, scheduledProvider, child) {
       return SingleChildScrollView(
         child: Container(
           color: Colors.grey[200],

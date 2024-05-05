@@ -191,7 +191,7 @@ class _PostTypesState extends State<PostTypesContent> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () async {
+            onPressed: (!isSaved) ? null: () async {
               await settingsProvider.setCommunityPostSetting(
                 communityName: communityName,
                 allowImages:

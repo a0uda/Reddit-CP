@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
 
@@ -12,7 +13,9 @@ class ModeratorController {
   List<Map<String, dynamic>> bannedUsers = [];
   List<Map<String, dynamic>> mutedUsers = [];
   List<Map<String, dynamic>> moderators = [];
+  List<Map<String, dynamic>> scheduled = [];
   List<RulesItem> rules = [];
+  List<RemovalItem> removalReasons = [];
   GeneralSettings generalSettings = GeneralSettings(
     communityID: "",
     communityTitle: "",
@@ -25,20 +28,11 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
-  CommunityItem? communityItem;
+  List<QueuesPostItem> removedPosts = [];
+  List<QueuesPostItem> reportedPosts = [];
+  List<QueuesPostItem> unmoderatedPosts = [];
 
-  Future<void> getCommunity(String communityName) async {
-    this.communityName = communityName;
-    approvedUsers = await moderatorService.getApprovedUsers(communityName);
-    bannedUsers = await moderatorService.getBannedUsers(communityName);
-    mutedUsers = await moderatorService.getMutedUsers(communityName);
-    moderators = await moderatorService.getModerators(communityName);
-    rules = await moderatorService.getRules(communityName);
-    generalSettings =
-        await moderatorService.getCommunityGeneralSettings(communityName);
-    postTypesAndOptions = moderatorService.getPostTypesAndOptions(communityName)
-        as Map<String, dynamic>;
-  }
+  CommunityItem? communityItem;
 
   Future<void> getCommunityInfo(String communityName) async {
     Map<String, dynamic> info =
@@ -74,12 +68,20 @@ class ModeratorController {
     mutedUsers = await moderatorService.getMutedUsers(communityName);
   }
 
+  Future<void> getScheduled(String communityName) async {
+    scheduled = await moderatorService.getScheduled(communityName);
+  }
+
   Future<void> getModerators(String communityName) async {
     moderators = await moderatorService.getModerators(communityName);
   }
 
   Future<void> getRules(String communityName) async {
     rules = await moderatorService.getRules(communityName);
+  }
+
+  Future<void> getRemoval(String communityName) async {
+    removalReasons = await moderatorService.getRemovalReason(communityName);
   }
 
   Future<void> getMembersCount(String communityName) async {
@@ -91,6 +93,45 @@ class ModeratorController {
       String username, String profilePicture, String communityName, String msgId) async {
     await moderatorService.addModUser(username, profilePicture, communityName, msgId);
     moderators = await moderatorService.getModerators(communityName);
+  }
+
+  // Future<void> getRemovedItems(
+  //     {required String communityName,
+  //     required String timeFilter,
+  //     required String postsOrComments}) async {
+  //   print('Ana fel controller fel removed');
+  //   removedPosts = await moderatorService.getRemovedItems(
+  //       communityName: communityName,
+  //       timeFilter: timeFilter,
+  //       postsOrComments: postsOrComments);
+  //   print('Mohy beyshoof el removed fel controller');
+  //   print(removedPosts);
+  // }
+
+  // Future<void> getReportedItems(
+  //     {required String communityName,
+  //     required String timeFilter,
+  //     required String postsOrComments}) async {
+  //   print('Ana fel controller fel reported');
+  //   reportedPosts = await moderatorService.getReportedItems(
+  //       communityName: communityName,
+  //       timeFilter: timeFilter,
+  //       postsOrComments: postsOrComments);
+  //   print('Mohy beyshoof el reported fel controller');
+  //   print(reportedPosts);
+  // }
+
+  Future<void> getUnmoderatedItems(
+      {required String communityName,
+      required String timeFilter,
+      required String postsOrComments}) async {
+    print('Ana fel controller fel unmoderated');
+     await moderatorService.getUnmoderatedItems(
+        communityName: communityName,
+        timeFilter: timeFilter,
+        postsOrComments: postsOrComments);
+    print('Mohy beyshoof el unmoderated fel controller');
+    print(unmoderatedPosts);
   }
 }
 
@@ -203,6 +244,16 @@ class MutedUserProvider extends ChangeNotifier {
   }
 }
 
+class ScheduledProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> getScheduled(String communityName) async {
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+  }
+}
+
 class ModeratorProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
@@ -254,6 +305,8 @@ class RulesProvider extends ChangeNotifier {
         reportReason: reportReason ?? "",
         ruleDescription: ruleDescription ?? "");
     moderatorController.rules = await moderatorService.getRules(communityName);
+    print("badrrr");
+    print(moderatorController.rules);
     notifyListeners();
   }
 
@@ -279,6 +332,48 @@ class RulesProvider extends ChangeNotifier {
       ruleDescription: ruleDescription ?? "",
     );
     moderatorController.rules = await moderatorService.getRules(communityName);
+  }
+}
+
+class RemovalProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> createRemoval({
+    required String communityName,
+    required String title,
+    required String removalReason,
+  }) async {
+    await moderatorService.createRemovalReason(
+      title: title,
+      communityName: communityName,
+      removalReason: removalReason,
+    );
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
+    notifyListeners();
+  }
+
+  Future<void> deleteRemovalReason(String communityName, String id) async {
+    await moderatorService.deleteRemovalReason(communityName, id);
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
+    notifyListeners();
+  }
+
+  Future<void> editRemovalReason(
+      {required String id,
+      required String communityName,
+      required String title,
+      required String reason}) async {
+    await moderatorService.editRemoval(
+      id: id,
+      communityName: communityName,
+      title: title,
+      reason: reason,
+    );
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
     notifyListeners();
   }
 }
@@ -299,7 +394,6 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
             nsfwFlag: general.nsfwFlag));
     moderatorController.generalSettings =
         await moderatorService.getCommunityGeneralSettings(communityName);
-
     notifyListeners();
   }
 }
@@ -355,6 +449,35 @@ class UpdateProfilePicture extends ChangeNotifier {
     await moderatorService.addProfilePicture(
         communityName: communityName, pictureURL: pictureUrl);
     moderatorController.profilePictureURL = pictureUrl;
+    notifyListeners();
+  }
+
+  Future<void> updateBannerPicture(
+      {required String communityName, required String pictureUrl}) async {
+    await moderatorService.addBannerPicture(
+        communityName: communityName, pictureURL: pictureUrl);
+    moderatorController.bannerPictureURL = pictureUrl;
+    notifyListeners();
+  }
+}
+
+class IsJoinedProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> joinCommunity(
+      {required String communityName, required bool isJoined}) async {
+    await moderatorService.joinCommunity(
+      communityName: communityName,
+    );
+    moderatorController.joinedFlag = isJoined;
+    notifyListeners();
+  }
+
+  Future<void> leaveCommunity(
+      {required String communityName, required bool isJoined}) async {
+    await moderatorService.leaveCommunity(communityName: communityName);
+    moderatorController.joinedFlag = isJoined;
     notifyListeners();
   }
 }
