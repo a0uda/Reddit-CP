@@ -806,13 +806,16 @@ class UserService {
     }
   }
 
-  Future<void> markoneMessageRead(String username, String id) async {
+  Future<void> markoneMessageRead(String username, List<String> msgId) async {
     if (testing) {
       List<Messages>? userMessages = users
           .firstWhere((element) => element.userAbout.username == username)
           .usermessages;
-      userMessages?.firstWhere((element) => element.id == id).unreadFlag =
-          false;
+      userMessages?.forEach((message) {
+        if (msgId.contains(message.id)) {
+          message.unreadFlag = false;
+        }
+      });
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -825,7 +828,11 @@ class UserService {
           'Content-Type': 'application/json',
           'Authorization': token!,
         },
-        body: json.encode({"_id": id}),
+        body: json.encode({
+          "Messages": [
+            for (var id in msgId) {"_id": id}
+          ]
+        }),
       );
       print('in mark one message read');
       print(response.body);

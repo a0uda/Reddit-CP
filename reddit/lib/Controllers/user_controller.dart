@@ -405,11 +405,11 @@ class MessagesOperations extends ChangeNotifier {
   }
 
   Future<void> markonAsRead(List<Messages> messages) async {
-    for (var message in messages) {
-      await userService.markoneMessageRead(
-          userController.userAbout!.username, message.id);
-    }
-    //await userController.getUnreadMessagesCount();
+    List<String> messageIds = messages.map((message) => message.id).toList();
+
+    await userService.markoneMessageRead(
+        userController.userAbout!.username, messageIds);
+
     notifyListeners();
   }
 }
