@@ -105,8 +105,6 @@ class SignUpPageState extends State<SignUpPage> {
           ),
         );
       } else if (statusCode == 200) {
-        final userController = GetIt.instance.get<UserController>();
-        userController.getUser(usernameController.text);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(

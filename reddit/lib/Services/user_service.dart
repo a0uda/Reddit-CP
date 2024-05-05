@@ -936,7 +936,8 @@ class UserService {
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final url = Uri.parse('https://redditech.me/backend/users/moderated-communities');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/moderated-communities');
       final response = await http.get(
         url,
         headers: {
@@ -950,7 +951,6 @@ class UserService {
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }
   }
-
 
   Future<int> forgetPassword(String email, String username) async {
     if (testing) {
@@ -1546,9 +1546,8 @@ class UserService {
             await googleSignIn.signIn();
         final GoogleSignInAuthentication? googleSignInAuthentication =
             await googleSignInAccount?.authentication;
-
-        // The access token can be used to authenticate with your backend
-        var accessToken = googleSignInAuthentication!.accessToken;
+        String? accessToken = googleSignInAuthentication!.accessToken;
+        print(accessToken);
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
@@ -1566,15 +1565,15 @@ class UserService {
             'access_token': accessToken,
           }),
         );
-        await googleSignIn.signOut();
         print(response.body);
+        print(response.statusCode);
         if (response.statusCode == 200) {
           return true;
         } else {
           return false;
         }
       } catch (error) {
-        print(error);
+        //print(error);
         return false;
       }
     }
@@ -1619,8 +1618,6 @@ class UserService {
       }
     }
   }
-
-  // toggle disconnect from google in db
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
