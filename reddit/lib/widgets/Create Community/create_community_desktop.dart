@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -110,6 +111,7 @@ class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
   Future<void> checkAvailibleName() async {
     var createCommunityProvider = context.read<CreateCommunityProvider>();
     var addProfilePictuireProvider = context.read<UpdateProfilePicture>();
+    var communityProvider = context.read<CommunityProvider>();
     int validation = await createCommunityProvider.createCommuntiy(
         communityName: inputController.text,
         communityType: chosenCommunityType,
@@ -136,6 +138,8 @@ class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
           )),
         ),
       );
+      communityProvider.getUserModerated();
+      communityProvider.getUserCommunities();
     }
   }
 

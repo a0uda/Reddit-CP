@@ -899,6 +899,28 @@ class UserService {
     }
   }
 
+  Future<List<CommunityBackend>?> getUserModerated() async {
+    if (testing) {
+      return [];
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/moderated-communities');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
+      print(response.body);
+      return List<CommunityBackend>.from(
+          decoded.map((community) => CommunityBackend.fromJson(community)));
+    }
+  }
+
+
   Future<int> forgetPassword(String email, String username) async {
     if (testing) {
       return 200;

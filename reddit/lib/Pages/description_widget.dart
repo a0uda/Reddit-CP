@@ -261,62 +261,63 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                         height: 1,
                         thickness: 1.0,
                       ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 16),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                child: const Text(
-                                  'Rules',
-                                  style: TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontSize: 14, // el mafrood 12
-                                    fontWeight: FontWeight.w600,
-                                    color: Color.fromARGB(255, 97, 104, 110),
+                      Consumer<RulesProvider>(
+                        builder: (context, addRulesProvider, child) {
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 16),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    child: const Text(
+                                      'Rules',
+                                      style: TextStyle(
+                                        fontFamily: 'Roboto',
+                                        fontSize: 14, // el mafrood 12
+                                        fontWeight: FontWeight.w600,
+                                        color:
+                                            Color.fromARGB(255, 97, 104, 110),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              FutureBuilder(
-                                future: fetchRules(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                      child:
-                                          LoadingAnimationWidget.twoRotatingArc(
-                                              color: const Color.fromARGB(
-                                                  255, 172, 172, 172),
-                                              size: 20),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return const Text('');
-                                  } else {
-                                    if (moderatorController.rules.isEmpty) {
-                                      return const Text(
-                                        'No rules have been set for this community yet.',
-                                        style: TextStyle(
-                                          fontFamily: 'Roboto',
-                                          fontSize: 14,
-                                          color:
-                                              Color.fromARGB(255, 97, 104, 110),
-                                        ),
-                                      );
-                                    } else {
-                                      return Consumer<RulesProvider>(
-                                        builder:
-                                            (context, addRulesProvider, child) {
+                                  FutureBuilder(
+                                    future: fetchRules(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 20),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return const Text('');
+                                      } else {
+                                        if (moderatorController.rules.isEmpty) {
+                                          return const Text(
+                                            'No rules have been set for this community yet.',
+                                            style: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 14,
+                                              color: Color.fromARGB(
+                                                  255, 97, 104, 110),
+                                            ),
+                                          );
+                                        } else {
                                           return ListView.builder(
                                             shrinkWrap: true,
                                             physics:
                                                 const NeverScrollableScrollPhysics(),
                                             itemCount: moderatorController
                                                 .rules.length,
-                                            itemBuilder: (context, index) {
+                                            itemBuilder: (context, index) {      
                                               return Column(
                                                 children: [
                                                   RuleTile(
@@ -328,15 +329,15 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                                               );
                                             },
                                           );
-                                        },
-                                      );
-                                    }
-                                  }
-                                },
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
                       const Divider(
                         color: Color.fromARGB(255, 215, 215, 215),

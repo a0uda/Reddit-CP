@@ -61,7 +61,7 @@ class SearchService {
       final List<Map<String, dynamic>> foundComm =
           List<Map<String, dynamic>>.from(decodedData['content']);
       print("yaba");
-
+      print(foundComm);
       return foundComm; //badrrr
     }
   }

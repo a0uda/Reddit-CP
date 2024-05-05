@@ -36,6 +36,8 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
     });
     foundCommunities
         .addAll(await searchService.getSearchCommunities(searchFor, page, 10));
+    print("IDD");
+    print(userController.userAbout!.id);
     if (userController.userCommunities == null) {
       await userController.getUserCommunities();
       joined = userController.userCommunities!;

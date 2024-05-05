@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -44,6 +45,8 @@ class _CreatePostState extends State<CreatePost> {
   final communityService = GetIt.instance.get<CommunityService>();
   final communityController = GetIt.instance.get<CommunityController>();
   final UserController userController = GetIt.instance.get<UserController>();
+  final ModeratorMockService moderatorService =
+      GetIt.instance.get<ModeratorMockService>();
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
 
@@ -65,6 +68,7 @@ class _CreatePostState extends State<CreatePost> {
   List<String> rules = [];
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
+  String recurring = "none";
   bool isSaved = false;
 
   void setSelectedDate(DateTime date, TimeOfDay time, String selectedRepeat) {
@@ -72,11 +76,13 @@ class _CreatePostState extends State<CreatePost> {
       //hour , day , week , month
       selectedDate = date;
       selectedTime = time;
+      recurring = "none";
       setState(() {
         isSaved = true;
       });
     } else {
       //set flags recurring we mashy el denya we schedule bardo
+      recurring = selectedRepeat;
       setState(() {
         isSaved = true;
       });
@@ -132,6 +138,7 @@ class _CreatePostState extends State<CreatePost> {
         showLinkField = false;
         videoSelected = false;
         pollSelected = false;
+        isSaved = false;
         type = 'image_and_videos';
       });
       // } catch (e) {
@@ -151,6 +158,7 @@ class _CreatePostState extends State<CreatePost> {
       pollSelected = true;
       showLinkField = false;
       imageSelected = false;
+      isSaved = true;
       videoSelected = false;
       type = 'polls';
     });
@@ -204,6 +212,7 @@ class _CreatePostState extends State<CreatePost> {
         videoSelected = true;
         pollSelected = false;
         imageSelected = false;
+        isSaved = false;
         type = 'image_and_videos';
       });
     }
@@ -291,42 +300,77 @@ class _CreatePostState extends State<CreatePost> {
                         }
                       else
                         {
-                          response = postService.addPost(
-                              userController.userAbout!.id,
-                              userController.userAbout!.username,
-                              titleController.text,
-                              bodyController.text,
-                              type,
-                              showLinkField ? URLController.text : null,
-                              imageSelected
-                                  ? [
-                                      ImageItem(
-                                          path: _image!.path, link: imageUrl!)
-                                    ]
-                                  : null,
-                              videoSelected
-                                  ? [
-                                      VideoItem(
-                                          path: _video!.path, link: videoUrl!)
-                                    ]
-                                  : null,
-                              pollSelected
-                                  ? PollItem(
-                                      question: questionController.text,
-                                      options: options,
-                                      votes: [0, 0],
-                                      option1Votes: [],
-                                      option2Votes: [],
-                                    )
-                                  : null,
-                              selectedCommunity == "Select Community"
-                                  ? ''
-                                  : selectedCommunity,
-                              selectedCommunity,
-                              false,
-                              _selections[1],
-                              _selections[0],
-                              !(selectedCommunity == "Select Community")),
+                          if (isSaved)
+                            {
+                              response = moderatorService.postSchedules(
+                                communityName: selectedCommunity,
+                                repetionOp: recurring,
+                                nsfwFlag: false,
+                                spoilerFlag: false,
+                                submitTime: {
+                                  "date": DateTime(selectedDate.year,
+                                          selectedDate.month, selectedDate.day)
+                                      .toString(),
+                                  "hour": selectedTime.hour,
+                                  "minute": selectedTime.minute,
+                                },
+                                title: titleController.text,
+                                description: bodyController.text,
+                                type: type,
+                                linkUrl:
+                                    showLinkField ? URLController.text : null,
+                                poll: pollSelected
+                                    ? PollItem(
+                                        question: questionController.text,
+                                        options: options,
+                                        votes: [0, 0],
+                                        option1Votes: [],
+                                        option2Votes: [],
+                                      )
+                                    : null,
+                              ),
+                            }
+                          else
+                            {
+                              response = postService.addPost(
+                                  userController.userAbout!.id,
+                                  userController.userAbout!.username,
+                                  titleController.text,
+                                  bodyController.text,
+                                  type,
+                                  showLinkField ? URLController.text : null,
+                                  imageSelected
+                                      ? [
+                                          ImageItem(
+                                              path: _image!.path,
+                                              link: imageUrl!)
+                                        ]
+                                      : null,
+                                  videoSelected
+                                      ? [
+                                          VideoItem(
+                                              path: _video!.path,
+                                              link: videoUrl!)
+                                        ]
+                                      : null,
+                                  pollSelected
+                                      ? PollItem(
+                                          question: questionController.text,
+                                          options: options,
+                                          votes: [0, 0],
+                                          option1Votes: [],
+                                          option2Votes: [],
+                                        )
+                                      : null,
+                                  selectedCommunity == "Select Community"
+                                      ? ''
+                                      : selectedCommunity,
+                                  selectedCommunity,
+                                  false,
+                                  _selections[1],
+                                  _selections[0],
+                                  !(selectedCommunity == "Select Community")),
+                            },
                           //print(_selections),
                           if (await response == 400)
                             {
@@ -813,7 +857,7 @@ class ModalForSchedule extends StatefulWidget {
 class _ModalForScheduleState extends State<ModalForSchedule> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
-  List<String> values = ["hour", "day", "week", "monthly"];
+  List<String> values = ["hourly", "daily", "weekly", "monthly"];
   List<String> labels = [
     "Every hour",
     "Every day ",

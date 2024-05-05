@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 
 class PostScheduled extends StatefulWidget {
@@ -19,24 +20,23 @@ class _PostScheduledState extends State<PostScheduled> {
   void initState() {
     super.initState();
     recurring = true;
-    if (widget.item.containsKey("every_month") && widget.item["every_month"]) {
+    Map<String, dynamic> item = widget.item;
+    DateTime createdAt = DateTime.parse(item["created_at"]);
+    String dayOfWeek = DateFormat('EEEE').format(createdAt);
+    if (item["scheduling_details"]["repetition_option"] == "monthly") {
       dateText =
-          " Every month on the ${widget.item["day"]}th day @ ${widget.item["time"]}";
-    } else if (widget.item.containsKey("every_hour") &&
-        widget.item["every_hour"]) {
+          " Every month on the ${createdAt.day.toString()}th day @ ${createdAt.hour}";
+    } else if (item["scheduling_details"]["repetition_option"] == "hourly") {
       dateText = " Every hour";
-    } else if (widget.item.containsKey("every_day") &&
-        widget.item["every_day"]) {
-      dateText = " Every day at ${widget.item["time"]}";
-    } else if (widget.item.containsKey("every_week") &&
-        widget.item["every_week"]) {
+    } else if (item["scheduling_details"]["repetition_option"] == "daily") {
+      dateText = " Every day at ${createdAt.hour.toString()}";
+    } else if (item["scheduling_details"]["repetition_option"] == "weekly") {
       dateText =
-          " Every week on ${widget.item["day_of_the_week"]} at ${widget.item["time"]}";
-    } else if (widget.item.containsKey("recurring") &&
-        !widget.item["recurring"]) {
-      recurring = false;
+          " Every week on ${DateFormat('EEEE').format(createdAt)} at ${createdAt.hour}";
+    } else if (item["scheduling_details"]["repetition_option"] == "none") {
+      recurring = true;
       dateText =
-          " Scheduled ${widget.item["scheduled_day"]} @ ${widget.item["scheduled_time"]}";
+          " Scheduled ${item["scheduling_details"]["schedule_date"].month}/${item["scheduling_details"]["schedule_date"].day} @ ${item["scheduling_details"]["schedule_date"].hour}:${item["scheduling_details"]["schedule_date"].minute} ";
     }
   }
 
@@ -84,7 +84,7 @@ class _PostScheduledState extends State<PostScheduled> {
               ),
             ),
             Text(
-              widget.item["postTitle"],
+              widget.item["title"],
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(
@@ -92,9 +92,9 @@ class _PostScheduledState extends State<PostScheduled> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8, bottom: 10),
-              child: widget.item.containsKey("postContent")
+              child: widget.item["description"] != ""
                   ? Text(
-                      "${widget.item["postContent"]}",
+                      "${widget.item["description"]}",
                       style: TextStyle(color: Colors.grey[500], fontSize: 12),
                     )
                   : const SizedBox(),
@@ -234,3 +234,47 @@ class _PostScheduledState extends State<PostScheduled> {
     );
   }
 }
+
+// {
+//       "scheduling_details": {
+//         "repetition_option": "none",
+//         "schedule_date": "2025-05-04T03:11:00.000Z"
+//       },
+//       "user_details": {
+//         "total_views": 0,
+//         "upvote_rate": 0,
+//         "total_shares": 0
+//       },
+//       "_id": "6635f035a08ae9782c6e7ee3",
+//       "title": "Back to the future",
+//       "description": "This is a description for my test post.",
+//       "created_at": "2024-05-04T08:22:14.641Z",
+//       "edited_at": null,
+//       "deleted_at": null,
+//       "deleted": false,
+//       "type": "text",
+//       "link_url": null,
+//       "images": [],
+//       "videos": [],
+//       "polls": [],
+//       "polls_voting_length": 3,
+//       "polls_voting_is_expired_flag": false,
+//       "post_in_community_flag": true,
+//       "community_name": "Adams_Group",
+//       "comments_count": 0,
+//       "views_count": 0,
+//       "shares_count": 0,
+//       "upvotes_count": 1,
+//       "downvotes_count": 0,
+//       "oc_flag": true,
+//       "spoiler_flag": false,
+//       "nsfw_flag": false,
+//       "locked_flag": false,
+//       "allowreplies_flag": true,
+//       "set_suggested_sort": "None (Recommended)",
+//       "scheduled_flag": false,
+//       "is_reposted_flag": false,
+//       "user_id": "663561b6720b7a2283bd8277",
+//       "username": "fatema",
+//       "__v": 0
+//     }

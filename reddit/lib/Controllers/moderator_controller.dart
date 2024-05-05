@@ -12,6 +12,7 @@ class ModeratorController {
   List<Map<String, dynamic>> bannedUsers = [];
   List<Map<String, dynamic>> mutedUsers = [];
   List<Map<String, dynamic>> moderators = [];
+  List<Map<String, dynamic>> scheduled = [];
   List<RulesItem> rules = [];
   GeneralSettings generalSettings = GeneralSettings(
     communityID: "",
@@ -26,7 +27,6 @@ class ModeratorController {
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
   CommunityItem? communityItem;
-
 
   Future<void> getCommunityInfo(String communityName) async {
     Map<String, dynamic> info =
@@ -60,6 +60,10 @@ class ModeratorController {
 
   Future<void> getMutedUsers(String communityName) async {
     mutedUsers = await moderatorService.getMutedUsers(communityName);
+  }
+
+  Future<void> getScheduled(String communityName) async {
+    scheduled = await moderatorService.getScheduled(communityName);
   }
 
   Future<void> getModerators(String communityName) async {
@@ -191,6 +195,16 @@ class MutedUserProvider extends ChangeNotifier {
   }
 }
 
+class ScheduledProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> getScheduled(String communityName) async {
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+  }
+}
+
 class ModeratorProvider extends ChangeNotifier {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
   final moderatorController = GetIt.instance.get<ModeratorController>();
@@ -242,6 +256,8 @@ class RulesProvider extends ChangeNotifier {
         reportReason: reportReason ?? "",
         ruleDescription: ruleDescription ?? "");
     moderatorController.rules = await moderatorService.getRules(communityName);
+    print("badrrr");
+    print(moderatorController.rules);
     notifyListeners();
   }
 
@@ -267,7 +283,6 @@ class RulesProvider extends ChangeNotifier {
       ruleDescription: ruleDescription ?? "",
     );
     moderatorController.rules = await moderatorService.getRules(communityName);
-    notifyListeners();
   }
 }
 
@@ -344,6 +359,7 @@ class UpdateProfilePicture extends ChangeNotifier {
     moderatorController.profilePictureURL = pictureUrl;
     notifyListeners();
   }
+
   Future<void> updateBannerPicture(
       {required String communityName, required String pictureUrl}) async {
     await moderatorService.addBannerPicture(

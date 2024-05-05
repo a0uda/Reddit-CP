@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
@@ -10,6 +11,89 @@ import 'package:http/http.dart' as http;
 bool testing = const bool.fromEnvironment('testing');
 
 class ModeratorMockService {
+  Future<List<Map<String, dynamic>>> getScheduled(String community) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return [];
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/get-scheduled-posts/$community');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print("GET SCHEDULED");
+      print(response.body);
+      final dynamic decodedData = json.decode(response.body);
+      final List<Map<String, dynamic>> scheduled =
+          List<Map<String, dynamic>>.from(decodedData['recurring_posts']);
+      return scheduled;
+    }
+  }
+
+  Future<int> postSchedules({
+    required String communityName,
+    required String title,
+    String? description,
+    required String type,
+    String? linkUrl,
+    PollItem? poll,
+    required bool spoilerFlag,
+    required bool nsfwFlag,
+    required String repetionOp,
+    required Map<String, dynamic> submitTime,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/schedule-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          {
+            "repetition_option": repetionOp,
+            "submit_time": submitTime,
+            "postInput": {
+              "title": title,
+              "description": description,
+              "post_in_community_flag": true,
+              "type": type,
+              "link_url": linkUrl,
+              "images": [],
+              "videos": [],
+              "polls": poll,
+              "community_name": communityName,
+              "spoiler_flag": spoilerFlag,
+              "nsfw_flag": nsfwFlag,
+            }
+          }
+        }),
+      );
+      print("POST SCHEDULED");
+      print(response.body);
+      return 201;
+    }
+  }
+
   Future<List<RulesItem>> getRules(String communityName) async {
     if (testing) {
       List<RulesItem> foundRules = communities
@@ -82,6 +166,8 @@ class ModeratorMockService {
           if (ruleDescription != null) 'full_description': ruleDescription,
         }),
       );
+      print("rulleleee");
+      print(response.body);
     }
   }
 
@@ -571,21 +657,21 @@ class ModeratorMockService {
       });
     } else {
       // todo: add moderator to the community
-    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   String? token = prefs.getString('token');
-    //   final url = Uri.parse(
-    //       'https://redditech.me/backend/communities/accept-moderator-invitation');
-    //   final response = await http.post(
-    //     url,
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': token!,
-    //     },
-    //     body: json.encode({"_id": communityId}),
-    //   );
-    //   print('in addModUser');
-    //   print(response.body);
-     }
+      //   SharedPreferences prefs = await SharedPreferences.getInstance();
+      //   String? token = prefs.getString('token');
+      //   final url = Uri.parse(
+      //       'https://redditech.me/backend/communities/accept-moderator-invitation');
+      //   final response = await http.post(
+      //     url,
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': token!,
+      //     },
+      //     body: json.encode({"_id": communityId}),
+      //   );
+      //   print('in addModUser');
+      //   print(response.body);
+    }
   }
 
   Future<void> removeAsMod(String username, String communityName) async {

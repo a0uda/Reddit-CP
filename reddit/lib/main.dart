@@ -102,9 +102,15 @@ void main() async {
         create: (context) => CreateCommunityProvider(),
       ),
       ChangeNotifierProvider(
+        create: (context) => CommunityProvider(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => UpdateProfilePicture(),
       ),
-            ChangeNotifierProvider(
+      ChangeNotifierProvider(
+        create: (context) => ScheduledProvider(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => Edit(),
       )
     ],

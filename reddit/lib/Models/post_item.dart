@@ -32,6 +32,7 @@ class PostItem {
   bool lockedFlag;
   bool allowrepliesFlag;
   bool? inCommunityFlag;
+  Map<String, dynamic>? scheduleDetails;
   String? profilePicture;
   final String? setSuggestedSort;
   final ModeratorDetails? moderatorDetails;
@@ -56,6 +57,7 @@ class PostItem {
     this.videos,
     this.poll,
     this.communityId,
+    this.scheduleDetails,
     this.inCommunityFlag,
     this.profilePicture,
     required this.communityName,
