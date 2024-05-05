@@ -126,10 +126,10 @@ class ModeratorController {
       required String timeFilter,
       required String postsOrComments}) async {
     print('Ana fel controller fel unmoderated');
-     await moderatorService.getUnmoderatedItems(
-        communityName: communityName,
-        timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
+    //  await moderatorService.getUnmoderatedItems(
+    //     communityName: communityName,
+    //     timeFilter: timeFilter,
+    //     postsOrComments: postsOrComments);
     print('Mohy beyshoof el unmoderated fel controller');
     print(unmoderatedPosts);
   }
