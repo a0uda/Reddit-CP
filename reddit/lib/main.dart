@@ -126,12 +126,13 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => Edit(),
       ),
-                 ChangeNotifierProvider(
+      ChangeNotifierProvider(
         create: (context) => RefreshHome(),
       ),
       ChangeNotifierProvider(
         create: (context) => AccountSettingsController(),
-      )
+      ),
+      ChangeNotifierProvider(
         create: (context) => GetMessagesController(),
       ),
     ],
