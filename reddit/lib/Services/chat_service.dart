@@ -36,6 +36,7 @@ class ChatsService {
       );
 
 print(response.body);
+print('chatsss');
       final List<dynamic> jsonlist = json.decode(response.body);
       final List<ChatUsers> chats = jsonlist.map((jsonitem) {
         return ChatUsers.fromJson(jsonitem);
@@ -49,7 +50,7 @@ print(response.body);
 
   }
  
- Future<List<ChatMessage>> getChatsContent () async
+ Future<List<ChatMessage>> getChatsContent (String username) async
   {
     if(testing)
     {
@@ -57,7 +58,28 @@ print(response.body);
     
     }
     else{
-      return messages;
+          final url =
+          Uri.parse('https://redditech.me/backend/chats/$username');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+ final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+
+print(response.body);
+print('chatsss');
+      final List<dynamic> jsonlist = json.decode(response.body);
+      final List<ChatMessage> chats = jsonlist.map((jsonitem) {
+        return ChatMessage.fromJson(jsonitem);
+      }).toList();
+      return chats;
+
+
 
     }
 

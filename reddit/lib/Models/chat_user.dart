@@ -1,4 +1,7 @@
 
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/user_controller.dart';
+
 class ChatUsers {
   String name;
   String messageText;
@@ -36,4 +39,23 @@ class ChatMessage{
   String messageContent;
   String messageType;
   ChatMessage({required this.messageContent, required this.messageType});
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) {
+     final UserController userController = GetIt.instance.get<UserController>();
+     var username=userController.userAbout!.username;
+
+    String type=(json['senderId']['username']==username)? 'sender':'receiver';
+    return ChatMessage(
+      messageContent:  json['message'],
+      messageType: type,
+    
+
+        ///todo
+       
+      
+        );
+
+  }
+
+
 }
