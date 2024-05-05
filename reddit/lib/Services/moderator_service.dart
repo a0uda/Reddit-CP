@@ -1183,25 +1183,140 @@ class ModeratorMockService {
     );
   }
 
-  Future<QueuesPostItem> getRemovedItems(
+  // Future<List<QueuesPostItem>> getRemovedItems(
+  //     {required String communityName,
+  //     required String timeFilter,
+  //     required String postsOrComments}) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   final url = Uri.parse(
+  //       'https://redditech.me/backend/communities/about/removed-or-spammed/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
+
+  //   final response = await http.get(
+  //     url,
+  //     headers: {'Content-Type': 'application/json', 'Authorization': token!},
+  //   );
+  //   final List<Map<String, dynamic>> decodedSettings =
+  //       json.decode(response.body);
+
+  //   final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
+  //     final List<QueuePostImage> images =
+  //         (post["images"] as List<dynamic>).map((image) {
+  //       return QueuePostImage(
+  //         imagePath: image["path"],
+  //         imageCaption: image["caption"],
+  //         imageLink: image["link"],
+  //       );
+  //     }).toList();
+  //     return QueuesPostItem(
+  //       queuePostImage: images,
+  //       moderatorDetails: ModeratorDetails(
+  //           approvedFlag: post["moderator_details"]["approved_flag"],
+  //           approvedDate: post["moderator_details"]["approved_date"],
+  //           removedFlag: post["moderator_details"]["removed_flag"],
+  //           removedBy: post["moderator_details"]["removed_by"],
+  //           removedDate: post["moderator_details"]["removed_date"],
+  //           removedRemovalReason: post["moderator_details"]
+  //               ["removed_removal_reason"],
+  //           spammedFlag: post["moderator_details"]["spammed_flag"],
+  //           spammedBy: post["moderator_details"]["spammed_by"],
+  //           spammedType: post["moderator_details"]["spammed_type"],
+  //           spammedRemovalReason: post["moderator_details"]
+  //               ["spammed_removal_reason"],
+  //           reportedFlag: post["moderator_details"]["reported_flag"],
+  //           reportedBy: post["moderator_details"]["reported_by"],
+  //           reportedType: post["moderator_details"]["reported_type"]),
+  //       postTitle: post["title"],
+  //       postDescription: post["description"],
+  //       createdAt: post["created_at"],
+  //       editedAt: post["edited_at"],
+  //       deletedAt: post["deleted_at"],
+  //       isDeleted: post["deleted"],
+  //       username: post["username"],
+  //       communityName: post["community_name"],
+  //       nsfwFlag: post["nsfw_flag"],
+  //       spoilerFlag: post["spoiler_flag"],
+  //     );
+  //   }).toList();
+  //   print(queuesPostItem);
+  //   return queuesPostItem;
+  // }
+
+  // Future<List<QueuesPostItem>> getReportedItems(
+  //     {required String communityName,
+  //     required timeFilter,
+  //     required postsOrComments}) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? token = prefs.getString('token');
+  //   final url = Uri.parse(
+  //       'https://redditech.me/backend/communities/about/reported/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
+
+  //   final response = await http.get(
+  //     url,
+  //     headers: {'Content-Type': 'application/json', 'Authorization': token!},
+  //   );
+  //   final List<Map<String, dynamic>> decodedSettings =
+  //       json.decode(response.body);
+  //   final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
+  //     final List<QueuePostImage> images =
+  //         (post["images"] as List<dynamic>).map((image) {
+  //       return QueuePostImage(
+  //         imagePath: image["path"],
+  //         imageCaption: image["caption"],
+  //         imageLink: image["link"],
+  //       );
+  //     }).toList();
+  //     return QueuesPostItem(
+  //       queuePostImage: images,
+  //       moderatorDetails: ModeratorDetails(
+  //           approvedFlag: post["moderator_details"]["approved_flag"],
+  //           approvedDate: post["moderator_details"]["approved_date"],
+  //           removedFlag: post["moderator_details"]["removed_flag"],
+  //           removedBy: post["moderator_details"]["removed_by"],
+  //           removedDate: post["moderator_details"]["removed_date"],
+  //           removedRemovalReason: post["moderator_details"]
+  //               ["removed_removal_reason"],
+  //           spammedFlag: post["moderator_details"]["spammed_flag"],
+  //           spammedBy: post["moderator_details"]["spammed_by"],
+  //           spammedType: post["moderator_details"]["spammed_type"],
+  //           spammedRemovalReason: post["moderator_details"]
+  //               ["spammed_removal_reason"],
+  //           reportedFlag: post["moderator_details"]["reported_flag"],
+  //           reportedBy: post["moderator_details"]["reported_by"],
+  //           reportedType: post["moderator_details"]["reported_type"]),
+  //       postTitle: post["title"],
+  //       postDescription: post["description"],
+  //       createdAt: post["created_at"],
+  //       editedAt: post["edited_at"],
+  //       deletedAt: post["deleted_at"],
+  //       isDeleted: post["deleted"],
+  //       username: post["username"],
+  //       communityName: post["community_name"],
+  //       nsfwFlag: post["nsfw_flag"],
+  //       spoilerFlag: post["spoiler_flag"],
+  //     );
+  //   }).toList();
+  //   return queuesPostItem;
+  // }
+
+  Future<List<QueuesPostItem>> getUnmoderatedItems(
       {required String communityName,
       required String timeFilter,
       required String postsOrComments}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(
-        'https://redditech.me/backend/communities/about/removed-or-spammed/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
-
+        'https://redditech.me/backend/communities/about/unmoderated/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json', 'Authorization': token!},
     );
     final Map<String, dynamic> decodedSettings = json.decode(response.body);
-    final QueuesPostItem queuesPostItem = QueuesPostItem(
-      queuePostImage: QueuePostImage(
-          imagePath: decodedSettings["images"]["path"],
-          imageCaption: decodedSettings["images"]["caption"],
-          imageLink: decodedSettings["images"]["link"]),
+    //final QueuesPostItem queuesPostItem = QueuesPostItem(
+      // queuePostImage: QueuePostImage(
+      //     imagePath: decodedSettings["images"]["path"],
+      //     imageCaption: decodedSettings["images"]["caption"],
+      //     imageLink: decodedSettings["images"]["link"]),
       moderatorDetails: ModeratorDetails(
           approvedFlag: decodedSettings["approved_flag"],
           approvedDate: decodedSettings["approved_date"],
@@ -1231,9 +1346,7 @@ class ModeratorMockService {
   }
 
   Future<QueuesPostItem> getReportedItems(
-      {required String communityName,
-      required timeFilter,
-      required postsOrComments}) async {
+      {required String communityName, required timeFilter, required postsOrComments}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(
@@ -1278,9 +1391,7 @@ class ModeratorMockService {
   }
 
   Future<QueuesPostItem> getUnmoderatedItems(
-      {required String communityName,
-      required String timeFilter,
-      required String postsOrComments}) async {
+      {required String communityName, required String timeFilter, required String postsOrComments}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(

@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -110,15 +112,16 @@ class _DescriptionWidgetState extends State<DescriptionWidget> {
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (MediaQuery.of(context).size.width < 700)
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.of(context).pop();
+                    ListTile(
+                        leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      onPressed: (){
+                         Navigator.pop(context);
                       },
-                    ),
+                    )),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
