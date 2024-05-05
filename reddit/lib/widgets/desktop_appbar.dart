@@ -7,11 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
 import 'package:reddit/widgets/chat_intro.dart';
-import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/listing_notifications.dart';
+import 'package:reddit/widgets/messages_list.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
@@ -136,7 +137,125 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                 onPressed: () {
                   //Navigate to Inbox
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const ListingNotifications(),
+                    builder: (context) => Scaffold(
+                      appBar: AppBar(
+                          title: DesktopAppBar(
+                        logoTapped: () {},
+                        isInbox: true,
+                      )),
+                      body: DefaultTabController(
+                        length: 2,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              height: 40,
+                              color: Colors.white,
+                              child: TabBar(
+                                indicatorColor:
+                                    const Color.fromARGB(255, 24, 82, 189),
+                                labelColor: Colors.black,
+                                unselectedLabelColor: Colors.grey,
+                                tabs: [
+                                  Tab(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Notifications'),
+                                        const SizedBox(width: 5),
+                                        Consumer<NotificationsService>(builder:
+                                            (context, notificationsService,
+                                                child) {
+                                          if (userController
+                                                  .unreadNotificationsCount >
+                                              0) {
+                                            return Container(
+                                              padding: const EdgeInsets.all(1),
+                                              decoration: const BoxDecoration(
+                                                color: Colors.red,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              constraints: const BoxConstraints(
+                                                minWidth: 15,
+                                                minHeight: 15,
+                                              ),
+                                              child: Text(
+                                                userController
+                                                    .unreadNotificationsCount
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            );
+                                          } else {
+                                            return Container();
+                                          }
+                                        }),
+                                      ],
+                                    ),
+                                  ),
+                                  Tab(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Messages'),
+                                        const SizedBox(width: 5),
+                                        Consumer<GetMessagesController>(
+                                          builder: (context,
+                                              getMessagesController, child) {
+                                            if (userController
+                                                    .unreadMessagesCount >
+                                                0) {
+                                              return Container(
+                                                padding:
+                                                    const EdgeInsets.all(1),
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.red,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                constraints:
+                                                    const BoxConstraints(
+                                                  minWidth: 15,
+                                                  minHeight: 15,
+                                                ),
+                                                child: Text(
+                                                  userController
+                                                      .unreadMessagesCount
+                                                      .toString(),
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              );
+                                            } else {
+                                              return const SizedBox.shrink();
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Expanded(
+                              child: TabBarView(
+                                children: [
+                                  ListingNotifications(),
+                                  MessagesPage(),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ));
                 },
                 icon: const Icon(CupertinoIcons.bell),
