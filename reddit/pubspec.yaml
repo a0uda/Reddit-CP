@@ -64,6 +64,7 @@ dependencies:
   fluentui_system_icons: ^1.1.234
   http: ^1.2.1
   intl: ^0.19.0
+  socket_io_client: ^2.0.3+1
   
 
 dev_dependencies:
