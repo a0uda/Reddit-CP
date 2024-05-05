@@ -59,7 +59,7 @@ class UserAbout {
       socialLinks: jsonDecode['social_links'] != null
           ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
-          : null,
+          : [],
       profilePicture: jsonDecode['profile_picture'] ?? '',
       bannerPicture: jsonDecode['banner_picture'],
       country: jsonDecode['country'] == ''

@@ -128,7 +128,8 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => AccountSettingsController(),
-      )
+      ),
+      ChangeNotifierProvider(
         create: (context) => GetMessagesController(),
       ),
     ],
