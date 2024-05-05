@@ -113,10 +113,10 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                 itemBuilder: (context, index) {
                       var imageurl=null;
                   if (posts[index].images != null ) {
-                    imageurl=  posts[index].images?[0].path;
+                    imageurl=  posts[index].images?[0].link;
                   }
                     print(posts[index].isReposted);
-                  if (posts[index].isReposted && !posts[index].isRemoved) {
+                  if (posts[index].isReposted) {
                     return Repost(
                           description: posts[index].description,
                         id: posts[index].id,
@@ -132,7 +132,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                         vote: posts[index].vote);
                   }
                   if ((posts[index].nsfwFlag == true ||
-                      posts[index].spoilerFlag == true)&& !posts[index].isRemoved) {
+                      posts[index].spoilerFlag == true)) {
                     return CollapsePost(
                       id: posts[index].id,
                       // profileImageUrl: posts[index].profilePic!,
@@ -145,7 +145,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                       isSpoiler: posts[index].spoilerFlag,
                     );
                   }
-                  if( !posts[index].isRemoved)
+                  // if( !posts[index].isRemoved)
                   return Post(
                     // profileImageUrl: posts[index].profilePic!,
                     name: posts[index].username,
@@ -159,7 +159,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
                     commentsCount: posts[index].commentsCount,
                     linkUrl: posts[index].linkUrl,
                     imageUrl: imageurl,
-                    videoUrl: posts[index].videos?[0].path,
+                    videoUrl: posts[index].videos?[0].link,
                     poll: posts[index].poll,
                     id: posts[index].id,
                     communityName: posts[index].communityName,

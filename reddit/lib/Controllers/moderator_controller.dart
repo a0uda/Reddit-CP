@@ -20,9 +20,11 @@ class ModeratorController {
     communityType: "Public",
     nsfwFlag: false,
   );
-  String membersCount = "";
+  bool joinedFlag = false;
+  String membersCount = "0";
   Map<String, dynamic> postTypesAndOptions = {};
-  String profilePictureURL = "";
+  String profilePictureURL = "images/logo-mobile.png";
+  String bannerPictureURL = "images/reddit-banner-image.jpg";
   CommunityItem? communityItem;
 
   Future<void> getCommunity(String communityName) async {
@@ -36,6 +38,18 @@ class ModeratorController {
         await moderatorService.getCommunityGeneralSettings(communityName);
     postTypesAndOptions = moderatorService.getPostTypesAndOptions(communityName)
         as Map<String, dynamic>;
+  }
+
+  Future<void> getCommunityInfo(String communityName) async {
+    Map<String, dynamic> info =
+        await moderatorService.getCommunityInfo(communityName: communityName);
+    generalSettings.communityTitle = info["communityTitle"];
+    generalSettings.communityDescription = info["communityDescription"];
+    generalSettings.communityType = info["communityType"];
+    generalSettings.nsfwFlag = info["communityFlag"];
+    profilePictureURL = info["communityProfilePicture"];
+    bannerPictureURL = info["communityBannerPicture"];
+    joinedFlag = info["communityJoined"];
   }
 
   Future<void> getBannedUsers(String communityName) async {
@@ -71,6 +85,13 @@ class ModeratorController {
   Future<void> getMembersCount(String communityName) async {
     membersCount = await moderatorService.getMembersCount(communityName);
   }
+
+//Rawan: add moderator
+  Future<void> addAsMod(
+      String username, String profilePicture, String communityName, String msgId) async {
+    await moderatorService.addModUser(username, profilePicture, communityName, msgId);
+    moderators = await moderatorService.getModerators(communityName);
+  }
 }
 
 class ApprovedUserProvider extends ChangeNotifier {
@@ -86,7 +107,7 @@ class ApprovedUserProvider extends ChangeNotifier {
 
   Future<void> removeApprovedUsers(
       String username, String communityName) async {
-    moderatorService.removeApprovedUsers(username, communityName);
+    await moderatorService.removeApprovedUsers(username, communityName);
     moderatorController.approvedUsers =
         await moderatorService.getApprovedUsers(communityName);
     notifyListeners();
@@ -280,7 +301,6 @@ class ChangeGeneralSettingsProvider extends ChangeNotifier {
         await moderatorService.getCommunityGeneralSettings(communityName);
 
     notifyListeners();
-
   }
 }
 
@@ -303,6 +323,38 @@ class PostSettingsProvider extends ChangeNotifier {
     );
     moderatorController.postTypesAndOptions =
         await moderatorService.getPostTypesAndOptions(communityName);
+    notifyListeners();
+  }
+}
+
+class CreateCommunityProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<int> createCommuntiy(
+      {required String communityName,
+      required String communityType,
+      required bool communityFlag}) async {
+    int validation = await moderatorService.createCommunity(
+        communityName: communityName,
+        communityType: communityType,
+        communityFlag: communityFlag);
+
+    notifyListeners();
+    //print(validation);
+    return validation;
+  }
+}
+
+class UpdateProfilePicture extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> updateProfilePicture(
+      {required String communityName, required String pictureUrl}) async {
+    await moderatorService.addProfilePicture(
+        communityName: communityName, pictureURL: pictureUrl);
+    moderatorController.profilePictureURL = pictureUrl;
     notifyListeners();
   }
 }

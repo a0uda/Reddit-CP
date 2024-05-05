@@ -7,6 +7,7 @@ import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Create%20Community/create_community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
 void navigateToCommunity(Widget communityPage, BuildContext context) {
@@ -66,7 +67,8 @@ class _DrawerTileState extends State<DrawerTile> {
                         leading: const Icon(Icons.add, color: Colors.black),
                         title: const Text("Create Community"),
                         onTap: () {
-                          //navigate to Create Community Page
+                           Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => const CreateCommunity()));
                         },
                       )
                     : const SizedBox(),
@@ -91,21 +93,24 @@ class _DrawerTileState extends State<DrawerTile> {
                           //     item['communityPage'], context);
                           moderatorController.profilePictureURL =
                               item.profilePictureURL;
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => (CommunityLayout(
-                          //           desktopLayout: DesktopCommunityPage(
-                          //               communityName: item.name),
-                          //           mobileLayout: MobileCommunityPage(
-                          //             communityName: item.name,
-                          //           ),
-                          //         ))));
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => (CommunityPage(
-                                    communityMembersNo: item.membersCount,
-                                    communityName: item.name,
-                                    communityProfilePicturePath:
-                                        item.profilePictureURL,
+                              builder: (context) => (CommunityLayout(
+                                    desktopLayout: DesktopCommunityPage(
+                                        isMod: widget.isMod,
+                                        communityName: item.name),
+                                    mobileLayout: MobileCommunityPage(
+                                      isMod : widget.isMod,
+                                      communityName: item.name,
+                                    ),
                                   ))));
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => (DesktopCommunityPage(
+                          //           //communityMembersNo: item.membersCount,
+                          //           communityName: item.name,
+                          //           //communityProfilePicturePath:
+                          //             //  item.profilePictureURL,
+                          //             isMod: false,
+                          //         ))));
                         },
                       );
                     },

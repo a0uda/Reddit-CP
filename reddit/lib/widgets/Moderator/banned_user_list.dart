@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
 
 class BannedUsersList extends StatefulWidget {
@@ -14,6 +17,7 @@ class BannedUsersList extends StatefulWidget {
 class _BannedUsersListState extends State<BannedUsersList> {
   final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
+  final UserService userService = GetIt.instance.get<UserService>();
   final TextEditingController usernameController = TextEditingController();
   List<Map<String, dynamic>> foundUsers = [];
   bool usersFetched = false;
@@ -205,8 +209,21 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                                       const Icon(Icons.person),
                                                   title: const Text(
                                                       "View Profile"),
-                                                  onTap: () {
+                                                  onTap: () async {
                                                     //navigate to profile of this user Badrr
+                                                    UserAbout otherUserData =
+                                                        (await (userService
+                                                            .getUserAbout(item[
+                                                                "username"])))!;
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ProfileScreen(
+                                                                otherUserData,
+                                                                'other'),
+                                                      ),
+                                                    );
                                                   },
                                                 ),
                                                 ListTile(
@@ -221,7 +238,7 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                                             moderatorController
                                                                 .communityName);
                                                     setState(() {
-                                                    usersFetched = true;
+                                                      usersFetched = true;
                                                       foundUsers =
                                                           moderatorController
                                                               .bannedUsers;

@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
 //Hena fel page deeh el mafrood te3ml boolean bey-save el state beta3t el community w yeshoof law etghayret wala laa law etghayret yeb2a hatghayr isSaved
 class PostTypes extends StatelessWidget {
-  const PostTypes({Key? key}) : super(key: key);
+  const PostTypes({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +15,10 @@ class PostTypes extends StatelessWidget {
       future: fetchCommunityPostComments(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(), // or any loading indicator
+              child: LoadingAnimationWidget.twoRotatingArc(
+                  color: const Color.fromARGB(255, 172, 172, 172), size: 20),
             ),
           );
         } else if (snapshot.hasError) {
@@ -26,7 +28,7 @@ class PostTypes extends StatelessWidget {
             ),
           );
         } else {
-          return PostTypesContent();
+          return const PostTypesContent();
         }
       },
     );
@@ -69,11 +71,6 @@ class _PostTypesState extends State<PostTypesContent> {
   bool isOptionsTypeVisible = false;
   bool isVideoImageVisible = true;
   bool toggleOptionsTypeVisiblity = false;
-
-  Future<void> fetchCommunityPostComments() async {
-    await moderatorController
-        .getPostTypesAndOptions(moderatorController.communityName);
-  }
 
   @override
   void initState() {
@@ -208,6 +205,8 @@ class _PostTypesState extends State<PostTypesContent> {
               setState(() {
                 doneSaved = true;
               });
+              // ignore: use_build_context_synchronously
+              Navigator.pop(context);
             },
             child: Text(
               'Save',
@@ -361,11 +360,20 @@ class _PostTypesState extends State<PostTypesContent> {
                   ]),
                 ),
                 onTap: () {
-                  setState(
-                    () {
-                      isOptionsTypeVisible = !isOptionsTypeVisible;
-                    },
-                  );
+                  showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OptionsWidget(
+                            changeTextShown: changeTextShown,
+                            chooseAny: chooseAny,
+                            chooseLink: chooseLink,
+                            chooseText: chooseText,
+                            isAnyIconPressed: isAnyIconPressed,
+                            isLinkOnlyIconPressed: isLinkOnlyIconPressed,
+                            isTextOnlyIconPressed: isTextOnlyIconPressed,
+                            falseVideoImageVisiblity: falseVideoImageVisiblity,
+                            trueVideoImageVisibility: trueVideoImageVisiblity);
+                      });
                 },
               ),
               //Image Posts

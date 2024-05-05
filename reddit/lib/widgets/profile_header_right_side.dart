@@ -28,15 +28,21 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
       {required this.userData, required this.userType});
 
   final UserController userController = GetIt.I.get<UserController>();
+  final userService = GetIt.I.get<UserService>();
 
   List<FollowersFollowingItem>? followingList;
   bool _dataFetched = false;
+  bool _firstTime = true;
 
   void loadFollowingList() async {
     if (userType != 'me') {
-      final userService = GetIt.I.get<UserService>();
-      followingList =
-          await userService.getFollowing(userController.userAbout!.username);
+      if (_firstTime) {
+        followingList =
+            await userService.getFollowing(userController.userAbout!.username);
+        _firstTime = false;
+      } else {
+        followingList = userController.following;
+      }
     }
     setState(() {
       _dataFetched = true;
@@ -65,8 +71,8 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
               child: IconButton(
                 icon: const Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
-                  const link =
-                      'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr'; //to be changed
+                  var link =
+                      'https://redditech.me/user/${userData.username}/saved';
                   await Share.share('Check out this profile on Reddit: $link');
                 },
               ),
@@ -82,24 +88,19 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                           builder: (context) => const EditProfileScreen()),
                     );
                   } else {
-                    setState(
-                      () async {
-                        if (followingList!
-                            .where((element) =>
-                                element.username == userData.username)
-                            .isEmpty) {
-                          setState(() {
-                            followerFollowingController
-                                .followUser(userData.username);
-                          });
-                        } else {
-                          setState(() {
-                            followerFollowingController
-                                .unfollowUser(userData.username);
-                          });
-                        }
-                      },
-                    );
+                    if (followingList!
+                        .where(
+                            (element) => element.username == userData.username)
+                        .isEmpty) {
+                      await followerFollowingController
+                          .followUser(userData.username);
+                    } else {
+                      await followerFollowingController
+                          .unfollowUser(userData.username);
+                    }
+                    setState(() {
+                      _dataFetched = false;
+                    });
                   }
                 },
                 style: TextButton.styleFrom(

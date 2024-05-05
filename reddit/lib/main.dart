@@ -1,14 +1,12 @@
 import 'dart:collection';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
 import 'package:reddit/Controllers/post_controller.dart';
-import 'package:reddit/Models/rules_item.dart';
-import 'package:reddit/Models/user_about.dart';
-import 'package:reddit/Pages/community_page.dart';
 
 import 'package:reddit/Pages/login.dart';
 import 'package:get_it/get_it.dart';
@@ -16,24 +14,37 @@ import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
-import 'package:reddit/widgets/Community/desktop_community_page.dart';
-import 'package:reddit/widgets/Community/mobile_community_page.dart';
-import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
-import 'package:reddit/widgets/Moderator/mod_responsive.dart';
-import 'package:reddit/widgets/Moderator/queues.dart';
+import 'package:reddit/Services/search_service.dart';
+import 'package:reddit/firebase_options.dart';
+import 'package:reddit/Services/notifications_service.dart';
 import 'Services/post_service.dart';
 import 'Services/user_service.dart';
 import '../Controllers/user_controller.dart';
-//TODO : FIREBASE
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   // Registering MockService with GetIt
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic notifications',
+          channelDescription: 'Notification channel for basic tests',
+          defaultColor: Color(0xFF9D50DD),
+          ledColor: Colors.white,
+        )
+      ],
+      debug: true);
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); //TODO : FIREBASE
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  GetIt.instance
+      .registerSingleton<NotificationsService>(NotificationsService());
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
+  GetIt.instance.registerSingleton<SearchService>(SearchService());
 
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
@@ -46,7 +57,6 @@ void main() async {
   GetIt.instance.registerSingleton<ModeratorController>(ModeratorController());
 
   GetIt.instance.registerSingleton<ChatsService>(ChatsService());
-
 
   runApp(MultiProvider(
     providers: [
@@ -98,12 +108,30 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => PostSettingsProvider(),
       ),
-            ChangeNotifierProvider(
+      ChangeNotifierProvider(
+        create: (context) => NotificationsService(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => BlockUnblockUser(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => MessagesOperations(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => CreateCommunityProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => UpdateProfilePicture(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => Edit(),
       ),
                  ChangeNotifierProvider(
         create: (context) => RefreshHome(),
-      )
+      ),
+      ChangeNotifierProvider(
+        create: (context) => GetMessagesController(),
+      ),
     ],
     child: const MyApp(),
   ));

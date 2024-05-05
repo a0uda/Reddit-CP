@@ -33,9 +33,11 @@ class CommentsService {
           'Authorization': token!,
         },
       );
+      print(response.body);
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print(response.body);
         List<Comments> commentsList = [];
         for (var comment in data['content']) {
           commentsList.add(Comments.fromJson(comment));
@@ -50,6 +52,7 @@ class CommentsService {
 
   Future<int> addComment(String postId, String commentDescription,
       String username, String userId) async {
+    print("adding comment");
     if (testing) {
       comments.add(Comments(
         id: comments.length.toString(),
@@ -69,6 +72,7 @@ class CommentsService {
       String? token = prefs.getString('token');
       final url =
           Uri.parse('https://redditech.me/backend/comments/new-comment');
+      print(token!);
 
       final response = await http.post(
         url,
@@ -81,8 +85,13 @@ class CommentsService {
           'description': commentDescription,
         }),
       );
+      print({
+        'id': postId,
+        'description': commentDescription,
+      });
 
       if (response.statusCode == 200) {
+        print('commentt addededde');
         return 200;
       } else {
         return 400;
@@ -90,7 +99,33 @@ class CommentsService {
     }
   }
 
-  void upVoteComment(String commentId) {
+  Future<void> EditComment(String id, String editedText) async {
+    if (testing) {
+    } else {
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/edit-text');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final response = await http.patch(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json
+            .encode({"id": id, "edited_text": editedText, "is_post": false}),
+      );
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        print('comment edited');
+      }
+    }
+  }
+
+  Future<void> upVoteComment(String commentId) async {
     if (testing) {
       for (var comment in comments) {
         if (comment.id == commentId) {
@@ -98,11 +133,29 @@ class CommentsService {
         }
       }
     } else {
-      // upvote comment in database
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": commentId, "is_post": false, "vote": "1"}),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('upvoted');
+      } else {
+        print('failed to upvote');
+      }
     }
   }
 
-  void downVoteComment(String commentId) {
+  Future<void> downVoteComment(String commentId) async {
     if (testing) {
       for (var comment in comments) {
         if (comment.id == commentId) {
@@ -110,7 +163,25 @@ class CommentsService {
         }
       }
     } else {
-      // downvote comment in database
+      final url =
+          Uri.parse('https://redditech.me/backend/posts-or-comments/vote');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({"id": commentId, "is_post": false, "vote": "-1"}),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('downvoted');
+      } else {
+        print('failed to downvote');
+      }
     }
   }
 

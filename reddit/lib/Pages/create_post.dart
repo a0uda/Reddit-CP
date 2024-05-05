@@ -1,15 +1,14 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
-import 'package:reddit/Pages/description_widget.dart';
-import 'package:reddit/widgets/Community/community_description.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
+import 'package:reddit/widgets/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/community_controller.dart';
@@ -58,13 +57,37 @@ class _CreatePostState extends State<CreatePost> {
   VideoPlayerController? _videoPlayerController;
   String? url;
   String? imageUrl;
+  String? videoUrl;
   List<CommunityBackend> userCommunities = [];
+  bool communitiesFetched = false;
+  bool isMod = false;
 
   List<String> rules = [];
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  bool isSaved = false;
+
+  void setSelectedDate(DateTime date, TimeOfDay time, String selectedRepeat) {
+    if (selectedRepeat == "") {
+      //hour , day , week , month
+      selectedDate = date;
+      selectedTime = time;
+      setState(() {
+        isSaved = true;
+      });
+    } else {
+      //set flags recurring we mashy el denya we schedule bardo
+      setState(() {
+        isSaved = true;
+      });
+    }
+  }
 
   Future<void> fetchUserCommunities() async {
-    await userController.getUserCommunities();
-    userCommunities = userController.userCommunities!;
+    if (!communitiesFetched) {
+      await userController.getUserCommunities();
+      userCommunities = userController.userCommunities!;
+    }
   }
 
   Future<void> _pickImage() async {
@@ -73,15 +96,47 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _image = pickedFile;
-        imageSelected = true;
-        showLinkField = false;
-        videoSelected = false;
-        pollSelected = false;
-        type = 'image';
+        type = 'image_and_videos';
       });
 
       //TODO: FIREBASE
       //saveImage();
+      // try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print('images/${DateTime.now().microsecondsSinceEpoch}-${_image!.name}');
+      print(_image!.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(_image!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
+
+      imageUrl = await storageRef.getDownloadURL();
+      print(imageUrl);
+      setState(() {
+        imageSelected = true;
+        showLinkField = false;
+        videoSelected = false;
+        pollSelected = false;
+        type = 'image_and_videos';
+      });
+      // } catch (e) {
+      //   print(e);
+      // }
     }
   }
 
@@ -97,7 +152,7 @@ class _CreatePostState extends State<CreatePost> {
       showLinkField = false;
       imageSelected = false;
       videoSelected = false;
-      type = 'poll';
+      type = 'polls';
     });
   }
 
@@ -107,11 +162,11 @@ class _CreatePostState extends State<CreatePost> {
     fetchUserCommunities();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _videoPlayerController?.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  //   _videoPlayerController?.dispose();
+  // }
 
   Future<void> _pickVideo() async {
     final pickedFile =
@@ -119,17 +174,38 @@ class _CreatePostState extends State<CreatePost> {
     if (pickedFile != null) {
       setState(() {
         _video = pickedFile;
-        videoSelected = true;
-        showLinkField = false;
-        imageSelected = false;
-        pollSelected = false;
-        type = 'video';
       });
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('videos')
+          .child('${DateTime.now().microsecondsSinceEpoch}-${_video!.name}');
+      print(_video!.name);
+      try {
+        // upload the file to Firebase Storage
+        final uploadFile = File(_video!.path);
+        print(uploadFile.path);
+        await storageRef
+            .putFile(
+                uploadFile,
+                SettableMetadata(
+                  cacheControl: "public,max-age=300",
+                  contentType: 'image/png',
+                ))
+            .whenComplete(() {});
+      } catch (e) {
+        print('Error uploading file to Firebase Storage: $e');
+        // Handle the error as needed, such as displaying an error message to the user.
+      }
 
-      _videoPlayerController = VideoPlayerController.file(File(_video!.path))
-        ..initialize().then((_) {
-          setState(() {});
-        });
+      videoUrl = await storageRef.getDownloadURL();
+      print(videoUrl);
+      setState(() {
+        showLinkField = false;
+        videoSelected = true;
+        pollSelected = false;
+        imageSelected = false;
+        type = 'image_and_videos';
+      });
     }
   }
 
@@ -140,7 +216,7 @@ class _CreatePostState extends State<CreatePost> {
   TextEditingController questionController = TextEditingController();
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
-  String type = 'type';
+  String type = 'text';
   String selectedCommunity = "Select Community";
   String communityDescription = "Select Community";
 
@@ -166,11 +242,32 @@ class _CreatePostState extends State<CreatePost> {
               icon:
                   Icon(Icons.arrow_back_ios_rounded, color: Colors.blue[900])),
           actions: [
-            IconButton(
+            isMod
+                ? IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20.0),
+                          ),
+                        ),
+                        builder: (BuildContext context) {
+                          return ModalForSchedule(
+                            setValues: setSelectedDate,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.more_horiz_outlined))
+                : const SizedBox(),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ElevatedButton(
                 onPressed: (() async => {
                       if (titleController.text.isEmpty)
                         {
-                          //print(selectedCommunity),
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -210,7 +307,7 @@ class _CreatePostState extends State<CreatePost> {
                               videoSelected
                                   ? [
                                       VideoItem(
-                                          path: _video!.path, link: 'linkUrl')
+                                          path: _video!.path, link: videoUrl!)
                                     ]
                                   : null,
                               pollSelected
@@ -269,7 +366,22 @@ class _CreatePostState extends State<CreatePost> {
                             }
                         }
                     }),
-                icon: Icon(Icons.check, color: Colors.blue[900])),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 55, 146),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  surfaceTintColor: const Color.fromARGB(255, 3, 55, 146),
+                  padding: const EdgeInsets.all(5),
+                ),
+                child: isSaved
+                    ? const Text(
+                        "Schedule",
+                      )
+                    : const Text(
+                        "Post",
+                      ),
+              ),
+            ),
           ],
           title: const Text('Create Post'),
           titleTextStyle: TextStyle(
@@ -302,6 +414,7 @@ class _CreatePostState extends State<CreatePost> {
                                 context: context,
                                 builder: (context) {
                                   return ListView.builder(
+                                    shrinkWrap: true,
                                     itemCount: userCommunities.length,
                                     itemBuilder: (context, index) {
                                       return ListTile(
@@ -322,10 +435,27 @@ class _CreatePostState extends State<CreatePost> {
                                   );
                                 },
                               );
-                              setState(() {
-                                if (result != null) selectedCommunity = result;
-                                // print(selectedCommunity);
-                              });
+                              if (result != null &&
+                                  userController
+                                          .userAbout?.moderatedCommunities !=
+                                      null) {
+                                setState(() {
+                                  isMod = userController
+                                      .userAbout!.moderatedCommunities!
+                                      .any((community) =>
+                                          community.name == result);
+                                  if (!isMod) {
+                                    isSaved = false;
+                                  }
+                                  selectedCommunity = result;
+                                });
+                              } else {
+                                setState(() {
+                                  if (result != null) {
+                                    selectedCommunity = result;
+                                  }
+                                });
+                              }
                             },
                             icon: Icon(
                               Icons.arrow_drop_down,
@@ -395,6 +525,7 @@ class _CreatePostState extends State<CreatePost> {
                                     onPressed: () {
                                       setState(() {
                                         showLinkField = false;
+                                        type = 'text';
                                       });
                                     },
                                   ),
@@ -415,7 +546,8 @@ class _CreatePostState extends State<CreatePost> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     image: DecorationImage(
-                                      image: FileImage(File(_image!.path)),
+                                      // image: FileImage(File(_image!.path)),
+                                      image: NetworkImage(imageUrl!),
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -424,18 +556,7 @@ class _CreatePostState extends State<CreatePost> {
                                 ),
                               ),
                             if (videoSelected)
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child:
-                                    _videoPlayerController!.value.isInitialized
-                                        ? AspectRatio(
-                                            aspectRatio: _videoPlayerController!
-                                                .value.aspectRatio,
-                                            child: VideoPlayer(
-                                                _videoPlayerController!),
-                                          )
-                                        : Container(),
-                              ),
+                              VideoPlayerWidget(videoPath: videoUrl!),
                             if (pollSelected)
                               Container(
                                 padding: const EdgeInsets.all(10.0),
@@ -561,7 +682,7 @@ class _CreatePostState extends State<CreatePost> {
                       onPressed: () {
                         setState(() {
                           showLinkField = true;
-                          type = 'link';
+                          type = 'url';
                           if (imageSelected) {
                             setState(() => imageSelected = false);
                           }
@@ -632,47 +753,248 @@ class ModalForRules extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0 , top: 20),
+      padding: const EdgeInsets.only(left: 10.0, top: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Padding(
-            padding:  EdgeInsets.only(bottom: 15.0),
-            child:  Center(
+            padding: EdgeInsets.only(bottom: 15.0),
+            child: Center(
               child: Text(
                 "Community Rules",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ),
           ),
-          const Text(
-            "Rules are different for each community. Reviewing the rules can help you be more successful when posting",
-            style: TextStyle(color: Colors.grey),
-          ),
-          Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: moderatorController.rules.length,
-              itemBuilder: (BuildContext context, int index) {
-                final item = moderatorController.rules[index];
-                return Column(
-                  children: [
-                    ListTile(
-                      leading: Text("${index + 1}."),
-                      title: Text(item.ruleTitle),
-                    ),
-                    Divider(
-                      endIndent: 25,
-                      indent: 25,
-                      color: Colors.grey[300],
-                      height: 1,
-                    ),
-                  ],
-                );
-              },
+          const Padding(
+            padding: EdgeInsets.only(left: 10.0, right: 10),
+            child: Text(
+              "Rules are different for each community. Reviewing the rules can help you be more successful when posting.",
+              style: TextStyle(color: Colors.grey),
             ),
           ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: moderatorController.rules.length,
+            itemBuilder: (BuildContext context, int index) {
+              final item = moderatorController.rules[index];
+              return Column(
+                children: [
+                  ListTile(
+                    leading: Text("${index + 1}."),
+                    title: Text(item.ruleTitle),
+                  ),
+                  Divider(
+                    endIndent: 25,
+                    indent: 25,
+                    color: Colors.grey[300],
+                    height: 1,
+                  ),
+                ],
+              );
+            },
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class ModalForSchedule extends StatefulWidget {
+  final Function(DateTime date, TimeOfDay time, String recurrings) setValues;
+  const ModalForSchedule({super.key, required this.setValues});
+
+  @override
+  State<ModalForSchedule> createState() => _ModalForScheduleState();
+}
+
+class _ModalForScheduleState extends State<ModalForSchedule> {
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+  List<String> values = ["hour", "day", "week", "monthly"];
+  List<String> labels = [
+    "Every hour",
+    "Every day ",
+    "Weekly on ${DateFormat('EEEE').format(DateTime.now())}",
+    "Monthly on the ${DateTime.now().day}th"
+  ];
+  String selectedRepeat = "";
+
+  void selectDate() async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              surfaceTint: Colors.white,
+              primary: Colors.blue, // Background color for the selected date
+              onPrimary: Colors.white, // Text color for the selected date
+              surface: Colors.white, // Background color of the picker
+              onSurface: Colors.black, // Text color for unselected dates
+            ),
+            dialogBackgroundColor:
+                Colors.white, // Background color of the dialog
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  void selectTime() async {
+    TimeOfDay? picked = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: const ColorScheme.light(
+                surfaceTint: Colors.white,
+                primary: Colors.blue,
+                onPrimary: Colors.white,
+                surface: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child!,
+          );
+        });
+
+    if (picked != null && picked != selectedTime) {
+      setState(() {
+        selectedTime = picked;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width > 700
+          ? MediaQuery.of(context).size.width * 0.4
+          : null,
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
+        ),
+      ),
+      child: IntrinsicHeight(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 30.0),
+          child: Column(
+            children: [
+              AppBar(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                title: const Text("Schedule Post"),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        widget.setValues(
+                            selectedDate, selectedTime, selectedRepeat);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 0, 69, 172),
+                      ),
+                      child: const Text("Save"),
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  const Text("Starts on date"),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      selectDate();
+                    },
+                    child: Text(
+                        "${DateFormat.MMM().format(selectedDate)} ${selectedDate.day}, ${selectedDate.year}",
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 49, 90))),
+                  )
+                ],
+              ),
+              Row(
+                children: [
+                  const Text("Starts at time"),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      selectTime();
+                    },
+                    child: Text(selectedTime.format(context),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 49, 90))),
+                  )
+                ],
+              ),
+              GestureDetector(
+                child: const Row(
+                  children: [
+                    Text("Repeat Every..."),
+                    Spacer(),
+                    Icon(Icons.keyboard_arrow_right_sharp)
+                  ],
+                ),
+                onTap: () {
+                  showModalBottomSheet(
+                    backgroundColor: Colors.white,
+                    context: context,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20.0),
+                      ),
+                    ),
+                    builder: (context) {
+                      return StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return ListView.builder(
+                          itemCount: labels.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return RadioListTile(
+                              activeColor: Colors.blue[900],
+                              selectedTileColor: Colors.blue[900],
+                              title: Text(labels[index]),
+                              value: values[index],
+                              groupValue: selectedRepeat,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  selectedRepeat = newValue!;
+                                });
+                              },
+                            );
+                          },
+                        );
+                      });
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

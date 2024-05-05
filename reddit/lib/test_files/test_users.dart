@@ -1,13 +1,14 @@
 import 'package:reddit/Models/account_settings_item.dart';
+import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/safety_settings_item.dart';
 import 'package:reddit/Models/social_link_item.dart';
 import 'package:reddit/test_files/test_comments.dart';
+import 'package:reddit/test_files/test_messages.dart';
 import '../Models/user_item.dart';
 import '../Models/user_about.dart';
 import '../Models/followers_following_item.dart';
-import 'test_communities.dart';
 
 final List<UserItem> users = [
   UserItem(
@@ -33,7 +34,7 @@ final List<UserItem> users = [
           displayText: 'rawan_adel165',
           type: 'instagram',
           customUrl:
-              'https://www.instagram.com/rawan_adel165/?igsh=Z3lxMmhpcW82NmR3&utm_source=qr',
+              "https://redditech.me/backend/users/signup-google",
         ),
         SocialLlinkItem(
           id: '1',
@@ -67,7 +68,6 @@ final List<UserItem> users = [
         createdAt: '5 March 2024',
         username: 'jane123',
         email: 'rawan7544@gmail.com',
-
       ),
       FollowersFollowingItem(
         id: '2',
@@ -100,11 +100,11 @@ final List<UserItem> users = [
     ),
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'johndoe',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'johndoe',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
         BlockedUsersItem(
           username: 'jane123',
           profilePicture: 'images/pp.jpg',
@@ -139,6 +139,7 @@ final List<UserItem> users = [
       communities[1],
       communities[2],
     ],
+    usermessages: List.from(userMessages[0]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -192,11 +193,11 @@ final List<UserItem> users = [
     comments: [],
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'jane123',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'jane123',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
       ],
       mutedCommunities: [
         MutedCommunity(
@@ -226,6 +227,7 @@ final List<UserItem> users = [
       communities[1],
       communities[2],
     ],
+    usermessages: List.from(userMessages[1]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -277,11 +279,11 @@ final List<UserItem> users = [
     ),
     safetySettings: SafetyAndPrivacySettings(
       blockedUsers: [
-        BlockedUsersItem(
-          username: 'johndoe',
-          profilePicture: 'images/pp.jpg',
-          blockedDate: '5 March 2024',
-        ),
+        // BlockedUsersItem(
+        //   username: 'johndoe',
+        //   profilePicture: 'images/pp.jpg',
+        //   blockedDate: '5 March 2024',
+        // ),
       ],
       mutedCommunities: [
         MutedCommunity(
@@ -296,6 +298,7 @@ final List<UserItem> users = [
       communities[2],
       communities[3],
     ],
+    usermessages: List.from(userMessages[2]),
   ),
   UserItem(
     savedCommentsIds: [],
@@ -355,5 +358,46 @@ final List<UserItem> users = [
       communities[2],
       communities[3],
     ],
+    usermessages: List.from(userMessages[3]),
+  ),
+];
+
+
+List <ActiveCommunities> communities=[
+  ActiveCommunities(
+    id: '0',
+    name: 'Flutter',
+    description: 'Flutter is Google’s UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.',
+    title: 'Flutter',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 5000,
+  ),
+  ActiveCommunities(
+    id: '1',
+    name: 'Dart',
+    description: 'Dart is a client-optimized language for fast apps on any platform',
+    title: 'Dart',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 8000,
+  ),
+  ActiveCommunities(
+    id: '2',
+    name: 'Firebase',
+    description: 'Firebase is a platform developed by Google for creating mobile and web applications.',
+    title: 'Firebase',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 10000,
+  ),
+  ActiveCommunities(
+    id: '3',
+    name: 'Android',
+    description: 'Android is a mobile operating system based on a modified version of the Linux kernel and other open source software.',
+    title: 'Android',
+    profilePicture: 'images/Greddit.png',
+    bannerPicture: 'images/Greddit.png',
+    membersCount: 12000,
   ),
 ];

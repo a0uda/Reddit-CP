@@ -11,6 +11,7 @@ import 'package:reddit/widgets/gender_settings_tile.dart';
 import 'package:reddit/widgets/manage_blocked_accounts.dart';
 import 'package:reddit/widgets/notifications_settings.dart';
 import 'package:reddit/widgets/reset_password.dart';
+import 'package:reddit/widgets/add_password.dart';
 import 'package:reddit/widgets/update_email.dart';
 import '../Controllers/user_controller.dart';
 import 'package:reddit/widgets/location_customization.dart';
@@ -29,6 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         title: const Text('Account Settings'),
       ),
       body: SafeArea(
@@ -95,6 +97,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
+void handleUpdateAllowFollowers(String setting, bool value) {
+  final UserController userController = GetIt.instance.get<UserController>();
+  userController.updateAllowFollowers(value);
+}
+
 Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
       title: 'Update email address',
       subtitle: email,
@@ -109,18 +116,31 @@ Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
       },
     );
 
-Widget buildAddPassword(context) => CustomSettingsTile(
-      title: 'Change password',
-      leading: const Icon(Icons.settings_outlined),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
-      onTap: () {
+Widget buildAddPassword(context) {
+  final UserController userController = GetIt.instance.get<UserController>();
+  bool isSetPass = userController.userAbout!.isPasswordSetFlag!;
+  return CustomSettingsTile(
+    title: isSetPass ? 'Change password' : 'Add password',
+    leading: const Icon(Icons.settings_outlined),
+    trailing: const Icon(Icons.arrow_forward_ios, size: 16.0),
+    onTap: () {
+      if (isSetPass) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => const ResetPassword(),
           ),
         );
-      },
-    );
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const AddPassword(),
+          ),
+        );
+      }
+    },
+  );
+}
+
 Widget buildManageNotifications(context) => CustomSettingsTile(
       title: 'Manage notifications',
       leading: const Icon(Icons.notifications_none_outlined),
@@ -181,15 +201,11 @@ Widget buildManageBlockedAccounts(context) => CustomSettingsTile(
     );
 
 Widget buildAllowPeopleToFollowYou() => CustomStatefulSettingsTile(
-      switchValue: true,
+      switchValue: userController.profileSettings!.allowFollowers!,
       title: 'Allow people to follow you',
       subtitle:
           'Followers will be notified about posts you make to your profile and see them in their home feed.',
       leading: const Icon(Icons.account_circle_outlined),
-      // onChanged: (value) {
-      //   // Callback for switch toggle
-      // },
-      onTap: () {
-        // Callback for tile tap
-      },
+      onChanged: handleUpdateAllowFollowers,
+      onTap: () {},
     );

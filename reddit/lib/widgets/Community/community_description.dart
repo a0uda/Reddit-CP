@@ -64,7 +64,7 @@ class _CommunityDescriptionState extends State<CommunityDescription> {
                           margin: const EdgeInsets.only(left: 10, bottom: 0),
                           child: CircleAvatar(
                             backgroundImage:
-                                AssetImage(widget.communityProfilePicturePath),
+                                NetworkImage(widget.communityProfilePicturePath),
                             backgroundColor: Colors.white,
                             radius: 40,
                           ),

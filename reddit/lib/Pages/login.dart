@@ -52,7 +52,6 @@ class LoginPageState extends State<LoginPage> {
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
-      
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -67,8 +66,6 @@ class LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Display error message for unsuccessful login
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -158,7 +155,36 @@ class LoginPageState extends State<LoginPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () async {
+                            var userService = GetIt.instance.get<UserService>();
+                            bool connected =
+                                (await userService.loginWithGoogle());
+                            if (connected) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Logged in successfully! Redirecting to home page...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.deepOrange[400],
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const ResponsiveLayout(
+                                    mobileLayout: MobileLayout(
+                                      mobilePageMode: 0,
+                                    ),
+                                    desktopLayout: DesktopHomePage(
+                                      indexOfPage: 0,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.all(buttonPadding),
                             textStyle: TextStyle(fontSize: buttonTextSize),

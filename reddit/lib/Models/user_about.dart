@@ -18,6 +18,7 @@ class UserAbout {
   String? country;
   String? gender;
   bool? connectedGoogle;
+  bool? isPasswordSetFlag;
   List<CommunityBackend>? moderatedCommunities;
 
   UserAbout({
@@ -37,6 +38,7 @@ class UserAbout {
     this.gender,
     this.connectedGoogle,
     this.moderatedCommunities,
+    this.isPasswordSetFlag,
   });
   static UserAbout fromJson(jsonDecode) {
     if (jsonDecode == null) {
@@ -58,17 +60,18 @@ class UserAbout {
           ? List<SocialLlinkItem>.from(jsonDecode['social_links']
               .map((x) => SocialLlinkItem.fromJson(x)))
           : null,
-      profilePicture: (jsonDecode['profile_picture'] == null ||
-              jsonDecode['profile_picture'] == "")
-          ? 'images/Greddit.png'
-          : jsonDecode['profile_picture'],
+      profilePicture: jsonDecode['profile_picture'] ?? '',
       bannerPicture: jsonDecode['banner_picture'],
-      country: jsonDecode['country'],
+      country: jsonDecode['country'] == ''
+          ? 'Choose your location'
+          : jsonDecode['country'],
       gender: jsonDecode['gender'],
+      isPasswordSetFlag: jsonDecode['is_password_set_flag'] ?? false,
       connectedGoogle: jsonDecode['connected_google'],
       moderatedCommunities: jsonDecode['moderatedCommunities'] != null
           ? List<CommunityBackend>.from(jsonDecode['moderatedCommunities']
-              .map((community) => CommunityBackend.fromJson(community))).toList()
+                  .map((community) => CommunityBackend.fromJson(community)))
+              .toList()
           : null,
     );
   }

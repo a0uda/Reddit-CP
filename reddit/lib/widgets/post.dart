@@ -6,6 +6,7 @@ import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
+import 'package:reddit/widgets/video_player_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/poll_widget.dart';
@@ -261,7 +262,16 @@ class PostState extends State<Post> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return const CircularProgressIndicator();
+                                            return Container(
+                                              color: Colors.white,
+                                              child: const SizedBox(
+                                                  height: 30,
+                                                  width: 30,
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  )),
+                                            );
                                           } else if (snapshot.hasError) {
                                             print(widget.name);
                                             print(snapshot.data);
@@ -318,7 +328,16 @@ class PostState extends State<Post> {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
+                                      return Container(
+                                        color: Colors.white,
+                                        child: const SizedBox(
+                                            height: 30,
+                                            width: 30,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )),
+                                      );
                                     } else if (snapshot.hasError) {
                                       print(widget.name);
                                       print(snapshot.data);
@@ -454,15 +473,18 @@ class PostState extends State<Post> {
                         ),
                       ),
                     if (widget.videoUrl != null)
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          // Border width
-                          decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              shape: BoxShape.rectangle),
-                          child: const Text("VIDEO") //TODO: VideoScreen(),
-                          ),
+                      // if (MediaQuery.of(context).size.width > 600)
+                      const Text("Open in mobile to view video"),
+                    // else
+                    //   Container(
+                    //       width: MediaQuery.of(context).size.width,
+                    //       height: MediaQuery.of(context).size.height * 0.5,
+                    //       // Border width
+                    //       decoration: const BoxDecoration(
+                    //           color: Color.fromARGB(255, 255, 255, 255),
+                    //           shape: BoxShape.rectangle),
+                    //       child:
+                    //           VideoPlayerWidget(videoPath: widget.videoUrl!)),
                     if (widget.poll != null)
                       SizedBox(
                         width: MediaQuery.of(context).size.width,

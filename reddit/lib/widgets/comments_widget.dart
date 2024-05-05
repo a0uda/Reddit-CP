@@ -48,45 +48,50 @@ class CommentsWidgetState extends State<CommentsWidget> {
     final UserController userController = GetIt.instance.get<UserController>();
 
     return Scaffold(
-      body: post == null
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Post(
-                    vote: post!.vote,
-
-                    name: post!.username,
-                    title: post!.title,
-                    postContent: post!.description ?? '',
-                    date: post!.createdAt.toString(),
-                    likes: post!.upvotesCount - post!.downvotesCount,
-                    commentsCount: post!.commentsCount,
-                    linkUrl: post!.linkUrl,
-                    imageUrl: post!.images?[0].path,
-                    videoUrl: post!.videos?[0].path,
-                    poll: post!.poll,
-                    id: post!.id,
-                    communityName: post!.communityName,
-                    isLocked: post!.lockedFlag,
+      body: SingleChildScrollView(
+        child: post == null
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: Post(
+                      vote: post!.vote,
+                      name: post!.username,
+                      title: post!.title,
+                      postContent: post!.description ?? '',
+                      date: post!.createdAt.toString(),
+                      likes: post!.upvotesCount - post!.downvotesCount,
+                      commentsCount: post!.commentsCount,
+                      linkUrl: post!.linkUrl,
+                      imageUrl: post!.images?[0].link,
+                      videoUrl: post!.videos?[0].link,
+                      poll: post!.poll,
+                      id: post!.id,
+                      communityName: post!.communityName,
+                      isLocked: post!.lockedFlag,
+                    ),
                   ),
-                ),
-                if (comments != null && comments!.isNotEmpty)
-                  Expanded(
-                    child: ListView.builder(
+                  if (comments != null && comments!.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: comments?.length,
                       itemBuilder: (context, index) {
                         final comment = comments![index];
-                        return Comment(comment: comment, isSaved: false);
+                        return Comment(
+                          comment: comment,
+                          isSaved: comment.saved ?? false,
+                          likes: comment.upvotesCount - comment.downvotesCount,
+                        );
                       },
                     ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 70),
                   ),
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 70),
-                ),
-              ],
-            ),
+                ],
+              ),
+      ),
       bottomSheet: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SizedBox(
@@ -126,6 +131,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                       commentController.text,
                       userController.userAbout!.username,
                       userController.userAbout?.id ?? '');
+                  print(status);
                   if (status == 200) {
                     loadComments();
                     commentController.clear();

@@ -34,12 +34,17 @@ class _UpdateEmailState extends State<UpdateEmail> {
                 alignment: Alignment.topLeft,
                 child: Align(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                          userController.userAbout!.profilePicture ??
-                              'images/Greddit.png'),
-                    ),
+                    leading: userController.userAbout!.profilePicture == null ||
+                            userController.userAbout!.profilePicture!.isEmpty
+                        ? const CircleAvatar(
+                            radius: 25,
+                            backgroundImage: AssetImage('images/Greddit.png'),
+                          )
+                        : CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                                userController.userAbout!.profilePicture!),
+                          ),
                     title: Column(
                       children: [
                         Align(
@@ -56,16 +61,15 @@ class _UpdateEmailState extends State<UpdateEmail> {
                           children: [
                             // Consumer<ChangeEmail>(
                             //   builder: (context, changeEmail, child) {
-                            //     return 
-                                Text(
-                                  userController.userAbout!.email!,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w200,
-                                      fontFamily: 'Arial')
+                            //     return
+                            Text(userController.userAbout!.email!,
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w200,
+                                    fontFamily: 'Arial')
                                 // ;
-                            //   },
-                             ),
+                                //   },
+                                ),
                           ],
                         ),
                       ],
@@ -179,6 +183,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                                 userController.userAbout!.username,
                                 _emailController.text,
                                 _passwordController.text);
+
                             if (changed) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Email updated')),

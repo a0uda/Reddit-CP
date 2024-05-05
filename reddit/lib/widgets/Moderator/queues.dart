@@ -17,7 +17,7 @@ class _ModQueuesState extends State<ModQueues> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double paddingPercentage = 0.1;
+    //double paddingPercentage = 0.1;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,

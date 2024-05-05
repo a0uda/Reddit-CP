@@ -1,6 +1,7 @@
 class Comments {
   String? id;
   String? postId;
+  String? postTitle;
   String? userId;
   String? username;
   String? parentId;
@@ -20,6 +21,7 @@ class Comments {
   ModeratorDetails? moderatorDetails;
   bool? spoilerFlag;
   bool? commentInCommunityFlag;
+  bool? saved;
 
   Comments({
     this.id,
@@ -43,19 +45,23 @@ class Comments {
     this.moderatorDetails,
     this.spoilerFlag,
     this.commentInCommunityFlag,
+    this.saved,
+    this.postTitle,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
     return Comments(
       id: json['_id'],
       postId: json['post_id'],
+      saved: json['saved'],
       userId: json['user_id'],
       username: json['username'],
       parentId: json['parent_id'],
+      postTitle: json['post_title'] ?? '',
       repliesCommentsIds: (json['replies_comments_ids'] as List<dynamic>)
           .map((item) => item.toString())
           .toList(),
-      createdAt: json['created_at'].substring(0, 10),
+      createdAt: json['created_at'],
       editedAt: json['edited_at'],
       deletedAt: json['deleted_at'],
       description: json['description'],
