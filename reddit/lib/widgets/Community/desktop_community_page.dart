@@ -45,89 +45,19 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
 
   @override
   void initState() {
-    if (isJoined) {
+    if (moderatorController.joinedFlag) {
       buttonState = 'Joined';
     } else {
       buttonState = 'Join';
     }
     moderatorController.communityName = widget.communityName;
+    isJoined = moderatorController.joinedFlag;
     super.initState();
   }
 
   void updateDescriptionOffset(double offset) {
     setState(() {
       descriptionOffset = offset;
-    });
-  }
-
-  void setButton() {
-    setState(() {
-      if (isJoined) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              surfaceTintColor: Colors.transparent,
-              content: const Text(
-                'Are you sure you want to leave this community?',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              actions: <Widget>[
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 242, 243, 245),
-                    foregroundColor: const Color.fromARGB(255, 109, 109, 110),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                      side: const BorderSide(
-                          color: Color.fromARGB(0, 238, 12, 0)),
-                    ),
-                  ),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    setState(() {
-                      isJoined = false;
-                      buttonState = 'Join';
-                    });
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    backgroundColor: const Color.fromARGB(255, 240, 6, 6),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                      side: const BorderSide(
-                        color: Color.fromARGB(0, 240, 6, 6),
-                      ),
-                    ),
-                  ),
-                  child: const Text('Leave'),
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        setState(() {
-          isJoined = true;
-          buttonState = 'Joined';
-        });
-      }
     });
   }
 
@@ -146,11 +76,19 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
       appBar: MediaQuery.of(context).size.width > 700
           ? PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: DesktopAppBar(logoTapped: logoTapped , communityName: widget.communityName, isInCommunity: true,),
+              child: DesktopAppBar(
+                logoTapped: logoTapped,
+                communityName: widget.communityName,
+                isInCommunity: true,
+              ),
             )
           : PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: MobileAppBar(logoTapped: logoTapped , communityName: widget.communityName, isInCommunity: true,),
+              child: MobileAppBar(
+                logoTapped: logoTapped,
+                communityName: widget.communityName,
+                isInCommunity: true,
+              ),
             ),
       drawer: MediaQuery.of(context).size.width < 700
           ? const DrawerReddit(indexOfPage: 0, inHome: true)
@@ -188,8 +126,7 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                                 horizontal: 16, vertical: 8),
                             child: DesktopCommunityPageBar(
                               communityName: widget.communityName,
-                              setButtonFunction: setButton,
-                              //buttonState: buttonState!,
+                              buttonState: buttonState!,
                               isJoined: isJoined,
                               isMod: widget.isMod,
                             ),
@@ -243,18 +180,16 @@ class DesktopCommunityPageBar extends StatefulWidget {
   const DesktopCommunityPageBar({
     super.key,
     required this.communityName,
-    //required this.buttonState,
+    required this.buttonState,
     required this.isJoined,
-    required this.setButtonFunction,
     required this.isMod,
   });
 
   final String communityName;
-  //final String buttonState;
+  final String buttonState;
   final bool isJoined;
   final bool isMod;
 
-  final Function() setButtonFunction;
   @override
   State<DesktopCommunityPageBar> createState() =>
       _DesktopCommunityPageBarState();
@@ -274,17 +209,86 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
     }
   }
 
-  // Future<void> fetchGeneralSettings() async {
-  //   if (!generalSettingsFetched) {
-  //     await moderatorController.getGeneralSettings(widget.communityName);
-  //     generalSettingsFetched = true;
-  //   }
-  // }
-
   Future<void> fetchMembersCount() async {
     if (!membersFetched) {
       await moderatorController.getMembersCount(widget.communityName);
       membersFetched = true;
+    }
+  }
+
+  void setButton(bool isJoined) async {
+    var isJoinedProvider = context.read<IsJoinedProvider>();
+    if (isJoined) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            content: const Text(
+              'Are you sure you want to leave this community?',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  backgroundColor: const Color.fromARGB(255, 242, 243, 245),
+                  foregroundColor: const Color.fromARGB(255, 109, 109, 110),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                    side: const BorderSide(
+                      color: Color.fromARGB(0, 238, 12, 0),
+                    ),
+                  ),
+                ),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await isJoinedProvider.leaveCommunity(
+                    communityName: moderatorController.communityName,
+                    isJoined: false,
+                  );
+                  setState(() {
+                    moderatorController.joinedFlag = false;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  backgroundColor: const Color.fromARGB(255, 240, 6, 6),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                    side: const BorderSide(
+                      color: Color.fromARGB(0, 240, 6, 6),
+                    ),
+                  ),
+                ),
+                child: const Text('Leave'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      await isJoinedProvider.joinCommunity(
+        communityName: moderatorController.communityName,
+        isJoined: true,
+      );
+      setState(() {
+        moderatorController.joinedFlag = true;
+      });
     }
   }
 
@@ -413,15 +417,13 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else {
-                                      return OutlineButtonWidget(
+                                      return (OutlineButtonWidget(
                                         moderatorController.joinedFlag
                                             ? 'Joined'
                                             : 'Join',
-                                        () {
-                                          setState(() {
-                                            moderatorController.joinedFlag =
-                                                !moderatorController.joinedFlag;
-                                          });
+                                        () async {
+                                          setButton(
+                                              moderatorController.joinedFlag);
                                         },
                                         backgroundColour:
                                             moderatorController.joinedFlag
@@ -436,7 +438,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                                             moderatorController.joinedFlag
                                                 ? Colors.black
                                                 : Colors.white,
-                                      );
+                                      ));
                                     }
                                   },
                                 ),

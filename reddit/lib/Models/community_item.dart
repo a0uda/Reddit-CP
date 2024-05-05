@@ -83,3 +83,75 @@ class GeneralSettings {
     this.nsfwFlag = nsfwFlag;
   }
 }
+
+class QueuesPostItem {
+  QueuesPostItem({
+    required this.queuePostImage,
+    required this.moderatorDetails,
+    required this.postTitle,
+    required this.postDescription,
+    required this.createdAt,
+    required this.editedAt,
+    required this.deletedAt,
+    required this.isDeleted,
+    required this.username,
+    required this.communityName,
+    required this.nsfwFlag,
+    required this.spoilerFlag,
+
+  });
+  ModeratorDetails moderatorDetails;
+  QueuePostImage queuePostImage;
+  String postTitle;
+  String postDescription;
+  String createdAt;
+  String editedAt;
+  String deletedAt;
+  bool isDeleted;
+  String username;
+  String communityName;
+  bool nsfwFlag;
+  bool spoilerFlag;
+}
+
+class ModeratorDetails {
+  ModeratorDetails({
+    required this.approvedFlag,
+    required this.approvedDate,
+    required this.removedFlag,
+    required this.removedBy,
+    required this.removedDate,
+    required this.removedRemovalReason,
+    required this.spammedFlag,
+    required this.spammedBy,
+    required this.spammedType,
+    required this.spammedRemovalReason,
+    required this.reportedFlag,
+    required this.reportedBy,
+    required this.reportedType,
+  });
+  bool approvedFlag;
+  String approvedDate;
+  bool removedFlag;
+  String removedBy;
+  String removedDate;
+  String removedRemovalReason;
+  bool spammedFlag;
+  String spammedBy;
+  String spammedType;
+  String spammedRemovalReason;
+  bool reportedFlag;
+  String reportedBy;
+  String reportedType;
+}
+class QueuePostImage {
+  QueuePostImage({
+    required this. imagePath,
+    required this.imageCaption,
+    required this.imageLink,
+  });
+  String imagePath;
+  String imageCaption;
+  String imageLink;
+}
+
