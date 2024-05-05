@@ -15,6 +15,7 @@ import 'package:reddit/widgets/Moderator/moderators_list.dart';
 import 'package:reddit/widgets/Moderator/muted_users_list.dart';
 import 'package:reddit/widgets/Moderator/post_types.dart';
 import 'package:reddit/widgets/Moderator/queues.dart';
+import 'package:reddit/widgets/Moderator/removal_list.dart';
 import 'package:reddit/widgets/Moderator/scheduled_list.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
@@ -61,6 +62,7 @@ class _DesktopModToolsState extends State<DesktopModTools> {
       const ModRulesList(
         isEditMode: false,
       ),
+      const RemovalList(isEditMode: false),
       const ScheduledPostsList(),
     ];
   }
@@ -89,7 +91,11 @@ class _DesktopModToolsState extends State<DesktopModTools> {
   Widget build(BuildContext context) {
     var approvedUserProvider = context.read<ApprovedUserProvider>();
     return Scaffold(
-      appBar: DesktopAppBar(logoTapped: logoTapped),
+      appBar: DesktopAppBar(
+        logoTapped: logoTapped,
+        communityName: widget.communityName,
+        isInCommunity: true,
+      ),
       body: Column(
         children: [
           const Divider(

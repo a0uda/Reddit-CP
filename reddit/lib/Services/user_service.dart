@@ -55,7 +55,7 @@ class UserService {
       print('username');
       print(username);
 
-      print(response.statusCode);
+      print(response.body);
       print(jsonDecode(response.body)['content']['moderatedCommunities']);
       print(UserAbout.fromJson(jsonDecode(response.body)['content'])
           .moderatedCommunities);
@@ -371,10 +371,10 @@ class UserService {
           'Authorization': token!,
         },
       );
-      print("In get profile settings");
-      print(response.statusCode);
-      print(response.body);
-      print(jsonDecode(response.body)['content']);
+      // print("In get profile settings");
+      // print(response.statusCode);
+      // print(response.body);
+      // print(jsonDecode(response.body)['content']);
       return ProfileSettings.fromJson(jsonDecode(response.body)['content']);
     }
   }
@@ -916,7 +916,6 @@ class UserService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       final url = Uri.parse('https://redditech.me/backend/users/communities');
-
       final response = await http.get(
         url,
         headers: {
@@ -924,11 +923,34 @@ class UserService {
           'Authorization': token!,
         },
       );
-      List<dynamic> decoded = jsonDecode(response.body)['content'];
+      List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
+      print(response.body);
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }
   }
+
+  Future<List<CommunityBackend>?> getUserModerated() async {
+    if (testing) {
+      return [];
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse('https://redditech.me/backend/users/moderated-communities');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
+      print(response.body);
+      return List<CommunityBackend>.from(
+          decoded.map((community) => CommunityBackend.fromJson(community)));
+    }
+  }
+
 
   Future<int> forgetPassword(String email, String username) async {
     if (testing) {

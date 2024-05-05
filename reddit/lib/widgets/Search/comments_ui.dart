@@ -92,18 +92,29 @@ class _CommentUIState extends State<CommentUI> {
             },
             child: Row(
               children: [
-                CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(comment["community_profile_picture"] ?? ""),
-                  radius: 12,
-                ),
+                (comment["community_profile_picture"] != null &&
+                        comment["community_profile_picture"] != "")
+                    ? CircleAvatar(
+                        backgroundImage:
+                            NetworkImage(comment["community_profile_picture"]),
+                        radius: 12,
+                      )
+                    : const CircleAvatar(
+                        backgroundImage:
+                            AssetImage("images/default_reddit.png"),
+                        radius: 12,
+                      ),
                 const SizedBox(
                   width: 5,
                 ),
                 Text(
-                  "r/${comment["post_id"]["community_name"]}",
+                  comment["post_id"]["post_in_community_flag"]
+                      ? "r/${comment["post_id"]["community_name"]}"
+                      : "u/${comment["post_id"]["username"]}",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 11 , fontFamily: 'Roboto'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      fontFamily: 'Roboto'),
                 ),
                 Text(
                   " · ",
@@ -157,11 +168,17 @@ class _CommentUIState extends State<CommentUI> {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(comment["profile_picture"] ?? ""),
-                        radius: 11,
-                      ),
+                      (comment["profile_picture"] != null &&
+                              comment["profile_picture"] != "")
+                          ? CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(comment["profile_picture"]),
+                              radius: 11,
+                            )
+                          : const CircleAvatar(
+                              backgroundImage: AssetImage("images/Greddit.png"),
+                              radius: 11,
+                            ),
                       const SizedBox(
                         width: 5,
                       ),

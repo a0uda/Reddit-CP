@@ -74,7 +74,7 @@ class _ModCommNameState extends State<ModCommName> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () async {
+            onPressed: (!isSaved) ? null : () async {
               await settingsProvider.setGeneralSettings(
                 communityName: communityName,
                 general: GeneralSettings(

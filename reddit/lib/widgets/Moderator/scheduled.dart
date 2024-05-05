@@ -4,7 +4,6 @@ import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/scheduled_list.dart';
 
-
 class ScheduledPosts extends StatefulWidget {
   const ScheduledPosts({super.key});
 
@@ -21,7 +20,9 @@ class _ScheduledPostsState extends State<ScheduledPosts> {
         scrolledUnderElevation: 0,
         title: const Center(child: Text("Scheduled posts")),
       ),
-      body: Container(color: Color.fromARGB(255, 225, 244, 255), child: const ScheduledPostsList()),
+      body: Container(
+          color: const Color.fromARGB(255, 225, 244, 255),
+          child: const ScheduledPostsList()),
     );
   }
 }

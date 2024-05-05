@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
-import 'package:reddit/widgets/Moderator/test_badr.dart';
 
 // ignore: must_be_immutable
 class PostModQueue extends StatefulWidget {
@@ -17,7 +17,7 @@ class PostModQueue extends StatefulWidget {
 
   // String? reportReason;
 
-  final BadrTestPostItem post;
+  final QueuesPostItem post;
 
   PostModQueue({super.key, required this.post});
 
@@ -63,7 +63,7 @@ class _PostModQueueState extends State<PostModQueue> {
                             ListTile(
                               leading: CircleAvatar(
                                 backgroundImage:
-                                    AssetImage(widget.post.profileImage),
+                                    NetworkImage(widget.post.profilePicture),
                                 radius: 24,
                               ),
                               title: Text(
@@ -139,7 +139,7 @@ class _PostModQueueState extends State<PostModQueue> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage(widget.post.profileImage),
+                    backgroundImage: NetworkImage(widget.post.profilePicture),
                     radius: 13,
                   ),
                   const SizedBox(
@@ -155,7 +155,7 @@ class _PostModQueueState extends State<PostModQueue> {
                             height: 0, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.post.postTime,
+                        widget.post.createdAt,
                         style: const TextStyle(color: Colors.grey, height: 0),
                       )
                     ],
@@ -309,7 +309,7 @@ class _PostModQueueState extends State<PostModQueue> {
                                           leading: const Icon(
                                               Icons.dangerous_outlined),
                                           title: Text(
-                                              widget.post.notSafeForWork != null
+                                              widget.post.nsfwFlag 
                                                   ? 'Unmark as NSFW'
                                                   : 'Mark as NFSW'),
                                           onTap: () {},
@@ -318,7 +318,7 @@ class _PostModQueueState extends State<PostModQueue> {
                                           leading:
                                               const Icon(CupertinoIcons.exclamationmark_octagon),
                                           title: Text(
-                                              widget.post.spoilerFlag != null
+                                              widget.post.spoilerFlag
                                                   ? 'Unmark as spoiler'
                                                   : 'Mark as spoiler'),
                                           onTap: () {},
@@ -338,7 +338,7 @@ class _PostModQueueState extends State<PostModQueue> {
               ),
             ),
             Row(children: [
-              widget.post.notSafeForWork != null
+              widget.post.nsfwFlag
                   ? const Padding(
                       padding: EdgeInsets.only(left: 8.0),
                       child: Icon(
@@ -348,7 +348,7 @@ class _PostModQueueState extends State<PostModQueue> {
                       ),
                     )
                   : const SizedBox(),
-              widget.post.notSafeForWork != null
+              widget.post.nsfwFlag 
                   ? const Text(
                       "NSFW",
                       style: TextStyle(
@@ -357,7 +357,7 @@ class _PostModQueueState extends State<PostModQueue> {
                           fontSize: 12.5),
                     )
                   : const SizedBox(),
-              widget.post.spoilerFlag != null
+              widget.post.spoilerFlag
                   ? const Padding(
                       padding: EdgeInsets.only(left: 8.0),
                       child: Icon(
@@ -366,7 +366,7 @@ class _PostModQueueState extends State<PostModQueue> {
                       ),
                     )
                   : const SizedBox(),
-              widget.post.spoilerFlag != null
+              widget.post.spoilerFlag 
                   ? const Text(
                       "SPOILER",
                       style: TextStyle(
@@ -384,11 +384,11 @@ class _PostModQueueState extends State<PostModQueue> {
                       widget.post.postTitle,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(widget.post.postDescription ?? ""),
+                    Text(widget.post.postDescription),
                   ],
                 ),
                 const Spacer(),
-                widget.post.postContentImage != null
+                widget.post.queuePostImage[0].imagePath != ""
                     ? Container(
                         margin: const EdgeInsets.only(right: 10),
                         width: screenSize.width * 0.15,
@@ -397,8 +397,8 @@ class _PostModQueueState extends State<PostModQueue> {
                             : screenSize.height * 0.2,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(4),
-                          child: Image.asset(
-                            widget.post.postContentImage!,
+                          child: Image.network(
+                            widget.post.queuePostImage[0].imagePath,
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -409,7 +409,7 @@ class _PostModQueueState extends State<PostModQueue> {
             const SizedBox(
               height: 8,
             ),
-            widget.post.reportReason != null
+            widget.post.moderatorDetails.removedRemovalReason != ""
                 ? Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -429,7 +429,7 @@ class _PostModQueueState extends State<PostModQueue> {
                         Padding(
                           padding: const EdgeInsets.only(right: 4.0),
                           child: Text(
-                            " ${widget.post.reportReason!}",
+                            " ${widget.post.moderatorDetails.removedRemovalReason}",
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                         ),
