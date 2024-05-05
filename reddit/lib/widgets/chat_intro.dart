@@ -10,6 +10,8 @@ class ChatIntro extends StatefulWidget {
   _ChatIntroState createState() => _ChatIntroState();
 }
 
+
+
 class _ChatIntroState extends State<ChatIntro> {
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   List<ChatUsers> chatUsers = [];
@@ -115,7 +117,7 @@ class _ChatIntroState extends State<ChatIntro> {
                         name: chatUsers[index].name,
                         messageText: chatUsers[index].messageText,
                         imageUrl: chatUsers[index].imageURL,
-                        time: chatUsers[index].time,
+                        time: chatUsers[index].time.split('T')[0],
                         isMessageRead:
                             (index == 0 || index == 3) ? true : false,
                       );

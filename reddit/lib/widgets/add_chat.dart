@@ -137,7 +137,7 @@ class _AddChatState extends State<AddChat> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  ChatPage(name: item.username), 
+                  ChatPage(name: item.username,image: item.profilePicture!,), 
             ),
           )
 

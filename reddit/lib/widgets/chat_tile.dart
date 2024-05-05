@@ -10,6 +10,35 @@ class ConversationList extends StatefulWidget{
   @override
   _ConversationListState createState() => _ConversationListState();
 }
+String formatDateTime(String dateTimeString) {
+
+
+  final DateTime now = DateTime.now();
+  final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+  final Duration difference = now.difference(parsedDateTime);
+
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}sec';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}m';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}h';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays}d';
+  } else {
+    final int months = now.month -
+        parsedDateTime.month +
+        (now.year - parsedDateTime.year) * 12;
+    if (months < 12) {
+      return '$months mth';
+    } else {
+      final int years = now.year - parsedDateTime.year;
+      return '$years yrs';
+    }
+  }
+}
+
 
 class _ConversationListState extends State<ConversationList> {
   @override
@@ -20,7 +49,7 @@ class _ConversationListState extends State<ConversationList> {
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  ChatPage(name:widget.name), // pass the post ID here
+                  ChatPage(name:widget.name,image: widget.imageUrl,), // pass the post ID here
             ),
           );
         
@@ -45,7 +74,7 @@ class _ConversationListState extends State<ConversationList> {
                         children: <Widget>[
                           Text(widget.name, style: TextStyle(fontSize: 16),),
                           SizedBox(height: 4,),
-                          Text(widget.messageText,style: TextStyle(fontSize: 13,color: Colors.grey.shade600, fontWeight: widget.isMessageRead?FontWeight.bold:FontWeight.normal),),
+                          Text(widget.messageText,style: TextStyle(fontSize: 13,color: Colors.grey.shade600, fontWeight: FontWeight.normal),),
                         ],
                       ),
                     ),
@@ -53,7 +82,7 @@ class _ConversationListState extends State<ConversationList> {
                 ],
               ),
             ),
-            Text(widget.time,style: TextStyle(fontSize: 12,fontWeight: widget.isMessageRead?FontWeight.bold:FontWeight.normal),),
+            Text(formatDateTime(widget.time),style: TextStyle(fontSize: 12,fontWeight: widget.isMessageRead?FontWeight.bold:FontWeight.normal),),
           ],
         ),
       ),
