@@ -86,4 +86,48 @@ print('chatsss');
 
   }
 
+
+
+ Future<int> SendChat (String username,String message) async
+  {
+    if(testing)
+    {
+    return 200;
+    }
+    else{
+          final url =
+          Uri.parse('https://redditech.me/backend/chats/send/$username');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      print('send messsaaaggeeee');
+ final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body:  json.encode( {
+          "message":message
+        })
+
+      );
+      print(response.statusCode);
+
+return response.statusCode;
+
+
+
+    }
+
+
+  }
+
+
+
+
+
+
+
+
 }

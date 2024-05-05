@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/chat_controller.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
@@ -34,7 +35,7 @@ void main() async {
   // await Firebase.initializeApp(); //TODO : FIREBASE
   GetIt.instance.registerSingleton<CommentsService>(CommentsService());
   GetIt.instance.registerSingleton<PostService>(PostService());
-
+ 
   GetIt.instance.registerSingleton<UserService>(UserService());
   GetIt.instance.registerSingleton<UserController>(UserController());
 
@@ -103,6 +104,9 @@ void main() async {
       ),
                  ChangeNotifierProvider(
         create: (context) => RefreshHome(),
+      ),
+                       ChangeNotifierProvider(
+        create: (context) => Chat(),
       )
     ],
     child: const MyApp(),
