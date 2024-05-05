@@ -31,6 +31,14 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   void validateForm(BuildContext context) async {
+    int emailAvailability = 0;
+    int usernameAvailability = 0;
+    if (testing) {
+      emailAvailability =
+          await UserService().availableEmail(emailController.text);
+      usernameAvailability =
+          await UserService().availableUsername(usernameController.text);
+    }
     setState(() {
       emailError = '';
       usernameError = '';
@@ -54,12 +62,13 @@ class SignUpPageState extends State<SignUpPage> {
           usernameController.text.isNotEmpty) {
         usernameError = 'Username cannot be same as password';
       }
-
-      if (UserService().availableEmail(emailController.text) == 400) {
-        emailError = 'Email already exists';
-      }
-      if (UserService().availableUsername(usernameController.text) == 400) {
-        usernameError = 'Username already exists';
+      if (testing) {
+        if (emailAvailability == 400) {
+          emailError = 'Email already exists';
+        }
+        if (usernameAvailability == 400) {
+          usernameError = 'Username already exists';
+        }
       }
     });
 
@@ -70,16 +79,38 @@ class SignUpPageState extends State<SignUpPage> {
         emailController.text,
         genderSelected,
       );
-
-      if (statusCode == 200) {
-        final userController = GetIt.instance.get<UserController>();
-        userController.getUser(usernameController.text);
-        // print('User signed up successfully!');
-        // print('User data: ${userController.userAbout?.email}');
+      if (statusCode == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Sign up successful! Redirecting to home page...',
+              'Username already exists! Please try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+      if (statusCode == 2) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Email already exists! Please try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.black,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else if (statusCode == 200) {
+        final userController = GetIt.instance.get<UserController>();
+        userController.getUser(usernameController.text);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Signed up successfully!',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white),
             ),
@@ -90,14 +121,7 @@ class SignUpPageState extends State<SignUpPage> {
         Future.delayed(const Duration(seconds: 3), () {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const ResponsiveLayout(
-                mobileLayout: MobileLayout(
-                  mobilePageMode: 0,
-                ),
-                desktopLayout: DesktopHomePage(
-                  indexOfPage: 0,
-                ),
-              ),
+              builder: (context) => const LoginPage(),
             ),
           );
         });
@@ -378,7 +402,37 @@ class SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(height: sizedBoxHeightBetweenButtons),
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () async {
+                          var userService = GetIt.instance.get<UserService>();
+                          bool connected =
+                              (await userService.loginWithGoogle());
+                          if (connected) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  'Signed up successfully! Redirecting to home page...',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.deepOrange[400],
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => const ResponsiveLayout(
+                                  mobileLayout: MobileLayout(
+                                    mobilePageMode: 0,
+                                  ),
+                                  desktopLayout: DesktopHomePage(
+                                    indexOfPage: 0,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.all(buttonPadding),
                           textStyle: TextStyle(fontSize: buttonTextSize),

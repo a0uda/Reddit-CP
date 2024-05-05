@@ -5,7 +5,8 @@ import 'package:reddit/widgets/Moderator/moderators_list.dart';
 
 class Moderators extends StatefulWidget {
   bool isInvite;
-  Moderators({super.key, this.isInvite = false});
+  String msgID;
+  Moderators({super.key, this.isInvite = false, this.msgID = ""});
 
   @override
   State<Moderators> createState() => _ModeratorsState();
@@ -34,7 +35,12 @@ class _ModeratorsState extends State<Moderators> {
           ) //implement add in mock badrrrrr
         ],
       ),
-      body: Container(color: Colors.grey[200], child: ModeratorsList(isInvite: widget.isInvite,)),
+      body: Container(
+          color: Colors.grey[200],
+          child: ModeratorsList(
+            isInvite: widget.isInvite,
+            msgID: widget.msgID,
+          )),
     );
   }
 }

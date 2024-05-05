@@ -39,8 +39,6 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     final bool userLoggedIn = userController.userAbout != null;
-    // print('mobile layout: ${userController.userAbout?.username}');
-    print(isInbox);
     final drawers = [
       DrawerReddit(
         indexOfPage: widget.mobilePageMode,
@@ -68,7 +66,7 @@ class _MobileLayoutState extends State<MobileLayout> {
               height: 40,
               color: Colors.white,
               child: TabBar(
-                indicatorColor: Color.fromARGB(255, 24, 82, 189),
+                indicatorColor: const Color.fromARGB(255, 24, 82, 189),
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 tabs: [
@@ -93,7 +91,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                               ),
                               child: Text(
                                 userController.unreadNotificationsCount
-                                    .toString(), // Replace this with your variable
+                                    .toString(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
@@ -108,7 +106,42 @@ class _MobileLayoutState extends State<MobileLayout> {
                       ],
                     ),
                   ),
-                  const Tab(text: 'Messages'),
+                  Tab(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Messages'),
+                        const SizedBox(width: 5),
+                        Consumer<GetMessagesController>(
+                          builder: (context, getMessagesController, child) {
+                            if (userController.unreadMessagesCount > 0) {
+                              return Container(
+                                padding: const EdgeInsets.all(1),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 15,
+                                  minHeight: 15,
+                                ),
+                                child: Text(
+                                  userController.unreadMessagesCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -147,8 +180,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                         Icons.home_outlined,
                         size: kToolbarHeight * (3 / 7),
                       ),
-                label: "Home"
-                ),
+                label: "Home"),
             BottomNavigationBarItem(
                 icon: selectedIndexPage == 1
                     ? const Icon(
@@ -187,40 +219,44 @@ class _MobileLayoutState extends State<MobileLayout> {
                         : Icons.notifications_outlined,
                     size: kToolbarHeight * (3 / 7),
                   ),
-                  // The notification count
+                  // The notification+messages count
                   Consumer<NotificationsService>(
                       builder: (context, notificationsService, child) {
-                    if (userController.unreadNotificationsCount > 0) {
-                      return Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: BoxConstraints(
-                            minWidth: 12,
-                            minHeight: 12,
-                          ),
-                          child: Text(
-                            userController.unreadNotificationsCount
-                                .toString(), // Replace this with your variable
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
+                    return Consumer<GetMessagesController>(
+                        builder: (context, getMessagesController, child) {
+                      if (userController.unreadNotificationsCount +
+                              userController.unreadMessagesCount >
+                          0) {
+                        return Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
                             ),
-                            textAlign: TextAlign.center,
+                            constraints: const BoxConstraints(
+                              minWidth: 12,
+                              minHeight: 12,
+                            ),
+                            child: Text(
+                              '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      return Container(
-                        height: 0,
-                        width: 0,
-                      );
-                    }
+                        );
+                      } else {
+                        return const SizedBox(
+                          height: 0,
+                          width: 0,
+                        );
+                      }
+                    });
                   }),
                 ],
               ),

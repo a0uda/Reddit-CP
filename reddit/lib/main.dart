@@ -129,6 +129,8 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => AccountSettingsController(),
       )
+        create: (context) => GetMessagesController(),
+      ),
     ],
     child: const MyApp(),
   ));

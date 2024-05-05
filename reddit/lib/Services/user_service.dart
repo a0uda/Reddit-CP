@@ -20,6 +20,8 @@ import '../test_files/test_users.dart';
 import '../test_files/test_messages.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:google_sign_in/google_sign_in.dart';
+
 bool testing = const bool.fromEnvironment('testing');
 
 class UserService {
@@ -638,18 +640,34 @@ class UserService {
             .where((item) => item != null)
             .map((dynamic item) async => Messages.fromJson(item)),
       );
-      print('get messages');
-      for (var msg in messages) {
-        print(msg.id);
-        print(msg.senderType);
-        print(msg.senderUsername);
-        print(msg.receiverType);
-        print(msg.receiverUsername);
-        print(msg.isSent);
-        print(msg.isInvitation);
-        print(msg.message);
-      }
       return messages;
+    }
+  }
+
+  Future<int> getUnreadMessagesCount(String username) async {
+    if (testing) {
+      List<Messages> messages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      int count = 0;
+      count = messages.where((element) => element.unreadFlag == true).length;
+      return count;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/unread-count');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in get unread messages count');
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body)['count'];
     }
   }
 
@@ -823,7 +841,20 @@ class UserService {
         msg.unreadFlag = false;
       }
     } else {
-      // todo: mark all messages read in database
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url =
+          Uri.parse('https://redditech.me/backend/messages/mark-all-as-read');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      print('in mark all messages as read');
+      print(response.body);
     }
   }
 
@@ -992,6 +1023,21 @@ class UserService {
         }),
       );
       print(response.body);
+
+      // i want to check if response.message == 'Username already exists, choose another' to return 0
+      var responseBody = jsonDecode(response.body);
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        return 200;
+      } else {
+        if (responseBody['error']['message'] ==
+            'Username already exists, choose another') {
+          return 0;
+        } else if (responseBody['error']['message'] ==
+            'Email already exists, choose another') {
+          return 2;
+        }
+      }
       return response.statusCode;
     }
   }
@@ -1025,10 +1071,88 @@ class UserService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token!);
         prefs.setString('username', username);
+        prefs.setBool('googleLogin', false);
         return 200;
       } else {
         return 400;
       }
+    }
+  }
+
+  Future<bool> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    final url = Uri.parse('https://redditech.me/backend/users/logout');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+    );
+    prefs.remove('token');
+    prefs.remove('username');
+    if (prefs.getBool('googleLogin') == true) {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+      prefs.remove('googleLogin');
+    }
+    return true;
+  }
+
+  Future<bool> loginWithGoogle() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      await googleSignIn.signOut();
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      final GoogleSignInAuthentication? googleSignInAuthentication =
+          await googleSignInAccount?.authentication;
+
+      // The access token can be used to authenticate with your backend
+      var accessToken = googleSignInAuthentication!.accessToken;
+
+      if (accessToken != null) {
+        print('Google login auth success');
+        print(accessToken);
+
+        final url =
+            Uri.parse('https://redditech.me/backend/users/signup-google');
+
+        final response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'access_token': accessToken,
+          }),
+        );
+
+        final token = response.headers['authorization'];
+        print(response.body);
+        print(token);
+        print(response.statusCode);
+        if (response.statusCode == 200) {
+          print('google login status 200');
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('token', token!);
+          prefs.setBool('googleLogin', true);
+          String username = jsonDecode(response.body)['username'];
+          prefs.setString('username', username);
+          final userController = GetIt.instance.get<UserController>();
+          await userController.getUser(username);
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      print(error);
+      return false;
     }
   }
 
@@ -1037,11 +1161,11 @@ class UserService {
     return emailRegex.hasMatch(email);
   }
 
-  int availableUsername(String username) {
+  Future<int> availableUsername(String username) async {
     return users.any((user) => user.userAbout.username == username) ? 400 : 200;
   }
 
-  int availableEmail(String email) {
+  Future<int> availableEmail(String email) async {
     return users.any((user) => user.userAbout.email == email) ? 400 : 200;
   }
 
@@ -1055,6 +1179,8 @@ class UserService {
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      print('in blocked');
+      print(token);
       final url = Uri.parse('https://redditech.me/backend/users/blocked-users');
 
       final response = await http.get(
@@ -1064,10 +1190,10 @@ class UserService {
           'Authorization': token!,
         },
       );
-      // print(response.body);
-
+      print('in get blocked users');
+      print(response.statusCode);
       if (response.statusCode == 200) {
-        print('get notifications success');
+        print('get blocked success');
         var data = jsonDecode(response.body);
         List<dynamic> blockedUsersJson = data['content'];
         return Future.wait(blockedUsersJson
@@ -1231,6 +1357,33 @@ class UserService {
     }
   }
 
+  Future<bool> addPassword(
+      String username, String newPassword, String verifiedNewPassword) async {
+    if (testing) {
+      return true;
+    } else {
+      var url = Uri.parse('https://redditech.me/backend/users/reset-password');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      var response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token!,
+        },
+        body: jsonEncode({
+          "new_password": newPassword,
+          "verified_password": verifiedNewPassword,
+        }),
+      );
+
+      print(response.body);
+      print(response.statusCode);
+
+      return response.statusCode == 200;
+    }
+  }
+
   Future<bool> changePassword(String username, String currentPassword,
       String newPassword, String verifiedNewPassword) async {
     if (testing) {
@@ -1355,27 +1508,97 @@ class UserService {
     }
   }
 
-  void connectToGoogle(String username) {
+  Future<bool> connectToGoogle(String username) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .accountSettings
           ?.connectedGoogle = true;
+      return true;
     } else {
-      // toggle connect to google in db
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+
+      try {
+        await googleSignIn.signOut();
+        final GoogleSignInAccount? googleSignInAccount =
+            await googleSignIn.signIn();
+        final GoogleSignInAuthentication? googleSignInAuthentication =
+            await googleSignInAccount?.authentication;
+
+        // The access token can be used to authenticate with your backend
+        var accessToken = googleSignInAuthentication!.accessToken;
+
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? token = prefs.getString('token');
+
+        final url =
+            Uri.parse('https://redditech.me/backend/users/connect-to-google');
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token!,
+          },
+          body: jsonEncode({
+            'access_token': accessToken,
+          }),
+        );
+        await googleSignIn.signOut();
+        print(response.body);
+        if (response.statusCode == 200) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (error) {
+        print(error);
+        return false;
+      }
     }
   }
 
-  void disconnectFromGoogle(String username) {
+  Future<int> disconnectFromGoogle(String username, String password) async {
     if (testing) {
       users
           .firstWhere((element) => element.userAbout.username == username)
           .accountSettings
           ?.connectedGoogle = false;
+      return 200;
     } else {
-      // toggle disconnect from google in db
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      final url =
+          Uri.parse('https://redditech.me/backend/users/disconnect-google');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: jsonEncode({
+          'password': password,
+        }),
+      );
+      print(response.body);
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        return 200;
+      } else {
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['error']['message'] ==
+            'User must set his password first') {
+          return 2;
+        }
+        return response.statusCode;
+      }
     }
   }
+
+  // toggle disconnect from google in db
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

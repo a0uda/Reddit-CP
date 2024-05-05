@@ -473,8 +473,8 @@ class PostState extends State<Post> {
                         ),
                       ),
                     if (widget.videoUrl != null)
-                      if (MediaQuery.of(context).size.width > 600)
-                        const Text("Open in mobile to view video"),
+                      // if (MediaQuery.of(context).size.width > 600)
+                      const Text("Open in mobile to view video"),
                     // else
                     //   Container(
                     //       width: MediaQuery.of(context).size.width,

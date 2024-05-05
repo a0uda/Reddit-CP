@@ -39,6 +39,7 @@ dependencies:
   flutter_settings_screen_ex: ^0.0.1+5
   shared_preferences: ^2.2.3
   uni_links: ^0.5.1
+  google_sign_in: ^6.2.1
   # TODO:FIREBASE
   # firebase_core: "^1.10.5"
   # firebase_storage: "^10.0.4"
@@ -69,6 +70,8 @@ dependencies:
   firebase_core: ^2.30.1
   firebase_storage: ^11.7.4
   awesome_notifications: ^0.9.3+1
+  easy_rich_text: ^2.1.0
+  flutter_emoji: ^2.5.1
   
 
 dev_dependencies:
