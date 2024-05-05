@@ -52,8 +52,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 buildAddPassword(context),
                 //buildGender(userController.userAbout!.gender!),
-                const GenderTile(),
-                const CountryTile(),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const GenderTile();
+                  },
+                ),
+                Consumer<AccountSettingsController>(
+                  builder: (context, accountSettingsController, child) {
+                    return const CountryTile();
+                  },
+                ),
               ],
             ),
             SettingsGroup(

@@ -36,7 +36,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             return userData.profilePicture == null ||
                     userData.profilePicture == ''
                 ? const CircleAvatar(
-                    radius: 50,
+                    radius: 50, 
                     backgroundImage: AssetImage('images/Greddit.png'),
                   )
                 : CircleAvatar(

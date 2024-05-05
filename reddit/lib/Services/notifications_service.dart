@@ -44,7 +44,8 @@ class NotificationsService with ChangeNotifier {
   Future<int> getUnreadNotificationsCount() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    final url = Uri.parse('https://redditech.me/backend/notifications');
+    final url =
+        Uri.parse('https://redditech.me/backend/notifications/unread-count');
     final response = await http.get(
       url,
       headers: {
@@ -54,16 +55,10 @@ class NotificationsService with ChangeNotifier {
     );
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      List<dynamic> notificationsJson = data['content'];
-      int unreadCount = 0;
-      for (var notification in notificationsJson) {
-        if (notification['unread_flag'] == true) {
-          unreadCount++;
-        }
-      }
+      int unreadCount = data['count'];
       return unreadCount;
     } else {
-      throw Exception('Failed to load notifications');
+      return 0;
     }
   }
 

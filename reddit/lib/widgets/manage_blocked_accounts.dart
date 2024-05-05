@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/blocked_users_item.dart';
+import 'package:reddit/widgets/Search/block_new_user_list.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
 
 class ManageBlockedAccounts extends StatefulWidget {
@@ -24,15 +25,6 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
     searchResults = blockedUsers;
   }
 
-  void searchBlockedUsers(String search) {
-    setState(() {
-      searchResults = blockedUsers.where((blockedUser) {
-        return blockedUser.username
-            .toLowerCase()
-            .contains(search.toLowerCase());
-      }).toList();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +36,24 @@ class _ManageBlockedAccountsState extends State<ManageBlockedAccounts> {
         margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
         child: Column(
           children: [
-            TextField(
-              onChanged: searchBlockedUsers,
-              decoration: InputDecoration(
-                hintText: "Block new account",
-                hintStyle: TextStyle(color: Colors.grey.shade600),
-                prefixIcon: Icon(
+            ElevatedButton(
+              onPressed: () {
+                showSearch(context: context, delegate: BlockSearch());
+              },
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.grey[200],
+                  foregroundColor: Colors.grey,
+                  shadowColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0))),
+              child: const Row(children: [
+                Icon(
                   Icons.search,
-                  color: Colors.grey.shade600,
-                  size: 20,
+                  color: Colors.black,
                 ),
-                filled: true,
-                fillColor: Colors.grey.shade100,
-                contentPadding: EdgeInsets.all(8),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Colors.grey.shade100)),
-              ),
+                Text("Block new account")
+              ]),
             ),
             Expanded(
                 child: ListView(

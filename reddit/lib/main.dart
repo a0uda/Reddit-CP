@@ -130,6 +130,8 @@ void main() async {
         create: (context) => RefreshHome(),
       ),
       ChangeNotifierProvider(
+        create: (context) => AccountSettingsController(),
+      )
         create: (context) => GetMessagesController(),
       ),
     ],
