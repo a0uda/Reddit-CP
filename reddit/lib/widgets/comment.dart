@@ -285,53 +285,77 @@ class _CommentState extends State<Comment> {
                               onTap: () {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
+                                  isDismissible: false,
                                   builder: (BuildContext context) {
                                     var editedTextController =
                                         TextEditingController(
                                             text: widget.comment.description);
-                                    return Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text(
-                                              'Edit your comment',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      Colors.deepOrange[400]),
-                                            ),
-                                            TextFormField(
-                                              controller: editedTextController,
-                                              minLines: 10,
-                                              maxLines: null,
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
+                                    return SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.8,
+                                      child: Scaffold(
+                                        appBar: AppBar(
+                                          automaticallyImplyLeading: false,
+                                          title: Row(
+                                            children: [
+                                              const Spacer(),
+                                              Text(
+                                                'Edit your comment',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.deepOrange[400]),
                                               ),
+                                              const Spacer(),
+                                            ],
+                                          ),
+                                        ),
+                                        body: SingleChildScrollView(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                TextFormField(
+                                                  controller:
+                                                      editedTextController,
+                                                  minLines: 10,
+                                                  maxLines: null,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.deepOrange[400],
+                                                  ),
+                                                  child: const Text('Save'),
+                                                  onPressed: () async {
+                                                    await commentService
+                                                        .EditComment(
+                                                            widget.comment.id!,
+                                                            editedTextController
+                                                                .text);
+                                                    setState(() {
+                                                      widget.comment
+                                                              .description =
+                                                          editedTextController
+                                                              .text;
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(height: 10),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Colors.deepOrange[400],
-                                              ),
-                                              child: const Text('Save'),
-                                              onPressed: () async {
-                                                await commentService
-                                                    .EditComment(
-                                                        widget.comment.id!,
-                                                        editedTextController
-                                                            .text);
-                                                setState(() {
-                                                  widget.comment.description =
-                                                      editedTextController.text;
-                                                });
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ),
                                     );
