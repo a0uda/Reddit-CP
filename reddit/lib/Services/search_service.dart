@@ -19,9 +19,13 @@ class SearchService {
       return [];
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      
+
       String url = 'https://redditech.me/backend/search/people';
-      final Map<String, String> queryParams = {'query': searchWord};
+      final Map<String, String> queryParams = {
+        'query': searchWord,
+        'page': '1',
+        'pageSize': '5'
+      };
 
       final Uri uri = Uri.parse(url).replace(queryParameters: queryParams);
 
@@ -29,9 +33,10 @@ class SearchService {
         uri,
       );
       print("ALOOOOOOOOO");
-      final decodedData = json.decode(response.body);
+      final decodedData = json.decode(response.body)['content'];
       print(decodedData);
-      final List<Map<String, dynamic>> foundUsers = decodedData.map((user) {
+      final List<Map<String, dynamic>> foundUsers =
+          (decodedData as List).map((user) {
         return {
           "_id": user["_id"],
           "username": user["username"],

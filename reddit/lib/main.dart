@@ -127,6 +127,8 @@ void main() async {
         create: (context) => Edit(),
       ),
       ChangeNotifierProvider(
+        create: (context) => AccountSettingsController(),
+      )
         create: (context) => GetMessagesController(),
       ),
     ],

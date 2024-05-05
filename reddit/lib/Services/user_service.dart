@@ -1262,15 +1262,11 @@ class UserService {
       final response = await http.post(
         url,
         headers: {
-          'Content': 'application/json',
+          'Content-Type': 'application/json',
           'Authorization': token!,
         },
-        body: jsonEncode({
-          'blocked_username': blockedUsername,
-        }),
+        body: jsonEncode({'blocked_username': blockedUsername}),
       );
-      print(blockedUsername);
-      print(response.body);
 
       if (response.statusCode == 200) {
         print('User unblocked successfully.');
@@ -1396,7 +1392,7 @@ class UserService {
           .password = newPassword;
       return true;
     } else {
-      var url = Uri.parse('http://redditech.me//backend/users/change-password');
+      var url = Uri.parse('https://redditech.me/backend/users/change-password');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       var response = await http.patch(
@@ -1411,14 +1407,7 @@ class UserService {
           "verified_new_password": verifiedNewPassword,
         }),
       );
-      print(token);
-      print(response.statusCode);
-      print(jsonEncode({
-        "current_password": currentPassword,
-        "new_password": newPassword,
-        "verified_new_password": verifiedNewPassword,
-      }));
-      return response.isRedirect;
+      return response.statusCode == 200;
     }
   }
 
@@ -1441,7 +1430,7 @@ class UserService {
       String country = userController.userAbout?.country ?? '';
 
       final url = Uri.parse(
-          'http://redditech.me/backend/users/change-account-settings');
+          'https://redditech.me/backend/users/change-account-settings');
 
       var response = await http.patch(
         url,
@@ -1466,13 +1455,8 @@ class UserService {
       }));
       print(response.statusCode);
       print(response.body);
-      if (response.isRedirect) {
-        print('successfull');
-      } else {
-        print('failed');
-      }
 
-      return response.isRedirect;
+      return response.statusCode == 200 ? true : false;
     }
   }
 
@@ -1496,7 +1480,7 @@ class UserService {
       String gender = userController.userAbout?.gender ?? '';
 
       final url = Uri.parse(
-          'http://redditech.me/backend/users/change-account-settings');
+          'https://redditech.me/backend/users/change-account-settings');
 
       var response = await http.patch(
         url,
