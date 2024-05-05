@@ -102,6 +102,9 @@ void main() async {
         create: (context) => CreateCommunityProvider(),
       ),
       ChangeNotifierProvider(
+        create: (context) => RemovalProvider(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => CommunityProvider(),
       ),
       ChangeNotifierProvider(

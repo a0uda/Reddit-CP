@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/poll_item.dart';
+import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
@@ -127,6 +128,80 @@ class ModeratorMockService {
     }
   }
 
+  Future<List<RemovalItem>> getRemovalReason(String communityName) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == communityName)
+      //     .communityRules;
+      return [];
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/get-removal-reasons/$communityName');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+      );
+      final List<dynamic> decodedData = json.decode(response.body);
+      print("yarab");
+      print(response.body);
+      final List<RemovalItem> removal = decodedData
+          .map((rem) => RemovalItem(
+                id: rem["_id"],
+                title: rem["removal_reason_title"],
+                message: rem["reason_message"] ?? "",
+              ))
+          .toList();
+      return removal; //badrr
+    }
+  }
+
+  Future<void> createRemovalReason({
+    required String communityName,
+    required String title,
+    required String removalReason,
+  }) async {
+    if (testing) {
+      // communities
+      //     .firstWhere((community) => community.communityName == communityName)
+      //     .communityRules
+      //     .add(
+      //       RulesItem(
+      //         id: id,
+      //         ruleTitle: ruleTitle,
+      //         appliesTo: appliesTo,
+      //         reportReason: reportReason ?? "",
+      //         ruleDescription: ruleDescription ?? "",
+      //       ),
+      //     );
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/add-removal-reason');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'removal_reason_title': title,
+          'removal_reason': removalReason,
+        }),
+      );
+      print("test removal");
+      print(removalReason);
+      print(response.body);
+    }
+  }
+
   Future<void> createRule(
       {String? id,
       required String communityName,
@@ -171,6 +246,46 @@ class ModeratorMockService {
     }
   }
 
+  Future<void> editRemoval({
+    required String id,
+    required String communityName,
+    required String title,
+    String? reason,
+  }) async {
+    if (testing) {
+      // communities
+      //     .firstWhere((community) => community.communityName == communityName)
+      //     .communityRules
+      //     .firstWhere((rule) => rule.id == id)
+      //     .updateAll(
+      //         appliesTo: appliesTo,
+      //         id: id,
+      //         ruleTitle: ruleTitle,
+      //         reportReason: reportReason ?? "",
+      //         ruleDescription: ruleDescription ?? "");
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/edit-removal-reason');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "removal_reason_id": id,
+          "removal_reason_title": title,
+          "reason_message": reason,
+          'community_name': communityName,
+        }),
+      );
+      print("in edit");
+      print(id);
+    }
+  }
+
   Future<void> editRules(
       {required String id,
       required String communityName,
@@ -207,6 +322,31 @@ class ModeratorMockService {
           'applies_to': appliesTo,
           if (reportReason != null) 'report_reason': reportReason,
           if (ruleDescription != null) 'full_description': ruleDescription,
+        }),
+      );
+    }
+  }
+
+  Future<void> deleteRemovalReason(String communityName, String id) async {
+    if (testing) {
+      // communities
+      //     .firstWhere((community) => community.communityName == communityName)
+      //     .communityRules
+      //     .removeWhere((rule) => rule.id == id);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/delete-removal-reason');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          'community_name': communityName,
+          'removal_reason_id': id,
         }),
       );
     }
@@ -1091,7 +1231,9 @@ class ModeratorMockService {
   }
 
   Future<QueuesPostItem> getReportedItems(
-      {required String communityName, required timeFilter, required postsOrComments}) async {
+      {required String communityName,
+      required timeFilter,
+      required postsOrComments}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(
@@ -1136,7 +1278,9 @@ class ModeratorMockService {
   }
 
   Future<QueuesPostItem> getUnmoderatedItems(
-      {required String communityName, required String timeFilter, required String postsOrComments}) async {
+      {required String communityName,
+      required String timeFilter,
+      required String postsOrComments}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(

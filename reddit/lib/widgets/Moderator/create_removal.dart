@@ -1,32 +1,27 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 
-class CreateRulePage extends StatefulWidget {
-  const CreateRulePage({super.key});
+class CreateRemoval extends StatefulWidget {
+  const CreateRemoval({super.key});
 
   @override
-  State<CreateRulePage> createState() => _CreateRulePageState();
+  State<CreateRemoval> createState() => _CreateRemovalState();
 }
 
-class _CreateRulePageState extends State<CreateRulePage> {
+class _CreateRemovalState extends State<CreateRemoval> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   bool saveButtonEnable = false;
 
   TextEditingController titleController = TextEditingController();
-  TextEditingController descritionController = TextEditingController();
-  TextEditingController reportReasonController = TextEditingController();
-  String selectedOption = 'posts_and_comments';
+  TextEditingController messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    var rulesProvider = context.read<RulesProvider>();
+    var remPov = context.read<RemovalProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +35,7 @@ class _CreateRulePageState extends State<CreateRulePage> {
         ),
         title: const Center(
           child: Text(
-            "Create a rule",
+            "Create Reason",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -55,16 +50,20 @@ class _CreateRulePageState extends State<CreateRulePage> {
                     foregroundColor: Colors.white,
                     shadowColor: Colors.transparent),
                 onPressed: saveButtonEnable
-                    ? () async{
+                    ? () async {
                         //save rule
-                        await rulesProvider.createRule(
+                        await remPov.createRemoval(
                           //id: Random().nextInt(100000).toString(),
                           communityName: moderatorController.communityName,
-                          ruleTitle: titleController.text,
-                          appliesTo: selectedOption,
-                          reportReason: reportReasonController.text,
-                          ruleDescription: descritionController.text,
+                          removalReason: messageController.text,
+                          title: titleController.text,
                         );
+                        print("Badr");
+                        print({
+                          "communityName": moderatorController.communityName,
+                          "removalReason": messageController.text,
+                          "title": titleController.text,
+                        });
                         Navigator.of(context).pop();
                       }
                     : null,
@@ -86,13 +85,13 @@ class _CreateRulePageState extends State<CreateRulePage> {
                 style: TextStyle(color: Colors.grey),
               ),
               TextField(
-                maxLength: 100,
+                maxLength: 50,
                 maxLines: null,
                 cursorColor: Colors.blue,
                 controller: titleController,
                 onChanged: (value) => {
                   setState(() {
-                    if (value == "") {
+                    if (value == "" || messageController.text == "") {
                       saveButtonEnable = false;
                     } else {
                       saveButtonEnable = true;
@@ -102,73 +101,31 @@ class _CreateRulePageState extends State<CreateRulePage> {
                 autofocus: true,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Rule title",
+                  hintText: "Removal reason title",
                 ),
               ),
               const Text(
-                "Descrition ",
+                "Message ",
                 style: TextStyle(color: Colors.grey),
               ),
               TextField(
                 minLines: 5,
-                maxLength: 500,
+                maxLength: 1000,
                 maxLines: null,
                 cursorColor: Colors.blue,
-                controller: descritionController,
+                controller: messageController,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  hintText: "Rule description",
+                  hintText: "Add description that helps users understand",
                 ),
-              ),
-              const Text(
-                "Report Reason ",
-                style: TextStyle(color: Colors.grey),
-              ),
-              TextField(
-                maxLength: 100,
-                maxLines: null,
-                cursorColor: Colors.blue, 
-                controller: reportReasonController,
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  hintText: "Report reason text",
-                ),
-              ),
-              const Text(
-                "Report reason applies to:",
-                style: TextStyle(color: Colors.grey),
-              ),
-              RadioListTile<String>(
-                activeColor: const Color.fromARGB(255, 42, 101, 210),
-                title: const Text("Post and comments"),
-                value: 'posts_and_comments',
-                groupValue: selectedOption,
-                onChanged: (value) {
+                onChanged: (value) => {
                   setState(() {
-                    selectedOption = value!;
-                  });
-                },
-              ),
-              RadioListTile<String>(
-                activeColor: const Color.fromARGB(255, 42, 101, 210),
-                title: const Text('Only comments'),
-                value: 'comments_only',
-                groupValue: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value!;
-                  });
-                },
-              ),
-              RadioListTile<String>(
-                activeColor: const Color.fromARGB(255, 42, 101, 210),
-                title: const Text('Only posts'),
-                value: 'posts_only', //Badrrr
-                groupValue: selectedOption,
-                onChanged: (value) {
-                  setState(() {
-                    selectedOption = value!;
-                  });
+                    if (value == "" || titleController.text == "") {
+                      saveButtonEnable = false;
+                    } else {
+                      saveButtonEnable = true;
+                    }
+                  }),
                 },
               ),
             ],

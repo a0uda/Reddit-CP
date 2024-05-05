@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
 
@@ -14,6 +15,7 @@ class ModeratorController {
   List<Map<String, dynamic>> moderators = [];
   List<Map<String, dynamic>> scheduled = [];
   List<RulesItem> rules = [];
+  List<RemovalItem> removalReasons = [];
   GeneralSettings generalSettings = GeneralSettings(
     communityID: "",
     communityTitle: "",
@@ -103,6 +105,10 @@ class ModeratorController {
 
   Future<void> getRules(String communityName) async {
     rules = await moderatorService.getRules(communityName);
+  }
+
+  Future<void> getRemoval(String communityName) async {
+    removalReasons = await moderatorService.getRemovalReason(communityName);
   }
 
   Future<void> getMembersCount(String communityName) async {
@@ -344,6 +350,49 @@ class RulesProvider extends ChangeNotifier {
       ruleDescription: ruleDescription ?? "",
     );
     moderatorController.rules = await moderatorService.getRules(communityName);
+  }
+}
+
+class RemovalProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> createRemoval({
+    required String communityName,
+    required String title,
+    required String removalReason,
+  }) async {
+    await moderatorService.createRemovalReason(
+      title: title,
+      communityName: communityName,
+      removalReason: removalReason,
+    );
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
+    notifyListeners();
+  }
+
+  Future<void> deleteRemovalReason(String communityName, String id) async {
+    await moderatorService.deleteRemovalReason(communityName, id);
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
+    notifyListeners();
+  }
+
+  Future<void> editRemovalReason(
+      {required String id,
+      required String communityName,
+      required String title,
+      required String reason}) async {
+    await moderatorService.editRemoval(
+      id: id,
+      communityName: communityName,
+      title: title,
+      reason: reason,
+    );
+    moderatorController.removalReasons =
+        await moderatorService.getRemovalReason(communityName);
+    notifyListeners();
   }
 }
 
