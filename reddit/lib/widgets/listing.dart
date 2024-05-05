@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/hot_listing.dart';
 import 'package:reddit/widgets/top_listing.dart';
@@ -22,11 +25,23 @@ class Listing extends StatefulWidget {
 }
 
 final postService = GetIt.instance.get<PostService>();
-List<TrendingItem> trends = postService.getTrendingPosts();
+
+List<TrendingItem> trends = [];
+
+  late Future<void> _dataFuture;
+  bool isloading=false;
+
 
 class _Listing extends State<Listing> {
   String dropdownvalue = 'Hot';
+Future<void> FetchTrendingPosts ()async
+{
+    bool isloading=true;
 
+trends=await postService.getTrendingPosts();
+    isloading=false;
+}
+bool refresh=false;
   // List of items in our dropdown menu
   var items = [
     'Hot',
@@ -37,10 +52,18 @@ class _Listing extends State<Listing> {
   ];
 
   // List of items in our dropdown menu
-
+@override
+  void initState() {
+    super.initState();
+    _dataFuture = FetchTrendingPosts(); 
+ 
+    
+  }
   @override
   Widget build(BuildContext context) {
-    return Container(
+       var postController = context.read<RefreshHome>();
+    return 
+    Container(
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
@@ -57,7 +80,40 @@ class _Listing extends State<Listing> {
               ? SizedBox(
                 height:  MediaQuery.of(context).size.height * 0.2,
  
-                child:  ListView.builder(
+                child: FutureBuilder<void>(
+      future: _dataFuture,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+           return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
+
+             return    ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: trends.length,
                   itemBuilder: (context, index) {
@@ -66,9 +122,33 @@ class _Listing extends State<Listing> {
                       imageUrl: trends[index].picture.path,
                     );
                   },
-                ),)
+                );};}}),)
+
+
+
               : Container(),
+
+
+
+
           ListTile(
+            trailing: 
+ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                  onPressed: () {
+              
+                      postController.Refresh();
+        postController.shouldRefresh=true;
+                 
+         
+                  },
+                  icon: Icon(Icons.refresh, color: Colors.white),
+                  label: Text(
+                    'refresh',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
             leading: Container(
               // width: 71,
               // height: 70,
@@ -94,6 +174,7 @@ class _Listing extends State<Listing> {
               ),
             ),
           ),
+     
           if (dropdownvalue == 'Hot')
             Expanded(
               child: HotListing(

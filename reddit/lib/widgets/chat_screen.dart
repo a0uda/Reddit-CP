@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/Services/chat_service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as Io;
+
 
 class ChatPage extends StatefulWidget {
   final String name;
@@ -13,18 +15,39 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late Io.Socket socket;
+
   TextEditingController textController = TextEditingController();
 
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   List<ChatMessage> messages = [];
   late Future<void> _dataFuture;
   Future<void> fetchMessages() async {
-    messages = await chatService.getChatsContent();
+    messages = await chatService.getChatsContent(widget.name);
   }
 
   void initState() {
     super.initState();
     _dataFuture = fetchMessages();
+    socket=Io.io('https://redditech.me/backend',<String,dynamic>{
+      'transports':['websocket'],
+      'autoConnect':false,
+
+    'Upgrade': 'websocket',
+    'Connection': 'Upgrade',
+
+
+    });
+    
+    socket.connect();
+    socket.onConnect((data) => {
+
+      print('connecteddd')
+    });
+    socket.onConnectError((data) => {
+      print(data)
+    });
+
   }
 
   @override
@@ -178,6 +201,12 @@ class _ChatPageState extends State<ChatPage> {
                                   Theme.of(context).colorScheme.primary,
                               icon: const Icon(Icons.send),
                               onPressed: () {
+                                //send message
+                                if(!textController.text.isEmpty)
+                                {
+
+
+                                }
                             
                               },
                             ),

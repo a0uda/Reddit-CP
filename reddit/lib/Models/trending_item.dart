@@ -8,6 +8,23 @@ class TrendingItem {
     required this.title,
     required this.picture,
 });
+
+factory TrendingItem.fromJson(Map<String, dynamic> json) {
+    print(json['images']);
+
+      ImageItem imagelist =ImageItem.fromJson(json['images'][0]);
+    
+    return TrendingItem(
+
+        ///todo
+   
+        picture: imagelist,
+        title: json['title']
+      
+        );
+
+  }
+
 }
 
 List<TrendingItem> trendingPosts = [

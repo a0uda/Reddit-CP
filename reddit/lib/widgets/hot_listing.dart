@@ -27,12 +27,14 @@ class HotListingBuild extends State<HotListing> {
   ScrollController controller = ScrollController();
   int page=1;
   // List of items in our dropdown menu
+  bool isloading=false;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
   Future<void> fetchdata() async {
     final postService = GetIt.instance.get<PostService>();
+    isloading=true;
     List<PostItem> post = [];
-    if (widget.type == "home") {
+    if (widget.type == "home" || widget.type=="popular"){
       if (userController.userAbout != null) {
         String user = userController.userAbout!.username;
 
@@ -41,16 +43,17 @@ class HotListingBuild extends State<HotListing> {
       } else {
         posts = postService.fetchPosts();
       }
-    } else if (widget.type == "popular") {
-      posts = await postService.getPopularPosts();
+
+
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
       posts = await postService.getMyPosts(username);
       //print(username);
     }
+      isloading=false;
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
-
+post.removeWhere((item1) => item1.isRemoved==true);
     setState(() {
       posts.addAll(post);
     });
@@ -79,7 +82,16 @@ fetchdata();
   }
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
+    return   Consumer<RefreshHome>(
+        builder: (context,refresh, child) { 
+            if (refresh.shouldRefresh) {
+          posts=[];
+          fetchdata();
+          refresh.resetRefresh(); //Reset the edit flag after fetching data
+        } 
+    
+    
+  return  FutureBuilder<void>(
       future: _dataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,6 +109,20 @@ fetchdata();
           return Text(
               'Error: ${snapshot.error}'); // Display error message if any
         } else {
+           if (isloading)
+          {
+      return Container(
+            color: Colors.white,
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+          }
+          else{
           return Consumer<LockPost>(
             builder: (context, lockPost, child) {
               
@@ -110,6 +136,7 @@ fetchdata();
                   }
 
   print(posts[index].isReposted);
+       if (posts[index].isRemoved == false) {
                   if (posts[index].isReposted) {
                     return Repost(
                           description: posts[index].description,
@@ -159,12 +186,14 @@ fetchdata();
                     isLocked: posts[index].lockedFlag,
                     
                   );
+       }
                 },
               );
             },
           );
         }
+        }
       },
-    );
+    );});
   }
 }

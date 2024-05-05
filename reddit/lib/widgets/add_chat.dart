@@ -8,6 +8,7 @@ import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Services/user_service.dart';
 
 import 'package:reddit/widgets/add_text_share.dart';
+import 'package:reddit/widgets/chat_screen.dart';
 import 'package:reddit/widgets/follower_list.dart';
 
 class AddChat extends StatefulWidget {
@@ -57,8 +58,7 @@ class _AddChatState extends State<AddChat> {
     double screenWidth = MediaQuery.of(context).size.width;
     double heigth = MediaQuery.of(context).size.height;
     bool ismobile = (screenWidth < 700) ? true : false;
-    return Consumer<ApprovedUserProvider>(
-        builder: (context, approvedUserProvider, child) {
+
       return Scaffold(
         appBar:AppBar(
           centerTitle: true,
@@ -133,6 +133,15 @@ class _AddChatState extends State<AddChat> {
                             final item = foundFollowing![index];
                             return InkWell(
                               onTap: () => {
+                                  Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ChatPage(name: item.username), 
+            ),
+          )
+
+
                                
                               },
                               child: Card(
@@ -171,6 +180,6 @@ class _AddChatState extends State<AddChat> {
         ),
       ),);
 
-    });
+    
   }
 }

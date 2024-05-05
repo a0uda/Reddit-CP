@@ -127,6 +127,9 @@ void main() async {
         create: (context) => Edit(),
       ),
       ChangeNotifierProvider(
+        create: (context) => RefreshHome(),
+      ),
+      ChangeNotifierProvider(
         create: (context) => AccountSettingsController(),
       ),
       ChangeNotifierProvider(

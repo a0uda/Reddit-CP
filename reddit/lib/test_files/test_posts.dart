@@ -6,8 +6,8 @@ import 'package:reddit/Models/report.dart';
 
 final List<PostItem> posts = [
   PostItem(
-    // isRemoved: false,
-        vote: 0,
+    isRemoved: false,
+    vote: 0,
     id: "1",
     userId: users[1].userAbout.id!,
     username: users[1].userAbout.username,
@@ -40,15 +40,15 @@ final List<PostItem> posts = [
     originalPostID: '',
   ),
   PostItem(
-        // isRemoved: false,
-        vote: 0,
+    isRemoved: false,
+    vote: 0,
     id: "2",
     userId: users[1].userAbout.id!,
     username: users[1].userAbout.username,
     title: 'A pic example',
     type: 'type',
     communityId: "0",
-        isReposted: false,
+    isReposted: false,
     originalPostID: '',
     communityName: "r/Photography",
     ocFlag: false,
@@ -84,9 +84,9 @@ final List<PostItem> posts = [
 
 final List<PostItem> popularPosts = [
   PostItem(
-        // isRemoved: false,
-        vote: 0,
-            isReposted: false,
+    isRemoved: false,
+    vote: 0,
+    isReposted: false,
     originalPostID: '',
     id: "2",
     userId: users[1].userAbout.id!,
@@ -125,9 +125,9 @@ final List<PostItem> popularPosts = [
     userDetails: null,
   ),
   PostItem(
-        // isRemoved: false,
-        vote: 0,
-            isReposted: false,
+    isRemoved: false,
+    vote: 0,
+    isReposted: false,
     originalPostID: '',
     id: "2",
     userId: users[1].userAbout.id!,
