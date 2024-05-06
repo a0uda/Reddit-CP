@@ -889,30 +889,33 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  Future<List<ActiveCommunities>?> getActiveCommunities(String username) async {
+  Future<ActiveCommunitiesResult> getActiveCommunities(String username) async {
     if (testing) {
-      return users
-          .firstWhere((element) => element.userAbout.username == username)
-          .activecommunities!;
-    } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
+      ActiveCommunitiesResult activeCommunitiesResult = ActiveCommunitiesResult(
+        activeCommunities: users
+            .firstWhere((element) => element.userAbout.username == username)
+            .activecommunities!,
+        showActiveCommunities: users
+            .firstWhere((element) => element.userAbout.username == username)
+            .profileSettings!
+            .activeCommunity,
+      );
+     return activeCommunitiesResult;
+    }
+  else {
       final url =
-          Uri.parse('https://redditech.me/backend/users/active-communities');
+          Uri.parse('https://redditech.me/backend/users/active-communities?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
         },
       );
       print('in get active communities');
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body)['content'];
-      print(body);
-      return List<ActiveCommunities>.from(
-          body.map((community) => ActiveCommunities.fromJson(community)));
+      print(response.body);
+      return ActiveCommunitiesResult.fromJson(jsonDecode(response.body)['content']);
     }
   }
 
@@ -1856,3 +1859,5 @@ class UserService {
     }
   }
 }
+
+
