@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Pages/history.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/saved.dart';
+import 'package:reddit/Services/chat_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Controllers/user_controller.dart';
@@ -13,6 +15,7 @@ import 'package:reddit/Pages/settings_screen.dart';
 class EndDrawerReddit extends StatelessWidget {
   EndDrawerReddit({super.key});
   final userController = GetIt.instance.get<UserController>();
+  final chatservice = GetIt.instance.get<ChatsService>();
 
   @override
   Widget build(BuildContext context) {
@@ -100,12 +103,16 @@ class EndDrawerReddit extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text("Logout", style: TextStyle(color: Colors.red)),
-            onTap: () {
+            onTap: () async{
               userController.userAbout = null;
+              await chatservice.SocketClose();
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => const LoginPage()));
+
             },
           ),
         ],

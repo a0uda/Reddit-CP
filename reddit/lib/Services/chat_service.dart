@@ -8,11 +8,65 @@ import 'package:reddit/test_files/test_chats.dart';
 import 'package:http/http.dart' as http;
 import '../test_files/test_posts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as Io;
 
 
 bool testing = const bool.fromEnvironment('testing');
 
 class ChatsService {
+
+
+    late Io.Socket? socket;
+Io.Socket getSocket()
+{
+  return socket!;
+}
+
+Future< void> SocketInit()async{
+  
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    print(token);
+    socket = Io.io('https://redditech.me', <String, dynamic>{
+      'path': '/socket.io',
+      'transports': ['websocket'],
+      'autoConnect': false,
+      'query': {'token': token!},
+      'Upgrade': 'websocket',
+      'Connection': 'Upgrade',
+      'forceNew':true,
+    
+    });
+    socket!.connect();
+    socket!.on('connection', (_) => {print('connecteddd')});
+    socket!.onConnectError((data) => {print(data)});
+
+}
+Future< void> SocketClose()async{
+  if(socket!=null)
+  {
+   print('socket close');
+   socket!.emit('forceDisconnect');
+socket!.dispose();
+socket!.disconnect();
+socket!.clearListeners();
+              socket!.on('disconnect', (_) => {print('disconnecteddd')});
+              socket=null;
+  }
+
+  
+    
+
+
+
+}
+
+     ChatsService() {
+       
+  }
+
+
+
   Future<List<ChatUsers>> getChats () async
   {
     if(testing)

@@ -2,31 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:reddit/Controllers/chat_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/chat_controller.dart';
 
 class ChatPage extends StatefulWidget {
   final String name;
   final String image;
+
   ChatPage({
     required this.name,
     required this.image,
+
   });
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+ ChatsService chatservice=GetIt.instance.get<ChatsService>();
   late Io.Socket socket;
   var previoususername='';
   final userController = GetIt.instance.get<UserController>();
   TextEditingController textController = TextEditingController();
-
+ String lastmessage='';
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   List<ChatMessage> messages = [];
   late Future<void> _dataFuture;
@@ -34,22 +37,8 @@ class _ChatPageState extends State<ChatPage> {
     messages = await chatService.getChatsContent(widget.name);
     print(messages.length);
   }
-
-  Future<void> SocketInit() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    socket = Io.io('https://redditech.me', <String, dynamic>{
-      'path': '/socket.io',
-      'transports': ['websocket'],
-      'autoConnect': false,
-      'query': {'token': token!},
-      'Upgrade': 'websocket',
-      'Connection': 'Upgrade',
-    });
-    socket.connect();
-    socket.on('connection', (_) => {print('connecteddd')});
-    socket.onConnectError((data) => {print(data)});
-    socket.on("newMessage", ((data) {
+  void Handlemessage(data){
+      
       print('message');
       print(data);
       DateTime dateTime = DateTime.parse(data['createdAt']);
@@ -60,7 +49,12 @@ class _ChatPageState extends State<ChatPage> {
           createdAt: formattedTime,
           username:widget.name));
       update();
-    }));
+    
+  }
+
+  Future<void> SocketInit() async {
+   
+    socket.on("newMessage",Handlemessage);
   }
 
   void update() {
@@ -69,6 +63,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void initState() {
     super.initState();
+    socket=chatservice.getSocket();
     SocketInit();
     _dataFuture = fetchMessages();
   }
@@ -76,12 +71,10 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     super.dispose();
-    socket.clearListeners();
-    socket.disconnect();
-    socket.close();
+    socket.off('newMessage',Handlemessage);
+  
 
-    socket.on('disconnect', (_) => {print('connecteddd')});
-    socket.disconnect();
+
   }
 
   @override
@@ -95,12 +88,12 @@ class _ChatPageState extends State<ChatPage> {
           backgroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
-              socket.clearListeners();
-              socket.disconnect();
-              socket.close();
-
-              socket.on('disconnect', (_) => {print('connecteddd')});
-              Navigator.pop(context);
+            socket.off('newMessage',Handlemessage);
+         
+    if(messages.length!=0)
+  lastmessage=messages[messages.length-1].messageContent;
+    
+              Navigator.pop(context,lastmessage);
             },
             icon: Icon(
               Icons.arrow_back,
@@ -120,8 +113,8 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
         ),
-        body: Consumer<Chat>(builder: (context, refresh, child) {
-          return Column(
+        
+          body: Column(
             children: <Widget>[
               Expanded(
                 flex: 6,
@@ -292,6 +285,7 @@ class _ChatPageState extends State<ChatPage> {
                             if (!textController.text.isEmpty) {
                               int response = await chatController.Sendmessage(
                                   widget.name, textController.text);
+                                  chatController.refresh=true;
 
                               if ((response >= 200) && (response < 300)) {
                                 setState(() {
@@ -314,7 +308,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
             ],
-          );
-        }));
+          ),
+        );
   }
 }

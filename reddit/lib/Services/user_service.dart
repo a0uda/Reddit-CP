@@ -682,6 +682,7 @@ class UserService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('token', token!);
         prefs.setString('username', username);
+        
         return 200;
       } else {
         return 400;
