@@ -39,7 +39,8 @@ class PostItem {
   final UserDetails? userDetails;
   final int vote;
   final String originalPostID;
-final bool  isRemoved;
+  final bool isRemoved;
+  final bool? pollExpired;
   PostItem({
     required this.id,
     required this.userId,
@@ -76,13 +77,15 @@ final bool  isRemoved;
     this.setSuggestedSort,
     this.moderatorDetails,
     this.userDetails,
+    this.pollExpired,
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
     print(json);
-    Map<String, dynamic> data = json['reposted']!=null?json['reposted']:{};
-    final List<dynamic> jsonlist = json['images']??[];
-    final List<ImageItem> imagelist =  jsonlist.map((jsonitem) {
+    Map<String, dynamic> data =
+        json['reposted'] != null ? json['reposted'] : {};
+    final List<dynamic> jsonlist = json['images'] ?? [];
+    final List<ImageItem> imagelist = jsonlist.map((jsonitem) {
       return ImageItem.fromJson(jsonitem);
     }).toList();
     final List<dynamic> jsonlist2 = json['videos'] ?? [];
@@ -92,7 +95,9 @@ final bool  isRemoved;
     return PostItem(
       ///todo
       isReposted: json['is_reposted_flag'],
-        originalPostID: (data['original_post_id']!=null)?(data['original_post_id']!):'', //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
+      originalPostID: (data['original_post_id'] != null)
+          ? (data['original_post_id']!)
+          : '', //(json['reposted']['original_post_id']!=null)?(json['reposted']['original_post_id']):'',
       id: json['_id'],
       userId: json['user_id'],
       description: json['description'],
@@ -117,8 +122,11 @@ final bool  isRemoved;
       vote: (json['vote'] != null) ? (json['vote']) : 0,
       images: (imagelist.isNotEmpty) ? imagelist : null,
       videos: (videolist.isNotEmpty) ? videolist : null,
+      linkUrl: json['link_url'] != null ? json['link_url'] : '',
       inCommunityFlag: json["post_in_community_flag"],
-      isRemoved: json['deleted']
+      isRemoved: json['deleted'],
+      poll: json['poll'] != null ? PollItem.fromJson(json['poll']) : null,
+      pollExpired: json['polls_voting_is_expired_flag'],
     );
   }
 }
