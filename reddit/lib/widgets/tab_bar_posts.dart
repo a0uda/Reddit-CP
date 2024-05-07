@@ -261,9 +261,13 @@ class TabBarPostsState extends State<TabBarPosts> {
                   SliverFillRemaining(
                     child: Consumer<BlockUnblockUser>(
                         builder: (context, blockUnblockUser, child) {
-                      return ListingCertainUser(
-                        userData: userData,
-                      );
+                      return RefreshIndicator(
+                          onRefresh: () async {
+                            setState(() {});
+                          },
+                          child: ListingCertainUser(
+                            userData: userData,
+                          ));
                     }),
                   ),
                 ],
