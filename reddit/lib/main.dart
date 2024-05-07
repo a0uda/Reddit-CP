@@ -149,7 +149,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => GetMessagesController(),
       ),
-                       ChangeNotifierProvider(
+      ChangeNotifierProvider(
         create: (context) => Chat(),
       )
     ],

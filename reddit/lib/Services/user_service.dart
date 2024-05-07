@@ -924,7 +924,6 @@ class UserService {
         },
       );
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
-      print(response.body);
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }
@@ -936,7 +935,8 @@ class UserService {
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
-      final url = Uri.parse('https://redditech.me/backend/users/moderated-communities');
+      final url =
+          Uri.parse('https://redditech.me/backend/users/moderated-communities');
       final response = await http.get(
         url,
         headers: {
@@ -945,12 +945,10 @@ class UserService {
         },
       );
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
-      print(response.body);
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }
   }
-
 
   Future<int> forgetPassword(String email, String username) async {
     if (testing) {

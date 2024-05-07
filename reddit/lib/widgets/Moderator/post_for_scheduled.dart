@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 
 class PostScheduled extends StatefulWidget {
@@ -15,6 +18,7 @@ class PostScheduled extends StatefulWidget {
 class _PostScheduledState extends State<PostScheduled> {
   String dateText = "";
   late bool recurring;
+  final moderatorController = GetIt.instance.get<ModeratorController>();
 
   @override
   void initState() {
@@ -22,7 +26,6 @@ class _PostScheduledState extends State<PostScheduled> {
     recurring = true;
     Map<String, dynamic> item = widget.item;
     DateTime createdAt = DateTime.parse(item["created_at"]);
-    String dayOfWeek = DateFormat('EEEE').format(createdAt);
     if (item["scheduling_details"]["repetition_option"] == "monthly") {
       dateText =
           " Every month on the ${createdAt.day.toString()}th day @ ${createdAt.hour}";
@@ -34,9 +37,11 @@ class _PostScheduledState extends State<PostScheduled> {
       dateText =
           " Every week on ${DateFormat('EEEE').format(createdAt)} at ${createdAt.hour}";
     } else if (item["scheduling_details"]["repetition_option"] == "none") {
-      recurring = true;
+      recurring = false;
+      DateTime date =
+          DateTime.parse(item["scheduling_details"]["schedule_date"]);
       dateText =
-          " Scheduled ${item["scheduling_details"]["schedule_date"].month}/${item["scheduling_details"]["schedule_date"].day} @ ${item["scheduling_details"]["schedule_date"].hour}:${item["scheduling_details"]["schedule_date"].minute} ";
+          " Scheduled ${date.month}/${date.day} @ ${date.hour}:${date.minute} ";
     }
   }
 
@@ -109,8 +114,14 @@ class _PostScheduledState extends State<PostScheduled> {
                             elevation: 0,
                             surfaceTintColor: Colors.transparent,
                             padding: const EdgeInsets.all(0)),
-                        onPressed: () {
+                        onPressed: () async {
                           //badrrrrr submit
+                          var scheduledProvider =
+                              context.read<ScheduledProvider>();
+                          await scheduledProvider.submitScheduledPost(
+                              moderatorController.communityName,
+                              widget.item["_id"]);
+                          
                         },
                         icon: Icon(
                           CupertinoIcons.paperplane_fill,
@@ -135,7 +146,9 @@ class _PostScheduledState extends State<PostScheduled> {
                       //badrrrrr
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const EditScheduledPost(),
+                          builder: (context) => EditScheduledPost(
+                            postId: widget.item["_id"],
+                          ),
                         ),
                       );
                     },

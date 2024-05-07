@@ -3,9 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/test_files/test_communities.dart';
 
 class EditScheduledPost extends StatefulWidget {
-  const EditScheduledPost({super.key});
+  final String linkUrl;
+  final bool isLinkPost;
+  final String postId;
+  const EditScheduledPost(
+      {super.key,
+      required this.postId,
+      this.linkUrl = "",
+      this.isLinkPost = false});
 
   @override
   State<EditScheduledPost> createState() => _EditScheduledPostState();
@@ -14,12 +22,10 @@ class EditScheduledPost extends StatefulWidget {
 class _EditScheduledPostState extends State<EditScheduledPost> {
   bool saveButtonEnable = false;
   TextEditingController contentController = TextEditingController();
-  TextEditingController questionController = TextEditingController();
-  bool isTextPost = false;
-  bool isPollPost = true;
-  bool isLinkPost = false;
+  TextEditingController urlController = TextEditingController();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   int selectedDays = 3;
-  List<String> options = ['', ''];
 
   // addUser() async {
   //   var approvedUserProvider = context.read<ApprovedUserProvider>();
@@ -28,23 +34,22 @@ class _EditScheduledPostState extends State<EditScheduledPost> {
   //   Navigator.of(context).pop();
   // }
   void validateValue() {
-    if (isTextPost) {
-      setState(() {
-        saveButtonEnable = true;
-      });
-    } else if (isLinkPost) {
+    if (widget.isLinkPost) {
       RegExp regExp = RegExp(r'\.com\b', caseSensitive: false);
       setState(() {
         saveButtonEnable = regExp.hasMatch(contentController.text);
       });
-    } else if (isPollPost) {
-      saveButtonEnable = true;
+    } else {
+      setState(() {
+        saveButtonEnable = true;
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
+    urlController.text = widget.linkUrl;
   }
 
   @override
@@ -70,6 +75,13 @@ class _EditScheduledPostState extends State<EditScheduledPost> {
                 onPressed: saveButtonEnable
                     ? () async {
                         //edit  badrrrr
+                        var scheduledProvider =
+                            context.read<ScheduledProvider>();
+                        await scheduledProvider.EditScheduledPost(
+                            moderatorController.communityName,
+                            widget.postId,
+                            contentController.text);
+                        Navigator.of(context).pop();
                       }
                     : null,
                 child: Text(
@@ -98,58 +110,22 @@ class _EditScheduledPostState extends State<EditScheduledPost> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 8),
                 border: InputBorder.none,
-                hintText: isLinkPost ? "URL" : "Your text post (optional)",
+                hintText: "Your text post (optional)",
               ),
             ),
-            isPollPost
-                ? Container(
-                    padding: const EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(color: Colors.black),
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(children: [
-                          const Text(
-                            'Poll ends in ',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          DropdownButton<int>(
-                            value: selectedDays,
-                            items: [1, 2, 3, 4, 5].map((int value) {
-                              return DropdownMenuItem<int>(
-                                value: value,
-                                child: Text('$value days'),
-                              );
-                            }).toList(),
-                            onChanged: (value) =>
-                                setState(() => selectedDays = value!),
-                          ),
-                        ]),
-                        TextField(
-                          controller: questionController,
-                          decoration:
-                              const InputDecoration(labelText: 'Question'),
-                        ),
-                        TextField(
-                          onChanged: (value) => options[0] = value,
-                          decoration:
-                              const InputDecoration(labelText: 'Option 1'),
-                        ),
-                        TextField(
-                          onChanged: (value) => options[1] = value,
-                          decoration:
-                              const InputDecoration(labelText: 'Option 2'),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox(),
+            widget.isLinkPost? TextField(
+              cursorColor: Colors.blue,
+              controller: urlController,
+              onChanged: (value) => {
+                validateValue(),
+              },
+              //autofocus: true,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.only(left: 8),
+                border: InputBorder.none,
+                hintText: "URL",
+              ),
+            ) : const SizedBox(),
           ],
         ),
       ),

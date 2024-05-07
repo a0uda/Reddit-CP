@@ -14,5 +14,6 @@ import 'package:reddit/Models/chat_user.dart';
 
   ];
   List<ChatMessage> messages = [
+    ChatMessage(messageContent: 'asda', messageType: 'sender', createdAt: '2024-05-06T18:23:38.000', username: 'nis'),
   
   ];

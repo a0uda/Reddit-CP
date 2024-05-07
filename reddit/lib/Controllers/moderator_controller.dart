@@ -89,9 +89,10 @@ class ModeratorController {
   }
 
 //Rawan: add moderator
-  Future<void> addAsMod(
-      String username, String profilePicture, String communityName, String msgId) async {
-    await moderatorService.addModUser(username, profilePicture, communityName, msgId);
+  Future<void> addAsMod(String username, String profilePicture,
+      String communityName, String msgId) async {
+    await moderatorService.addModUser(
+        username, profilePicture, communityName, msgId);
     moderators = await moderatorService.getModerators(communityName);
   }
 
@@ -126,7 +127,7 @@ class ModeratorController {
       required String timeFilter,
       required String postsOrComments}) async {
     print('Ana fel controller fel unmoderated');
-     await moderatorService.getUnmoderatedItems(
+    await moderatorService.getUnmoderatedItems(
         communityName: communityName,
         timeFilter: timeFilter,
         postsOrComments: postsOrComments);
@@ -251,6 +252,28 @@ class ScheduledProvider extends ChangeNotifier {
   Future<void> getScheduled(String communityName) async {
     moderatorController.scheduled =
         await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> EditScheduledPost(
+      String communityName, String post_id, String description) async {
+    await moderatorService.EditScheduledPost(
+        postId: post_id,
+        description: description,
+        communityName: communityName);
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> submitScheduledPost(
+      String communityName, String post_id) async {
+    await moderatorService.submitScheduledPost(
+        postId: post_id,
+        communityName: communityName);
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+    notifyListeners();
   }
 }
 
@@ -305,8 +328,6 @@ class RulesProvider extends ChangeNotifier {
         reportReason: reportReason ?? "",
         ruleDescription: ruleDescription ?? "");
     moderatorController.rules = await moderatorService.getRules(communityName);
-    print("badrrr");
-    print(moderatorController.rules);
     notifyListeners();
   }
 
