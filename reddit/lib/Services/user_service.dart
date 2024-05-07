@@ -196,16 +196,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return followers.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/followers-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/followers-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get followers count');
@@ -263,16 +263,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return following.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/following-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/following-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get following count');
@@ -900,11 +900,10 @@ class UserService {
             .profileSettings!
             .activeCommunity,
       );
-     return activeCommunitiesResult;
-    }
-  else {
-      final url =
-          Uri.parse('https://redditech.me/backend/users/active-communities?username=$username');
+      return activeCommunitiesResult;
+    } else {
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/active-communities?username=$username');
 
       final response = await http.get(
         url,
@@ -915,7 +914,8 @@ class UserService {
       print('in get active communities');
       print(response.statusCode);
       print(response.body);
-      return ActiveCommunitiesResult.fromJson(jsonDecode(response.body)['content']);
+      return ActiveCommunitiesResult.fromJson(
+          jsonDecode(response.body)['content']);
     }
   }
 
@@ -1859,5 +1859,3 @@ class UserService {
     }
   }
 }
-
-
