@@ -9,11 +9,14 @@ import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/Search/search_in_community.dart';
 import 'package:reddit/Services/notifications_service.dart';
+import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/inbox_options.dart';
 import 'package:reddit/widgets/Search/search_bar.dart';
 import 'package:reddit/widgets/chat_intro.dart';
 import 'package:reddit/widgets/listing_notifications.dart';
 import 'package:reddit/widgets/messages_list.dart';
+import 'package:reddit/widgets/mobile_layout.dart';
+import 'package:reddit/widgets/responsive_layout.dart';
 
 class DesktopAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback logoTapped;
@@ -57,7 +60,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       scrolledUnderElevation: 0,
       title: !isInbox
           ? Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(right: 50.0),
@@ -106,7 +109,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                               padding: const EdgeInsets.all(5),
                               child: Container(
                                 padding:
-                                    const EdgeInsets.fromLTRB(15, 8, 15, 8 ),
+                                    const EdgeInsets.fromLTRB(15, 8, 15, 8),
                                 decoration: BoxDecoration(
                                   color: Colors.grey[400],
                                   borderRadius: BorderRadius.circular(20.0),
@@ -139,17 +142,18 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
       actions: [
         userLoggedIn
             ? Padding(
-              padding:  EdgeInsets.only(left: MediaQuery.of(context).size.width * 1/50),
-              child: IconButton(
-                onPressed: () {
-                  //Navigate to chattt
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ChatIntro(),
-                  ));
-                },
-                icon: const Icon(CupertinoIcons.chat_bubble_text),
-              ),
-            )
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * 1 / 50),
+                child: IconButton(
+                  onPressed: () {
+                    //Navigate to chattt
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ChatIntro(),
+                    ));
+                  },
+                  icon: const Icon(CupertinoIcons.chat_bubble_text),
+                ),
+              )
             : const SizedBox(),
         userLoggedIn
             ? TextButton(
@@ -173,13 +177,26 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
             ? IconButton(
                 onPressed: () {
                   //Navigate to Inbox
+
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => Scaffold(
-                      appBar: AppBar(
-                          title: DesktopAppBar(
-                        logoTapped: () {},
+                      appBar: DesktopAppBar(
                         isInbox: true,
-                      )),
+                        logoTapped: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const ResponsiveLayout(
+                                mobileLayout: MobileLayout(
+                                  mobilePageMode: 0,
+                                ),
+                                desktopLayout: DesktopHomePage(
+                                  indexOfPage: 0,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                       body: DefaultTabController(
                         length: 2,
                         child: Column(
