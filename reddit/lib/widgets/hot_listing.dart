@@ -52,7 +52,7 @@ class HotListingBuild extends State<HotListing> {
     }
       isloading=false;
     // Remove objects from list1 if their IDs match any in list2
-    post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
+    // post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
 post.removeWhere((item1) => item1.isRemoved==true);
     setState(() {
       posts.addAll(post);
@@ -62,7 +62,7 @@ post.removeWhere((item1) => item1.isRemoved==true);
   @override
 
   void HandleScrolling() {
-    if (controller.position.maxScrollExtent*0.9  < controller.offset) {
+    if (controller.position.maxScrollExtent  == controller.offset) {
       // Load more data here (e.g., fetch additional items from an API)
       // Add the new items to your existing list
       // Example: myList.addAll(newItems);
@@ -82,13 +82,7 @@ fetchdata();
   }
   @override
   Widget build(BuildContext context) {
-    return   Consumer<RefreshHome>(
-        builder: (context,refresh, child) { 
-            if (refresh.shouldRefresh) {
-          posts=[];
-          fetchdata();
-          refresh.resetRefresh(); //Reset the edit flag after fetching data
-        } 
+    
     
     
   return  FutureBuilder<void>(
@@ -194,6 +188,6 @@ fetchdata();
         }
         }
       },
-    );});
+    );
   }
 }
