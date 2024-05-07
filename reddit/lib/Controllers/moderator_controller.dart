@@ -28,9 +28,7 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
-  List<QueuesPostItem> removedPosts = [];
-  List<QueuesPostItem> reportedPosts = [];
-  List<QueuesPostItem> unmoderatedPosts = [];
+  List<QueuesPostItem> queuePosts = [];
 
   CommunityItem? communityItem;
 
@@ -96,43 +94,19 @@ class ModeratorController {
     moderators = await moderatorService.getModerators(communityName);
   }
 
-  // Future<void> getRemovedItems(
-  //     {required String communityName,
-  //     required String timeFilter,
-  //     required String postsOrComments}) async {
-  //   print('Ana fel controller fel removed');
-  //   removedPosts = await moderatorService.getRemovedItems(
-  //       communityName: communityName,
-  //       timeFilter: timeFilter,
-  //       postsOrComments: postsOrComments);
-  //   print('Mohy beyshoof el removed fel controller');
-  //   print(removedPosts);
-  // }
-
-  // Future<void> getReportedItems(
-  //     {required String communityName,
-  //     required String timeFilter,
-  //     required String postsOrComments}) async {
-  //   print('Ana fel controller fel reported');
-  //   reportedPosts = await moderatorService.getReportedItems(
-  //       communityName: communityName,
-  //       timeFilter: timeFilter,
-  //       postsOrComments: postsOrComments);
-  //   print('Mohy beyshoof el reported fel controller');
-  //   print(reportedPosts);
-  // }
-
-  Future<void> getUnmoderatedItems(
+  Future<void> getQueueItems(
       {required String communityName,
       required String timeFilter,
-      required String postsOrComments}) async {
+      required String postsOrComments,
+      required String queueType}) async {
     print('Ana fel controller fel unmoderated');
-    await moderatorService.getUnmoderatedItems(
+    queuePosts = await moderatorService.getQueueItems(
         communityName: communityName,
         timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
+        postsOrComments: postsOrComments,
+        queueType: queueType);
     print('Mohy beyshoof el unmoderated fel controller');
-    print(unmoderatedPosts);
+    print(queuePosts);
   }
 }
 

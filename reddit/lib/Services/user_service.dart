@@ -945,6 +945,7 @@ class UserService {
         },
       );
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
+      //print(response.body);
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }
