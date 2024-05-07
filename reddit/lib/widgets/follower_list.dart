@@ -21,6 +21,7 @@ class FollowerListState extends State<FollowerList> {
   List<FollowersFollowingItem>? followers;
   List<FollowersFollowingItem>? following;
   bool _firstTime = true;
+  bool _isSearch = false;
 
   Widget _buildLoading() {
     return Container(
@@ -37,10 +38,11 @@ class FollowerListState extends State<FollowerList> {
 
   Widget _buildFollowersList(
       FollowerFollowingController followerFollowingController) {
+    _isSearch = false;
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          onChanged: searchfollowers,
+          onSubmitted: searchfollowers,
           controller: followerNameController,
           decoration: const InputDecoration(
             prefixIcon: Icon(
@@ -138,28 +140,28 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void searchfollowers(String text) {
-    for (var follower in userController.followers!) {
-      print(follower.username);
-    }
     setState(() {
-      followers = userController.followers!.where((follower) {
-        final name = follower.username.toString().toLowerCase();
-        return name.contains(followerNameController.text.toLowerCase());
-      }).toList();
-      _firstTime = false;
+      _isSearch = true;
     });
   }
 
   Future<void> loadingData() async {
-    if (_firstTime) {
-      followers =
-          await userController.getFollowers(userController.userAbout!.username);
-      following =
-          await userController.getFollowing(userController.userAbout!.username);
+    if (!_isSearch) {
+      if (_firstTime) {
+        followers = await userController
+            .getFollowers(userController.userAbout!.username);
+        following = await userController
+            .getFollowing(userController.userAbout!.username);
+      } else {
+        followers = userController.followers;
+        following = userController.following;
+        _firstTime = true;
+      }
     } else {
-      followers = userController.followers;
-      following = userController.following;
-      _firstTime = true;
+      followers = userController.followers!.where((follower) {
+        final name = follower.username.toString().toLowerCase();
+        return name.contains(followerNameController.text.toLowerCase());
+      }).toList();
     }
   }
 
