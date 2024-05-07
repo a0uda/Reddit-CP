@@ -93,24 +93,22 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              followersCount > 0
-                                  ? IconButton(
-                                      padding: const EdgeInsets.only(top: 26),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const FollowerList(),
-                                          ),
-                                        );
-                                      },
-                                      icon: const Icon(
-                                          Icons.arrow_forward_ios_rounded),
-                                      color: Colors.white,
-                                      iconSize: 13,
-                                    )
-                                  : const SizedBox.shrink(),
+                              IconButton(
+                                padding: const EdgeInsets.only(top: 26),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const FollowerList(),
+                                    ),
+                                  );
+                                },
+                                icon:
+                                    const Icon(Icons.arrow_forward_ios_rounded),
+                                color: Colors.white,
+                                iconSize: 13,
+                              ),
                             ],
                           );
                         }

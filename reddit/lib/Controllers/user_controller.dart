@@ -24,8 +24,8 @@ class UserController {
   NotificationsSettingsItem? notificationsSettings;
   List<CommunityBackend>? userCommunities;
   List<CommunityBackend>? userModeratedCommunities;
-  List<FollowersFollowingItem>? followers;
-  List<FollowersFollowingItem>? following;
+  List<FollowersFollowingItem>? followers = [];
+  List<FollowersFollowingItem>? following = [];
   int unreadNotificationsCount = 0;
   int unreadMessagesCount = 0;
 
