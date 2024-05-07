@@ -42,8 +42,8 @@ class _PeopleListState extends State<PeopleList> {
     temp = await searchService.getSearchUsers(searchFor, page);
     foundUsers.addAll(temp);
     if (followerfollowingcontroller.following.isEmpty) {
-      following = await followerfollowingcontroller
-          .getFollowing(userController.userAbout!.username);
+      following =
+          await userController.getFollowing(userController.userAbout!.username);
     } else {
       following = followerfollowingcontroller.following!;
     }
