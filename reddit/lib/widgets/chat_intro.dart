@@ -3,19 +3,16 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/widgets/add_chat.dart';
+import 'package:reddit/widgets/chat_search.dart';
 import 'package:reddit/widgets/chat_tile.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
-
 
 class ChatIntro extends StatefulWidget {
   @override
   _ChatIntroState createState() => _ChatIntroState();
 }
 
-
-
 class _ChatIntroState extends State<ChatIntro> {
-  
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   late Io.Socket socket;
   List<ChatUsers> chatUsers = [];
@@ -27,36 +24,31 @@ class _ChatIntroState extends State<ChatIntro> {
     SocketInit();
   }
 
- Future<void> SocketInit() async {
-   socket=chatService.getSocket();
-   
+  Future<void> SocketInit() async {
+    socket = chatService.getSocket();
+
     socket.on("newMessage", ((data) {
-  
       print(data);
 
-     setState(() {
-      _dataFuture=fetchChats();
-       
-     });
-
+      setState(() {
+        _dataFuture = fetchChats();
+      });
     }));
   }
 
   void update() {
     setState(() {});
   }
- @override
+
+  @override
   void dispose() {
     super.dispose();
     socket.clearListeners();
-  
-
-
   }
+
   @override
   void initState() {
     super.initState();
-
 
     _dataFuture = fetchChats();
   }
@@ -94,26 +86,27 @@ class _ChatIntroState extends State<ChatIntro> {
                       style:
                           TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
-                  onPressed: () {
-                     Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  AddChat(), 
-            ),
-          );
-    
-                  },
-                  icon: Icon(Icons.add, color: Colors.white),
-                  label: Text(
-                    'New',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                   
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                      onPressed: () {
+                        //            Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         AddChat(),
+                        //   ),
+                        // );
+                        showSearch(
+                            context: context, delegate: ChatSearch());
+
+                      },
+                      icon: Icon(Icons.add, color: Colors.white),
+                      label: Text(
+                        'New',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),

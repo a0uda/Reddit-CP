@@ -243,10 +243,13 @@ class UserService {
       print('in get followers');
       print(response.statusCode);
       print(response.body);
-      List<dynamic> body = jsonDecode(response.body)['content'];
+      List<dynamic>? body = jsonDecode(response.body)['content'];
       print(body);
-      return Future.wait(body
-          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
+      if (body != null)
+        return Future.wait(body.map(
+            (dynamic item) async => FollowersFollowingItem.fromJson(item)));
+      else
+        return [];
     }
   }
 
@@ -309,11 +312,14 @@ class UserService {
       );
       print("in get following");
       print(response.body);
-      List<dynamic> body = jsonDecode(response.body)['content'];
-      List<FollowersFollowingItem> following = await Future.wait(body
-          .map((dynamic item) async => FollowersFollowingItem.fromJson(item)));
-      print(following);
-      return following;
+      List<dynamic>? body = jsonDecode(response.body)['content'];
+      if (body != null) {
+        List<FollowersFollowingItem> following = await Future.wait(body.map(
+            (dynamic item) async => FollowersFollowingItem.fromJson(item)));
+        return following;
+      } else {
+        return [];
+      }
     }
   }
 

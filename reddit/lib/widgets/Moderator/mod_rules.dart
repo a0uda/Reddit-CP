@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/create_rule_page.dart';
 import 'package:reddit/widgets/Moderator/mod_rules_list.dart';
-
 
 class ModRules extends StatefulWidget {
   const ModRules({super.key});
@@ -13,8 +14,8 @@ class ModRules extends StatefulWidget {
 }
 
 class _ModRulesState extends State<ModRules> {
-  int rulesCount = rules.length;
   bool isEditMode = false;
+    final moderatorController = GetIt.instance.get<ModeratorController>();
 
   @override
   void initState() {
@@ -37,23 +38,19 @@ class _ModRulesState extends State<ModRules> {
               isEditMode ? "EditRules" : "Rules",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            isEditMode
-                ? const SizedBox()
-                : Text(
-                    "$rulesCount/15 rules",
-                    style: const TextStyle(color: Colors.grey, fontSize: 10),
-                  )
           ],
         ),
         actions: [
           !isEditMode
-              ? IconButton(onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const CreateRulePage(),
-                    ),
-                  );
-              }, icon: const Icon(Icons.add))
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CreateRulePage(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add))
               : const SizedBox(),
           Padding(
             padding: const EdgeInsets.only(right: 8.0),

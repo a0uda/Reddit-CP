@@ -89,6 +89,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       } else {
                         showSearch(
                             context: context, delegate: SearchBarClass());
+                            
                       }
                     },
                     style: ElevatedButton.styleFrom(
