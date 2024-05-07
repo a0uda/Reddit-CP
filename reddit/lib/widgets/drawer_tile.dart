@@ -85,6 +85,7 @@ class _DrawerTileState extends State<DrawerTile> {
                   duration: const Duration(seconds: 0),
                   curve: Curves.bounceInOut,
                   child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: widget.lists.length,
                     itemBuilder: (BuildContext context, int index) {

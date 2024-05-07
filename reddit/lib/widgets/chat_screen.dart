@@ -136,12 +136,14 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     FutureBuilder<void>(
                         future: _dataFuture,
+
                         builder: (BuildContext context,
                             AsyncSnapshot<void> snapshot) {
                           return ListView.builder(
                             reverse: true,
                             itemCount: messages.length,
                             shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.only(top: 10, bottom: 10),
                             itemBuilder: (context, index) {
                               if (index!=messages.length-1)
