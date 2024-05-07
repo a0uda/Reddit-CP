@@ -6,7 +6,17 @@ import 'package:reddit/Services/post_service.dart';
 
 
 class Chat extends ChangeNotifier {
+    bool refresh=false;
+  bool get shouldRefresh => refresh;
+ set shouldRefresh(bool value)
+{
+refresh=value;
+}  
+
   final chatService = GetIt.instance.get<ChatsService>();
+    void resetRefresh() {
+    refresh=false;
+  }
 
 Future< int> Sendmessage(String username,String message) async
 {

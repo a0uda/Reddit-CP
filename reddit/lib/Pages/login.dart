@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Pages/sign_up.dart';
 import 'package:reddit/Pages/forgot_password.dart';
 import 'package:reddit/Pages/forgot_username.dart';
+import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -46,12 +47,16 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> validateForm(BuildContext context) async {
     final userService = GetIt.instance.get<UserService>();
+    final chatService = GetIt.instance.get<ChatsService>();
+
     int validationResult = await userService.userLogin(
         usernameController.text, passwordController.text);
 
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
+          final userService = GetIt.instance.get<UserService>();
+       await chatService.SocketInit();
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(

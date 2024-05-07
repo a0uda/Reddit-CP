@@ -4,6 +4,8 @@ import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/widgets/add_chat.dart';
 import 'package:reddit/widgets/chat_tile.dart';
+import 'package:socket_io_client/socket_io_client.dart' as Io;
+
 
 class ChatIntro extends StatefulWidget {
   @override
@@ -13,18 +15,49 @@ class ChatIntro extends StatefulWidget {
 
 
 class _ChatIntroState extends State<ChatIntro> {
+  
   ChatsService chatService = GetIt.instance.get<ChatsService>();
+  late Io.Socket socket;
   List<ChatUsers> chatUsers = [];
   late Future<void> _dataFuture;
 
   Future<void> fetchChats() async {
     chatUsers = await chatService.getChats();
     print(chatUsers);
+    SocketInit();
   }
 
+ Future<void> SocketInit() async {
+   socket=chatService.getSocket();
+   
+    socket.on("newMessage", ((data) {
+  
+      print(data);
+
+     setState(() {
+      _dataFuture=fetchChats();
+       
+     });
+
+    }));
+  }
+
+  void update() {
+    setState(() {});
+  }
+ @override
+  void dispose() {
+    super.dispose();
+    socket.clearListeners();
+  
+
+
+  }
   @override
   void initState() {
     super.initState();
+
+
     _dataFuture = fetchChats();
   }
 
@@ -41,6 +74,7 @@ class _ChatIntroState extends State<ChatIntro> {
             (!ismobile)
                 ? IconButton(
                     onPressed: () {
+                      socket.clearListeners();
                       Navigator.pop(context);
                     },
                     icon: Icon(

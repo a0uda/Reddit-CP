@@ -2,26 +2,33 @@
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:intl/intl.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Services/user_service.dart';
+  final userService = GetIt.instance.get<UserService>();
+
 class ChatUsers {
   String name;
   String messageText;
   String imageURL;
   String time;
+
   ChatUsers(
       {required this.name,
       required this.messageText,
+
       required this.imageURL,
       required this.time});
 
 
+
       factory ChatUsers.fromJson(Map<String, dynamic> json) {
-   
-    
+
     return ChatUsers(
       name: json['otherUsername'],
       messageText: json['lastMessageText'],
       time: json['lastMessageTimestamp'],
       imageURL:json['otherProfilePicture'],
+     
 
         ///todo
        

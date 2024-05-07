@@ -44,15 +44,21 @@ class _ConversationListState extends State<ConversationList> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-          Navigator.push(
+      onTap: ()async {
+           final String result=  await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) =>
-                  ChatPage(name:widget.name,image: widget.imageUrl,), // pass the post ID here
+                  ChatPage(name: widget.name, image: widget.imageUrl,), 
             ),
+            
+
           );
-        
+          setState(() {
+            widget.messageText=result;
+    
+            
+          });
       },
       child: Container(
         padding: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
