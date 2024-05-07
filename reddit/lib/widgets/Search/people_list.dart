@@ -8,10 +8,12 @@ import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/best_listing.dart';
+import 'package:reddit/widgets/chat_screen.dart';
 
 class PeopleList extends StatefulWidget {
   final String searchFor;
-  const PeopleList({super.key, required this.searchFor});
+  final bool inChat;
+  const PeopleList({super.key, required this.searchFor, this.inChat = false});
 
   @override
   State<PeopleList> createState() => _PeopleListState();
@@ -88,15 +90,27 @@ class _PeopleListState extends State<PeopleList> {
             children: [
               ListTile(
                 onTap: () async {
-                  UserAbout otherUserData =
-                      (await (userService.getUserAbout(item["username"])))!;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(otherUserData, 'other'),
-                    ),
-                  );
+                  if (widget.inChat) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          name: item["username"],
+                          image: item["profile_picture"],
+                        ),
+                      ),
+                    );
+                  } else {
+                    UserAbout otherUserData =
+                        (await (userService.getUserAbout(item["username"])))!;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProfileScreen(otherUserData, 'other'),
+                      ),
+                    );
+                  }
                 },
                 tileColor: Colors.white,
                 leading: (item["profile_picture"] != null &&
@@ -146,7 +160,8 @@ class _PeopleListState extends State<PeopleList> {
                     )
                   ],
                 ),
-                trailing: item["profile_settings"]["allow_followers"]
+                trailing: (item["profile_settings"]["allow_followers"] &&
+                        !widget.inChat)
                     ? StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                         return ElevatedButton(

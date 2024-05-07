@@ -28,9 +28,7 @@ class ModeratorController {
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
   String bannerPictureURL = "images/reddit-banner-image.jpg";
-  List<QueuesPostItem> removedPosts = [];
-  List<QueuesPostItem> reportedPosts = [];
-  List<QueuesPostItem> unmoderatedPosts = [];
+  List<QueuesPostItem> queuePosts = [];
 
   CommunityItem? communityItem;
 
@@ -89,49 +87,26 @@ class ModeratorController {
   }
 
 //Rawan: add moderator
-  Future<void> addAsMod(
-      String username, String profilePicture, String communityName, String msgId) async {
-    await moderatorService.addModUser(username, profilePicture, communityName, msgId);
+  Future<void> addAsMod(String username, String profilePicture,
+      String communityName, String msgId) async {
+    await moderatorService.addModUser(
+        username, profilePicture, communityName, msgId);
     moderators = await moderatorService.getModerators(communityName);
   }
 
-  // Future<void> getRemovedItems(
-  //     {required String communityName,
-  //     required String timeFilter,
-  //     required String postsOrComments}) async {
-  //   print('Ana fel controller fel removed');
-  //   removedPosts = await moderatorService.getRemovedItems(
-  //       communityName: communityName,
-  //       timeFilter: timeFilter,
-  //       postsOrComments: postsOrComments);
-  //   print('Mohy beyshoof el removed fel controller');
-  //   print(removedPosts);
-  // }
-
-  // Future<void> getReportedItems(
-  //     {required String communityName,
-  //     required String timeFilter,
-  //     required String postsOrComments}) async {
-  //   print('Ana fel controller fel reported');
-  //   reportedPosts = await moderatorService.getReportedItems(
-  //       communityName: communityName,
-  //       timeFilter: timeFilter,
-  //       postsOrComments: postsOrComments);
-  //   print('Mohy beyshoof el reported fel controller');
-  //   print(reportedPosts);
-  // }
-
-  Future<void> getUnmoderatedItems(
+  Future<void> getQueueItems(
       {required String communityName,
       required String timeFilter,
-      required String postsOrComments}) async {
+      required String postsOrComments,
+      required String queueType}) async {
     print('Ana fel controller fel unmoderated');
-     await moderatorService.getUnmoderatedItems(
+    queuePosts = await moderatorService.getQueueItems(
         communityName: communityName,
         timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
+        postsOrComments: postsOrComments,
+        queueType: queueType);
     print('Mohy beyshoof el unmoderated fel controller');
-    print(unmoderatedPosts);
+    print(queuePosts);
   }
 }
 
@@ -251,6 +226,28 @@ class ScheduledProvider extends ChangeNotifier {
   Future<void> getScheduled(String communityName) async {
     moderatorController.scheduled =
         await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> EditScheduledPost(
+      String communityName, String post_id, String description) async {
+    await moderatorService.EditScheduledPost(
+        postId: post_id,
+        description: description,
+        communityName: communityName);
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> submitScheduledPost(
+      String communityName, String post_id) async {
+    await moderatorService.submitScheduledPost(
+        postId: post_id,
+        communityName: communityName);
+    moderatorController.scheduled =
+        await moderatorService.getScheduled(communityName);
+    notifyListeners();
   }
 }
 
@@ -305,8 +302,6 @@ class RulesProvider extends ChangeNotifier {
         reportReason: reportReason ?? "",
         ruleDescription: ruleDescription ?? "");
     moderatorController.rules = await moderatorService.getRules(communityName);
-    print("badrrr");
-    print(moderatorController.rules);
     notifyListeners();
   }
 

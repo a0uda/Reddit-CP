@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/chat_controller.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/post_controller.dart';
@@ -148,6 +149,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => GetMessagesController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => Chat(),
+      )
     ],
     child: const MyApp(),
   ));

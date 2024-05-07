@@ -2,7 +2,6 @@ import 'package:reddit/Models/image_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Models/comments.dart';
-import 'dart:convert';
 
 class PostItem {
   final String id;

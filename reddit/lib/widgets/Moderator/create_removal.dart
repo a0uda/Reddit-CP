@@ -58,12 +58,6 @@ class _CreateRemovalState extends State<CreateRemoval> {
                           removalReason: messageController.text,
                           title: titleController.text,
                         );
-                        print("Badr");
-                        print({
-                          "communityName": moderatorController.communityName,
-                          "removalReason": messageController.text,
-                          "title": titleController.text,
-                        });
                         Navigator.of(context).pop();
                       }
                     : null,

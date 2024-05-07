@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/removal.dart';
@@ -6,6 +7,7 @@ import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
+import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,12 +33,14 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
-      print("GET SCHEDULED");
-      print(response.body);
+      // print("GET SCHEDULED");
+      // print(response.body);
       final dynamic decodedData = json.decode(response.body);
-      final List<Map<String, dynamic>> scheduled =
+      final List<Map<String, dynamic>> recurring =
           List<Map<String, dynamic>>.from(decodedData['recurring_posts']);
-      return scheduled;
+      final List<Map<String, dynamic>> scheduled =
+          List<Map<String, dynamic>>.from(decodedData['non_recurring_posts']);
+      return scheduled + recurring;
     }
   }
 
@@ -50,7 +54,9 @@ class ModeratorMockService {
     required bool spoilerFlag,
     required bool nsfwFlag,
     required String repetionOp,
-    required Map<String, dynamic> submitTime,
+    required String date,
+    required String hour,
+    required String minute,
   }) async {
     if (testing) {
       // List<RulesItem> foundRules = communities
@@ -70,28 +76,104 @@ class ModeratorMockService {
           'Authorization': token!,
         },
         body: json.encode({
-          {
-            "repetition_option": repetionOp,
-            "submit_time": submitTime,
-            "postInput": {
-              "title": title,
-              "description": description,
-              "post_in_community_flag": true,
-              "type": type,
-              "link_url": linkUrl,
-              "images": [],
-              "videos": [],
-              "polls": poll,
-              "community_name": communityName,
-              "spoiler_flag": spoilerFlag,
-              "nsfw_flag": nsfwFlag,
-            }
+          "repetition_option": repetionOp,
+          "submit_time": {
+            "date": date,
+            "hours": hour,
+            "minutes": minute,
+          },
+          "postInput": {
+            "title": title,
+            "description": description,
+            "post_in_community_flag": true,
+            "type": type,
+            "link_url": linkUrl,
+            "images": [],
+            "videos": [],
+            "polls": poll,
+            "community_name": communityName,
+            "spoiler_flag": spoilerFlag,
+            "nsfw_flag": nsfwFlag,
           }
         }),
       );
       print("POST SCHEDULED");
+      print(json.decode(response.body));
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
+    }
+  }
+
+  Future<int> EditScheduledPost({
+    required String postId,
+    required String description,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/edit-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+          "new_description": description,
+        }),
+      );
+      print("POST edited");
+      print(postId);
+      print(description);
       print(response.body);
       return 201;
+    }
+  }
+
+  Future<int> submitScheduledPost({
+    required String postId,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/submit-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+        }),
+      );
+      print("POST submited");
+      print(response.body);
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
     }
   }
 
@@ -148,8 +230,6 @@ class ModeratorMockService {
         },
       );
       final List<dynamic> decodedData = json.decode(response.body);
-      print("yarab");
-      print(response.body);
       final List<RemovalItem> removal = decodedData
           .map((rem) => RemovalItem(
                 id: rem["_id"],
@@ -722,11 +802,11 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
+      print("fouda");
+      print(response.body);
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
-      print("badr");
-      print(response.body);
       return moderators.reversed.toList(); //badrrr
     }
   }
@@ -780,8 +860,8 @@ class ModeratorMockService {
   }
 
 //Rawan: add moderator to the community
-  Future<void> addModUser(
-      String username, String profilePicture, String communityName, String msgId) async {
+  Future<void> addModUser(String username, String profilePicture,
+      String communityName, String msgId) async {
     if (testing) {
       communities
           .firstWhere((community) => community.communityName == communityName)
@@ -810,7 +890,7 @@ class ModeratorMockService {
       );
       print('in addModUser');
       print(response.body);
-     }
+    }
   }
 
   Future<void> removeAsMod(String username, String communityName) async {
@@ -1162,6 +1242,8 @@ class ModeratorMockService {
         },
       ),
     );
+    print("JOIN");
+    print(response.body);
   }
 
   Future<void> leaveCommunity({required String communityName}) async {
@@ -1182,234 +1264,78 @@ class ModeratorMockService {
     );
   }
 
-  // Future<List<QueuesPostItem>> getRemovedItems(
-  //     {required String communityName,
-  //     required String timeFilter,
-  //     required String postsOrComments}) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? token = prefs.getString('token');
-  //   final url = Uri.parse(
-  //       'https://redditech.me/backend/communities/about/removed-or-spammed/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
-
-  //   final response = await http.get(
-  //     url,
-  //     headers: {'Content-Type': 'application/json', 'Authorization': token!},
-  //   );
-  //   final List<Map<String, dynamic>> decodedSettings =
-  //       json.decode(response.body);
-
-  //   final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
-  //     final List<QueuePostImage> images =
-  //         (post["images"] as List<dynamic>).map((image) {
-  //       return QueuePostImage(
-  //         imagePath: image["path"],
-  //         imageCaption: image["caption"],
-  //         imageLink: image["link"],
-  //       );
-  //     }).toList();
-  //     return QueuesPostItem(
-  //       queuePostImage: images,
-  //       moderatorDetails: ModeratorDetails(
-  //           approvedFlag: post["moderator_details"]["approved_flag"],
-  //           approvedDate: post["moderator_details"]["approved_date"],
-  //           removedFlag: post["moderator_details"]["removed_flag"],
-  //           removedBy: post["moderator_details"]["removed_by"],
-  //           removedDate: post["moderator_details"]["removed_date"],
-  //           removedRemovalReason: post["moderator_details"]
-  //               ["removed_removal_reason"],
-  //           spammedFlag: post["moderator_details"]["spammed_flag"],
-  //           spammedBy: post["moderator_details"]["spammed_by"],
-  //           spammedType: post["moderator_details"]["spammed_type"],
-  //           spammedRemovalReason: post["moderator_details"]
-  //               ["spammed_removal_reason"],
-  //           reportedFlag: post["moderator_details"]["reported_flag"],
-  //           reportedBy: post["moderator_details"]["reported_by"],
-  //           reportedType: post["moderator_details"]["reported_type"]),
-  //       postTitle: post["title"],
-  //       postDescription: post["description"],
-  //       createdAt: post["created_at"],
-  //       editedAt: post["edited_at"],
-  //       deletedAt: post["deleted_at"],
-  //       isDeleted: post["deleted"],
-  //       username: post["username"],
-  //       communityName: post["community_name"],
-  //       nsfwFlag: post["nsfw_flag"],
-  //       spoilerFlag: post["spoiler_flag"],
-  //     );
-  //   }).toList();
-  //   print(queuesPostItem);
-  //   return queuesPostItem;
-  // }
-
-  // Future<List<QueuesPostItem>> getReportedItems(
-  //     {required String communityName,
-  //     required timeFilter,
-  //     required postsOrComments}) async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? token = prefs.getString('token');
-  //   final url = Uri.parse(
-  //       'https://redditech.me/backend/communities/about/reported/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
-
-  //   final response = await http.get(
-  //     url,
-  //     headers: {'Content-Type': 'application/json', 'Authorization': token!},
-  //   );
-  //   final List<Map<String, dynamic>> decodedSettings =
-  //       json.decode(response.body);
-  //   final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
-  //     final List<QueuePostImage> images =
-  //         (post["images"] as List<dynamic>).map((image) {
-  //       return QueuePostImage(
-  //         imagePath: image["path"],
-  //         imageCaption: image["caption"],
-  //         imageLink: image["link"],
-  //       );
-  //     }).toList();
-  //     return QueuesPostItem(
-  //       queuePostImage: images,
-  //       moderatorDetails: ModeratorDetails(
-  //           approvedFlag: post["moderator_details"]["approved_flag"],
-  //           approvedDate: post["moderator_details"]["approved_date"],
-  //           removedFlag: post["moderator_details"]["removed_flag"],
-  //           removedBy: post["moderator_details"]["removed_by"],
-  //           removedDate: post["moderator_details"]["removed_date"],
-  //           removedRemovalReason: post["moderator_details"]
-  //               ["removed_removal_reason"],
-  //           spammedFlag: post["moderator_details"]["spammed_flag"],
-  //           spammedBy: post["moderator_details"]["spammed_by"],
-  //           spammedType: post["moderator_details"]["spammed_type"],
-  //           spammedRemovalReason: post["moderator_details"]
-  //               ["spammed_removal_reason"],
-  //           reportedFlag: post["moderator_details"]["reported_flag"],
-  //           reportedBy: post["moderator_details"]["reported_by"],
-  //           reportedType: post["moderator_details"]["reported_type"]),
-  //       postTitle: post["title"],
-  //       postDescription: post["description"],
-  //       createdAt: post["created_at"],
-  //       editedAt: post["edited_at"],
-  //       deletedAt: post["deleted_at"],
-  //       isDeleted: post["deleted"],
-  //       username: post["username"],
-  //       communityName: post["community_name"],
-  //       nsfwFlag: post["nsfw_flag"],
-  //       spoilerFlag: post["spoiler_flag"],
-  //     );
-  //   }).toList();
-  //   return queuesPostItem;
-  // }
-
-  Future<List<QueuesPostItem>> getUnmoderatedItems(
+  Future<List<QueuesPostItem>> getQueueItems(
       {required String communityName,
       required String timeFilter,
-      required String postsOrComments}) async {
+      required String postsOrComments,
+      required String queueType}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
+    print('Ana hena abl mayrooh el link');
     final url = Uri.parse(
-        'https://redditech.me/backend/communities/about/unmoderated/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments');
+        'https://redditech.me/backend/communities/get-items-from-queue/$communityName?time_filter=$timeFilter&posts_or_comments=$postsOrComments&queue_type=$queueType');
     final response = await http.get(
       url,
       headers: {'Content-Type': 'application/json', 'Authorization': token!},
     );
-
+    print('Ana hena ba3d mayrooh el link');
     final List<dynamic> decodedSettings = json.decode(response.body);
+    print('Ana hena hatab3 el decoded settings');
+    print(decodedSettings);
     try {
       final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
-        print('Bashoof el runtypes');
-        print('post: $post, type: ${post.runtimeType}');
-        print(
-            'post["images"]: ${post["images"]}, type: ${post["images"].runtimeType}');
-        print(
-            'post["images"]["path"]: ${post["images"]["path"]}, type: ${post["images"]["path"].runtimeType}');
-        print(
-            'post["moderator_details"]: ${post["moderator_details"]}, type: ${post["moderator_details"].runtimeType}');
-        print(
-            'post["moderator_details"]["approved_flag"]: ${post["moderator_details"]["approved_flag"]}, type: ${post["moderator_details"]["approved_flag"].runtimeType}');
-        print(
-            'post["title"]: ${post["title"]}, type: ${post["title"].runtimeType}');
-        print(
-            'post["description"]: ${post["description"]}, type: ${post["description"].runtimeType}');
-        print(
-            'post["created_at"]: ${post["created_at"]}, type: ${post["created_at"].runtimeType}');
-        print(
-            'post["edited_at"]: ${post["edited_at"]}, type: ${post["edited_at"].runtimeType}');
-        print(
-            'post["deleted_at"]: ${post["deleted_at"]}, type: ${post["deleted_at"].runtimeType}');
-        print(
-            'post["deleted"]: ${post["deleted"]}, type: ${post["deleted"].runtimeType}');
-        print(
-            'post["username"]: ${post["username"]}, type: ${post["username"].runtimeType}');
-        print(
-            'post["community_name"]: ${post["community_name"]}, type: ${post["community_name"].runtimeType}');
-        print(
-            'post["nsfw_flag"]: ${post["nsfw_flag"]}, type: ${post["nsfw_flag"].runtimeType}');
-        print(
-            'post["spoiler_flag"]: ${post["spoiler_flag"]}, type: ${post["spoiler_flag"].runtimeType}');
-        print(
-            'post["profile_picture"]: ${post["profile_picture"]}, type: ${post["profile_picture"].runtimeType}');
-        print(
-            'post["total_views"]: ${post["total_views"]}, type: ${post["total_views"].runtimeType}');
-        print(
-            'post["upvote_rate"]: ${post["upvote_rate"]}, type: ${post["upvote_rate"].runtimeType}');
-        print(
-            'post["total_shares"]: ${post["total_shares"]}, type: ${post["total_shares"].runtimeType}');
-        print(
-            'post["comments_count"]: ${post["comments_count"]}, type: ${post["comments_count"].runtimeType}');
-        print(
-            'post["views_count"]: ${post["views_count"]}, type: ${post["views_count"].runtimeType}');
-        print(
-            'post["shares_count"]: ${post["shares_count"]}, type: ${post["shares_count"].runtimeType}');
-        print(
-            'post["upvotes_count"]: ${post["upvotes_count"]}, type: ${post["upvotes_count"].runtimeType}');
-        print(
-            'post["downvotes_count"]: ${post["downvotes_count"]}, type: ${post["downvotes_count"].runtimeType}');
-        print(
-            'post["oc_flag"]: ${post["oc_flag"]}, type: ${post["oc_flag"].runtimeType}');
-        print(
-            'post["locked_flag"]: ${post["locked_flag"]}, type: ${post["locked_flag"].runtimeType}');
-        print(
-            'post["allowreplies_flag"]: ${post["allowreplies_flag"]}, type: ${post["allowreplies_flag"].runtimeType}');
-        print(
-            'post["set_suggested_sort"]: ${post["set_suggested_sort"]}, type: ${post["set_suggested_sort"].runtimeType}');
-        print(
-            'post["scheduled_flag"]: ${post["scheduled_flag"]}, type: ${post["scheduled_flag"].runtimeType}');
-        print(
-            'post["is_reposted_flag"]: ${post["is_reposted_flag"]}, type: ${post["is_reposted_flag"].runtimeType}');
-        print('post["__v"]: ${post["__v"]}, type: ${post["__v"].runtimeType}');
-        print('bengarab el donya');
-        print('post["images"]: ${post["images"]}');
-        final List<dynamic> images = post["images"].isEmpty
-            ? []
-            : post["images"].map((image) {
+        final List<QueuePostImage> images = post["images"] != null
+            ? List<QueuePostImage>.from(post["images"].map((image) {
                 print('image type: ${image.runtimeType}');
                 return QueuePostImage(
                   imagePath: image["path"],
                   imageCaption: image["caption"],
                   imageLink: image["link"],
                 );
-              }).toList();
+              }))
+            : [];
+
+        final List<EditHistory> editHistory = post["edit_history"] != null
+            ? List<EditHistory>.from(post["edit_history"].map((item) {
+                return EditHistory(
+                  editedAt: item["moderator_details"]["edited_at"],
+                  approvedEditFlag: item["moderator_details"]
+                      ["approved_edit_flag"],
+                  removedEditFlag: item["moderator_details"]
+                      ["removed_edit_flag"],
+                );
+              }))
+            : [];
+        print('Ana batba3 el posts');
+        print(post);
         return QueuesPostItem(
           queuePostImage: images,
           moderatorDetails: ModeratorDetails(
-              approvedFlag: post["moderator_details"]["approved_flag"],
-              approvedDate: post["moderator_details"]["approved_date"],
-              removedFlag: post["moderator_details"]["removed_flag"],
-              removedBy: post["moderator_details"]["removed_by"],
-              removedDate: post["moderator_details"]["removed_date"],
-              removedRemovalReason: post["moderator_details"]
-                  ["removed_removal_reason"],
-              spammedFlag: post["moderator_details"]["spammed_flag"],
-              spammedBy: post["moderator_details"]["spammed_by"],
-              spammedType: post["moderator_details"]["spammed_type"],
-              spammedRemovalReason: post["moderator_details"]
-                  ["spammed_removal_reason"],
-              reportedFlag: post["moderator_details"]["reported_flag"],
-              reportedBy: post["moderator_details"]["reported_by"],
-              reportedType: post["moderator_details"]["reported_type"]),
+              unmoderated: Unmoderated(
+                  approvedFlag: post["moderator_details"]["unmoderated"]
+                      ["approved"]["flag"]),
+              reported: Reported(
+                flag: post["moderator_details"]["reported"]["flag"],
+                type: post["moderator_details"]["reported"]["type"] ?? "",
+                confirmed: post["moderator_details"]["reported"]["confirmed"],
+              ),
+              spammed: Spammed(
+                  flag: post["moderator_details"]["spammed"]["flag"],
+                  type: post["moderator_details"]["spammed"]["type"] ?? "",
+                  confirmed: post["moderator_details"]["spammed"]["confirmed"]),
+              removed: Removed(
+                flag: post["moderator_details"]["removed"]["flag"],
+                removedDate: post["moderator_details"]["removed"]["date"],
+                type: post["moderator_details"]["removed"]["type"] ?? "",
+                confirmed: post["moderator_details"]["removed"]["confirmed"],
+                removedBy: post["moderator_details"]["removed"]["by"],
+              ),
+              editHistory: editHistory),
           postTitle: post["title"],
           postDescription: post["description"],
           createdAt: post["created_at"],
-          editedAt: post["edited_at"],
-          deletedAt: post["deleted_at"],
+          editedAt: post["edited_at"] ?? '',
+          deletedAt: post["deleted_at"] ?? '',
           isDeleted: post["deleted"],
           username: post["username"],
           communityName: post["community_name"],
@@ -1417,8 +1343,8 @@ class ModeratorMockService {
           spoilerFlag: post["spoiler_flag"],
         );
       }).toList();
-      print('Bashoof el donya ba3d ghabay');
-      print(queuesPostItem);
+      // print('Bashoof el donya ba3d ghabay');
+      // print(queuesPostItem);
       return queuesPostItem;
     } catch (e) {
       print('Error occurred while decoding: $e');
