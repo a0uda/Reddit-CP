@@ -36,7 +36,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
             return userData.profilePicture == null ||
                     userData.profilePicture == ''
                 ? const CircleAvatar(
-                    radius: 50, 
+                    radius: 50,
                     backgroundImage: AssetImage('images/Greddit.png'),
                   )
                 : CircleAvatar(
@@ -133,12 +133,13 @@ class ProfileHeaderLeftSide extends StatelessWidget {
                 var userController = GetIt.instance.get<UserController>();
                 userData = userController.userAbout!;
               }
-              return Padding(
-                padding: EdgeInsets.only(
-                    bottom: userData.about != null && userData.about!.isNotEmpty
-                        ? 10
-                        : 0),
-                child: Flexible(
+              return Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom:
+                          userData.about != null && userData.about!.isNotEmpty
+                              ? 10
+                              : 0),
                   child: Text(
                     userData.about != null && userData.about!.isNotEmpty
                         ? '${userData.about}'

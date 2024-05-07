@@ -806,13 +806,16 @@ class UserService {
     }
   }
 
-  Future<void> markoneMessageRead(String username, String id) async {
+  Future<void> markoneMessageRead(String username, List<String> msgId) async {
     if (testing) {
       List<Messages>? userMessages = users
           .firstWhere((element) => element.userAbout.username == username)
           .usermessages;
-      userMessages?.firstWhere((element) => element.id == id).unreadFlag =
-          false;
+      userMessages?.forEach((message) {
+        if (msgId.contains(message.id)) {
+          message.unreadFlag = false;
+        }
+      });
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -825,7 +828,11 @@ class UserService {
           'Content-Type': 'application/json',
           'Authorization': token!,
         },
-        body: json.encode({"_id": id}),
+        body: json.encode({
+          "Messages": [
+            for (var id in msgId) {"_id": id}
+          ]
+        }),
       );
       print('in mark one message read');
       print(response.body);
@@ -882,30 +889,33 @@ class UserService {
   }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  Future<List<ActiveCommunities>?> getActiveCommunities(String username) async {
+  Future<ActiveCommunitiesResult> getActiveCommunities(String username) async {
     if (testing) {
-      return users
-          .firstWhere((element) => element.userAbout.username == username)
-          .activecommunities!;
+      ActiveCommunitiesResult activeCommunitiesResult = ActiveCommunitiesResult(
+        activeCommunities: users
+            .firstWhere((element) => element.userAbout.username == username)
+            .activecommunities!,
+        showActiveCommunities: users
+            .firstWhere((element) => element.userAbout.username == username)
+            .profileSettings!
+            .activeCommunity,
+      );
+      return activeCommunitiesResult;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/active-communities');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/active-communities?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
         },
       );
       print('in get active communities');
       print(response.statusCode);
-      List<dynamic> body = jsonDecode(response.body)['content'];
-      print(body);
-      return List<ActiveCommunities>.from(
-          body.map((community) => ActiveCommunities.fromJson(community)));
+      print(response.body);
+      return ActiveCommunitiesResult.fromJson(
+          jsonDecode(response.body)['content']);
     }
   }
 
@@ -1087,6 +1097,7 @@ class UserService {
       );
 
       final token = response.headers['authorization'];
+      print(token);
       print(response.body);
       if (response.statusCode == 200) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1545,9 +1556,8 @@ class UserService {
             await googleSignIn.signIn();
         final GoogleSignInAuthentication? googleSignInAuthentication =
             await googleSignInAccount?.authentication;
-
-        // The access token can be used to authenticate with your backend
-        var accessToken = googleSignInAuthentication!.accessToken;
+        String? accessToken = googleSignInAuthentication!.accessToken;
+        print(accessToken);
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
@@ -1565,15 +1575,15 @@ class UserService {
             'access_token': accessToken,
           }),
         );
-        await googleSignIn.signOut();
         print(response.body);
+        print(response.statusCode);
         if (response.statusCode == 200) {
           return true;
         } else {
           return false;
         }
       } catch (error) {
-        print(error);
+        //print(error);
         return false;
       }
     }
@@ -1618,8 +1628,6 @@ class UserService {
       }
     }
   }
-
-  // toggle disconnect from google in db
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

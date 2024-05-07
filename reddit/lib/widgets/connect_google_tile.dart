@@ -84,7 +84,7 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
               },
             );
             String password = passwordController.text;
-            // Validate the password here
+
             disconnectStatus = await userController.disconnectFromGoogle(
                 userController.userAbout!.username, password);
 
@@ -95,7 +95,7 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
                   return AlertDialog(
                     title: const Text('Error'),
                     content: const Text(
-                        "Your don't have password, Add a password to your account first please"),
+                        "Your don't have password, Add a password to your account first please."),
                     actions: <Widget>[
                       TextButton(
                         style: ButtonStyle(
