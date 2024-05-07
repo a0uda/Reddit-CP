@@ -29,6 +29,7 @@ class PostService {
     List<ImageItem>? images,
     List<VideoItem>? videos,
     PollItem? poll,
+    int days,
     String communityId,
     String communityName,
     bool ocFlag,
@@ -72,15 +73,7 @@ class PostService {
       );
     } else {
       // add post to database
-      print("images: " +
-          (images
-                  ?.map((image) => {
-                        "path": image.path,
-                        "caption": image.caption ?? "",
-                        "link": image.link
-                      })
-                  .toList())
-              .toString());
+      print("ALOOOOOOOOOOOOOO");
       final url = Uri.parse('https://redditech.me/backend/posts/new-post');
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -111,11 +104,11 @@ class PostService {
                   })
               .toList(),
           "polls": poll != null
-              ? [
-                  {"options": poll.options}
-                ]
-              : [],
-          "polls_voting_length": poll != null ? poll.votes.length : 0,
+            ? poll.options.map((option) {
+                return {"options": option};
+              }).toList()
+            : [],
+          "polls_voting_length": days,
           "community_name": communityName,
           "post_in_community_flag": postInCommunityFlag,
           "oc_flag": ocFlag,
@@ -123,15 +116,7 @@ class PostService {
           "nsfw_flag": nsfwFlag
         }),
       );
-      print("images: " +
-          (images
-                  ?.map((image) => {
-                        "path": image.path,
-                        "caption": image.caption ?? "",
-                        "link": image.link
-                      })
-                  .toList())
-              .toString());
+      print("add post response: " + response.body);
 
       print(response.body);
       if (response.statusCode == 200) {
@@ -215,7 +200,7 @@ class PostService {
     }
   }
 
-  Future<List<TrendingItem>> getTrendingPosts() async {
+  Future<List<TrendingItem?>> getTrendingPosts() async {
     if (testing) {
       return trendingPosts;
     } else {
@@ -230,12 +215,15 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-
+      print('trenddddddddddd');
+      print(response.body);
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
-      final List<TrendingItem> postsItem = jsonlist.map((jsonitem) {
-        return TrendingItem.fromJson(jsonitem);
+      final List<TrendingItem?> postsItem = jsonlist.map((jsonitem) {
+        if (jsonitem["images"].length == 0) {
+          print(jsonitem);
+          return TrendingItem.fromJson(jsonitem);
+        }
       }).toList();
-
       return postsItem;
     }
   }

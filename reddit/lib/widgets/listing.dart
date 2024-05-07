@@ -26,7 +26,7 @@ class Listing extends StatefulWidget {
 
 final postService = GetIt.instance.get<PostService>();
 
-List<TrendingItem> trends = [];
+List<TrendingItem?> trends = [];
 
   late Future<void> _dataFuture;
   bool isloading=false;
@@ -118,8 +118,8 @@ bool refresh=false;
                   itemCount: trends.length,
                   itemBuilder: (context, index) {
                     return TrendingPost(
-                      title: trends[index].title,
-                      imageUrl: trends[index].picture.path,
+                      title: trends[index]!.title,
+                      imageUrl: trends[index]!.picture.path,
                     );
                   },
                 );};}}),)

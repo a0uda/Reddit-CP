@@ -10,6 +10,7 @@ class PollView extends StatefulWidget {
   final List<String> option1UserVotes;
   final List<String> option2UserVotes;
   final String currentUser;
+  final bool isExpired;
 
   const PollView({
     super.key,
@@ -19,6 +20,7 @@ class PollView extends StatefulWidget {
     required this.option1UserVotes,
     required this.option2UserVotes,
     required this.currentUser,
+    required this.isExpired,
   });
 
   @override
@@ -76,6 +78,30 @@ class _PollViewState extends State<PollView> {
             backgroundColor: Colors.white,
             voteCastedBackgroundColor: const Color.fromARGB(255, 230, 231, 232),
             onVote: (choice) {
+              if (widget.isExpired) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Poll Results'),
+                      content: Column(
+                        children: widget.options.map((option) {
+                          return Text('${option.keys.first}: ${option.values.first}');
+                        }).toList(),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                return;
+              }
               setState(() {
                 usersWhoVoted[user] = choice;
                 widget.options[choice][widget.options[choice].keys.first] =
