@@ -61,6 +61,7 @@ class Post extends StatefulWidget {
   final String? linkUrl;
   final String? videoUrl;
   final PollItem? poll;
+  final bool? pollExpired;
   final String id;
   final String communityName;
   final bool isLocked;
@@ -80,6 +81,7 @@ class Post extends StatefulWidget {
       this.linkUrl,
       this.videoUrl,
       this.poll,
+      this.pollExpired,
       required this.communityName,
       required this.isLocked,
       required this.vote});
@@ -504,6 +506,7 @@ class PostState extends State<Post> {
                           option1UserVotes: widget.poll!.option1Votes,
                           option2UserVotes: widget.poll!.option2Votes,
                           currentUser: userController.userAbout!.username,
+                          isExpired: widget.pollExpired!,
                         ),
                       )
                   ],

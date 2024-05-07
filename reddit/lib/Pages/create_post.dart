@@ -160,7 +160,7 @@ class _CreatePostState extends State<CreatePost> {
       pollSelected = true;
       showLinkField = false;
       imageSelected = false;
-      isSaved = true;
+      isSaved = false;
       videoSelected = false;
       type = 'polls';
     });
@@ -327,7 +327,7 @@ class _CreatePostState extends State<CreatePost> {
                                         votes: [0, 0],
                                         option1Votes: [],
                                         option2Votes: [],
-                                      )
+                                        expirationDate: selectedDays)
                                     : null,
                               ),
                             }
@@ -361,8 +361,9 @@ class _CreatePostState extends State<CreatePost> {
                                           votes: [0, 0],
                                           option1Votes: [],
                                           option2Votes: [],
-                                        )
+                                          expirationDate: selectedDays)
                                       : null,
+                                  selectedDays,
                                   selectedCommunity == "Select Community"
                                       ? ''
                                       : selectedCommunity,
@@ -640,6 +641,7 @@ class _CreatePostState extends State<CreatePost> {
                                           onPressed: () {
                                             setState(() {
                                               pollSelected = false;
+                                              isSaved = false;
                                             });
                                           },
                                         ),
