@@ -7,6 +7,7 @@ import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/widgets/comment.dart';
 import 'package:reddit/widgets/post.dart';
+import 'package:reddit/widgets/repost.dart';
 
 class CommentsWidget extends StatefulWidget {
   final String postId;
@@ -55,22 +56,35 @@ class CommentsWidgetState extends State<CommentsWidget> {
                 children: [
                   SizedBox(
                     width: double.infinity,
-                    child: Post(
-                      vote: post!.vote,
-                      name: post!.username,
-                      title: post!.title,
-                      postContent: post!.description ?? '',
-                      date: post!.createdAt.toString(),
-                      likes: post!.upvotesCount - post!.downvotesCount,
-                      commentsCount: post!.commentsCount,
-                      linkUrl: post!.linkUrl,
-                      imageUrl: post!.images?[0].link,
-                      videoUrl: post!.videos?[0].link,
-                      poll: post!.poll,
-                      id: post!.id,
-                      communityName: post!.communityName,
-                      isLocked: post!.lockedFlag,
-                    ),
+                    child: post!.isReposted
+                        ? Repost(
+                            description: post!.description,
+                            id: post!.id,
+                            name: post!.username,
+                            title: post!.title,
+                            originalID: post!.originalPostID,
+                            date: post!.createdAt.toString(),
+                            likes: post!.upvotesCount - post!.downvotesCount,
+                            commentsCount: post!.commentsCount,
+                            communityName: post!.communityName,
+                            isLocked: post!.lockedFlag,
+                            vote: post!.vote)
+                        : Post(
+                            vote: post!.vote,
+                            name: post!.username,
+                            title: post!.title,
+                            postContent: post!.description ?? '',
+                            date: post!.createdAt.toString(),
+                            likes: post!.upvotesCount - post!.downvotesCount,
+                            commentsCount: post!.commentsCount,
+                            linkUrl: post!.linkUrl,
+                            imageUrl: post!.images?[0].link,
+                            videoUrl: post!.videos?[0].link,
+                            poll: post!.poll,
+                            id: post!.id,
+                            communityName: post!.communityName,
+                            isLocked: post!.lockedFlag,
+                          ),
                   ),
                   if (comments != null && comments!.isNotEmpty)
                     ListView.builder(
