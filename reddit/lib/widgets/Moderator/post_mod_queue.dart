@@ -409,34 +409,34 @@ class _PostModQueueState extends State<PostModQueue> {
             const SizedBox(
               height: 8,
             ),
-            widget.post.moderatorDetails.removedRemovalReason != ""
-                ? Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      color: Colors.amber[100],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0),
-                          child: Icon(
-                            CupertinoIcons.flag,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4.0),
-                          child: Text(
-                            " ${widget.post.moderatorDetails.removedRemovalReason}",
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox(),
+            // widget.post.moderatorDetails.removedRemovalReason != ""
+            //     ? Container(
+            //         padding: const EdgeInsets.all(4),
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(3),
+            //           color: Colors.amber[100],
+            //         ),
+            //         child: Row(
+            //           mainAxisSize: MainAxisSize.min,
+            //           children: [
+            //             Padding(
+            //               padding: const EdgeInsets.only(left: 4.0),
+            //               child: Icon(
+            //                 CupertinoIcons.flag,
+            //                 color: Colors.grey[700],
+            //               ),
+            //             ),
+            //             Padding(
+            //               padding: const EdgeInsets.only(right: 4.0),
+            //               child: Text(
+            //                 " ${widget.post.moderatorDetails.removedRemovalReason}",
+            //                 style: TextStyle(color: Colors.grey[700]),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       )
+            //     : const SizedBox(),
             const SizedBox(
               height: 8,
             ),

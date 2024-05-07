@@ -14,8 +14,8 @@ class ModQueues extends StatefulWidget {
 class _ModQueuesState extends State<ModQueues> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
-  String needReviewTitle = 'Unmoderated';
-  String postsAndCommentsTitle = 'Posts and Comments';
+  String needReviewTitle = 'unmoderated';
+  String postsAndCommentsTitle = 'posts and comments';
   String newestFirstTitle = 'Newest First';
 
   Color greyColor = const Color.fromARGB(255, 247, 247, 247);
@@ -24,34 +24,24 @@ class _ModQueuesState extends State<ModQueues> {
   bool isRemovedFetched = false;
   bool isUnmoderatedFetched = false;
 
-  Future<void> fetchRemovedPosts(
-      String timeFilter, String postsOrComments) async {
-    // await moderatorController.getRemovedItems(
-    //     communityName: moderatorController.communityName,
-    //     timeFilter: timeFilter,
-    //     postsOrComments: postsOrComments);
-  }
-
-  Future<void> fetchReportedPosts(
-      String timeFilter, String postsOrComments) async {
-    // await moderatorController.getReportedItems(
-    //     communityName: moderatorController.communityName,
-    //     timeFilter: timeFilter,
-    //     postsOrComments: postsOrComments);
-  }
-
-  Future<void> fetchUnmoderatedPosts(
-      String timeFilter, String postsOrComments) async {
+  Future<void> fetchQueuePosts(
+      {required String timeFilter,
+      required String postsOrComments,
+      required String queueType}) async {
     print('Ana gowa el fetch function');
-    print(timeFilter);
-    print(postsOrComments);
-    await moderatorController.getUnmoderatedItems(
+    print(needReviewTitle);
+    print(postsAndCommentsTitle);
+    print(newestFirstTitle);
+    await moderatorController.getQueueItems(
         communityName: moderatorController.communityName,
         timeFilter: timeFilter,
-        postsOrComments: postsOrComments);
+        postsOrComments: postsOrComments,
+        queueType: queueType);
 
-    List<Future<void>> futures =
-        moderatorController.unmoderatedPosts.map((post) => post.getProfilePicture(post.username, moderatorController.communityName)).toList();
+    List<Future<void>> futures = moderatorController.queuePosts
+        .map((post) => post.getProfilePicture(
+            post.username, moderatorController.communityName))
+        .toList();
     await Future.wait(futures);
   }
 
@@ -68,8 +58,8 @@ class _ModQueuesState extends State<ModQueues> {
     setState(() {
       postsAndCommentsTitle = text;
     });
-    print('mohy betest 2');
-    print(postsAndCommentsTitle);
+    // print('mohy betest 2');
+    // print(postsAndCommentsTitle);
   }
 
   void changeNewestFirstText(String text) {
@@ -120,10 +110,14 @@ class _ModQueuesState extends State<ModQueues> {
                   changeNewestFirstText: changeNewestFirstText)),
           Expanded(
             flex: 8,
-            child: needReviewTitle == "Unmoderated"
+            child: needReviewTitle == "unmoderated"
                 ? FutureBuilder(
-                    future: fetchUnmoderatedPosts(
-                        newestFirstTitle, postsAndCommentsTitle),
+                    future: fetchQueuePosts(
+
+                      timeFilter: newestFirstTitle,
+                      postsOrComments: postsAndCommentsTitle,
+                      queueType: needReviewTitle,
+                    ),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(
@@ -133,13 +127,13 @@ class _ModQueuesState extends State<ModQueues> {
                         );
                       } else {
                         print('Mohy beyshoof el unmoderated');
-                        print(moderatorController.unmoderatedPosts);
+                        print(moderatorController.queuePosts);
                         return ListView.builder(
                           itemCount:
-                              moderatorController.unmoderatedPosts.length,
+                              moderatorController.queuePosts.length,
                           itemBuilder: (context, index) {
                             final item =
-                                moderatorController.unmoderatedPosts[index];
+                                moderatorController.queuePosts[index];
                             return PostModQueue(
                               post: item,
                             );
@@ -148,10 +142,13 @@ class _ModQueuesState extends State<ModQueues> {
                       }
                     },
                   )
-                : needReviewTitle == "Removed"
+                : needReviewTitle == "removed"
                     ? FutureBuilder(
-                        future: fetchRemovedPosts(
-                            newestFirstTitle, postsAndCommentsTitle),
+                        future: fetchQueuePosts(
+                          timeFilter: newestFirstTitle,
+                          postsOrComments: postsAndCommentsTitle,
+                          queueType: needReviewTitle,
+                        ),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -163,13 +160,13 @@ class _ModQueuesState extends State<ModQueues> {
                             );
                           } else {
                             print('Mohy beyshoof el removed posts');
-                            print(moderatorController.removedPosts);
+                            print(moderatorController.queuePosts);
                             return ListView.builder(
                               itemCount:
-                                  moderatorController.removedPosts.length,
+                                  moderatorController.queuePosts.length,
                               itemBuilder: (context, index) {
                                 final item =
-                                    moderatorController.removedPosts[index];
+                                    moderatorController.queuePosts[index];
                                 return PostModQueue(
                                   post: item,
                                 );
@@ -178,10 +175,13 @@ class _ModQueuesState extends State<ModQueues> {
                           }
                         },
                       )
-                    : needReviewTitle == "Reported"
+                    : needReviewTitle == "reported"
                         ? FutureBuilder(
-                            future: fetchReportedPosts(
-                                newestFirstTitle, postsAndCommentsTitle),
+                            future: fetchQueuePosts(
+                              timeFilter: newestFirstTitle,
+                              postsOrComments: postsAndCommentsTitle,
+                              queueType: needReviewTitle,
+                            ),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -193,13 +193,13 @@ class _ModQueuesState extends State<ModQueues> {
                                 );
                               } else {
                                 print('Mohy beyshoof el reported');
-                                print(moderatorController.reportedPosts);
+                                print(moderatorController.queuePosts);
                                 return ListView.builder(
                                   itemCount:
-                                      moderatorController.reportedPosts.length,
+                                      moderatorController.queuePosts.length,
                                   itemBuilder: (context, index) {
                                     final item = moderatorController
-                                        .reportedPosts[index];
+                                        .queuePosts[index];
                                     return PostModQueue(
                                       post: item,
                                     );
@@ -276,7 +276,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
-            widget.changeNeedsToReviewText(value);
+            widget.changeNeedsToReviewText('unmoderated');
           });
         },
         'bool': true
@@ -288,7 +288,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
-            widget.changeNeedsToReviewText(value);
+            widget.changeNeedsToReviewText('removed');
           });
         },
         'bool': false
@@ -300,7 +300,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               needReviewDisplay = value;
             });
-            widget.changeNeedsToReviewText(value);
+            widget.changeNeedsToReviewText('reported');
           });
         },
         'bool': false
@@ -313,7 +313,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
               needReviewDisplay = value;
             });
 
-            widget.changeNeedsToReviewText(value);
+            widget.changeNeedsToReviewText('edited');
           });
         },
         'bool': false
@@ -341,7 +341,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               postsAndCommentsDisplay = value;
             });
-            widget.changePostsAndCommentsText(value);
+            widget.changePostsAndCommentsText('posts');
           });
         },
         'bool': false
@@ -354,7 +354,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               postsAndCommentsDisplay = value;
             });
-            widget.changePostsAndCommentsText(value);
+            widget.changePostsAndCommentsText('comments');
           });
         },
         'bool': false

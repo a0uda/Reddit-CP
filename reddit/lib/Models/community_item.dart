@@ -102,13 +102,13 @@ class QueuesPostItem {
     required this.spoilerFlag,
   });
   ModeratorDetails moderatorDetails;
-  List<dynamic>queuePostImage;
-  List<QueuePostImage>?queuePostImageObject;
+  List<dynamic> queuePostImage;
+  List<QueuePostImage>? queuePostImageObject;
   String postTitle;
   String postDescription;
   String createdAt;
-  String ?editedAt;
-  String ?deletedAt;
+  String? editedAt;
+  String? deletedAt;
   bool isDeleted;
   String username;
   String communityName;
@@ -130,33 +130,18 @@ class QueuesPostItem {
 
 class ModeratorDetails {
   ModeratorDetails({
-    required this.approvedFlag,
-    required this.approvedDate,
-    required this.removedFlag,
-    required this.removedBy,
-    required this.removedDate,
-    required this.removedRemovalReason,
-    required this.spammedFlag,
-    required this.spammedBy,
-    required this.spammedType,
-    required this.spammedRemovalReason,
-    required this.reportedFlag,
-    required this.reportedBy,
-    required this.reportedType,
+    required this.unmoderated,
+    required this.reported,
+    required this.spammed,
+    required this.removed,
+    required this.editHistory,
+
   });
-  bool approvedFlag;
-  String?approvedDate;
-  bool ?removedFlag;
-  String ?removedBy;
-  String?removedDate;
-  String removedRemovalReason;
-  bool spammedFlag;
-  String ?spammedBy;
-  String ?spammedType;
-  String ?spammedRemovalReason;
-  bool reportedFlag;
-  String ?reportedBy;
-  String ?reportedType;
+  Unmoderated unmoderated;
+  Reported reported;
+  Spammed spammed;
+  Removed removed;
+  List<EditHistory> editHistory;
 }
 
 class QueuePostImage {
@@ -168,4 +153,62 @@ class QueuePostImage {
   String imagePath;
   String imageCaption;
   String imageLink;
+}
+
+class Unmoderated {
+  Unmoderated({required this.approvedFlag});
+  bool approvedFlag;
+}
+
+class Approved {
+  Approved({required this.flag});
+  bool flag;
+}
+
+class Reported {
+  Reported({
+    required this.flag,
+    required this.type,
+    required this.confirmed,
+  });
+  bool flag;
+  String? type;
+  bool confirmed;
+}
+
+class Spammed {
+  Spammed({
+    required this.flag,
+    required this.type,
+    required this.confirmed,
+  });
+  bool flag;
+  String? type;
+  bool confirmed;
+}
+
+class Removed {
+  Removed({
+    required this.flag,
+    required this.type,
+    required this.confirmed,
+    required this.removedBy,
+    required this.removedDate,
+  });
+  bool flag;
+  String? type;
+  bool confirmed;
+  String? removedBy;
+  String? removedDate;
+}
+
+class EditHistory {
+  EditHistory({
+    required this.editedAt,
+    required this.approvedEditFlag,
+    required this.removedEditFlag,
+  });
+  String editedAt;
+  bool approvedEditFlag;
+  bool removedEditFlag;
 }
