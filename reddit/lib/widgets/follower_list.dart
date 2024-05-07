@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Controllers/user_controller.dart';
 import '../Pages/profile_screen.dart';
 import 'package:get_it/get_it.dart';
 import '../Services/user_service.dart';
@@ -37,7 +36,8 @@ class FollowerListState extends State<FollowerList> {
     );
   }
 
-  Widget _buildFollowersList() {
+  Widget _buildFollowersList(
+      FollowerFollowingController followerFollowingController) {
     _dataFetched = false;
     return Scaffold(
       appBar: AppBar(
@@ -70,40 +70,37 @@ class FollowerListState extends State<FollowerList> {
               title: Text((followers![index].displayName ??
                   followers![index].username)),
               subtitle: Text('u/${followers![index].username}'),
-              trailing: Consumer<FollowerFollowingController>(
-                builder: (context, followerFollowingController, child) {
-                  return TextButton(
-                    onPressed: () async {
-                      if (following!
-                          .where((element) =>
-                              element.username == followers![index].username)
-                          .isNotEmpty) {
-                        await followerFollowingController
-                            .unfollowUser(followers![index].username);
-                      } else {
-                        await followerFollowingController
-                            .followUser(followers![index].username);
-                      }
-                      setState(() {});
-                    },
-                    child: Text(
-                      (following!.any((element) =>
-                                  element.username ==
-                                  followers![index].username) ==
-                              true)
-                          ? 'Following'
-                          : 'Follow',
-                      style: TextStyle(
-                        color: (following!.any((element) =>
-                                    element.username ==
-                                    followers![index].username) ==
-                                true)
-                            ? const Color.fromARGB(255, 110, 110, 110)
-                            : Colors.blue,
-                      ),
-                    ),
-                  );
+              trailing: TextButton(
+                onPressed: () async {
+                  if (following!
+                      .where((element) =>
+                          element.username == followers![index].username)
+                      .isNotEmpty) {
+                    await followerFollowingController
+                        .unfollowUser(followers![index].username);
+                  } else {
+                    await followerFollowingController
+                        .followUser(followers![index].username);
+                  }
+                  setState(() {
+                    _firstTime = false;
+                  });
                 },
+                child: Text(
+                  (following!.any((element) =>
+                              element.username == followers![index].username) ==
+                          true)
+                      ? 'Following'
+                      : 'Follow',
+                  style: TextStyle(
+                    color: (following!.any((element) =>
+                                element.username ==
+                                followers![index].username) ==
+                            true)
+                        ? const Color.fromARGB(255, 110, 110, 110)
+                        : Colors.blue,
+                  ),
+                ),
               ),
               onTap: () async {
                 var username = followers![index].username.toString();
@@ -155,10 +152,16 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void loadingData() async {
-    followers =
-        await userService.getFollowers(userController.userAbout!.username);
-    following =
-        await userService.getFollowing(userController.userAbout!.username);
+    if (_firstTime) {
+      followers =
+          await userController.getFollowers(userController.userAbout!.username);
+      following =
+          await userController.getFollowing(userController.userAbout!.username);
+    } else {
+      followers = userController.followers;
+      following = userController.following;
+      _firstTime = true;
+    }
 
     if (mounted) {
       setState(() {
@@ -176,7 +179,9 @@ class FollowerListState extends State<FollowerList> {
         if (!_dataFetched) {
           loadingData();
         }
-        return _dataFetched ? _buildFollowersList() : _buildLoading();
+        return _dataFetched
+            ? _buildFollowersList(followerFollowingController)
+            : _buildLoading();
       });
     });
   }
