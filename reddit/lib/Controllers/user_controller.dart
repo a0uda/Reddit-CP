@@ -142,12 +142,20 @@ class UserController {
   }
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
+    print('getting followers');
     followers = await userService.getFollowers(username);
+    for (var item in followers!) {
+      print(item.username);
+    }
     return followers!;
   }
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
+    print('getting following');
     following = await userService.getFollowing(username);
+    for (var item in following!) {
+      print(item.username);
+    }
     return following!;
   }
 }
@@ -275,7 +283,7 @@ class FollowerFollowingController extends ChangeNotifier {
   Future<void> unfollowUser(String username) async {
     await userService.unfollowUser(
         username, userController.userAbout!.username);
-    following = await userController.getFollowers(username);
+    following = await userController.getFollowing(username);
     notifyListeners();
   }
 }

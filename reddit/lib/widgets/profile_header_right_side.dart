@@ -72,7 +72,7 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                 icon: const Icon(Icons.share, color: Colors.white, size: 40),
                 onPressed: () async {
                   var link =
-                      'https://redditech.me/user/${userData.username}/saved';
+                      'https://redditech.me/u/${userData.username}/overview';
                   await Share.share('Check out this profile on Reddit: $link');
                 },
               ),
