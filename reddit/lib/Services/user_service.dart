@@ -671,7 +671,7 @@ class UserService {
           'Authorization': token!,
         },
       );
-  
+
       print('in get unread messages count');
       print(jsonDecode(response.body));
       return jsonDecode(response.body)['count'];
@@ -1104,6 +1104,7 @@ class UserService {
       );
 
       final token = response.headers['authorization'];
+      print("inside login token");
       print(token);
       print(response.body);
       if (response.statusCode == 200) {

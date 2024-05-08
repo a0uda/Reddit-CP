@@ -33,12 +33,18 @@ class _AddPasswordState extends State<AddPassword> {
                 alignment: Alignment.topLeft,
                 child: Align(
                   child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage(
-                          userController.userAbout!.profilePicture ??
-                              'images/Greddit.png'),
-                    ),
+                    leading: userController.userAbout!.profilePicture == null ||
+                            (userController.userAbout!.profilePicture!) == '' ||
+                            userController.userAbout!.profilePicture!.isEmpty
+                        ? const CircleAvatar(
+                            radius: 25,
+                            backgroundImage: AssetImage('images/Greddit.png'),
+                          )
+                        : CircleAvatar(
+                            radius: 25,
+                            backgroundImage: NetworkImage(
+                                userController.userAbout!.profilePicture!),
+                          ),
                     title: Column(
                       children: [
                         Align(
