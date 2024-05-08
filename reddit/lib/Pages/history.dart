@@ -106,6 +106,7 @@ class HistoryScreen extends State<History> {
                           id: posts[index].id,
                           communityName: posts[index].communityName,
                           isLocked: posts[index].lockedFlag,
+                          isSaved: posts[index].isSaved!,
                         ));
                   }
                   return Post(
@@ -124,6 +125,7 @@ class HistoryScreen extends State<History> {
                     id: posts[index].id,
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
+                    isSaved: posts[index].isSaved!,
                   );
                 },
               );

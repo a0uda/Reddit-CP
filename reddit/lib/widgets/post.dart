@@ -3,6 +3,8 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/Services/community_service.dart';
+import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -21,6 +23,8 @@ import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/widgets/add_text_share.dart';
 
+typedef OnSaveChanged = void Function(bool isSaved);
+typedef OnlockChanged = void Function(bool isLocked);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
   final DateTime parsedDateTime = DateTime.parse(dateTimeString);
@@ -64,8 +68,9 @@ class Post extends StatefulWidget {
   final bool? pollExpired;
   final String id;
   final String communityName;
-  final bool isLocked;
+  bool isLocked;
   final int vote;
+  bool isSaved;
 
   Post(
       {super.key,
@@ -84,7 +89,8 @@ class Post extends StatefulWidget {
       this.pollExpired,
       required this.communityName,
       required this.isLocked,
-      required this.vote});
+      required this.vote,
+      required this.isSaved});
 
   @override
   PostState createState() => PostState();
@@ -93,7 +99,10 @@ class Post extends StatefulWidget {
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
+  CommunityService communityService = GetIt.instance.get<CommunityService>();
   UserController userController = GetIt.instance.get<UserController>();
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+
   ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
   bool issaved = false;
@@ -167,6 +176,18 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    void _handleSaveChanged(bool newValue) {
+      setState(() {
+        widget.isSaved = newValue;
+      });
+    }
+
+    void _handleLockChanged(bool newValue) {
+      setState(() {
+        widget.isLocked = newValue;
+      });
+    }
+
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
@@ -204,10 +225,76 @@ class PostState extends State<Post> {
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage('images/reddit-logo.png'),
-                ),
+                leading: widget.communityName == ''
+                    ? FutureBuilder<UserAbout>(
+                        future: userService.getUserAbout(widget.name!),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserAbout> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!.profilePicture!);
+                            if (snapshot.data!.profilePicture == null ||
+                                snapshot.data!.profilePicture!.isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!.profilePicture!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      )
+                    : FutureBuilder<Map<String, dynamic>>(
+                        future: moderatorService.getCommunityInfo(
+                            communityName: widget.communityName),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!['communityProfilePicture']);
+                            if (snapshot.data!['communityProfilePicture'] ==
+                                    null ||
+                                snapshot.data!['communityProfilePicture']!
+                                    .isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!['communityProfilePicture']!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      ),
                 title: Column(
                   children: [
                     Row(children: [
@@ -389,10 +476,12 @@ class PostState extends State<Post> {
                         child: (userController.userAbout != null)
                             ? Options(
                                 postId: widget.id,
-                                saved: issaved,
+                                saved: widget.isSaved,
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
                                 username: widget.name,
+                                onSaveChanged: _handleSaveChanged,
+                                onLockChanged: _handleLockChanged,
                               )
                             : Container(),
                       ),

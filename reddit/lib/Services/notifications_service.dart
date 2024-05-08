@@ -23,6 +23,7 @@ class NotificationsService with ChangeNotifier {
     print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
+
       List<dynamic> notificationsJson = data['content'];
       int unreadCount = 0;
       for (var notification in notificationsJson) {
@@ -56,6 +57,8 @@ class NotificationsService with ChangeNotifier {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       int unreadCount = data['count'];
+      userController.unreadNotificationsCount = unreadCount;
+      notifyListeners();
       return unreadCount;
     } else {
       return 0;
@@ -100,6 +103,7 @@ class NotificationsService with ChangeNotifier {
       }),
     );
     // userController.unreadNotificationsCount--;
+    getUnreadNotificationsCount();
     if (response.statusCode == 200) {
       notifyListeners();
       return true;
@@ -121,6 +125,7 @@ class NotificationsService with ChangeNotifier {
       },
     );
     userController.unreadNotificationsCount = 0;
+    getUnreadNotificationsCount();
     if (response.statusCode == 200) {
       notifyListeners();
       return true;

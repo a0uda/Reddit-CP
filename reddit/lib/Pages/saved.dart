@@ -90,25 +90,26 @@ class SavedScreen extends State<Saved> {
         ),
         body: TabBarView(
           children: [
-            FutureBuilder<void>(
-                future: SavedPosts(),
-                builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      color: Colors.white,
-                      child: const Center(
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(),
+            Consumer<SavePost>(
+              builder: (context, socialLinksController, child) {
+                return FutureBuilder<void>(
+                  future: SavedPosts(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<void> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Container(
+                        color: Colors.white,
+                        child: const Center(
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(),
+                          ),
                         ),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return Consumer<SavePost>(
-                        builder: (context, socialLinksController, child) {
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
                       return ListView.builder(
                         itemCount: posts.length,
                         itemBuilder: (context, index) {
@@ -142,12 +143,15 @@ class SavedScreen extends State<Saved> {
                             id: posts[index].id,
                             communityName: posts[index].communityName,
                             isLocked: posts[index].lockedFlag,
+                            isSaved: posts[index].isSaved!,
                           );
                         },
                       );
-                    });
-                  }
-                }),
+                    }
+                  },
+                );
+              },
+            ),
             Consumer<SaveComment>(
               builder: (context, socialLinksController, child) {
                 return FutureBuilder<List<Comments>>(

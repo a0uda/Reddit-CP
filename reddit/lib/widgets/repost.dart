@@ -5,6 +5,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
@@ -57,24 +58,27 @@ class Repost extends StatefulWidget {
   final int commentsCount;
   final String id;
   final String communityName;
-  final bool isLocked;
+  bool isLocked;
   String? description;
   final int vote;
+  bool isSaved;
 
-  Repost(
-      {super.key,
-      required this.id,
-      // required this.profileImageUrl,
-      required this.name,
-      required this.title,
-      required this.originalID,
-      required this.date,
-      required this.likes,
-      required this.commentsCount,
-      required this.communityName,
-      required this.isLocked,
-      this.description,
-      required this.vote});
+  Repost({
+    super.key,
+    required this.id,
+    // required this.profileImageUrl,
+    required this.name,
+    required this.title,
+    required this.originalID,
+    required this.date,
+    required this.likes,
+    required this.commentsCount,
+    required this.communityName,
+    required this.isLocked,
+    this.description,
+    required this.vote,
+    required this.isSaved,
+  });
 
   @override
   RepostState createState() => RepostState();
@@ -84,6 +88,8 @@ class RepostState extends State<Repost> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
+  ModeratorMockService moderatorService =
+      GetIt.instance.get<ModeratorMockService>();
   bool issaved = false;
   bool upVote = false;
   bool downVote = false;
@@ -169,6 +175,17 @@ class RepostState extends State<Repost> {
       String username = userController.userAbout!.username;
       //todo saved posts
     }
+    void _handleSaveChanged(bool newValue) {
+      setState(() {
+        widget.isSaved = newValue;
+      });
+    }
+
+    void _handleLockChanged(bool newValue) {
+      setState(() {
+        widget.isLocked = newValue;
+      });
+    }
 
     String userType;
 
@@ -197,10 +214,76 @@ class RepostState extends State<Repost> {
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage('images/reddit-logo.png'),
-                ),
+                leading: widget.communityName == ''
+                    ? FutureBuilder<UserAbout>(
+                        future: userService.getUserAbout(widget.name!),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserAbout> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!.profilePicture!);
+                            if (snapshot.data!.profilePicture == null ||
+                                snapshot.data!.profilePicture!.isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!.profilePicture!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      )
+                    : FutureBuilder<Map<String, dynamic>>(
+                        future: moderatorService.getCommunityInfo(
+                            communityName: widget.communityName),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!['communityProfilePicture']);
+                            if (snapshot.data!['communityProfilePicture'] ==
+                                    null ||
+                                snapshot.data!['communityProfilePicture']!
+                                    .isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!['communityProfilePicture']!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      ),
                 title: Column(
                   children: [
                     Row(children: [
@@ -386,10 +469,12 @@ class RepostState extends State<Repost> {
                         child: (userController.userAbout != null)
                             ? Options(
                                 postId: widget.id,
-                                saved: issaved,
+                                saved: widget.isSaved,
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
                                 username: widget.name,
+                                onSaveChanged: _handleSaveChanged,
+                                onLockChanged: _handleLockChanged,
                               )
                             : Container(),
                       ),
@@ -467,11 +552,98 @@ class RepostState extends State<Repost> {
                                       Theme.of(context).colorScheme.background,
                                   child: Column(children: <Widget>[
                                     ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 15,
-                                        backgroundImage: AssetImage(
-                                            'images/reddit-logo.png'),
-                                      ),
+                                      leading: post!.communityName == ''
+                                          ? FutureBuilder<UserAbout>(
+                                              future: userService
+                                                  .getUserAbout(widget.name!),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<UserAbout>
+                                                      snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const CircularProgressIndicator();
+                                                } else if (snapshot.hasError) {
+                                                  print("el sora");
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else {
+                                                  print('in comment');
+                                                  print(snapshot.data!);
+                                                  print('username in comment');
+                                                  print(widget.name!);
+                                                  print(snapshot
+                                                      .data!.profilePicture!);
+                                                  if (snapshot.data!
+                                                              .profilePicture ==
+                                                          null ||
+                                                      snapshot
+                                                          .data!
+                                                          .profilePicture!
+                                                          .isEmpty) {
+                                                    return const CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundImage: AssetImage(
+                                                          'images/Greddit.png'),
+                                                    );
+                                                  } else {
+                                                    return CircleAvatar(
+                                                      backgroundImage:
+                                                          NetworkImage(snapshot
+                                                              .data!
+                                                              .profilePicture!),
+                                                      radius: 15,
+                                                    );
+                                                  }
+                                                }
+                                              },
+                                            )
+                                          : FutureBuilder<Map<String, dynamic>>(
+                                              future: moderatorService
+                                                  .getCommunityInfo(
+                                                      communityName:
+                                                          post!.communityName),
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot<
+                                                          Map<String, dynamic>>
+                                                      snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const CircularProgressIndicator();
+                                                } else if (snapshot.hasError) {
+                                                  print("el sora");
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else {
+                                                  print('in comment');
+                                                  print(snapshot.data!);
+                                                  print('username in comment');
+                                                  print(widget.name!);
+                                                  print(snapshot.data![
+                                                      'communityProfilePicture']);
+                                                  if (snapshot.data![
+                                                              'communityProfilePicture'] ==
+                                                          null ||
+                                                      snapshot
+                                                          .data![
+                                                              'communityProfilePicture']!
+                                                          .isEmpty) {
+                                                    return const CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundImage: AssetImage(
+                                                          'images/Greddit.png'),
+                                                    );
+                                                  } else {
+                                                    return CircleAvatar(
+                                                      backgroundImage:
+                                                          NetworkImage(snapshot
+                                                                  .data![
+                                                              'communityProfilePicture']!),
+                                                      radius: 15,
+                                                    );
+                                                  }
+                                                }
+                                              },
+                                            ),
                                       title: Column(
                                         children: [
                                           Row(children: [

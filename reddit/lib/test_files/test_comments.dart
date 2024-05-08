@@ -28,6 +28,7 @@ final List<Comments> comments = [
       spammedBy: 'spammedBy1',
       spammedType: 'spammedType1',
     ),
+    vote: 1,
   ),
   Comments(
     id: '2',
@@ -56,5 +57,6 @@ final List<Comments> comments = [
       spammedBy: 'spammedBy1',
       spammedType: 'spammedType1',
     ),
+    vote: 1,
   ),
 ];

@@ -2,7 +2,7 @@ import 'package:reddit/widgets/post.dart';
 
 final List<Post> testPosts = [
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -13,9 +13,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -26,9 +27,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -39,9 +41,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -52,9 +55,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -65,9 +69,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -78,9 +83,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -91,9 +97,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -104,9 +111,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -117,9 +125,10 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
   Post(
-        vote: 0,
+    vote: 0,
     isLocked: false,
     id: "1",
     imageUrl: "assets/images/profile.png",
@@ -130,5 +139,6 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    isSaved: false,
   ),
 ];
