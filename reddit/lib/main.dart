@@ -148,6 +148,12 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => GetMessagesController(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => handleObjectionProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => handleUnmoderatedProvider(),
+      ),
     ],
     child: const MyApp(),
   ));
