@@ -992,6 +992,7 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
+      print(response.body);
       final Map<String, dynamic> decodedSettings = json.decode(response.body);
       return {
         "postTypes": decodedSettings['posts']["post_type_options"],
