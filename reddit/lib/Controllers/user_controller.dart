@@ -158,6 +158,7 @@ class UserController {
     }
     return following!;
   }
+
 }
 
 class AccountSettingsController extends ChangeNotifier {

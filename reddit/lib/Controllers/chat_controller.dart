@@ -4,36 +4,26 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/post_service.dart';
 
-
 class Chat extends ChangeNotifier {
-    bool refresh=false;
+  bool refresh = false;
   bool get shouldRefresh => refresh;
- set shouldRefresh(bool value)
-{
-refresh=value;
-}  
-
-  final chatService = GetIt.instance.get<ChatsService>();
-    void resetRefresh() {
-    refresh=false;
+  set shouldRefresh(bool value) {
+    refresh = value;
   }
 
-Future< int> Sendmessage(String username,String message) async
-{
- int response= await chatService.SendChat(username, message);
+  final chatService = GetIt.instance.get<ChatsService>();
+  void resetRefresh() {
+    refresh = false;
+  }
 
- notifyListeners();
-return response;
+  Future<int> Sendmessage(String username, String message) async {
+    int response = await chatService.SendChat(username, message);
 
-}
-void receivedchat(String username,String message) async
-{
+    notifyListeners();
+    return response;
+  }
 
-
- notifyListeners();
-
-
-}
-
-
+  void receivedchat(String username, String message) async {
+    notifyListeners();
+  }
 }
