@@ -145,11 +145,18 @@ class _BannedUsersListState extends State<BannedUsersList> {
                               color: Colors.white,
                               child: ListTile(
                                 tileColor: Colors.white,
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(item["profile_picture"]!),
-                                  radius: 15,
-                                ),
+                                leading: (item["profile_picture"] != null &&
+                                        item["profile_picture"] != "")
+                                    ? CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            item["profile_picture"]!),
+                                        radius: 15,
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage:
+                                            AssetImage("images/Greddit.png"),
+                                        radius: 15,
+                                      ),
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [

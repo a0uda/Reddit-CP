@@ -2,6 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
@@ -71,7 +74,7 @@ class _PostUIState extends State<PostUI> {
           context,
           MaterialPageRoute(
             builder: (context) => CommentsDesktop(
-              postId: post["is_reposted_flag"] ? ogPost?.id : post["_id"],
+              postId: post["_id"],
             ),
           ),
         );
@@ -88,37 +91,44 @@ class _PostUIState extends State<PostUI> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        if ((post["is_reposted_flag"] &&
-                                ogPost!.inCommunityFlag!) ||
-                            post["post_in_community_flag"]) {
-                          bool isMod = userController.userModeratedCommunities!
+                        if (post["post_in_community_flag"]) {
+                          bool isMod = userController
+                              .userAbout!.moderatedCommunities!
                               .any((element) =>
-                                  element.name ==
-                                  (post["is_reposted_flag"]
-                                      ? ogPost?.communityName
-                                      : post["community_name"]));
+                                  element.name == post["community_name"]);
+                          var moderatorProvider =
+                              context.read<ModeratorProvider>();
+                          if (isMod) {
+                            await moderatorProvider.getModAccess(
+                                userController.userAbout!.username,
+                                post["community_name"]);
+                          } else {
+                            moderatorProvider.moderatorController.modAccess =
+                                ModeratorItem(
+                                    everything: false,
+                                    managePostsAndComments: false,
+                                    manageSettings: false,
+                                    manageUsers: false,
+                                    username:
+                                        userController.userAbout!.username);
+                          }
+
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => (CommunityLayout(
                                 desktopLayout: DesktopCommunityPage(
                                     isMod: isMod,
-                                    communityName: post["is_reposted_flag"]
-                                        ? ogPost?.communityName
-                                        : post["community_name"]),
+                                    communityName: post["community_name"]),
                                 mobileLayout: MobileCommunityPage(
                                   isMod: isMod,
-                                  communityName: post["is_reposted_flag"]
-                                      ? ogPost?.communityName
-                                      : post["community_name"],
+                                  communityName: post["community_name"],
                                 ),
                               )),
                             ),
                           );
                         } else {
-                          UserAbout otherUserData = await (userService
-                              .getUserAbout(post["is_reposted_flag"]
-                                  ? ogPost?.username
-                                  : post["username"]))!;
+                          UserAbout otherUserData = (await (userService
+                              .getUserAbout(post["username"])))!;
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -130,16 +140,11 @@ class _PostUIState extends State<PostUI> {
                       },
                       child: Row(
                         children: [
-                          ((post["community_profile_picture"] != null &&
-                                      post["community_profile_picture"] !=
-                                          "") ||
-                                  post["is_reposted_flag"] &&
-                                      ogPost?.profilePicture != "")
+                          (post["community_profile_picture"] != null &&
+                                  post["community_profile_picture"] != "")
                               ? CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                      post["is_reposted_flag"]
-                                          ? ogPost?.profilePicture
-                                          : post["community_profile_picture"]),
+                                      post["community_profile_picture"]),
                                   radius: 12,
                                 )
                               : const CircleAvatar(
@@ -152,8 +157,8 @@ class _PostUIState extends State<PostUI> {
                           ),
                           Text(
                             post["post_in_community_flag"]
-                                ? "r/${post["is_reposted_flag"] ? ogPost?.communityName : post["community_name"] ?? ""}"
-                                : "u/${post["is_reposted_flag"] ? ogPost?.username : post["username"] ?? ""}",
+                                ? "r/${post["community_name"] ?? ""}"
+                                : "u/${post["username"]}",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11 * desktopFactor,
@@ -167,9 +172,7 @@ class _PostUIState extends State<PostUI> {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            formatDateTime(post["is_reposted_flag"]
-                                ? ogPost?.createdAt.toString()
-                                : post["created_at"]),
+                            formatDateTime(post["created_at"]),
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 11 * desktopFactor),
@@ -181,18 +184,14 @@ class _PostUIState extends State<PostUI> {
                       height: 5,
                     ),
                     Row(children: [
-                      (post["is_reposted_flag"]
-                              ? ogPost?.nsfwFlag
-                              : post["nsfw_flag"])
+                      post["nsfw_flag"]
                           ? const Icon(
                               Icons.dangerous_sharp,
                               color: Color(0xFFE00096),
                               size: 12,
                             )
                           : const SizedBox(),
-                      (post["is_reposted_flag"]
-                              ? ogPost?.nsfwFlag
-                              : post["nsfw_flag"])
+                      post["nsfw_flag"]
                           ? Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Text(
@@ -206,47 +205,29 @@ class _PostUIState extends State<PostUI> {
                           : const SizedBox(),
                     ]),
                     const SizedBox(
-                      height: 2,
+                      height: 4,
                     ),
                     Text(
-                      post["is_reposted_flag"] ? ogPost?.title : post["title"],
+                      post["title"],
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Roboto',
-                          fontSize: 16 * desktopFactor),
+                          fontSize: 15 * desktopFactor),
                     ),
-                    post["is_reposted_flag"]
-                        ? (ogPost?.description != null &&
-                                ogPost?.description != "")
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  ogPost?.description ?? "",
-                                  style: TextStyle(
-                                      fontFamily: "Roboto",
-                                      fontSize: 12 * desktopFactor),
-                                ),
-                              )
-                            : const SizedBox()
-                        : (post["description"] != null &&
-                                post["description"] != "")
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  post["description"],
-                                  style: TextStyle(
-                                      fontFamily: "Roboto",
-                                      fontSize: 12 * desktopFactor),
-                                ),
-                              )
-                            : const SizedBox(),
+                    (post["description"] != null && post["description"] != "")
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Text(
+                              post["description"],
+                              style: TextStyle(
+                                  fontFamily: "Roboto",
+                                  fontSize: 12 * desktopFactor),
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
-              (post["is_reposted_flag"]
-                      ? (ogPost?.images != null && ogPost!.images!.isNotEmpty)
-                      : (post.containsKey("images") &&
-                          post["images"].isNotEmpty))
+              (post.containsKey("images") && post["images"].isNotEmpty)
                   ? Padding(
                       padding: const EdgeInsets.only(left: 5.0),
                       child: Column(
@@ -262,15 +243,11 @@ class _PostUIState extends State<PostUI> {
                                 width: 80.0 * desktopFactor,
                                 height: 60.0 * desktopFactor,
                                 child: ImageFiltered(
-                                  imageFilter: (post["is_reposted_flag"]
-                                          ? ogPost?.nsfwFlag
-                                          : post["nsfw_flag"])
+                                  imageFilter: post["nsfw_flag"]
                                       ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
                                       : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                                   child: Image.network(
-                                    post["is_reposted_flag"]
-                                        ? ogPost?.images![0].link
-                                        : post["images"][0]["path"],
+                                    post["images"][0]["path"],
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -304,29 +281,61 @@ class _PostUIState extends State<PostUI> {
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                if (post["post_in_community_flag"]) {
+                                if ((post["is_reposted_flag"] &&
+                                        ogPost!.inCommunityFlag!) ||
+                                    post["post_in_community_flag"]) {
                                   bool isMod = userController
-                                      .userAbout!.moderatedCommunities!
+                                      .userModeratedCommunities!
                                       .any((element) =>
                                           element.name ==
-                                          post["community_name"]);
+                                          (post["is_reposted_flag"]
+                                              ? ogPost?.communityName
+                                              : post["community_name"]));
+
+                                  var moderatorProvider =
+                                      context.read<ModeratorProvider>();
+                                  if (isMod) {
+                                    await moderatorProvider.getModAccess(
+                                        userController.userAbout!.username,
+                                        post["is_reposted_flag"]
+                                            ? ogPost?.communityName
+                                            : post["community_name"]);
+                                  } else {
+                                    moderatorProvider
+                                            .moderatorController.modAccess =
+                                        ModeratorItem(
+                                            everything: false,
+                                            managePostsAndComments: false,
+                                            manageSettings: false,
+                                            manageUsers: false,
+                                            username: userController
+                                                .userAbout!.username);
+                                  }
+
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) => (CommunityLayout(
                                         desktopLayout: DesktopCommunityPage(
                                             isMod: isMod,
                                             communityName:
-                                                post["community_name"]),
+                                                post["is_reposted_flag"]
+                                                    ? ogPost?.communityName
+                                                    : post["community_name"]),
                                         mobileLayout: MobileCommunityPage(
                                           isMod: isMod,
-                                          communityName: post["community_name"],
+                                          communityName:
+                                              post["is_reposted_flag"]
+                                                  ? ogPost?.communityName
+                                                  : post["community_name"],
                                         ),
                                       )),
                                     ),
                                   );
                                 } else {
-                                  UserAbout otherUserData = (await (userService
-                                      .getUserAbout(post["username"])))!;
+                                  UserAbout otherUserData = await (userService
+                                      .getUserAbout(post["is_reposted_flag"]
+                                          ? ogPost?.username
+                                          : post["username"]))!;
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -338,12 +347,17 @@ class _PostUIState extends State<PostUI> {
                               },
                               child: Row(
                                 children: [
-                                  (post["community_profile_picture"] != null &&
-                                          post["community_profile_picture"] !=
-                                              "")
+                                  ((post["community_profile_picture"] != null &&
+                                              post["community_profile_picture"] !=
+                                                  "") ||
+                                          post["is_reposted_flag"] &&
+                                              ogPost?.profilePicture != "")
                                       ? CircleAvatar(
                                           backgroundImage: NetworkImage(post[
-                                              "community_profile_picture"]),
+                                                  "is_reposted_flag"]
+                                              ? ogPost?.profilePicture
+                                              : post[
+                                                  "community_profile_picture"]),
                                           radius: 12,
                                         )
                                       : const CircleAvatar(
@@ -356,8 +370,8 @@ class _PostUIState extends State<PostUI> {
                                   ),
                                   Text(
                                     post["post_in_community_flag"]
-                                        ? "r/${post["community_name"] ?? ""}"
-                                        : "u/${post["username"]}",
+                                        ? "r/${post["is_reposted_flag"] ? ogPost?.communityName : post["community_name"] ?? ""}"
+                                        : "u/${post["is_reposted_flag"] ? ogPost?.username : post["username"] ?? ""}",
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 11 * desktopFactor,
@@ -371,7 +385,9 @@ class _PostUIState extends State<PostUI> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    formatDateTime(post["created_at"]),
+                                    formatDateTime(post["is_reposted_flag"]
+                                        ? ogPost?.createdAt.toString()
+                                        : post["created_at"]),
                                     style: TextStyle(
                                         color: Colors.grey,
                                         fontSize: 11 * desktopFactor),
@@ -383,14 +399,18 @@ class _PostUIState extends State<PostUI> {
                               height: 5,
                             ),
                             Row(children: [
-                              post["nsfw_flag"]
+                              (post["is_reposted_flag"]
+                                      ? ogPost?.nsfwFlag
+                                      : post["nsfw_flag"])
                                   ? const Icon(
                                       Icons.dangerous_sharp,
                                       color: Color(0xFFE00096),
                                       size: 12,
                                     )
                                   : const SizedBox(),
-                              post["nsfw_flag"]
+                              (post["is_reposted_flag"]
+                                      ? ogPost?.nsfwFlag
+                                      : post["nsfw_flag"])
                                   ? Padding(
                                       padding:
                                           const EdgeInsets.only(right: 8.0),
@@ -405,26 +425,42 @@ class _PostUIState extends State<PostUI> {
                                   : const SizedBox(),
                             ]),
                             const SizedBox(
-                              height: 4,
+                              height: 2,
                             ),
                             Text(
-                              post["title"],
+                              post["is_reposted_flag"]
+                                  ? ogPost?.title
+                                  : post["title"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 15 * desktopFactor),
+                                  fontFamily: 'Roboto',
+                                  fontSize: 16 * desktopFactor),
                             ),
-                            (post["description"] != null &&
-                                    post["description"] != "")
-                                ? Padding(
-                                    padding: const EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                      post["description"],
-                                      style: TextStyle(
-                                          fontFamily: "Roboto",
-                                          fontSize: 12 * desktopFactor),
-                                    ),
-                                  )
-                                : const SizedBox(),
+                            post["is_reposted_flag"]
+                                ? (ogPost?.description != null &&
+                                        ogPost?.description != "")
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          ogPost?.description ?? "",
+                                          style: TextStyle(
+                                              fontFamily: "Roboto",
+                                              fontSize: 12 * desktopFactor),
+                                        ),
+                                      )
+                                    : const SizedBox()
+                                : (post["description"] != null &&
+                                        post["description"] != "")
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 5),
+                                        child: Text(
+                                          post["description"],
+                                          style: TextStyle(
+                                              fontFamily: "Roboto",
+                                              fontSize: 12 * desktopFactor),
+                                        ),
+                                      )
+                                    : const SizedBox(),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Row(
@@ -458,7 +494,11 @@ class _PostUIState extends State<PostUI> {
                           ],
                         ),
                       ),
-                      (post.containsKey("images") && post["images"].isNotEmpty)
+                      (post["is_reposted_flag"]
+                              ? (ogPost?.images != null &&
+                                  ogPost!.images!.isNotEmpty)
+                              : (post.containsKey("images") &&
+                                  post["images"].isNotEmpty))
                           ? Padding(
                               padding: const EdgeInsets.only(left: 5.0),
                               child: Column(
@@ -474,13 +514,17 @@ class _PostUIState extends State<PostUI> {
                                         width: 80.0 * desktopFactor,
                                         height: 60.0 * desktopFactor,
                                         child: ImageFiltered(
-                                          imageFilter: post["nsfw_flag"]
+                                          imageFilter: (post["is_reposted_flag"]
+                                                  ? ogPost?.nsfwFlag
+                                                  : post["nsfw_flag"])
                                               ? ImageFilter.blur(
                                                   sigmaX: 5, sigmaY: 5)
                                               : ImageFilter.blur(
                                                   sigmaX: 0, sigmaY: 0),
                                           child: Image.network(
-                                            post["images"][0]["link"],
+                                            post["is_reposted_flag"]
+                                                ? ogPost?.images![0].path
+                                                : post["images"][0]["path"],
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -496,13 +540,13 @@ class _PostUIState extends State<PostUI> {
                 )
               : const SizedBox(),
           Padding(
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.only(top: 8.0),
             child: Row(
               children: [
                 Text(
                   post["type"] == "polls"
                       ? ""
-                      : "${post["is_reposted_flag"] ? ogPost?.upvotesCount : post["upvotes_count"]} upvotes",
+                      : "${post["upvotes_count"]} upvotes",
                   style: TextStyle(
                       color: Colors.grey[600], fontSize: 11 * desktopFactor),
                 ),
@@ -510,13 +554,13 @@ class _PostUIState extends State<PostUI> {
                   " · ",
                   style: TextStyle(
                       color: Colors.grey[600],
-                      fontSize: 14 * desktopFactor * 2,
+                      fontSize: 14 * desktopFactor,
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
                   post["type"] == "polls"
                       ? ""
-                      : "${post["is_reposted_flag"] ? ogPost?.commentsCount : post["comments_count"]} comments",
+                      : "${post["comments_count"]} comments",
                   style: TextStyle(
                       color: Colors.grey[600], fontSize: 11 * desktopFactor),
                 ),

@@ -6,20 +6,27 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/delete_post.dart';
 import 'package:reddit/widgets/edit_post.dart';
+import 'package:reddit/widgets/post.dart';
 import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
   final String? postId;
-  final bool saved;
+
+  bool saved;
   bool islocked;
   final bool isMyPost;
   final String username;
+  final OnSaveChanged onSaveChanged;
+  final OnlockChanged onLockChanged;
+
   Options({
     required this.username,
     required this.postId,
     required this.saved,
     required this.islocked,
     required this.isMyPost,
+    required this.onSaveChanged,
+    required this.onLockChanged,
     super.key,
   });
 
@@ -35,7 +42,7 @@ class Postoptions extends State<Options> {
   Widget build(BuildContext context) {
     var postController = context.read<SavePost>();
     String username = userController.userAbout!.username;
-    bool isMyPost = (username==widget.username)?true:false;
+    bool isMyPost = (username == widget.username) ? true : false;
     var heigth = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     bool ismobile = (width < 700) ? true : false;
@@ -50,6 +57,10 @@ class Postoptions extends State<Options> {
                       onTap: () => {
                         //save todo
                         postService.savePost(widget.postId, username),
+                        setState(() {
+                          widget.saved = true;
+                        }),
+                        widget.onSaveChanged(true),
                       },
                       child: const Row(
                         children: [
@@ -65,7 +76,11 @@ class Postoptions extends State<Options> {
                       value: 1,
                       onTap: () => {
                         //save todo
-                        postController.unSavePost(widget.postId, username),
+                        postController.savePost(widget.postId, username),
+                        widget.onSaveChanged(false),
+                        setState(() {
+                          widget.saved = false;
+                        })
                       },
                       child: const Row(
                         children: [
@@ -78,7 +93,7 @@ class Postoptions extends State<Options> {
                       ),
                     ),
               // PopupMenuItem 2
-            
+
               PopupMenuItem(
                 value: 3,
                 onTap: () => {
@@ -125,6 +140,7 @@ class Postoptions extends State<Options> {
                   value: 4,
                   onTap: () {
                     postLockController.lockPost(widget.postId!);
+                    widget.onLockChanged(!widget.islocked);
                     setState(
                         () {}); // Call setState to rebuild the widget with new values
                   },
@@ -142,103 +158,80 @@ class Postoptions extends State<Options> {
                   ),
                 ),
 
-                 if (isMyPost)
-                        PopupMenuItem(
+              if (isMyPost)
+                PopupMenuItem(
                   value: 4,
                   onTap: () {
-    ///todo edit 
-    showDialog(
-                                                  context: context,
-                                                  barrierDismissible: true,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      scrollable: true,
-                                                      content: Builder(
-                                                        builder: ((context) {
-                                                          return SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.5,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.5,
-                                                            child: EditPost(
-                                                              
-                                                              postId: widget.postId!,
-                                                            ),
-                                                          );
-                                                        }),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
+                    ///todo edit
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          scrollable: true,
+                          content: Builder(
+                            builder: ((context) {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                child: EditPost(
+                                  postId: widget.postId!,
+                                ),
+                              );
+                            }),
+                          ),
+                        );
+                      },
+                    );
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.edit
-                      ),
+                      Icon(Icons.edit),
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                         'Edit')
+                      Text('Edit')
                     ],
                   ),
                 ),
-                if(isMyPost)
-                   PopupMenuItem(
-                    onTap:() {
-                      //to do delete
-                              showDialog(
-                                                  context: context,
-                                                  barrierDismissible: true,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      scrollable: true,
-                                                      content: Builder(
-                                                        builder: ((context) {
-                                                          return SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.3,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.4,
-                                                            child: DeletePost(
-                                                              
-                                                              postId: widget.postId!,
-                                                            ),
-                                                          );
-                                                        }),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-
-                    },
-
-                    
-                value: 2,
-                child: Row(
-                  children: [
-                    Icon(Icons.delete),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text("Delete")
-                  ],
+              if (isMyPost)
+                PopupMenuItem(
+                  onTap: () {
+                    //to do delete
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          scrollable: true,
+                          content: Builder(
+                            builder: ((context) {
+                              return SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.3,
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: DeletePost(
+                                  postId: widget.postId!,
+                                ),
+                              );
+                            }),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text("Delete")
+                    ],
+                  ),
                 ),
-              ),
             ],
             offset: const Offset(0, 25),
             color: Colors.white,
@@ -294,22 +287,30 @@ class Postoptions extends State<Options> {
                                 ? ListTile(
                                     leading: const Icon(Icons.save),
                                     title: const Text("Save"),
-                                    onTap: () => {
+                                    onTap: () async {
                                       //todo
-                                      postService.savePost(
-                                          widget.postId, username),
-                                      Navigator.of(context).pop(),
+                                      await postController.savePost(
+                                          widget.postId, username);
+                                      Navigator.of(context).pop(true);
+                                      setState(() {
+                                        widget.saved = true;
+                                      });
+                                      widget.onSaveChanged(true);
                                     },
                                   )
                                 : ListTile(
                                     leading: const Icon(Icons.save),
                                     title: const Text("Unsave"),
-                                    onTap: () => {
-                                      //todo
-                                      postController.unSavePost(
-                                          widget.postId, username),
+                                    onTap: () async {
+                                      widget.onSaveChanged(false);
 
-                                      Navigator.of(context).pop(),
+                                      //todo
+                                      await postController.savePost(
+                                          widget.postId, username);
+                                      Navigator.of(context).pop(false);
+                                      setState(() {
+                                        widget.saved = false;
+                                      });
                                     },
                                   ),
                             if (isMyPost)
@@ -321,6 +322,7 @@ class Postoptions extends State<Options> {
                                     ? "Unlock Comments"
                                     : "Lock Comments"),
                                 onTap: () {
+                                  widget.onLockChanged(!widget.islocked);
                                   setState(() {
                                     postLockController.lockPost(widget.postId!);
                                     widget.islocked = !widget.islocked;
@@ -328,64 +330,54 @@ class Postoptions extends State<Options> {
                                   Navigator.of(context).pop();
                                 },
                               ),
-  if (isMyPost)
+                            if (isMyPost)
                               ListTile(
-                                leading: Icon(Icons.edit
-                                    ),
+                                leading: Icon(Icons.edit),
                                 title: Text('Edit'),
                                 onTap: () {
-                           
                                   Navigator.of(context).pop();
-                                                    showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            builder: (BuildContext context) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white),
-                                                height: heigth * 0.8,
-                                                width: width,
-                                                padding:
-                                                    const EdgeInsets.all(16.0),
-                                                child: EditPost(
-                                                
-                                                  postId: widget.postId!,
-                                                ),
-                                              );
-                                            });
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white),
+                                          height: heigth * 0.8,
+                                          width: width,
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: EditPost(
+                                            postId: widget.postId!,
+                                          ),
+                                        );
+                                      });
                                 },
                               ),
 
- if (isMyPost)
+                            if (isMyPost)
                               ListTile(
-                                leading: Icon(Icons.delete
-                                    ),
+                                leading: Icon(Icons.delete),
                                 title: Text('Delete'),
                                 onTap: () {
-                         
                                   Navigator.of(context).pop();
 
-
-                                    showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            builder: (BuildContext context) {
-                                              return Container(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white),
-                                                height: heigth * 0.3,
-                                                width: width,
-                                                padding:
-                                                    const EdgeInsets.all(16.0),
-                                                child: DeletePost(
-                                                
-                                                  postId: widget.postId!,
-                                                ),
-                                              );
-                                            });
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white),
+                                          height: heigth * 0.3,
+                                          width: width,
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: DeletePost(
+                                            postId: widget.postId!,
+                                          ),
+                                        );
+                                      });
                                 },
                               ),
-
 
                             //
                           ],

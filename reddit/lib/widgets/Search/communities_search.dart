@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
@@ -50,12 +51,23 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
     });
   }
 
-  void navigateToCommunity(String name, String pp) {
-    List<CommunityBackend> moderated =
-        userController.userAbout!.moderatedCommunities ?? [];
-    moderatorController.profilePictureURL = pp;
-    bool isMod = moderated.any((element) => element.name == name);
+  void navigateToCommunity(String name, String pp) async {
     moderatorController.communityName = name;
+    await userController.getUserModerated();
+    bool isMod = userController.userModeratedCommunities!
+        .any((comm) => comm.name == name);
+    var moderatorProvider = context.read<ModeratorProvider>();
+    if (isMod) {
+      await moderatorProvider.getModAccess(
+          userController.userAbout!.username, name);
+    } else {
+      moderatorProvider.moderatorController.modAccess = ModeratorItem(
+          everything: false,
+          managePostsAndComments: false,
+          manageSettings: false,
+          manageUsers: false,
+          username: userController.userAbout!.username);
+    }
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => (CommunityLayout(

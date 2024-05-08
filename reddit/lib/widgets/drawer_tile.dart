@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -89,26 +91,42 @@ class _DrawerTileState extends State<DrawerTile> {
                     shrinkWrap: true,
                     itemCount: widget.lists.length,
                     itemBuilder: (BuildContext context, int index) {
+                      print("hnaaa");
                       final item = widget.lists[index];
                       return ListTile(
-                        leading: CircleAvatar( 
+                        leading: CircleAvatar(
                           backgroundImage: AssetImage(item.profilePictureURL),
                           radius: 10,
                         ),
                         title: Text(item.name),
-                        onTap: () {
-                          // Call the function to navigate to the community page
-                          // navigateToCommunity(
-                          //     item['communityPage'], context);
+                        onTap: () async {
                           moderatorController.profilePictureURL =
                               item.profilePictureURL;
+                          await userController.getUserModerated();
+                          bool isMod = userController.userModeratedCommunities!
+                              .any((comm) => comm.name == item.name);
+                          var moderatorProvider =
+                              context.read<ModeratorProvider>();
+                          if (isMod) {
+                            await moderatorProvider.getModAccess(
+                                userController.userAbout!.username, item.name);
+                          } else {
+                            moderatorProvider.moderatorController.modAccess =
+                                ModeratorItem(
+                                    everything: false,
+                                    managePostsAndComments: false,
+                                    manageSettings: false,
+                                    manageUsers: false,
+                                    username:
+                                        userController.userAbout!.username);
+                          }
+                          //IS MOD HENA.
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => (CommunityLayout(
                                     desktopLayout: DesktopCommunityPage(
-                                        isMod: widget.isMod,
-                                        communityName: item.name),
+                                        isMod: isMod, communityName: item.name),
                                     mobileLayout: MobileCommunityPage(
-                                      isMod: widget.isMod,
+                                      isMod: isMod,
                                       communityName: item.name,
                                     ),
                                   ))));

@@ -77,6 +77,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                         const Text('Notifications'),
                         const SizedBox(width: 5),
                         Consumer<NotificationsService>(
+                            
                             builder: (context, notificationsService, child) {
                           if (userController.unreadNotificationsCount > 0) {
                             return Container(

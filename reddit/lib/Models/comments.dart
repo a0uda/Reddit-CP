@@ -22,6 +22,7 @@ class Comments {
   bool? spoilerFlag;
   bool? commentInCommunityFlag;
   bool? saved;
+  int vote;
 
   Comments({
     this.id,
@@ -47,6 +48,7 @@ class Comments {
     this.commentInCommunityFlag,
     this.saved,
     this.postTitle,
+    required this.vote,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
@@ -86,6 +88,7 @@ class Comments {
               spammedFlag: json['moderator_details']['spammed_flag'],
             )
           : null,
+      vote: json['vote'],
     );
   }
 }
@@ -112,4 +115,6 @@ class ModeratorDetails {
     this.spammedFlag,
     this.approvedFlag,
   });
+
+  
 }

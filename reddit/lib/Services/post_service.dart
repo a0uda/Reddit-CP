@@ -104,10 +104,10 @@ class PostService {
                   })
               .toList(),
           "polls": poll != null
-            ? poll.options.map((option) {
-                return {"options": option};
-              }).toList()
-            : [],
+              ? poll.options.map((option) {
+                  return {"options": option};
+                }).toList()
+              : [],
           "polls_voting_length": days,
           "community_name": communityName,
           "post_in_community_flag": postInCommunityFlag,
@@ -200,6 +200,78 @@ class PostService {
     }
   }
 
+  Future<List<PostItem>> getCommunityPosts(
+      String communityName, String sortingType, int page) async {
+    if (testing) {
+      // final userService = GetIt.instance.get<UserService>();
+      // final List<FollowersFollowingItem> following =
+      //     await userService.getFollowers(username);
+      // var usernames = following.map((user) => user.username).toSet();
+      // // print(usernames);
+      // var filteredPosts =
+      //     posts.where((post) => usernames.contains(post.username)).toList();
+      return [];
+    } else {
+      Map<String, String> queryparams = {
+        'page': page.toString(),
+        'limit': '10',
+        'sortBy': sortingType,
+      };
+
+      print(queryparams.toString());
+      var url = Uri.parse(
+              'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+          .replace(queryParameters: queryparams);
+
+      if (sortingType == "best") {
+        url = Uri.parse(
+                'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "hot") {
+        url = Uri.parse(
+                'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "new") {
+        url = Uri.parse(
+                'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "top") {
+        url = Uri.parse(
+                'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "random") {
+        url = Uri.parse(
+                'https://redditech.me/backend/communities/get-visible-posts/$communityName')
+            .replace(queryParameters: queryparams);
+        print(url);
+        print(page);
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+      );
+      print("rege3");
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonlist = json.decode(response.body);
+        final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+          return PostItem.fromJson(jsonitem);
+        }).toList();
+
+        return postsItem;
+      } else {
+        List<PostItem> nullPost = [];
+        return nullPost;
+      }
+    }
+  }
+
   Future<List<TrendingItem?>> getTrendingPosts() async {
     if (testing) {
       return trendingPosts;
@@ -215,8 +287,8 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      print('trenddddddddddd');
-      print(response.body);
+      // print('trenddddddddddd');
+      // print(response.body);
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<TrendingItem?> postsItem = jsonlist.map((jsonitem) {
         if (jsonitem["images"].length == 0) {
@@ -275,11 +347,11 @@ class PostService {
     }
   }
 
-  List<PostItem> getCommunityPosts(int communityId) {
-    return posts
-        .where((element) => element.communityId == communityId)
-        .toList();
-  }
+  // List<PostItem> getCommunityPosts(int communityId) {
+  //   return posts
+  //       .where((element) => element.communityId == communityId)
+  //       .toList();
+  // }
 
   Future<void> upVote(String id) async {
     if (testing) {
@@ -362,6 +434,8 @@ class PostService {
     } else {
       final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/save');
+      // PostItem post = posts.firstWhere((element) => element.id == id);
+      // post.isSaved = !post.isSaved!;
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -378,15 +452,6 @@ class PostService {
       );
       print(response.statusCode);
 
-      // dislike post in database
-    }
-  }
-
-  void unSavePost(String? id, String username) {
-    if (testing) {
-      savedPosts.removeWhere(
-          (post) => ((post.id == id) && (post.username == username)));
-    } else {
       // dislike post in database
     }
   }

@@ -196,16 +196,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return followers.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/followers-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/followers-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get followers count');
@@ -266,16 +266,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return following.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/following-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/following-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get following count');
@@ -671,6 +671,7 @@ class UserService {
           'Authorization': token!,
         },
       );
+
       print('in get unread messages count');
       print(jsonDecode(response.body));
       return jsonDecode(response.body)['count'];
@@ -939,6 +940,8 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print("user communities");
+      print(response.body);
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
@@ -960,8 +963,9 @@ class UserService {
           'Authorization': token!,
         },
       );
+
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
-      //print(response.body);
+
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }

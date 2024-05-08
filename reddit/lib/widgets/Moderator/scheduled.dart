@@ -21,7 +21,6 @@ class _ScheduledPostsState extends State<ScheduledPosts> {
         title: const Center(child: Text("Scheduled posts")),
       ),
       body: Container(
-          color: const Color.fromARGB(255, 225, 244, 255),
           child: const ScheduledPostsList()),
     );
   }

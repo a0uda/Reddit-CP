@@ -128,6 +128,8 @@ class UserController {
 
   Future<void> getUserModerated() async {
     userModeratedCommunities = await userService.getUserModerated();
+    // print("moderated communities");
+    // print(userModeratedCommunities?[0].name);
   }
 
   Future<int> getUnreadNotificationsCount() async {
@@ -139,6 +141,24 @@ class UserController {
   Future<void> getUnreadMessagesCount() async {
     unreadMessagesCount =
         await userService.getUnreadMessagesCount(userAbout!.username);
+  }
+
+  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
+    print('getting followers');
+    followers = await userService.getFollowers(username);
+    for (var item in followers!) {
+      print(item.username);
+    }
+    return followers!;
+  }
+
+  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
+    print('getting following');
+    following = await userService.getFollowing(username);
+    for (var item in following!) {
+      print(item.username);
+    }
+    return following!;
   }
 }
 
@@ -256,32 +276,16 @@ class FollowerFollowingController extends ChangeNotifier {
   List<FollowersFollowingItem> followers = [];
   List<FollowersFollowingItem> following = [];
 
-  Future<List<FollowersFollowingItem>> getFollowers(String username) async {
-    followers = await userService.getFollowers(username);
-    userController.followers = followers;
-    return followers;
-  }
-
-  Future<List<FollowersFollowingItem>> getFollowing(String username) async {
-    following = await userService.getFollowing(username);
-    userController.following = following;
-    return following;
-  }
-
   Future<void> followUser(String username) async {
     await userService.followUser(username, userController.userAbout!.username);
-    following =
-        await userService.getFollowing(userController.userAbout!.username);
-    userController.following = following;
+    following = await userController.getFollowing(username);
     notifyListeners();
   }
 
   Future<void> unfollowUser(String username) async {
     await userService.unfollowUser(
         username, userController.userAbout!.username);
-    following =
-        await userService.getFollowing(userController.userAbout!.username);
-    userController.following = following;
+    following = await userController.getFollowing(username);
     notifyListeners();
   }
 }

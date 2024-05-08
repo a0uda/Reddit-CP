@@ -1,8 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/Services/community_service.dart';
+import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -21,6 +28,8 @@ import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/widgets/add_text_share.dart';
 
+typedef OnSaveChanged = void Function(bool isSaved);
+typedef OnlockChanged = void Function(bool isLocked);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
   final DateTime parsedDateTime = DateTime.parse(dateTimeString);
@@ -64,27 +73,34 @@ class Post extends StatefulWidget {
   final bool? pollExpired;
   final String id;
   final String communityName;
-  final bool isLocked;
+  bool isLocked;
   final int vote;
+  final bool isPostMod;
+  bool isSaved;
+  ModeratorDetails? moderatorDetails;
 
-  Post(
-      {super.key,
-      required this.id,
-      // required this.profileImageUrl,
-      required this.name,
-      required this.title,
-      required this.postContent,
-      required this.date,
-      required this.likes,
-      required this.commentsCount,
-      this.imageUrl,
-      this.linkUrl,
-      this.videoUrl,
-      this.poll,
-      this.pollExpired,
-      required this.communityName,
-      required this.isLocked,
-      required this.vote});
+  Post({
+    super.key,
+    required this.id,
+    // required this.profileImageUrl,
+    required this.name,
+    required this.title,
+    required this.postContent,
+    required this.date,
+    required this.likes,
+    required this.commentsCount,
+    this.imageUrl,
+    this.linkUrl,
+    this.videoUrl,
+    this.poll,
+    this.pollExpired,
+    required this.communityName,
+    required this.isLocked,
+    required this.vote,
+    this.isPostMod = false,
+    required this.isSaved,
+    this.moderatorDetails,
+  });
 
   @override
   PostState createState() => PostState();
@@ -93,7 +109,10 @@ class Post extends StatefulWidget {
 class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
+  CommunityService communityService = GetIt.instance.get<CommunityService>();
   UserController userController = GetIt.instance.get<UserController>();
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+
   ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
   bool issaved = false;
@@ -156,7 +175,6 @@ class PostState extends State<Post> {
   @override
   void initState() {
     super.initState();
-
     if (widget.vote == 1) {
       upVote = true;
     } else if (widget.vote == -1) {
@@ -167,6 +185,18 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    void _handleSaveChanged(bool newValue) {
+      setState(() {
+        widget.isSaved = newValue;
+      });
+    }
+
+    void _handleLockChanged(bool newValue) {
+      setState(() {
+        widget.isLocked = newValue;
+      });
+    }
+
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
@@ -204,10 +234,76 @@ class PostState extends State<Post> {
           child: Column(
             children: <Widget>[
               ListTile(
-                leading: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage('images/reddit-logo.png'),
-                ),
+                leading: widget.communityName == ''
+                    ? FutureBuilder<UserAbout>(
+                        future: userService.getUserAbout(widget.name!),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserAbout> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!.profilePicture!);
+                            if (snapshot.data!.profilePicture == null ||
+                                snapshot.data!.profilePicture!.isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!.profilePicture!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      )
+                    : FutureBuilder<Map<String, dynamic>>(
+                        future: moderatorService.getCommunityInfo(
+                            communityName: widget.communityName),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            print("el sora");
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            print('in comment');
+                            print(snapshot.data!);
+                            print('username in comment');
+                            print(widget.name!);
+                            print(snapshot.data!['communityProfilePicture']);
+                            if (snapshot.data!['communityProfilePicture'] ==
+                                    null ||
+                                snapshot.data!['communityProfilePicture']!
+                                    .isEmpty) {
+                              return const CircleAvatar(
+                                radius: 15,
+                                backgroundImage:
+                                    AssetImage('images/Greddit.png'),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                    snapshot.data!['communityProfilePicture']!),
+                                radius: 15,
+                              );
+                            }
+                          }
+                        },
+                      ),
                 title: Column(
                   children: [
                     Row(children: [
@@ -215,12 +311,34 @@ class PostState extends State<Post> {
                         alignment: Alignment.centerLeft,
                         child: (widget.communityName != "")
                             ? InkWell(
-                                onTap: () {
+                                onTap: () async {
                                   //TODO: go to community
+                                  await userController.getUserModerated();
+                                  print("nav");
+                                  print(
+                                      userController.userModeratedCommunities);
                                   bool isMod = userController
-                                      .userAbout!.moderatedCommunities!
-                                      .any((element) =>
-                                          element.name == widget.communityName);
+                                      .userModeratedCommunities!
+                                      .any((comm) =>
+                                          comm.name == widget.communityName);
+                                  var moderatorProvider =
+                                      context.read<ModeratorProvider>();
+                                  if (isMod) {
+                                    await moderatorProvider.getModAccess(
+                                        userController.userAbout!.username,
+                                        widget.communityName);
+                                  } else {
+                                    moderatorProvider
+                                            .moderatorController.modAccess =
+                                        ModeratorItem(
+                                            everything: false,
+                                            managePostsAndComments: false,
+                                            manageSettings: false,
+                                            manageUsers: false,
+                                            username: userController
+                                                .userAbout!.username);
+                                  }
+                                  //IS MOD HENA.
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => (CommunityLayout(
                                             desktopLayout: DesktopCommunityPage(
@@ -389,10 +507,12 @@ class PostState extends State<Post> {
                         child: (userController.userAbout != null)
                             ? Options(
                                 postId: widget.id,
-                                saved: issaved,
+                                saved: widget.isSaved,
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
                                 username: widget.name,
+                                onSaveChanged: _handleSaveChanged,
+                                onLockChanged: _handleLockChanged,
                               )
                             : Container(),
                       ),
@@ -805,6 +925,37 @@ class PostState extends State<Post> {
                         ),
                       ),
                     ),
+                    widget.isPostMod ? Spacer() : const SizedBox(),
+                    widget.isPostMod
+                        ? ElevatedButton.icon(
+                            onPressed: () {
+                              showOptions(
+                                  context: context,
+                                  isApproved:
+                                      widget.moderatorDetails?.approvedFlag ??
+                                          false,
+                                  isRemoved:
+                                      widget.moderatorDetails?.removedFlag ??
+                                          false,
+                                  lockComments: widget.isLocked ?? false,
+                                  removedAsSpam:
+                                      widget.moderatorDetails?.spammedFlag ??
+                                          false);
+                            },
+                            icon: Icon(
+                              Icons.shield_outlined,
+                              color: Colors.black,
+                            ),
+                            label: SizedBox(),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
@@ -814,4 +965,82 @@ class PostState extends State<Post> {
       ),
     );
   }
+}
+
+void showOptions({
+  required BuildContext context,
+  bool isApproved = false,
+  bool isRemoved = false,
+  bool removedAsSpam = false,
+  bool lockComments = false,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isApproved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Approve post',
+                style:
+                    TextStyle(color: isApproved ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //approve
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.xmark,
+                color: isRemoved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove post',
+                style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //remove
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.free_cancellation_outlined,
+                color: removedAsSpam ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove as spam',
+                style: TextStyle(
+                    color: removedAsSpam ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //as spam
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.lock,
+                color: lockComments ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Lock Comments',
+                style:
+                    TextStyle(color: lockComments ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //lock comments
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

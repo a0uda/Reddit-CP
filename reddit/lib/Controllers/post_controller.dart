@@ -15,56 +15,54 @@ class PostController {
 class SavePost extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();
 
-  void unSavePost(String? id, String username) {
-    postService.unSavePost(id, username);
+  Future<void> savePost(String? id, String username) async {
+    await postService.savePost(id, username);
     notifyListeners();
   }
 }
-class RefreshHome extends ChangeNotifier{
-   bool refresh=false;
+
+class RefreshHome extends ChangeNotifier {
+  bool refresh = false;
   bool get shouldRefresh => refresh;
- set shouldRefresh(bool value)
-{
-refresh=value;
-}  
- void Refresh() {
-  
+  set shouldRefresh(bool value) {
+    refresh = value;
+  }
+
+  void Refresh() {
     notifyListeners();
   }
+
   void resetRefresh() {
-    refresh=false;
+    refresh = false;
   }
 }
+
 class Edit extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();
-  bool refresh=false;
+  bool refresh = false;
   bool get shouldRefresh => refresh;
- set shouldRefresh(bool value)
-{
-refresh=value;
-}  
+  set shouldRefresh(bool value) {
+    refresh = value;
+  }
 
   void EditPost(String id, String caption) {
-    postService.EditPost(id,caption);
+    postService.EditPost(id, caption);
     print('ana geet provider');
     Future.delayed(Duration(seconds: 2));
     notifyListeners();
   }
-    void DeletePost(String id) {
+
+  void DeletePost(String id) {
     postService.DeletePost(id);
     print('ana geet provider');
     Future.delayed(Duration(seconds: 2));
     notifyListeners();
   }
 
-   
-
-
   void resetRefresh() {
-    refresh=false;
+    refresh = false;
   }
 }
-
 
 class LockPost extends ChangeNotifier {
   final postService = GetIt.instance.get<PostService>();

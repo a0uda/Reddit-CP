@@ -177,6 +177,41 @@ class ModeratorMockService {
     }
   }
 
+  Future<int> cancelScheduledPost({
+    required String postId,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/cancel-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+        }),
+      );
+      print("POST cancled");
+      print(response.body);
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
+    }
+  }
+
   Future<List<RulesItem>> getRules(String communityName) async {
     if (testing) {
       List<RulesItem> foundRules = communities
@@ -718,6 +753,7 @@ class ModeratorMockService {
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> mutedUsers =
           List<Map<String, dynamic>>.from(decodedData);
+      print(decodedData);
       return mutedUsers; //badrrr
     }
   }
@@ -754,6 +790,8 @@ class ModeratorMockService {
           'action': "mute",
         }),
       );
+      print("badr mute user");
+      print(response.body);
     }
   }
 
@@ -802,8 +840,8 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
-      print("fouda");
-      print(response.body);
+      // print("fouda");
+      // print(response.body);
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
@@ -992,6 +1030,7 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
+      print(response.body);
       final Map<String, dynamic> decodedSettings = json.decode(response.body);
       return {
         "postTypes": decodedSettings['posts']["post_type_options"],

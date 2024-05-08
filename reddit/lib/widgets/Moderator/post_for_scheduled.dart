@@ -8,8 +8,9 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 
 class PostScheduled extends StatefulWidget {
+  final VoidCallback fetch;
   final Map<String, dynamic> item;
-  const PostScheduled({super.key, required this.item});
+  const PostScheduled({super.key, required this.item, required this.fetch});
 
   @override
   State<PostScheduled> createState() => _PostScheduledState();
@@ -121,7 +122,7 @@ class _PostScheduledState extends State<PostScheduled> {
                           await scheduledProvider.submitScheduledPost(
                               moderatorController.communityName,
                               widget.item["_id"]);
-                          
+                          widget.fetch();
                         },
                         icon: Icon(
                           CupertinoIcons.paperplane_fill,
@@ -206,7 +207,13 @@ class _PostScheduledState extends State<PostScheduled> {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () {
+                                onPressed: () async {
+                                  var scheduledProvider =
+                                      context.read<ScheduledProvider>();
+                                  await scheduledProvider.cancelScheduledPost(
+                                      moderatorController.communityName,
+                                      widget.item["_id"]);
+                                  widget.fetch();
                                   Navigator.of(context).pop();
                                   //cancell posttttt.
                                 },

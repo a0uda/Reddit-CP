@@ -68,7 +68,9 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             commentsCount: post!.commentsCount,
                             communityName: post!.communityName,
                             isLocked: post!.lockedFlag,
-                            vote: post!.vote)
+                            isSaved: post!.isSaved!,
+                            vote: post!.vote,
+                          )
                         : Post(
                             vote: post!.vote,
                             name: post!.username,
@@ -84,6 +86,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             id: post!.id,
                             communityName: post!.communityName,
                             isLocked: post!.lockedFlag,
+                            isSaved: post!.isSaved!,
                           ),
                   ),
                   if (comments != null && comments!.isNotEmpty)
