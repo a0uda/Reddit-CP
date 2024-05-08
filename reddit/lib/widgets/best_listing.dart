@@ -125,19 +125,20 @@ class BestListingBuild extends State<BestListing> {
 
                       if (posts[index].isReposted) {
                         return Repost(
-                            id: posts[index].id,
-                            description: posts[index].description ?? '',
-                            name: posts[index].username,
-                            title: posts[index].title,
-                            originalID: posts[index].originalPostID,
-                            date: posts[index].createdAt.toString(),
-                            likes: posts[index].upvotesCount -
-                                posts[index].downvotesCount,
-                            commentsCount: posts[index].commentsCount,
-                            communityName: posts[index].communityName,
-                            isLocked: posts[index].lockedFlag,
-                        isSaved: posts[index].isSaved!,
-                            vote: posts[index].vote,);
+                          id: posts[index].id,
+                          description: posts[index].description ?? '',
+                          name: posts[index].username,
+                          title: posts[index].title,
+                          originalID: posts[index].originalPostID,
+                          date: posts[index].createdAt.toString(),
+                          likes: posts[index].upvotesCount -
+                              posts[index].downvotesCount,
+                          commentsCount: posts[index].commentsCount,
+                          communityName: posts[index].communityName,
+                          isLocked: posts[index].lockedFlag,
+                          isSaved: posts[index].isSaved!,
+                          vote: posts[index].vote,
+                        );
                       }
                       if (posts[index].nsfwFlag == true ||
                           posts[index].spoilerFlag == true) {
@@ -172,6 +173,9 @@ class BestListingBuild extends State<BestListing> {
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
                         isSaved: posts[index].isSaved!,
+                        pollExpired: posts[index].pollExpired!,
+                          pollVote: posts[index].pollVote!,
+
                       );
                     },
                   );

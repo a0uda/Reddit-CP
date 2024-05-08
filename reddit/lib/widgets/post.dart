@@ -25,6 +25,7 @@ import 'package:reddit/widgets/add_text_share.dart';
 
 typedef OnSaveChanged = void Function(bool isSaved);
 typedef OnlockChanged = void Function(bool isLocked);
+typedef OnPollVote = void Function(String id, int index, String username);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
   final DateTime parsedDateTime = DateTime.parse(dateTimeString);
@@ -71,6 +72,7 @@ class Post extends StatefulWidget {
   bool isLocked;
   final int vote;
   bool isSaved;
+  String? pollVote;
 
   Post(
       {super.key,
@@ -86,11 +88,12 @@ class Post extends StatefulWidget {
       this.linkUrl,
       this.videoUrl,
       this.poll,
-      this.pollExpired,
+      required this.pollExpired,
       required this.communityName,
       required this.isLocked,
       required this.vote,
-      required this.isSaved});
+      required this.isSaved,
+      required this.pollVote});
 
   @override
   PostState createState() => PostState();
@@ -185,6 +188,18 @@ class PostState extends State<Post> {
     void _handleLockChanged(bool newValue) {
       setState(() {
         widget.isLocked = newValue;
+      });
+    }
+
+    void _handleVote(String id, int index, String user) {
+      // var user = userService.getUserAbout(username);
+      setState(() {
+        widget.poll!.votes[index]++;
+        if (index == 0) {
+          widget.poll!.option1Votes.add(user);
+        } else {
+          widget.poll!.option2Votes.add(user);
+        }
       });
     }
 
@@ -583,8 +598,10 @@ class PostState extends State<Post> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.3,
                         child: PollView(
-                          id: int.parse(widget.id),
+                          id: widget.id,
                           question: widget.poll!.question,
+                          optionId: widget.poll!.optionId!,
+                          onPollVote: _handleVote,
                           options: widget.poll!.options
                               .asMap()
                               .map((index, option) => MapEntry(index, {
@@ -595,9 +612,17 @@ class PostState extends State<Post> {
                           option1UserVotes: widget.poll!.option1Votes,
                           option2UserVotes: widget.poll!.option2Votes,
                           currentUser: userController.userAbout!.username,
+                          currentUserId: userController.userAbout!.id!,
                           isExpired: widget.pollExpired!,
                         ),
-                      )
+                      ),
+                    if (widget.poll != null)
+                      if (widget.pollExpired == false)
+                        Text("Poll ends in " +
+                            widget.poll!.expirationDate.toString() +
+                            " days"),
+                    if (widget.poll != null)
+                      if (widget.pollExpired == true) Text("Poll has ended"),
                   ],
                 ),
               ),

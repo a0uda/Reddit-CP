@@ -144,6 +144,8 @@ class SavedScreen extends State<Saved> {
                             communityName: posts[index].communityName,
                             isLocked: posts[index].lockedFlag,
                             isSaved: posts[index].isSaved!,
+                            pollExpired: posts[index].pollExpired!,
+                            pollVote: posts[index].pollVote!,
                           );
                         },
                       );

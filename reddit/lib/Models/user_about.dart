@@ -45,7 +45,7 @@ class UserAbout {
       return UserAbout(username: '');
     }
     return UserAbout(
-      id: jsonDecode['id'],
+      id: jsonDecode['_id'],
       createdAt: DateFormat('d MMMM yyyy')
           .format(DateTime.parse(jsonDecode['created_at']))
           .toString(),

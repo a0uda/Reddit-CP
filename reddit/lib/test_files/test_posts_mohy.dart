@@ -14,6 +14,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -28,6 +30,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -42,6 +46,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -56,6 +62,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -70,6 +78,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -84,6 +94,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -98,6 +110,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -112,6 +126,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -126,6 +142,8 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -140,5 +158,7 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
     isSaved: false,
+    pollExpired: false,
+    pollVote: null,
   ),
 ];
