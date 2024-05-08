@@ -10,7 +10,7 @@ class PostItem {
   final String userId;
   final String username;
   final String title;
-  final String? description;
+   String? description;
   final DateTime createdAt;
   final DateTime? editedAt;
   final DateTime? deletedAt;
@@ -37,7 +37,7 @@ class PostItem {
   final UserDetails? userDetails;
   final int vote;
   final String originalPostID;
-final bool  isRemoved;
+    bool  isRemoved;
   PostItem({
     required this.id,
     required this.userId,

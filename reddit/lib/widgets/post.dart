@@ -3,6 +3,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
@@ -15,7 +16,8 @@ import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/widgets/add_text_share.dart';
-
+typedef OnEditChanged = void Function(String description);
+typedef OnDeleteChanged = void Function(bool delete);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
   final DateTime parsedDateTime = DateTime.parse(dateTimeString);
@@ -48,7 +50,7 @@ class Post extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent;
+  String? postContent;
   final String date;
   int likes;
   final int commentsCount;
@@ -60,7 +62,9 @@ class Post extends StatefulWidget {
   final String communityName;
   final bool isLocked;
   final int vote;
-
+  bool deleted;
+  OnClearDelete? onclearDelete;
+   OnClearEdit? onclearEdit;
   Post(
       {super.key,
       required this.id,
@@ -68,6 +72,7 @@ class Post extends StatefulWidget {
       required this.name,
       required this.title,
       required this.postContent,
+      required this.deleted,
       required this.date,
       required this.likes,
       required this.commentsCount,
@@ -75,6 +80,8 @@ class Post extends StatefulWidget {
       this.linkUrl,
       this.videoUrl,
       this.poll,
+      this.onclearDelete,
+      this.onclearEdit,
       required this.communityName,
       required this.isLocked,
       required this.vote});
@@ -96,8 +103,25 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  String? editPostContent;
 
   // bool isMyPost = postService.isMyPost(widget.postId!, username);
+
+    void handleEditChanged(String postcontent) {
+    setState(() {
+      widget.postContent=postcontent;
+      widget.onclearEdit!(widget.id,postcontent);
+    });
+  }
+      void handledeleteChanged(bool delete) {
+    setState(() {
+    
+       widget.onclearDelete!(widget.id);
+    });
+  }
+
+    
+
 
   void incrementCounter() {
     setState(() {
@@ -157,7 +181,10 @@ class PostState extends State<Post> {
   // List of items in our dropdown menu
 
   @override
+
   Widget build(BuildContext context) {
+    
+
     var width = MediaQuery.of(context).size.width;
     var heigth = MediaQuery.of(context).size.height;
     bool ismobile = (width < 700) ? true : false;
@@ -370,6 +397,9 @@ class PostState extends State<Post> {
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
                                 username: widget.name,
+                                onEditChanged: handleEditChanged,
+onDeleteChanged: handledeleteChanged,
+
                               )
                             : Container(),
                       ),

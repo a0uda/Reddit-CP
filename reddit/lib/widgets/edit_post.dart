@@ -5,10 +5,15 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/widgets/post.dart';
 
 class EditPost extends StatefulWidget {
   String postId;
-  EditPost({required this.postId});
+  OnEditChanged onEditChanged;
+  EditPost({required this.postId,
+  required this.onEditChanged
+  
+  });
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -73,6 +78,7 @@ class _EditPostState extends State<EditPost> {
               
                       postController.EditPost(widget.postId, bodyController.text);
         postController.shouldRefresh=true;
+        widget.onEditChanged(bodyController.text);
                      Navigator.of(context).pop();
           
          

@@ -6,6 +6,7 @@ import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
@@ -60,16 +61,24 @@ class Repost extends StatefulWidget {
   final bool isLocked;
    String? description;
   final int vote;
+  bool deleted;
+
+  OnClearDelete?onclearDelete;
+
+  OnClearEdit? onclearEdit;
 
   Repost(
       {super.key,
       required this.id,
       // required this.profileImageUrl,
+      required this.deleted,
       required this.name,
       required this.title,
       required this.originalID,
       required this.date,
       required this.likes,
+      this.onclearDelete,
+      this.onclearEdit,
       required this.commentsCount,
       required this.communityName,
       required this.isLocked,
@@ -81,6 +90,7 @@ class Repost extends StatefulWidget {
 }
 
 class RepostState extends State<Repost> {
+
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
@@ -96,6 +106,21 @@ class RepostState extends State<Repost> {
   Color? upVoteColor;
   Color? downVoteColor;
   PostItem? post;
+
+
+   void handleEditChanged(String postcontent) {
+    setState(() {
+      widget.description=postcontent;
+      widget.onclearEdit!(widget.id,postcontent);
+    });
+  }
+      void handledeleteChanged(bool delete) {
+    setState(() {
+    
+       widget.onclearDelete!(widget.id);
+    });
+  }
+
   Future<void> loadOriginalPost() async {
 
     post= await postService.getPostById(widget.originalID);
@@ -174,7 +199,7 @@ class RepostState extends State<Repost> {
 
     String userType;
 
-    return SizedBox(
+    return(widget.deleted!=false)?  SizedBox(
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
         onTap: () => {
@@ -369,12 +394,13 @@ class RepostState extends State<Repost> {
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
                             ? Options(
-                              
+                              onEditChanged: handleEditChanged,
                                 postId: widget.id,
                                 saved: issaved,
                                 islocked: widget.isLocked,
                                 isMyPost: true, //To be changed
                                 username: widget.name,
+                                onDeleteChanged:handledeleteChanged ,
                               )
                             : Container(),
                       ),
@@ -962,6 +988,6 @@ class RepostState extends State<Repost> {
           ),
         ),
       ),
-    );
+    ):Container();
   }
 }

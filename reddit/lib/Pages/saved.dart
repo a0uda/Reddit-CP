@@ -116,7 +116,7 @@ future:SavedPosts() ,
                           context: context,
                           child: Post(
                                               vote: posts[index].vote,
-
+deleted: posts[index].isRemoved,
                             name: posts[index].username,
                             title: posts[index].title,
                             postContent: posts[index].description!,
@@ -135,6 +135,7 @@ future:SavedPosts() ,
                     }
                     return Post(
                                         vote: posts[index].vote,
+deleted: posts[index].isRemoved,
 
                       name: posts[index].username,
                       title: posts[index].title,

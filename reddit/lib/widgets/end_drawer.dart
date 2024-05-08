@@ -85,7 +85,7 @@ class EndDrawerReddit extends StatelessWidget {
               //Navigate to History
                     Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const History()),
+                MaterialPageRoute(builder: (context) => History()),
               );
             },
           ),

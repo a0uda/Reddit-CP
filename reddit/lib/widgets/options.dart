@@ -6,6 +6,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/delete_post.dart';
 import 'package:reddit/widgets/edit_post.dart';
+import 'package:reddit/widgets/post.dart';
 import 'package:reddit/widgets/report_options.dart';
 
 class Options extends StatefulWidget {
@@ -14,12 +15,16 @@ class Options extends StatefulWidget {
   bool islocked;
   final bool isMyPost;
   final String username;
+  OnEditChanged onEditChanged;
+    OnDeleteChanged onDeleteChanged;
   Options({
     required this.username,
     required this.postId,
     required this.saved,
     required this.islocked,
     required this.isMyPost,
+     required this.onEditChanged,
+         required this.onDeleteChanged,
     super.key,
   });
 
@@ -170,6 +175,7 @@ class Postoptions extends State<Options> {
                                                             child: EditPost(
                                                               
                                                               postId: widget.postId!,
+                                                              onEditChanged:widget.onEditChanged
                                                             ),
                                                           );
                                                         }),
@@ -215,7 +221,7 @@ class Postoptions extends State<Options> {
                                                                     .width *
                                                                 0.4,
                                                             child: DeletePost(
-                                                              
+                                                              onDeleteChanged: widget.onDeleteChanged,
                                                               postId: widget.postId!,
                                                             ),
                                                           );
@@ -350,6 +356,7 @@ class Postoptions extends State<Options> {
                                                 child: EditPost(
                                                 
                                                   postId: widget.postId!,
+                                                                    onEditChanged:widget.onEditChanged
                                                 ),
                                               );
                                             });
@@ -378,7 +385,7 @@ class Postoptions extends State<Options> {
                                                 padding:
                                                     const EdgeInsets.all(16.0),
                                                 child: DeletePost(
-                                                
+                                                          onDeleteChanged: widget.onDeleteChanged,
                                                   postId: widget.postId!,
                                                 ),
                                               );
