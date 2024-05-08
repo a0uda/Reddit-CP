@@ -1416,6 +1416,7 @@ class ModeratorMockService {
             postInCommunityFlag: post["post_in_community_flag"] ?? false,
             postID: post["_id"] ?? "",
             itemID: post["post_id"] ?? "",
+            commentInCommunityFlag: post["comment_in_community_flag"] ?? true,
           );
         },
       ).toList();
@@ -1448,7 +1449,6 @@ class ModeratorMockService {
       body: json.encode(
         {
           "item_id": itemID,
-          "community_name": communityName,
           "item_type": itemType,
           "objection_type": objectionType,
           "action": action,
@@ -1478,9 +1478,33 @@ class ModeratorMockService {
       body: json.encode(
         {
           "item_id": itemID,
-          "community_name": communityName,
           "item_type": itemType,
-          "objection_type": objectionType,
+          "action": action,
+        },
+      ),
+    );
+    print(response.body);
+  }
+  Future<void> handleEditItem({
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/handle-objection/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "item_id": itemID,
+          "item_type": itemType,
           "action": action,
         },
       ),
@@ -1521,3 +1545,4 @@ class ModeratorMockService {
     }
   }
 }
+

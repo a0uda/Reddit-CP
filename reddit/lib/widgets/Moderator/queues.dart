@@ -4,7 +4,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/post_mod_queue.dart';
 
-
 class ModQueues extends StatefulWidget {
   const ModQueues({super.key});
 
@@ -24,6 +23,19 @@ class _ModQueuesState extends State<ModQueues> {
   bool isReportedFetched = false;
   bool isRemovedFetched = false;
   bool isUnmoderatedFetched = false;
+
+  void refreshData() async {
+    setState(() {
+      isReportedFetched = false;
+      isRemovedFetched = false;
+      isUnmoderatedFetched = false;
+    });
+    await fetchQueuePosts(
+      timeFilter: newestFirstTitle,
+      postsOrComments: postsAndCommentsTitle,
+      queueType: needReviewTitle,
+    );
+  }
 
   Future<void> fetchQueuePosts(
       {required String timeFilter,
@@ -88,7 +100,7 @@ class _ModQueuesState extends State<ModQueues> {
         ),
         actions: <Widget>[
           IconButton(
-              onPressed: () {/*to re-fetch posts again*/},
+              onPressed: refreshData,
               icon: const Icon(Icons.refresh))
         ],
         leading: (screenWidth < 700)
@@ -115,7 +127,6 @@ class _ModQueuesState extends State<ModQueues> {
             child: needReviewTitle == "unmoderated"
                 ? FutureBuilder(
                     future: fetchQueuePosts(
-
                       timeFilter: newestFirstTitle,
                       postsOrComments: postsAndCommentsTitle,
                       queueType: needReviewTitle,
@@ -131,15 +142,18 @@ class _ModQueuesState extends State<ModQueues> {
                         print('Mohy beyshoof el unmoderated');
                         print(moderatorController.queuePosts);
                         return ListView.builder(
-                          itemCount:
-                              moderatorController.queuePosts.length,
+                          itemCount: moderatorController.queuePosts.length,
                           itemBuilder: (context, index) {
-                            final item =
-                                moderatorController.queuePosts[index];
-                            return PostModQueue(
-                              post: item,
-                              queueType: needReviewTitle,
-                            );
+                            final item = moderatorController.queuePosts[index];
+                            return item.commentInCommunityFlag
+                                ? PostModQueue(
+                                    post: item,
+                                    queueType: needReviewTitle,
+                                  )
+                                : CommentsModQueue(
+                                    post: item,
+                                    queueType: needReviewTitle,
+                                  );
                           },
                         );
                       }
@@ -165,15 +179,19 @@ class _ModQueuesState extends State<ModQueues> {
                             print('Mohy beyshoof el removed posts');
                             print(moderatorController.queuePosts);
                             return ListView.builder(
-                              itemCount:
-                                  moderatorController.queuePosts.length,
+                              itemCount: moderatorController.queuePosts.length,
                               itemBuilder: (context, index) {
                                 final item =
                                     moderatorController.queuePosts[index];
-                                return PostModQueue(
-                                  post: item,
-                                   queueType: needReviewTitle,
-                                );
+                                return item.commentInCommunityFlag
+                                    ? PostModQueue(
+                                        post: item,
+                                        queueType: needReviewTitle,
+                                      )
+                                    : CommentsModQueue(
+                                        post: item,
+                                        queueType: needReviewTitle,
+                                      );
                               },
                             );
                           }
@@ -202,18 +220,63 @@ class _ModQueuesState extends State<ModQueues> {
                                   itemCount:
                                       moderatorController.queuePosts.length,
                                   itemBuilder: (context, index) {
-                                    final item = moderatorController
-                                        .queuePosts[index];
-                                    return PostModQueue(
-                                      post: item,
-                                       queueType: needReviewTitle,
-                                    );
+                                    final item =
+                                        moderatorController.queuePosts[index];
+                                    return item.postInCommunityFlag
+                                        ? PostModQueue(
+                                            post: item,
+                                            queueType: needReviewTitle,
+                                          )
+                                        : CommentsModQueue(
+                                            post: item,
+                                            queueType: needReviewTitle,
+                                          );
                                   },
                                 );
                               }
                             },
                           )
-                        : const SizedBox(),
+                        : needReviewTitle == "edited"
+                            ? FutureBuilder(
+                                future: fetchQueuePosts(
+                                  timeFilter: newestFirstTitle,
+                                  postsOrComments: postsAndCommentsTitle,
+                                  queueType: needReviewTitle,
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child:
+                                          LoadingAnimationWidget.twoRotatingArc(
+                                              color: const Color.fromARGB(
+                                                  255, 172, 172, 172),
+                                              size: 30),
+                                    );
+                                  } else {
+                                    print('Mohy beyshoof el reported');
+                                    print(moderatorController.queuePosts);
+                                    return ListView.builder(
+                                      itemCount:
+                                          moderatorController.queuePosts.length,
+                                      itemBuilder: (context, index) {
+                                        final item = moderatorController
+                                            .queuePosts[index];
+                                        return item.postInCommunityFlag
+                                            ? PostModQueue(
+                                                post: item,
+                                                queueType: needReviewTitle,
+                                              )
+                                            : CommentsModQueue(
+                                                post: item,
+                                                queueType: needReviewTitle,
+                                              );
+                                      },
+                                    );
+                                  }
+                                },
+                              )
+                            : const SizedBox(),
           )
         ],
       ),

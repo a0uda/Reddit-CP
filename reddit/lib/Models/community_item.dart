@@ -103,6 +103,7 @@ class QueuesPostItem {
     required this.postInCommunityFlag,
     required this.postID,
     required this.itemID,
+    required this.commentInCommunityFlag,
   });
   ModeratorDetails moderatorDetails;
   List<dynamic> queuePostImage;
@@ -118,6 +119,7 @@ class QueuesPostItem {
   bool nsfwFlag;
   bool spoilerFlag;
   bool postInCommunityFlag;
+  bool commentInCommunityFlag;
   String profilePicture = '';
   String postID;
   String itemID;

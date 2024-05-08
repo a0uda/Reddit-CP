@@ -158,6 +158,9 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => handleUnmoderatedProvider(),
       ),
+      ChangeNotifierProvider(
+        create: (context) => handleEditItemProvider(),
+      ),
     ],
     child: const MyApp(),
   ));
