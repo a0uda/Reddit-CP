@@ -53,7 +53,7 @@ class TopListingBuild extends State<TopListing> {
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
+      posts = await postService.getMyPosts(username , page);
       //print(username);
     } else if (widget.type == "comm") {
       post = await postService.getCommunityPosts(
@@ -114,6 +114,7 @@ class TopListingBuild extends State<TopListing> {
           if (posts[index].isRemoved == false) {
             if (posts[index].isReposted) {
               return Repost(
+                 deleted:  posts[index].isRemoved,
                   description: posts[index].description,
                   id: posts[index].id,
                   name: posts[index].username,
@@ -146,7 +147,7 @@ class TopListingBuild extends State<TopListing> {
               // profileImageUrl: posts[index].profilePic!,
               name: posts[index].username,
               vote: posts[index].vote,
-
+   deleted:  posts[index].isRemoved,
               title: posts[index].title,
               postContent: posts[index].description,
               date: posts[index].createdAt.toString(),

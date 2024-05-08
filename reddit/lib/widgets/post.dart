@@ -14,6 +14,7 @@ import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
@@ -30,6 +31,8 @@ import 'package:reddit/widgets/add_text_share.dart';
 
 typedef OnSaveChanged = void Function(bool isSaved);
 typedef OnlockChanged = void Function(bool isLocked);
+typedef OnEditChanged = void Function(String description);
+typedef OnDeleteChanged = void Function(bool delete);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
   final DateTime parsedDateTime = DateTime.parse(dateTimeString);
@@ -62,7 +65,7 @@ class Post extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent;
+  String? postContent;
   final String date;
   int likes;
   final int commentsCount;
@@ -78,6 +81,9 @@ class Post extends StatefulWidget {
   final bool isPostMod;
   bool isSaved;
   ModeratorDetails? moderatorDetails;
+  bool deleted;
+  OnClearDelete? onclearDelete;
+  OnClearEdit? onclearEdit;
 
   Post({
     super.key,
@@ -89,6 +95,9 @@ class Post extends StatefulWidget {
     required this.date,
     required this.likes,
     required this.commentsCount,
+    required this.deleted,
+    this.onclearDelete,
+    this.onclearEdit,
     this.imageUrl,
     this.linkUrl,
     this.videoUrl,
@@ -124,8 +133,22 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  String? editPostContent;
 
   // bool isMyPost = postService.isMyPost(widget.postId!, username);
+
+  void handleEditChanged(String postcontent) {
+    setState(() {
+      widget.postContent = postcontent;
+      widget.onclearEdit!(widget.id, postcontent);
+    });
+  }
+
+  void handledeleteChanged(bool delete) {
+    setState(() {
+      widget.onclearDelete!(widget.id);
+    });
+  }
 
   void incrementCounter() {
     setState(() {
@@ -513,6 +536,8 @@ class PostState extends State<Post> {
                                 username: widget.name,
                                 onSaveChanged: _handleSaveChanged,
                                 onLockChanged: _handleLockChanged,
+                                onEditChanged: handleEditChanged,
+                                onDeleteChanged: handledeleteChanged,
                               )
                             : Container(),
                       ),

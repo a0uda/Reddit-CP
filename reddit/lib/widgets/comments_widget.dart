@@ -70,6 +70,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             isLocked: post!.lockedFlag,
                             isSaved: post!.isSaved!,
                             vote: post!.vote,
+                            deleted: post!.isRemoved ?? false,
                           )
                         : Post(
                             vote: post!.vote,
@@ -87,6 +88,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             communityName: post!.communityName,
                             isLocked: post!.lockedFlag,
                             isSaved: post!.isSaved!,
+                            deleted: post!.isRemoved ?? false,
                           ),
                   ),
                   if (comments != null && comments!.isNotEmpty)

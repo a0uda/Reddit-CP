@@ -19,6 +19,8 @@ class Options extends StatefulWidget {
   final OnSaveChanged onSaveChanged;
   final OnlockChanged onLockChanged;
 
+  OnEditChanged onEditChanged;
+  OnDeleteChanged onDeleteChanged;
   Options({
     required this.username,
     required this.postId,
@@ -27,6 +29,8 @@ class Options extends StatefulWidget {
     required this.isMyPost,
     required this.onSaveChanged,
     required this.onLockChanged,
+    required this.onEditChanged,
+    required this.onDeleteChanged,
     super.key,
   });
 
@@ -176,8 +180,8 @@ class Postoptions extends State<Options> {
                                     MediaQuery.of(context).size.height * 0.5,
                                 width: MediaQuery.of(context).size.width * 0.5,
                                 child: EditPost(
-                                  postId: widget.postId!,
-                                ),
+                                    postId: widget.postId!,
+                                    onEditChanged: widget.onEditChanged),
                               );
                             }),
                           ),
@@ -197,41 +201,42 @@ class Postoptions extends State<Options> {
                 ),
               if (isMyPost)
                 PopupMenuItem(
-                  onTap: () {
-                    //to do delete
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          scrollable: true,
-                          content: Builder(
-                            builder: ((context) {
-                              return SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.3,
-                                width: MediaQuery.of(context).size.width * 0.4,
-                                child: DeletePost(
-                                  postId: widget.postId!,
-                                ),
-                              );
-                            }),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  value: 2,
-                  child: Row(
-                    children: [
-                      Icon(Icons.delete),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text("Delete")
-                    ],
-                  ),
-                ),
+                    onTap: () {
+                      //to do delete
+                      showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            scrollable: true,
+                            content: Builder(
+                              builder: ((context) {
+                                return SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.3,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: DeletePost(
+                                    onDeleteChanged: widget.onDeleteChanged,
+                                    postId: widget.postId!,
+                                  ),
+                                );
+                              }),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    value: 2,
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Delete")
+                      ],
+                    )),
             ],
             offset: const Offset(0, 25),
             color: Colors.white,
@@ -347,8 +352,9 @@ class Postoptions extends State<Options> {
                                           width: width,
                                           padding: const EdgeInsets.all(16.0),
                                           child: EditPost(
-                                            postId: widget.postId!,
-                                          ),
+                                              postId: widget.postId!,
+                                              onEditChanged:
+                                                  widget.onEditChanged),
                                         );
                                       });
                                 },
@@ -372,6 +378,8 @@ class Postoptions extends State<Options> {
                                           width: width,
                                           padding: const EdgeInsets.all(16.0),
                                           child: DeletePost(
+                                            onDeleteChanged:
+                                                widget.onDeleteChanged,
                                             postId: widget.postId!,
                                           ),
                                         );

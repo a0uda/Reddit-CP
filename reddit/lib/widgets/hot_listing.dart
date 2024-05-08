@@ -54,7 +54,7 @@ class HotListingBuild extends State<HotListing> {
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
+      posts = await postService.getMyPosts(username, page);
       //print(username);
     } else if (widget.type == "comm") {
       post = await postService.getCommunityPosts(
@@ -116,6 +116,7 @@ class HotListingBuild extends State<HotListing> {
             if (posts[index].isReposted) {
               return Repost(
                 description: posts[index].description,
+                deleted: posts[index].isRemoved,
                 id: posts[index].id,
                 name: posts[index].username,
                 title: posts[index].title,
@@ -147,7 +148,7 @@ class HotListingBuild extends State<HotListing> {
               // profileImageUrl: posts[index].profilePic!,
               name: posts[index].username,
               vote: posts[index].vote,
-
+              deleted: posts[index].isRemoved,
               title: posts[index].title,
               postContent: posts[index].description,
               date: posts[index].createdAt.toString(),

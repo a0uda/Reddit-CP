@@ -28,7 +28,7 @@ class NewListing extends StatefulWidget {
 
 class NewListingBuild extends State<NewListing> {
   ScrollController controller = ScrollController();
-   final ModeratorController moderatorController =
+  final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
   int page = 1;
   // List of items in our dropdown menu
@@ -54,12 +54,14 @@ class NewListingBuild extends State<NewListing> {
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username);
+      posts = await postService.getMyPosts(username, page);
       //print(username);
     } else if (widget.type == "comm") {
       post = await postService.getCommunityPosts(
           widget.commmunityName, "new", page);
       page++;
+      // posts = await postService.getMyPosts(username,page);
+      //print(username);
     }
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
@@ -127,6 +129,7 @@ class NewListingBuild extends State<NewListing> {
                 isLocked: posts[index].lockedFlag,
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved!,
+                deleted: posts[index].isRemoved,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -148,6 +151,7 @@ class NewListingBuild extends State<NewListing> {
               name: posts[index].username,
               vote: posts[index].vote,
 
+              deleted: posts[index].isRemoved,
               title: posts[index].title,
               postContent: posts[index].description,
               date: posts[index].createdAt.toString(),
@@ -161,7 +165,7 @@ class NewListingBuild extends State<NewListing> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved!,
-              isPostMod: (widget.commmunityName!= "" &&
+              isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
             );

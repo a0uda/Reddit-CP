@@ -300,7 +300,7 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getMyPosts(String username) async {
+  Future<List<PostItem>> getMyPosts(String username,int page) async {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
@@ -308,7 +308,7 @@ class PostService {
     } else {
       print(username);
       final url =
-          Uri.parse('https://redditech.me/backend/users/posts/$username');
+          Uri.parse('https://redditech.me/backend/users/posts/$username?page=$page');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -572,13 +572,14 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getHistoryPost(String username) async {
+  Future <List<PostItem>> getHistoryPost(int page) async{
     if (testing) {
       return posts;
     } else {
-      {
-        final url =
-            Uri.parse('https://redditech.me/backend/users/history-posts');
+      
+     {
+      final url =
+          Uri.parse('https://redditech.me/backend/users/history-posts?page=$page');
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
@@ -678,6 +679,7 @@ class PostService {
           "id": id,
         }),
       );
+      print('deleteeee postttt');
       print(response.body);
     }
   }

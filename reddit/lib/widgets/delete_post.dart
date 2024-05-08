@@ -6,10 +6,14 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/widgets/post.dart';
 
 class DeletePost extends StatefulWidget {
   String postId;
-  DeletePost({required this.postId});
+  OnDeleteChanged onDeleteChanged;
+  DeletePost({required this.postId,
+  required this.onDeleteChanged
+  });
 
   @override
   _DeletePostState createState() => _DeletePostState();
@@ -77,6 +81,7 @@ class _DeletePostState extends State<DeletePost> {
                     onPressed: () {
               postController.DeletePost(widget.postId);
         postController.shouldRefresh=true;
+        widget.onDeleteChanged(true);
                       Navigator.of(context).pop();
 
                     },
