@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -7,6 +9,7 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Services/post_service.dart';
+import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
 // ignore: must_be_immutable
@@ -22,6 +25,7 @@ class PostModQueue extends StatefulWidget {
 
 class _PostModQueueState extends State<PostModQueue> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
+  final UserService userService = GetIt.instance.get<UserService>();
 
   bool? isMuted;
   bool? isApprovedUser;
@@ -32,6 +36,31 @@ class _PostModQueueState extends State<PostModQueue> {
   String? removalReasons;
   String? reportedReason;
 
+  List<Map<String, dynamic>> foundUsers = [];
+  bool usersFetched = false;
+
+  Future<void> fetchBannedUsers() async {
+    if (!usersFetched) {
+      await moderatorController
+          .getBannedUsers(moderatorController.communityName);
+      setState(() {
+        foundUsers = moderatorController.bannedUsers;
+        usersFetched = true;
+      });
+    }
+  }
+
+  Future<void> fetchApprovedUsers() async {
+    if (!usersFetched) {
+      await moderatorController
+          .getApprovedUser(moderatorController.communityName);
+      setState(() {
+        foundUsers = moderatorController.approvedUsers;
+        usersFetched = true;
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -68,11 +97,17 @@ class _PostModQueueState extends State<PostModQueue> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(widget.post.profilePicture),
-                                radius: 24,
-                              ),
+                              leading: widget.post.profilePicture != ""
+                                  ? CircleAvatar(
+                                      backgroundImage:
+                                          NetworkImage("images/Greddit.png"),
+                                      radius: 24,
+                                    )
+                                  : CircleAvatar(
+                                      backgroundImage: AssetImage(
+                                          'assets/images/Greddit.png'),
+                                      radius: 24,
+                                    ),
                               title: Text(
                                 widget.post.username,
                                 style: const TextStyle(
@@ -144,10 +179,16 @@ class _PostModQueueState extends State<PostModQueue> {
               },
               child: Row(
                 children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(widget.post.profilePicture),
-                    radius: 13,
-                  ),
+                  widget.post.profilePicture != ""
+                      ? CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(widget.post.profilePicture),
+                          radius: 13,
+                        )
+                      : CircleAvatar(
+                          backgroundImage: AssetImage("images/Greddit.png"),
+                          radius: 13,
+                        ),
                   const SizedBox(
                     width: 5,
                   ),
@@ -770,7 +811,143 @@ class _PostModQueueState extends State<PostModQueue> {
                                               ],
                                             ),
                                           )
-                                        : SizedBox(),
+                                        : isApproved
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                child: Row(children: [
+                                                  Container(
+                                                    width: 17,
+                                                    height: 17,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.5),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              192,
+                                                              236,
+                                                              187),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.check,
+                                                      size: 13,
+                                                      color: Color.fromARGB(
+                                                          255, 48, 108, 45),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 3),
+                                                  Text(
+                                                    'Approved',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                    ),
+                                                  )
+                                                ]),
+                                              )
+                                            : isRemoved
+                                                ? Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          width: 17,
+                                                          height: 17,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.5),
+                                                            color: const Color
+                                                                .fromARGB(255,
+                                                                246, 204, 212),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            size: 13,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    169,
+                                                                    100,
+                                                                    75),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 3),
+                                                        widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .removed
+                                                                        .removedBy !=
+                                                                    "" &&
+                                                                widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .spammed
+                                                                        .flag ==
+                                                                    false
+                                                            ? Text(
+                                                                " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      170,
+                                                                      170,
+                                                                      170),
+                                                                  fontSize: 14,
+                                                                ),
+                                                              )
+                                                            : widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .spammed
+                                                                        .flag ==
+                                                                    true
+                                                                ? Text(
+                                                                    " Removed as a spam",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          170,
+                                                                          170,
+                                                                          170),
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  )
+                                                                : Text(
+                                                                    'Removed',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          170,
+                                                                          170,
+                                                                          170),
+                                                                    ),
+                                                                  ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : SizedBox(),
             const SizedBox(height: 8),
             const Divider(
               color: Colors.grey,
@@ -819,6 +996,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
     var QueuesProvider = context.read<handleObjectionProvider>();
     var QueuesUnmoderatedProvider = context.read<handleUnmoderatedProvider>();
     var QueuesEditItemProvider = context.read<handleEditItemProvider>();
+    double desktopFactor = MediaQuery.of(context).size.width > 700 ? 1.3 : 1;
 
     return Padding(
       padding: const EdgeInsets.only(left: 3.0),
@@ -1223,10 +1401,19 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                             ? screenSize.height * 0.1
                             : screenSize.height * 0.2,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.network(
-                            widget.post.queuePostImage[0].imagePath,
-                            fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            width: 80.0 * desktopFactor,
+                            height: 60.0 * desktopFactor,
+                            child: ImageFiltered(
+                              imageFilter: widget.post.nsfwFlag
+                                  ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
+                                  : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                              child: Image.network(
+                                widget.post.queuePostImage[0].imageLink,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                       )
@@ -1580,7 +1767,143 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                               ],
                                             ),
                                           )
-                                        : SizedBox(),
+                                        : isApproved
+                                            ? Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                child: Row(children: [
+                                                  Container(
+                                                    width: 17,
+                                                    height: 17,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.5),
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              192,
+                                                              236,
+                                                              187),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.check,
+                                                      size: 13,
+                                                      color: Color.fromARGB(
+                                                          255, 48, 108, 45),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 3),
+                                                  Text(
+                                                    'Approved',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                    ),
+                                                  )
+                                                ]),
+                                              )
+                                            : isRemoved
+                                                ? Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Container(
+                                                          width: 17,
+                                                          height: 17,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8.5),
+                                                            color: const Color
+                                                                .fromARGB(255,
+                                                                246, 204, 212),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            size: 13,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    169,
+                                                                    100,
+                                                                    75),
+                                                          ),
+                                                        ),
+                                                        SizedBox(width: 3),
+                                                        widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .removed
+                                                                        .removedBy !=
+                                                                    "" &&
+                                                                widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .spammed
+                                                                        .flag ==
+                                                                    false
+                                                            ? Text(
+                                                                " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      170,
+                                                                      170,
+                                                                      170),
+                                                                  fontSize: 14,
+                                                                ),
+                                                              )
+                                                            : widget
+                                                                        .post
+                                                                        .moderatorDetails
+                                                                        .spammed
+                                                                        .flag ==
+                                                                    true
+                                                                ? Text(
+                                                                    " Removed as a spam",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          170,
+                                                                          170,
+                                                                          170),
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  )
+                                                                : Text(
+                                                                    'Removed',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          170,
+                                                                          170,
+                                                                          170),
+                                                                    ),
+                                                                  ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : SizedBox(),
             const SizedBox(height: 8),
             const Divider(
               color: Colors.grey,
