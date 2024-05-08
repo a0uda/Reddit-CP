@@ -41,6 +41,7 @@ class PostItem {
   final bool isRemoved;
   final bool? pollExpired;
   bool? isSaved;
+  String? pollVote;
   PostItem({
     required this.id,
     required this.userId,
@@ -79,6 +80,7 @@ class PostItem {
     this.userDetails,
     this.pollExpired,
     this.isSaved,
+    this.pollVote,
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
@@ -93,6 +95,10 @@ class PostItem {
     final List<VideoItem> videolist = jsonlist2.map((jsonitem) {
       return VideoItem.fromJson(jsonitem);
     }).toList();
+    PollItem? poll;
+    if (json['polls'] != null) {
+      if (json['polls'].isNotEmpty) poll = PollItem.fromJson(json);
+    }
     return PostItem(
       ///todo
       isReposted: json['is_reposted_flag'],
@@ -126,9 +132,10 @@ class PostItem {
       linkUrl: json['link_url'] != null ? json['link_url'] : '',
       inCommunityFlag: json["post_in_community_flag"],
       isRemoved: json['deleted'],
-      poll: json['poll'] != null ? PollItem.fromJson(json['poll']) : null,
+      poll: poll,
       pollExpired: json['polls_voting_is_expired_flag'],
       isSaved: json['saved'],
+      pollVote: json['poll_vote'] ?? "",
     );
   }
 }

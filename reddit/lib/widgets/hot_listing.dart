@@ -172,6 +172,8 @@ class HotListingBuild extends State<HotListing> {
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
                         isSaved: posts[index].isSaved ?? false,
+                        pollExpired: posts[index].pollExpired!,
+                        pollVote: posts[index].pollVote!,
                       );
                     }
                   },

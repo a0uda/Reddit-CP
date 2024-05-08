@@ -423,7 +423,8 @@ class PostService {
     }
   }
 
-  void updatePoll(String id, int index, String username) {
+  Future<void> updatePoll(
+      String id, int index, String choiceId, String username) async {
     //print('id is : $id');
     if (testing) {
       final post = posts.firstWhere((element) => element.id == id);
@@ -438,7 +439,21 @@ class PostService {
         post.poll!.option2Votes.add(username);
       }
     } else {
-      // update poll in database
+      final url = Uri.parse('https://redditech.me/backend/posts/poll-vote');
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token.toString()
+        },
+        body: json.encode({
+          "id": id,
+          "option_id": choiceId,
+        }),
+      );
+      print(response.body);
     }
   }
 
@@ -479,6 +494,7 @@ class PostService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},

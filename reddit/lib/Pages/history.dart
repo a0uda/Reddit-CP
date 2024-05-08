@@ -26,7 +26,6 @@ class HistoryScreen extends State<History> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   Future<void> HistoryPosts() async {
@@ -42,95 +41,105 @@ class HistoryScreen extends State<History> {
     final postService = GetIt.instance.get<PostService>();
     String username = userController.userAbout!.username;
 
-    return Scaffold( appBar: AppBar(
-      backgroundColor: Colors.white,
-      centerTitle: true,
-      title: Text("History"),
-      elevation: 0,
-      titleTextStyle: TextStyle(
-        color: Color.fromARGB(255, 244, 87, 3),
-        fontWeight: FontWeight.bold,
-        fontSize: 20,
-      ), leading: GestureDetector(
-        child: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            size: 20,
-            color: Color.fromARGB(255, 244, 87, 3),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: Text("History"),
+        elevation: 0,
+        titleTextStyle: TextStyle(
+          color: Color.fromARGB(255, 244, 87, 3),
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
+        leading: GestureDetector(
+          child: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              size: 20,
+              color: Color.fromARGB(255, 244, 87, 3),
+            ),
+            onPressed: () {
+              Navigator.pop(context); // Navigate back to the previous page
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous page
-          },
-        ),  ),
-    ),
-    backgroundColor: Colors.white,
-      body:FutureBuilder<void>(
-        future: HistoryPosts(),
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              color: Colors.white,
-              child: const Center(
-                child: SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(),
+        ),
+      ),
+      backgroundColor: Colors.white,
+      body: FutureBuilder<void>(
+          future: HistoryPosts(),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return Consumer<SavePost>(
-                builder: (context, socialLinksController, child) {
-              return ListView.builder(
-                itemCount: posts.length,
-                itemBuilder: (context, index) {
-                  if (posts[index].nsfwFlag == true) {
-                    // TODO : NSFW , Spoiler
-                    return buildBlur(
-                        context: context,
-                        child: Post(
-                          vote: posts[index].vote,
-                          name: posts[index].username,
-                          title: posts[index].title,
-                          postContent: posts[index].description!,
-                          date: posts[index].createdAt.toString(),
-                          likes: posts[index].upvotesCount -
-                              posts[index].downvotesCount,
-                          commentsCount: posts[index].commentsCount,
-                          linkUrl: posts[index].linkUrl,
-                          imageUrl: posts[index].images?[0].path,
-                          videoUrl: posts[index].videos?[0].path,
-                          poll: posts[index].poll,
-                          id: posts[index].id,
-                          communityName: posts[index].communityName,
-                          isLocked: posts[index].lockedFlag,
-                          isSaved: posts[index].isSaved!,
-                        ));
-                  }
-                  return Post(
-                    vote: posts[index].vote,
-                    name: posts[index].username,
-                    title: posts[index].title,
-                    postContent: posts[index].description!,
-                    date: posts[index].createdAt.toString(),
-                    likes:
-                        posts[index].upvotesCount - posts[index].downvotesCount,
-                    commentsCount: posts[index].commentsCount,
-                    linkUrl: posts[index].linkUrl,
-                    imageUrl: posts[index].images?[0].path,
-                    videoUrl: posts[index].videos?[0].path,
-                    poll: posts[index].poll,
-                    id: posts[index].id,
-                    communityName: posts[index].communityName,
-                    isLocked: posts[index].lockedFlag,
-                    isSaved: posts[index].isSaved!,
-                  );
-                },
               );
-            });
-          }
-        }),);
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Consumer<SavePost>(
+                  builder: (context, socialLinksController, child) {
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    if (posts[index].nsfwFlag == true) {
+                      // TODO : NSFW , Spoiler
+                      return buildBlur(
+                          context: context,
+                          child: Post(
+                            vote: posts[index].vote,
+                            name: posts[index].username,
+                            title: posts[index].title,
+                            postContent: posts[index].description!,
+                            date: posts[index].createdAt.toString(),
+                            likes: posts[index].upvotesCount -
+                                posts[index].downvotesCount,
+                            commentsCount: posts[index].commentsCount,
+                            linkUrl: posts[index].linkUrl,
+                            imageUrl: posts[index].images?[0].path,
+                            videoUrl: posts[index].videos?[0].path,
+                            poll: posts[index].poll,
+                            id: posts[index].id,
+                            communityName: posts[index].communityName,
+                            isLocked: posts[index].lockedFlag,
+                            isSaved: posts[index].isSaved!,
+                            pollExpired: posts[index].pollExpired!,
+                          pollVote: posts[index].pollVote!,
+
+                          ));
+                    }
+                    return Post(
+                      vote: posts[index].vote,
+                      name: posts[index].username,
+                      title: posts[index].title,
+                      postContent: posts[index].description!,
+                      date: posts[index].createdAt.toString(),
+                      likes: posts[index].upvotesCount -
+                          posts[index].downvotesCount,
+                      commentsCount: posts[index].commentsCount,
+                      linkUrl: posts[index].linkUrl,
+                      imageUrl: posts[index].images?[0].path,
+                      videoUrl: posts[index].videos?[0].path,
+                      poll: posts[index].poll,
+                      id: posts[index].id,
+                      communityName: posts[index].communityName,
+                      isLocked: posts[index].lockedFlag,
+                      isSaved: posts[index].isSaved!,
+                      pollExpired: posts[index].pollExpired!,
+                          pollVote: posts[index].pollVote!,
+
+                    );
+                  },
+                );
+              });
+            }
+          }),
+    );
   }
 }

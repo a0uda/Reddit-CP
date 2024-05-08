@@ -87,6 +87,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             communityName: post!.communityName,
                             isLocked: post!.lockedFlag,
                             isSaved: post!.isSaved!,
+                            pollExpired: post!.pollExpired!,
+                            pollVote: post!.pollVote!,
                           ),
                   ),
                   if (comments != null && comments!.isNotEmpty)

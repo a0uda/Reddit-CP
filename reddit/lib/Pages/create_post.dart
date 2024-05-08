@@ -653,12 +653,12 @@ class _CreatePostState extends State<CreatePost> {
                                         ),
                                       ),
                                     ]),
-                                    TextField(
-                                      controller: questionController,
-                                      onChanged: (value) => question = value,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Question'),
-                                    ),
+                                    // TextField(
+                                    //   controller: questionController,
+                                    //   onChanged: (value) => question = value,
+                                    //   decoration: const InputDecoration(
+                                    //       labelText: 'Question'),
+                                    // ),
                                     TextField(
                                       onChanged: (value) => options[0] = value,
                                       decoration: const InputDecoration(
