@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/poll_item.dart';
 import 'package:reddit/Models/removal.dart';
@@ -6,6 +7,7 @@ import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
+import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,12 +33,14 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
-      print("GET SCHEDULED");
-      print(response.body);
+      // print("GET SCHEDULED");
+      // print(response.body);
       final dynamic decodedData = json.decode(response.body);
-      final List<Map<String, dynamic>> scheduled =
+      final List<Map<String, dynamic>> recurring =
           List<Map<String, dynamic>>.from(decodedData['recurring_posts']);
-      return scheduled;
+      final List<Map<String, dynamic>> scheduled =
+          List<Map<String, dynamic>>.from(decodedData['non_recurring_posts']);
+      return scheduled + recurring;
     }
   }
 
@@ -50,7 +54,9 @@ class ModeratorMockService {
     required bool spoilerFlag,
     required bool nsfwFlag,
     required String repetionOp,
-    required Map<String, dynamic> submitTime,
+    required String date,
+    required String hour,
+    required String minute,
   }) async {
     if (testing) {
       // List<RulesItem> foundRules = communities
@@ -70,28 +76,104 @@ class ModeratorMockService {
           'Authorization': token!,
         },
         body: json.encode({
-          {
-            "repetition_option": repetionOp,
-            "submit_time": submitTime,
-            "postInput": {
-              "title": title,
-              "description": description,
-              "post_in_community_flag": true,
-              "type": type,
-              "link_url": linkUrl,
-              "images": [],
-              "videos": [],
-              "polls": poll,
-              "community_name": communityName,
-              "spoiler_flag": spoilerFlag,
-              "nsfw_flag": nsfwFlag,
-            }
+          "repetition_option": repetionOp,
+          "submit_time": {
+            "date": date,
+            "hours": hour,
+            "minutes": minute,
+          },
+          "postInput": {
+            "title": title,
+            "description": description,
+            "post_in_community_flag": true,
+            "type": type,
+            "link_url": linkUrl,
+            "images": [],
+            "videos": [],
+            "polls": poll,
+            "community_name": communityName,
+            "spoiler_flag": spoilerFlag,
+            "nsfw_flag": nsfwFlag,
           }
         }),
       );
       print("POST SCHEDULED");
+      print(json.decode(response.body));
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
+    }
+  }
+
+  Future<int> EditScheduledPost({
+    required String postId,
+    required String description,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/edit-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+          "new_description": description,
+        }),
+      );
+      print("POST edited");
+      print(postId);
+      print(description);
       print(response.body);
       return 201;
+    }
+  }
+
+  Future<int> submitScheduledPost({
+    required String postId,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/submit-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+        }),
+      );
+      print("POST submited");
+      print(response.body);
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
     }
   }
 
@@ -148,8 +230,6 @@ class ModeratorMockService {
         },
       );
       final List<dynamic> decodedData = json.decode(response.body);
-      print("yarab");
-      print(response.body);
       final List<RemovalItem> removal = decodedData
           .map((rem) => RemovalItem(
                 id: rem["_id"],
@@ -722,11 +802,11 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
+      print("fouda");
+      print(response.body);
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
-      print("badr");
-      print(response.body);
       return moderators.reversed.toList(); //badrrr
     }
   }
@@ -1162,6 +1242,8 @@ class ModeratorMockService {
         },
       ),
     );
+    print("JOIN");
+    print(response.body);
   }
 
   Future<void> leaveCommunity({required String communityName}) async {

@@ -22,8 +22,6 @@ class _RemovalListState extends State<RemovalList> {
   Future<void> fetchRem() async {
     if (!remFetched) {
       await moderatorController.getRemoval(moderatorController.communityName);
-      print("moderator");
-      print(moderatorController.communityName);
       setState(() {
         remFetched = true;
       });

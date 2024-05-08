@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/widgets/Search/search_trending.dart';
 
 //for merging
 class TrendingPost extends StatefulWidget {
@@ -23,6 +24,13 @@ class TrendState extends State<TrendingPost> {
       child: InkWell(
         onTap: () => {
           // search for trend to do badr 
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  SearchTrending(result: widget.title,), 
+            ),
+          )
 
         },
         child: Card(

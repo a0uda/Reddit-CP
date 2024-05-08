@@ -59,6 +59,7 @@ class _PostUIState extends State<PostUI> {
 
   @override
   Widget build(BuildContext context) {
+    print(post);
     if (post["is_reposted_flag"]) {
       ogPost = post["ogPost"];
     }
@@ -66,14 +67,14 @@ class _PostUIState extends State<PostUI> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => CommentsDesktop(
-        //       postId: post["is_reposted_flag"] ? ogPost?.id : post["_id"],
-        //     ),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CommentsDesktop(
+              postId: post["is_reposted_flag"] ? ogPost?.id : post["_id"],
+            ),
+          ),
+        );
       },
       child: Column(
         children: [
@@ -90,12 +91,12 @@ class _PostUIState extends State<PostUI> {
                         if ((post["is_reposted_flag"] &&
                                 ogPost!.inCommunityFlag!) ||
                             post["post_in_community_flag"]) {
-                          bool isMod = userController
-                              .userAbout!.moderatedCommunities!
+                          bool isMod = userController.userModeratedCommunities!
                               .any((element) =>
-                                  element.name == post["is_reposted_flag"]
+                                  element.name ==
+                                  (post["is_reposted_flag"]
                                       ? ogPost?.communityName
-                                      : post["community_name"]);
+                                      : post["community_name"]));
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => (CommunityLayout(
@@ -269,7 +270,7 @@ class _PostUIState extends State<PostUI> {
                                   child: Image.network(
                                     post["is_reposted_flag"]
                                         ? ogPost?.images![0].link
-                                        : post["images"][0]["link"],
+                                        : post["images"][0]["path"],
                                     fit: BoxFit.cover,
                                   ),
                                 ),

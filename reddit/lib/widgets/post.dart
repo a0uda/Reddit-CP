@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
+import 'package:reddit/widgets/Community/community_responsive.dart';
+import 'package:reddit/widgets/Community/desktop_community_page.dart';
+import 'package:reddit/widgets/Community/mobile_community_page.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
@@ -57,6 +61,7 @@ class Post extends StatefulWidget {
   final String? linkUrl;
   final String? videoUrl;
   final PollItem? poll;
+  final bool? pollExpired;
   final String id;
   final String communityName;
   final bool isLocked;
@@ -76,6 +81,7 @@ class Post extends StatefulWidget {
       this.linkUrl,
       this.videoUrl,
       this.poll,
+      this.pollExpired,
       required this.communityName,
       required this.isLocked,
       required this.vote});
@@ -88,6 +94,8 @@ class PostState extends State<Post> {
   PostService postService = GetIt.instance.get<PostService>();
   UserService userService = GetIt.instance.get<UserService>();
   UserController userController = GetIt.instance.get<UserController>();
+  ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   bool issaved = false;
   bool upVote = false;
   bool downVote = false;
@@ -207,28 +215,24 @@ class PostState extends State<Post> {
                         alignment: Alignment.centerLeft,
                         child: (widget.communityName != "")
                             ? InkWell(
-                                onTap: () => {
+                                onTap: () {
                                   //TODO: go to community
-                                  communityController
-                                      .getCommunity(widget.communityName),
-
+                                  bool isMod = userController
+                                      .userAbout!.moderatedCommunities!
+                                      .any((element) =>
+                                          element.name == widget.communityName);
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => (CommunityPage(
-                                            communityName: widget.communityName,
-                                            communityDescription:
-                                                communityController
-                                                    .communityItem!
-                                                    .general
-                                                    .communityDescription,
-                                            communityMembersNo:
-                                                communityController
-                                                    .communityItem!
-                                                    .communityMembersNo,
-                                            communityProfilePicturePath:
-                                                communityController
-                                                    .communityItem!
-                                                    .communityProfilePicturePath,
-                                          )))),
+                                      builder: (context) => (CommunityLayout(
+                                            desktopLayout: DesktopCommunityPage(
+                                                isMod: isMod,
+                                                communityName:
+                                                    widget.communityName),
+                                            mobileLayout: MobileCommunityPage(
+                                              isMod: isMod,
+                                              communityName:
+                                                  widget.communityName,
+                                            ),
+                                          ))));
                                 },
                                 onHover: (hover) {
                                   setState(() {
@@ -502,6 +506,7 @@ class PostState extends State<Post> {
                           option1UserVotes: widget.poll!.option1Votes,
                           option2UserVotes: widget.poll!.option2Votes,
                           currentUser: userController.userAbout!.username,
+                          isExpired: widget.pollExpired!,
                         ),
                       )
                   ],

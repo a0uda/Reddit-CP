@@ -26,7 +26,7 @@ class Listing extends StatefulWidget {
 
 final postService = GetIt.instance.get<PostService>();
 
-List<TrendingItem> trends = [];
+List<TrendingItem?> trends = [];
 
   late Future<void> _dataFuture;
   bool isloading=false;
@@ -118,8 +118,8 @@ bool refresh=false;
                   itemCount: trends.length,
                   itemBuilder: (context, index) {
                     return TrendingPost(
-                      title: trends[index].title,
-                      imageUrl: trends[index].picture.path,
+                      title: trends[index]!.title,
+                      imageUrl: trends[index]!.picture.path,
                     );
                   },
                 );};}}),)
@@ -132,23 +132,7 @@ bool refresh=false;
 
 
           ListTile(
-            trailing: 
-ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
-                  onPressed: () {
-              
-                      postController.Refresh();
-        postController.shouldRefresh=true;
-                 
-         
-                  },
-                  icon: Icon(Icons.refresh, color: Colors.white),
-                  label: Text(
-                    'refresh',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+
             leading: Container(
               // width: 71,
               // height: 70,

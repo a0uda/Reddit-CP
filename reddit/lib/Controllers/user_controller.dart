@@ -24,8 +24,8 @@ class UserController {
   NotificationsSettingsItem? notificationsSettings;
   List<CommunityBackend>? userCommunities;
   List<CommunityBackend>? userModeratedCommunities;
-  List<FollowersFollowingItem>? followers;
-  List<FollowersFollowingItem>? following;
+  List<FollowersFollowingItem>? followers = [];
+  List<FollowersFollowingItem>? following = [];
   int unreadNotificationsCount = 0;
   int unreadMessagesCount = 0;
 
@@ -405,11 +405,11 @@ class MessagesOperations extends ChangeNotifier {
   }
 
   Future<void> markonAsRead(List<Messages> messages) async {
-    for (var message in messages) {
-      await userService.markoneMessageRead(
-          userController.userAbout!.username, message.id);
-    }
-    //await userController.getUnreadMessagesCount();
+    List<String> messageIds = messages.map((message) => message.id).toList();
+
+    await userService.markoneMessageRead(
+        userController.userAbout!.username, messageIds);
+
     notifyListeners();
   }
 }

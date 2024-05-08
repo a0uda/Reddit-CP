@@ -14,14 +14,6 @@ import 'package:reddit/Models/chat_user.dart';
 
   ];
   List<ChatMessage> messages = [
-    ChatMessage(messageContent: "yastaaa enta fen?", messageType: "receiver"),
-    ChatMessage(messageContent: "ana mestanek men zaman", messageType: "receiver"),
-    ChatMessage(messageContent: "kont nayem yasta ma3lesh metaba2 men embareh", messageType: "sender"),
-    ChatMessage(messageContent: "eshta yasta yalla nenzel", messageType: "receiver"),
-    ChatMessage(messageContent: "okay ha2om keda w anzel", messageType: "sender"),
-      ChatMessage(messageContent: "yastaaa enta fen?", messageType: "receiver"),
-    ChatMessage(messageContent: "ana mestanek men zaman", messageType: "receiver"),
-    ChatMessage(messageContent: "kont nayem yasta ma3lesh metaba2 men embareh", messageType: "sender"),
-    ChatMessage(messageContent: "eshta yasta yalla nenzel", messageType: "receiver"),
-    ChatMessage(messageContent: "okay ha2om keda w anzel", messageType: "sender"),
+    ChatMessage(messageContent: 'asda', messageType: 'sender', createdAt: '2024-05-06T18:23:38.000', username: 'nis'),
+  
   ];

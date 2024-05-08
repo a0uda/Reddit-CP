@@ -89,6 +89,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                       } else {
                         showSearch(
                             context: context, delegate: SearchBarClass());
+                            
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -312,7 +313,51 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                     ),
                   ));
                 },
-                icon: const Icon(CupertinoIcons.bell),
+                icon: Stack(
+                  children: [
+                    // The icon
+                    Icon(CupertinoIcons.bell),
+                    // The notification+messages count
+                    Consumer<NotificationsService>(
+                        builder: (context, notificationsService, child) {
+                      return Consumer<GetMessagesController>(
+                          builder: (context, getMessagesController, child) {
+                        if (userController.unreadNotificationsCount +
+                                userController.unreadMessagesCount >
+                            0) {
+                          return Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(1),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 12,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox(
+                            height: 0,
+                            width: 0,
+                          );
+                        }
+                      });
+                    }),
+                  ],
+                ),
               )
             : const SizedBox(),
         userLoggedIn

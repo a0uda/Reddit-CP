@@ -24,17 +24,6 @@ class FollowerListState extends State<FollowerList> {
   bool _dataFetched = false;
   bool _firstTime = true;
 
-  void initState() {
-    super.initState();
-    final blockUnblockUser =
-        Provider.of<BlockUnblockUser>(context, listen: false);
-    blockUnblockUser.addListener(() {
-      setState(() {
-        _dataFetched = false;
-      });
-    });
-  }
-
   Widget _buildLoading() {
     return Container(
       color: Colors.white,
@@ -49,6 +38,7 @@ class FollowerListState extends State<FollowerList> {
   }
 
   Widget _buildFollowersList() {
+    _dataFetched = false;
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -94,9 +84,7 @@ class FollowerListState extends State<FollowerList> {
                         await followerFollowingController
                             .followUser(followers![index].username);
                       }
-                      setState(() {
-                        _dataFetched = false;
-                      });
+                      setState(() {});
                     },
                     child: Text(
                       (following!.any((element) =>
@@ -167,26 +155,29 @@ class FollowerListState extends State<FollowerList> {
   }
 
   void loadingData() async {
-    if (_firstTime) {
-      followers =
-          await userService.getFollowers(userController.userAbout!.username);
-      following =
-          await userService.getFollowing(userController.userAbout!.username);
-      _firstTime = false;
-    } else {
-      followers = userController.followers;
-      following = userController.following;
+    followers =
+        await userService.getFollowers(userController.userAbout!.username);
+    following =
+        await userService.getFollowing(userController.userAbout!.username);
+
+    if (mounted) {
+      setState(() {
+        _dataFetched = true;
+      });
     }
-    setState(() {
-      _dataFetched = true;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_dataFetched) {
-      loadingData();
-    }
-    return _dataFetched ? _buildFollowersList() : _buildLoading();
+    return Consumer<FollowerFollowingController>(
+        builder: (context, followerFollowingController, child) {
+      return Consumer<BlockUnblockUser>(
+          builder: (context, blockUnblockUser, child) {
+        if (!_dataFetched) {
+          loadingData();
+        }
+        return _dataFetched ? _buildFollowersList() : _buildLoading();
+      });
+    });
   }
 }

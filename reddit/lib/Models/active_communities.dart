@@ -29,3 +29,22 @@ class ActiveCommunities {
     );
   }
 }
+
+class ActiveCommunitiesResult {
+  List<ActiveCommunities> activeCommunities;
+  bool showActiveCommunities;
+
+  ActiveCommunitiesResult({
+    required this.activeCommunities,
+    required this.showActiveCommunities,
+  });
+
+  static ActiveCommunitiesResult fromJson(json) {
+    ActiveCommunitiesResult activeCommunitiesResult = ActiveCommunitiesResult(
+      activeCommunities: List<ActiveCommunities>.from(json['active_communities']
+          .map((community) => ActiveCommunities.fromJson(community))),
+      showActiveCommunities: json['showActiveCommunities'] ?? false,
+    );
+    return activeCommunitiesResult;
+  }
+}

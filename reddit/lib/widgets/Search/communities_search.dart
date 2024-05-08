@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
@@ -168,19 +169,86 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
                   //check typr of community
                   return ElevatedButton(
                     onPressed: () async {
-                      if (!isJoined) {
+                      var isJoinedProvider = context.read<IsJoinedProvider>();
+                      if (isJoined) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              content: const Text(
+                                'Are you sure you want to leave this community?',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 242, 243, 245),
+                                    foregroundColor: const Color.fromARGB(
+                                        255, 109, 109, 110),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                      side: const BorderSide(
+                                        color: Color.fromARGB(0, 238, 12, 0),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    await isJoinedProvider.leaveCommunity(
+                                      communityName:
+                                          moderatorController.communityName,
+                                      isJoined: false,
+                                    );
+                                    setState(() {
+                                      moderatorController.joinedFlag = false;
+                                      isJoined = false;
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 240, 6, 6),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                      side: const BorderSide(
+                                        color: Color.fromARGB(0, 240, 6, 6),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text('Leave'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        await isJoinedProvider.joinCommunity(
+                          communityName: moderatorController.communityName,
+                          isJoined: true,
+                        );
                         setState(() {
+                          moderatorController.joinedFlag = true;
                           isJoined = true;
                         });
-                        // await followerfollowingcontroller
-                        //     .followUser(item["username"]);
-                      } else {
-                        setState(() {
-                          isJoined = false;
-                        });
-                        // await followerfollowingcontroller
-                        //     .unfollowUser(item["username"]);
                       }
+
                       //badrrrr followw
                     },
                     style: ElevatedButton.styleFrom(

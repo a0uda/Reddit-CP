@@ -67,7 +67,7 @@ class _CreatePostState extends State<CreatePost> {
 
   List<String> rules = [];
   DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
+  TimeOfDay selectedTime = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
   String recurring = "none";
   bool isSaved = false;
 
@@ -160,7 +160,7 @@ class _CreatePostState extends State<CreatePost> {
       pollSelected = true;
       showLinkField = false;
       imageSelected = false;
-      isSaved = true;
+      isSaved = false;
       videoSelected = false;
       type = 'polls';
     });
@@ -309,13 +309,12 @@ class _CreatePostState extends State<CreatePost> {
                                 repetionOp: recurring,
                                 nsfwFlag: false,
                                 spoilerFlag: false,
-                                submitTime: {
-                                  "date": DateTime(selectedDate.year,
-                                          selectedDate.month, selectedDate.day)
-                                      .toString(),
-                                  "hour": selectedTime.hour,
-                                  "minute": selectedTime.minute,
-                                },
+                                date: DateFormat('yyyy-MM-dd').format(DateTime(
+                                    selectedDate.year,
+                                    selectedDate.month,
+                                    selectedDate.day)),
+                                hour: selectedTime.hour.toString(),
+                                minute: selectedTime.minute.toString(),
                                 title: titleController.text,
                                 description: bodyController.text,
                                 type: type,
@@ -328,7 +327,7 @@ class _CreatePostState extends State<CreatePost> {
                                         votes: [0, 0],
                                         option1Votes: [],
                                         option2Votes: [],
-                                      )
+                                        expirationDate: selectedDays)
                                     : null,
                               ),
                             }
@@ -362,8 +361,9 @@ class _CreatePostState extends State<CreatePost> {
                                           votes: [0, 0],
                                           option1Votes: [],
                                           option2Votes: [],
-                                        )
+                                          expirationDate: selectedDays)
                                       : null,
+                                  selectedDays,
                                   selectedCommunity == "Select Community"
                                       ? ''
                                       : selectedCommunity,
@@ -487,7 +487,7 @@ class _CreatePostState extends State<CreatePost> {
                                       null) {
                                 setState(() {
                                   isMod = userController
-                                      .userAbout!.moderatedCommunities!
+                                      .userModeratedCommunities!
                                       .any((community) =>
                                           community.name == result);
                                   if (!isMod) {
@@ -641,6 +641,7 @@ class _CreatePostState extends State<CreatePost> {
                                           onPressed: () {
                                             setState(() {
                                               pollSelected = false;
+                                              isSaved = false;
                                             });
                                           },
                                         ),
@@ -858,7 +859,7 @@ class ModalForSchedule extends StatefulWidget {
 
 class _ModalForScheduleState extends State<ModalForSchedule> {
   DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
+  TimeOfDay selectedTime = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
   List<String> values = ["hourly", "daily", "weekly", "monthly"];
   List<String> labels = [
     "Every hour",
@@ -871,8 +872,8 @@ class _ModalForScheduleState extends State<ModalForSchedule> {
   void selectDate() async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime.now(),
+      initialDate: DateTime.now().add(Duration(hours: 1)),
+      firstDate: DateTime.now().add(Duration(hours: 1)),
       lastDate: DateTime(2101),
       builder: (BuildContext context, Widget? child) {
         return Theme(

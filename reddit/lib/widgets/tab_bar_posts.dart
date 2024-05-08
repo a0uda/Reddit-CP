@@ -38,11 +38,9 @@ class TabBarPostsState extends State<TabBarPosts> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Future.wait([
-          userService.getProfileSettings(userData!.username),
-          userService.getActiveCommunities(userData!.username)
-        ]),
-        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+        future: userService.getActiveCommunities(userData!.username),
+        builder: (BuildContext context,
+            AsyncSnapshot<ActiveCommunitiesResult> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             print('getting bool active communities tmm');
             return Container(
@@ -58,8 +56,8 @@ class TabBarPostsState extends State<TabBarPosts> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            showActiveCommunities = snapshot.data![0].activeCommunity;
-            activeCommunities = snapshot.data![1];
+            showActiveCommunities = snapshot.data!.showActiveCommunities;
+            activeCommunities = snapshot.data!.activeCommunities;
             return Consumer<EditProfileController>(
                 builder: (context, editProfileController, child) {
               if (userType == 'me' && userController.profileSettings != null) {

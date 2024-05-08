@@ -33,9 +33,6 @@ class _DrawerRedditState extends State<DrawerReddit> {
   Future<void> fetchUserCommunities() async {
     await userController.getUserCommunities();
     await userController.getUserModerated();
-    print("badr");
-    print(userController.userCommunities!.length);
-    print(userController.userModeratedCommunities!.length);
   }
 
   @override
