@@ -52,6 +52,33 @@ class _ConnectGoogleTileState extends State<ConnectGoogleTile> {
                       setState(() {
                         isConnected = newConnectionStatus;
                       });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text(
+                                "Cannot connect to this account."),
+                            actions: <Widget>[
+                              TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color?>(
+                                    (Set<MaterialState> states) {
+                                      return Colors.deepOrange[400];
+                                    },
+                                  ),
+                                ),
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     }
                   } else {
                     final TextEditingController passwordController =
