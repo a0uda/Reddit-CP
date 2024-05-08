@@ -196,16 +196,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return followers.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/followers-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/followers-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get followers count');
@@ -266,16 +266,16 @@ class UserService {
           .any((blockedUser) => blockedUser.username == element.username));
       return following.length;
     } else {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? token = prefs.getString('token');
-      final url =
-          Uri.parse('https://redditech.me/backend/users/following-count');
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/following-count?username=$username');
 
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          // 'Authorization': token!,
         },
       );
       print('in get following count');
