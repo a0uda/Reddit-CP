@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -71,8 +75,9 @@ class Post extends StatefulWidget {
   final String communityName;
   bool isLocked;
   final int vote;
-  final isPostMod;
-    bool isSaved;
+  final bool isPostMod;
+  bool isSaved;
+  ModeratorDetails? moderatorDetails;
 
   Post({
     super.key,
@@ -93,7 +98,8 @@ class Post extends StatefulWidget {
     required this.isLocked,
     required this.vote,
     this.isPostMod = false,
-    required this.isSaved
+    required this.isSaved,
+    this.moderatorDetails,
   });
 
   @override
@@ -169,7 +175,6 @@ class PostState extends State<Post> {
   @override
   void initState() {
     super.initState();
-
     if (widget.vote == 1) {
       upVote = true;
     } else if (widget.vote == -1) {
@@ -309,6 +314,9 @@ class PostState extends State<Post> {
                                 onTap: () async {
                                   //TODO: go to community
                                   await userController.getUserModerated();
+                                  print("nav");
+                                  print(
+                                      userController.userModeratedCommunities);
                                   bool isMod = userController
                                       .userModeratedCommunities!
                                       .any((comm) =>
@@ -319,6 +327,16 @@ class PostState extends State<Post> {
                                     await moderatorProvider.getModAccess(
                                         userController.userAbout!.username,
                                         widget.communityName);
+                                  } else {
+                                    moderatorProvider
+                                            .moderatorController.modAccess =
+                                        ModeratorItem(
+                                            everything: false,
+                                            managePostsAndComments: false,
+                                            manageSettings: false,
+                                            manageUsers: false,
+                                            username: userController
+                                                .userAbout!.username);
                                   }
                                   //IS MOD HENA.
                                   Navigator.of(context).push(MaterialPageRoute(
@@ -907,6 +925,37 @@ class PostState extends State<Post> {
                         ),
                       ),
                     ),
+                    widget.isPostMod ? Spacer() : const SizedBox(),
+                    widget.isPostMod
+                        ? ElevatedButton.icon(
+                            onPressed: () {
+                              showOptions(
+                                  context: context,
+                                  isApproved:
+                                      widget.moderatorDetails?.approvedFlag ??
+                                          false,
+                                  isRemoved:
+                                      widget.moderatorDetails?.removedFlag ??
+                                          false,
+                                  lockComments: widget.isLocked ?? false,
+                                  removedAsSpam:
+                                      widget.moderatorDetails?.spammedFlag ??
+                                          false);
+                            },
+                            icon: Icon(
+                              Icons.shield_outlined,
+                              color: Colors.black,
+                            ),
+                            label: SizedBox(),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
@@ -916,4 +965,82 @@ class PostState extends State<Post> {
       ),
     );
   }
+}
+
+void showOptions({
+  required BuildContext context,
+  bool isApproved = false,
+  bool isRemoved = false,
+  bool removedAsSpam = false,
+  bool lockComments = false,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isApproved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Approve post',
+                style:
+                    TextStyle(color: isApproved ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //approve
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.xmark,
+                color: isRemoved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove post',
+                style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //remove
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.free_cancellation_outlined,
+                color: removedAsSpam ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove as spam',
+                style: TextStyle(
+                    color: removedAsSpam ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //as spam
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.lock,
+                color: lockComments ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Lock Comments',
+                style:
+                    TextStyle(color: lockComments ? Colors.grey : Colors.black),
+              ),
+              onTap: () {
+                //lock comments
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

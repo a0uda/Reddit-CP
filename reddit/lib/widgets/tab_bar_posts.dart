@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -123,6 +124,20 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                               .userAbout!
                                                               .username,
                                                           community.name);
+                                                } else {
+                                                  moderatorProvider
+                                                          .moderatorController
+                                                          .modAccess =
+                                                      ModeratorItem(
+                                                          everything: false,
+                                                          managePostsAndComments:
+                                                              false,
+                                                          manageSettings: false,
+                                                          manageUsers: false,
+                                                          username:
+                                                              userController
+                                                                  .userAbout!
+                                                                  .username);
                                                 }
                                                 Navigator.of(context).push(
                                                   MaterialPageRoute(

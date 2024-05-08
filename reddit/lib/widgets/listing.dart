@@ -5,9 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/hot_listing.dart';
+import 'package:reddit/widgets/rising_listing.dart';
 import 'package:reddit/widgets/top_listing.dart';
 import 'package:reddit/widgets/best_listing.dart';
-import 'package:reddit/widgets/Rising_Listing.dart';
+
 import 'package:reddit/widgets/new_listing.dart';
 import 'package:reddit/widgets/trending_card.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -15,10 +16,15 @@ import '../Models/trending_item.dart';
 
 class Listing extends StatefulWidget {
   final String type;
-  final int? comId;
+  final String commName;
   final UserAbout? userData;
 
-  const Listing({super.key, required this.type, this.comId, this.userData});
+  const Listing({
+    super.key,
+    required this.type,
+    this.commName = "",
+    this.userData,
+  });
   @override
   State<Listing> createState() => _Listing();
 }
@@ -149,15 +155,16 @@ class _Listing extends State<Listing> {
           if (dropdownvalue == 'Hot')
             Expanded(
               child: HotListing(
-                type: widget.type,
-                userData: widget.userData,
-              ),
+                  type: widget.type,
+                  userData: widget.userData,
+                  commmunityName: widget.commName),
             ),
           if (dropdownvalue == "Best")
             Expanded(
               child: BestListing(
                 type: widget.type,
                 userData: widget.userData,
+                commmunityName: widget.commName,
               ),
             ),
           if (dropdownvalue == "New")
@@ -165,6 +172,7 @@ class _Listing extends State<Listing> {
               child: NewListing(
                 type: widget.type,
                 userData: widget.userData,
+                commmunityName: widget.commName,
               ),
             ),
           if (dropdownvalue == "Top")
@@ -172,13 +180,15 @@ class _Listing extends State<Listing> {
               child: TopListing(
                 type: widget.type,
                 userData: widget.userData,
+                commmunityName: widget.commName,
               ),
             ),
           if (dropdownvalue == "Random")
             Expanded(
-              child: RisingListing(
+              child: RandomListing(
                 type: widget.type,
                 userData: widget.userData,
+                commmunityName: widget.commName,
               ),
             ),
         ],

@@ -115,4 +115,6 @@ class ModeratorDetails {
     this.spammedFlag,
     this.approvedFlag,
   });
+
+  
 }

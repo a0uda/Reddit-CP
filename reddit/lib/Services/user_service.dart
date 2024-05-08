@@ -671,7 +671,7 @@ class UserService {
           'Authorization': token!,
         },
       );
-  
+
       print('in get unread messages count');
       print(jsonDecode(response.body));
       return jsonDecode(response.body)['count'];
@@ -940,6 +940,8 @@ class UserService {
           'Authorization': token!,
         },
       );
+      print("user communities");
+      print(response.body);
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
@@ -961,8 +963,9 @@ class UserService {
           'Authorization': token!,
         },
       );
+
       List<dynamic> decoded = jsonDecode(response.body)['content'] ?? [];
-      //print(response.body);
+
       return List<CommunityBackend>.from(
           decoded.map((community) => CommunityBackend.fromJson(community)));
     }

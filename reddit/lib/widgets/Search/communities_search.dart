@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
@@ -59,6 +60,13 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
     if (isMod) {
       await moderatorProvider.getModAccess(
           userController.userAbout!.username, name);
+    } else {
+      moderatorProvider.moderatorController.modAccess = ModeratorItem(
+          everything: false,
+          managePostsAndComments: false,
+          manageSettings: false,
+          manageUsers: false,
+          username: userController.userAbout!.username);
     }
     Navigator.of(context).push(
       MaterialPageRoute(

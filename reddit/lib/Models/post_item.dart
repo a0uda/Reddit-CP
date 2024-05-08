@@ -128,7 +128,20 @@ class PostItem {
       isRemoved: json['deleted'],
       poll: json['poll'] != null ? PollItem.fromJson(json['poll']) : null,
       pollExpired: json['polls_voting_is_expired_flag'],
-      isSaved: json['saved'],
+      isSaved: json['saved'] ?? false,
+      moderatorDetails: json['moderator_details'] != null
+          ? ModeratorDetails(
+              approvedBy: json['moderator_details']['approved_by'],
+              approvedDate: json['moderator_details']['approved_date'],
+              removedBy: json['moderator_details']['removed_by'],
+              removedDate: json['moderator_details']['removed_date'],
+              spammedBy: json['moderator_details']['spammed_by'],
+              spammedType: json['moderator_details']['spammed_type'],
+              removedFlag: json['moderator_details']['removed_flag'],
+              spammedFlag: json['moderator_details']['spammed_flag'],
+              approvedFlag: json['moderator_details']['approved_flag'],
+            )
+          : null,
     );
   }
 }

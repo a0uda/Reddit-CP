@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -90,9 +91,10 @@ class _DrawerTileState extends State<DrawerTile> {
                     shrinkWrap: true,
                     itemCount: widget.lists.length,
                     itemBuilder: (BuildContext context, int index) {
+                      print("hnaaa");
                       final item = widget.lists[index];
                       return ListTile(
-                        leading: CircleAvatar( 
+                        leading: CircleAvatar(
                           backgroundImage: AssetImage(item.profilePictureURL),
                           radius: 10,
                         ),
@@ -108,6 +110,15 @@ class _DrawerTileState extends State<DrawerTile> {
                           if (isMod) {
                             await moderatorProvider.getModAccess(
                                 userController.userAbout!.username, item.name);
+                          } else {
+                            moderatorProvider.moderatorController.modAccess =
+                                ModeratorItem(
+                                    everything: false,
+                                    managePostsAndComments: false,
+                                    manageSettings: false,
+                                    manageUsers: false,
+                                    username:
+                                        userController.userAbout!.username);
                           }
                           //IS MOD HENA.
                           Navigator.of(context).push(MaterialPageRoute(

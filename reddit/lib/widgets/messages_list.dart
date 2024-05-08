@@ -8,6 +8,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -42,8 +43,7 @@ class MessagesState extends State<MessagesPage> {
         return FutureBuilder<List<dynamic>>(
           future: Future.wait([
             myProvider.getUserMessages(),
-            userController
-                .getFollowing(userController.userAbout!.username)
+            userController.getFollowing(userController.userAbout!.username)
           ]),
           builder:
               (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -194,6 +194,20 @@ class MessagesState extends State<MessagesPage> {
                                                               .userAbout!
                                                               .username,
                                                           messageReceiver!);
+                                                } else {
+                                                  moderatorProvider
+                                                          .moderatorController
+                                                          .modAccess =
+                                                      ModeratorItem(
+                                                          everything: false,
+                                                          managePostsAndComments:
+                                                              false,
+                                                          manageSettings: false,
+                                                          manageUsers: false,
+                                                          username:
+                                                              userController
+                                                                  .userAbout!
+                                                                  .username);
                                                 }
                                                 //IS MOD HENA.
                                                 // IS MOD HENA

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
@@ -95,6 +96,23 @@ class _PostUIState extends State<PostUI> {
                               .userAbout!.moderatedCommunities!
                               .any((element) =>
                                   element.name == post["community_name"]);
+                          var moderatorProvider =
+                              context.read<ModeratorProvider>();
+                          if (isMod) {
+                            await moderatorProvider.getModAccess(
+                                userController.userAbout!.username,
+                                post["community_name"]);
+                          } else {
+                            moderatorProvider.moderatorController.modAccess =
+                                ModeratorItem(
+                                    everything: false,
+                                    managePostsAndComments: false,
+                                    manageSettings: false,
+                                    manageUsers: false,
+                                    username:
+                                        userController.userAbout!.username);
+                          }
+
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => (CommunityLayout(
@@ -282,6 +300,16 @@ class _PostUIState extends State<PostUI> {
                                         post["is_reposted_flag"]
                                             ? ogPost?.communityName
                                             : post["community_name"]);
+                                  } else {
+                                    moderatorProvider
+                                            .moderatorController.modAccess =
+                                        ModeratorItem(
+                                            everything: false,
+                                            managePostsAndComments: false,
+                                            manageSettings: false,
+                                            manageUsers: false,
+                                            username: userController
+                                                .userAbout!.username);
                                   }
 
                                   Navigator.of(context).push(

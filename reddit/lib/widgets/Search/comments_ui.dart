@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -91,6 +92,14 @@ class _CommentUIState extends State<CommentUI> {
                   await moderatorProvider.getModAccess(
                       userController.userAbout!.username,
                       comment["post_id"]["community_name"]);
+                } else {
+                  moderatorProvider.moderatorController.modAccess =
+                      ModeratorItem(
+                          everything: false,
+                          managePostsAndComments: false,
+                          manageSettings: false,
+                          manageUsers: false,
+                          username: userController.userAbout!.username);
                 }
                 Navigator.of(context).push(
                   MaterialPageRoute(

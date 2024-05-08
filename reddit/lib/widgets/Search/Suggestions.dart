@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
@@ -76,6 +77,14 @@ class _SuggestCommunitiesState extends State<SuggestCommunities> {
                           await moderatorProvider.getModAccess(
                               userController.userAbout!.username,
                               community["name"]);
+                        } else {
+                          moderatorProvider.moderatorController.modAccess =
+                              ModeratorItem(
+                                  everything: false,
+                                  managePostsAndComments: false,
+                                  manageSettings: false,
+                                  manageUsers: false,
+                                  username: userController.userAbout!.username);
                         }
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => (CommunityLayout(
