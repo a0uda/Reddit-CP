@@ -67,7 +67,8 @@ class _CreatePostState extends State<CreatePost> {
 
   List<String> rules = [];
   DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
+  TimeOfDay selectedTime =
+      TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
   String recurring = "none";
   bool isSaved = false;
 
@@ -473,6 +474,11 @@ class _CreatePostState extends State<CreatePost> {
                                         onTap: () async {
                                           await moderatorController.getRules(
                                               userCommunities[index].name);
+                                          await userController
+                                              .getUserModerated();
+                                          await moderatorController
+                                              .getPostTypesAndOptions(
+                                                  userCommunities[index].name);
                                           Navigator.pop(context,
                                               userCommunities[index].name);
                                         },
@@ -737,6 +743,10 @@ class _CreatePostState extends State<CreatePost> {
                       },
                       child: const Icon(Icons.link),
                     ),
+                    // if (selectedCommunity == "Select Community" ||
+                    //     moderatorController
+                    //             .postTypesAndOptions['allowImages'] ==
+                    //         true)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
@@ -750,6 +760,9 @@ class _CreatePostState extends State<CreatePost> {
                         ],
                       ),
                     ),
+                    // if (selectedCommunity == "Select Community" ||
+                    //     moderatorController.postTypesAndOptions['allowVideo'] ==
+                    //         true)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
@@ -764,6 +777,9 @@ class _CreatePostState extends State<CreatePost> {
                         ],
                       ),
                     ),
+                    // if (selectedCommunity == "Select Community" ||
+                    //     moderatorController.postTypesAndOptions['allowPolls'] ==
+                    //         true)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
@@ -859,7 +875,8 @@ class ModalForSchedule extends StatefulWidget {
 
 class _ModalForScheduleState extends State<ModalForSchedule> {
   DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
+  TimeOfDay selectedTime =
+      TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 1)));
   List<String> values = ["hourly", "daily", "weekly", "monthly"];
   List<String> labels = [
     "Every hour",

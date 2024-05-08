@@ -14,8 +14,8 @@ import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/message_content.dart';
-import 'package:social_media_flutter/widgets/icons.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({
@@ -42,7 +42,7 @@ class MessagesState extends State<MessagesPage> {
         return FutureBuilder<List<dynamic>>(
           future: Future.wait([
             myProvider.getUserMessages(),
-            followerfollowingcontroller
+            userController
                 .getFollowing(userController.userAbout!.username)
           ]),
           builder:

@@ -63,6 +63,7 @@ class CommentsService {
         createdAt: DateTime.now().toString().substring(0, 10),
         upvotesCount: 0,
         downvotesCount: 0,
+        vote: 0,
       ));
       final post = posts.firstWhere((element) => element.id == postId);
       post.commentsCount++;

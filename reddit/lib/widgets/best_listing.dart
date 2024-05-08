@@ -136,7 +136,8 @@ class BestListingBuild extends State<BestListing> {
                             commentsCount: posts[index].commentsCount,
                             communityName: posts[index].communityName,
                             isLocked: posts[index].lockedFlag,
-                            vote: posts[index].vote);
+                        isSaved: posts[index].isSaved!,
+                            vote: posts[index].vote,);
                       }
                       if (posts[index].nsfwFlag == true ||
                           posts[index].spoilerFlag == true) {
@@ -170,6 +171,7 @@ class BestListingBuild extends State<BestListing> {
                         id: posts[index].id,
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
+                        isSaved: posts[index].isSaved!,
                       );
                     },
                   );

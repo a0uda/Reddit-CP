@@ -104,10 +104,10 @@ class PostService {
                   })
               .toList(),
           "polls": poll != null
-            ? poll.options.map((option) {
-                return {"options": option};
-              }).toList()
-            : [],
+              ? poll.options.map((option) {
+                  return {"options": option};
+                }).toList()
+              : [],
           "polls_voting_length": days,
           "community_name": communityName,
           "post_in_community_flag": postInCommunityFlag,
@@ -362,6 +362,8 @@ class PostService {
     } else {
       final url =
           Uri.parse('https://redditech.me/backend/posts-or-comments/save');
+      // PostItem post = posts.firstWhere((element) => element.id == id);
+      // post.isSaved = !post.isSaved!;
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -378,15 +380,6 @@ class PostService {
       );
       print(response.statusCode);
 
-      // dislike post in database
-    }
-  }
-
-  void unSavePost(String? id, String username) {
-    if (testing) {
-      savedPosts.removeWhere(
-          (post) => ((post.id == id) && (post.username == username)));
-    } else {
       // dislike post in database
     }
   }

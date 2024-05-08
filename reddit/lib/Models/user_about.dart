@@ -66,7 +66,7 @@ class UserAbout {
           ? 'Choose your location'
           : jsonDecode['country'],
       gender: jsonDecode['gender'],
-      isPasswordSetFlag: jsonDecode['is_password_set_flag'] ?? false,
+      isPasswordSetFlag: jsonDecode['is_password_set_flag'] ?? true,
       connectedGoogle: jsonDecode['connected_google'],
       moderatedCommunities: jsonDecode['moderatedCommunities'] != null
           ? List<CommunityBackend>.from(jsonDecode['moderatedCommunities']

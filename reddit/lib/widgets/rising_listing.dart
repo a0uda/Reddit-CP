@@ -147,7 +147,9 @@ class RisingListingBuild extends State<RisingListing> {
                         commentsCount: posts[index].commentsCount,
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
-                        vote: posts[index].vote);
+                        vote: posts[index].vote,
+                        isSaved: posts[index].isSaved!,
+                        );
                   }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
@@ -181,6 +183,7 @@ class RisingListingBuild extends State<RisingListing> {
                     id: posts[index].id,
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
+                    isSaved: posts[index].isSaved!,
                   );
                          }
                 },

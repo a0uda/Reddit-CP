@@ -17,7 +17,8 @@ final userController = GetIt.instance.get<UserController>();
 class TopListing extends StatefulWidget {
   final String type;
   final UserAbout? userData;
-  const TopListing({super.key, required this.type, this.userData});
+  final bool isInCommunity;
+  const TopListing({super.key, required this.type, this.userData , this.isInCommunity = false});
   @override
   State<TopListing> createState() => TopListingBuild();
 }
@@ -154,7 +155,9 @@ class TopListingBuild extends State<TopListing> {
                               commentsCount: posts[index].commentsCount,
                               communityName: posts[index].communityName,
                               isLocked: posts[index].lockedFlag,
-                              vote: posts[index].vote);
+                              vote: posts[index].vote,
+                              isSaved: posts[index].isSaved!,
+                              );
                         }
                         if (posts[index].nsfwFlag == true ||
                             posts[index].spoilerFlag == true) {
@@ -188,6 +191,7 @@ class TopListingBuild extends State<TopListing> {
                           id: posts[index].id,
                           communityName: posts[index].communityName,
                           isLocked: posts[index].lockedFlag,
+                          isSaved: posts[index].isSaved!,
                         );
                       }
                     },

@@ -143,7 +143,9 @@ post.removeWhere((item1) => item1.isRemoved==true);
                         commentsCount: posts[index].commentsCount,
                         communityName: posts[index].communityName,
                         isLocked: posts[index].lockedFlag,
-                        vote: posts[index].vote);
+                        vote: posts[index].vote,
+                        isSaved: posts[index].isSaved!,
+                        );
                   }
                   if (posts[index].nsfwFlag == true ||
                       posts[index].spoilerFlag == true) {
@@ -177,6 +179,7 @@ post.removeWhere((item1) => item1.isRemoved==true);
                     id: posts[index].id,
                     communityName: posts[index].communityName,
                     isLocked: posts[index].lockedFlag,
+                    isSaved: posts[index].isSaved??false,
                   );
                        }
                 },

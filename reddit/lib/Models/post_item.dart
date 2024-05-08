@@ -40,6 +40,7 @@ class PostItem {
   final String originalPostID;
   final bool isRemoved;
   final bool? pollExpired;
+  bool? isSaved;
   PostItem({
     required this.id,
     required this.userId,
@@ -77,6 +78,7 @@ class PostItem {
     this.moderatorDetails,
     this.userDetails,
     this.pollExpired,
+    this.isSaved,
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
@@ -126,6 +128,7 @@ class PostItem {
       isRemoved: json['deleted'],
       poll: json['poll'] != null ? PollItem.fromJson(json['poll']) : null,
       pollExpired: json['polls_voting_is_expired_flag'],
+      isSaved: json['saved'],
     );
   }
 }

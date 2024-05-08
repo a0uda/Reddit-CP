@@ -70,6 +70,13 @@ class _CommentState extends State<Comment> {
   @override
   void initState() {
     super.initState();
+    if (widget.comment.vote == 1) {
+      upVote = true;
+      upVoteColor = Colors.blue;
+    } else if (widget.comment.vote == -1) {
+      downVote = true;
+      downVoteColor = Colors.red;
+    }
     initPrefs();
   }
 
@@ -94,7 +101,7 @@ class _CommentState extends State<Comment> {
         }
         widget.likes++;
       } else {
-        commentService.downVoteComment(commentId);
+        commentService.upVoteComment(commentId);
         upVoteColor = Colors.black;
         widget.likes--;
       }
@@ -116,7 +123,7 @@ class _CommentState extends State<Comment> {
         }
         widget.likes--;
       } else {
-        commentService.upVoteComment(commentId);
+        commentService.downVoteComment(commentId);
         downVoteColor = Colors.black;
         widget.likes++;
       }
