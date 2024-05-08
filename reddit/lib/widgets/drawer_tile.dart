@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
@@ -96,19 +97,25 @@ class _DrawerTileState extends State<DrawerTile> {
                           radius: 10,
                         ),
                         title: Text(item.name),
-                        onTap: () {
-                          // Call the function to navigate to the community page
-                          // navigateToCommunity(
-                          //     item['communityPage'], context);
+                        onTap: () async {
                           moderatorController.profilePictureURL =
                               item.profilePictureURL;
+                          await userController.getUserModerated();
+                          bool isMod = userController.userModeratedCommunities!
+                              .any((comm) => comm.name == item.name);
+                          var moderatorProvider =
+                              context.read<ModeratorProvider>();
+                          if (isMod) {
+                            await moderatorProvider.getModAccess(
+                                userController.userAbout!.username, item.name);
+                          }
+                          //IS MOD HENA.
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => (CommunityLayout(
                                     desktopLayout: DesktopCommunityPage(
-                                        isMod: widget.isMod,
-                                        communityName: item.name),
+                                        isMod: isMod, communityName: item.name),
                                     mobileLayout: MobileCommunityPage(
-                                      isMod: widget.isMod,
+                                      isMod: isMod,
                                       communityName: item.name,
                                     ),
                                   ))));

@@ -27,11 +27,11 @@ class TopListingBuild extends State<TopListing> {
   int page = 1;
   List<PostItem> posts = [];
   late Future<void> _dataFuture;
-  bool isloading=false;
+  bool isloading = false;
   // List of items in our dropdown menu
   Future<void> fetchdata({bool isRefresh = false}) async {
     final postService = GetIt.instance.get<PostService>();
-    isloading=true;
+    isloading = true;
     List<PostItem> post = [];
     if (isRefresh) {
       page = 1; // Reset the page to 1 if it's a refresh
@@ -52,7 +52,7 @@ class TopListingBuild extends State<TopListing> {
       post = await postService.getMyPosts(username);
     }
     // Remove objects from list1 if their IDs match any in list2
-    isloading=false;
+    isloading = false;
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
     post.removeWhere((item1) => item1.isRemoved == true);
 
@@ -86,121 +86,118 @@ class TopListingBuild extends State<TopListing> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RefreshHome>(
-        builder: (context,refresh, child) { 
-            if (refresh.shouldRefresh) {
-          posts=[];
-          fetchdata();
-          refresh.resetRefresh(); // Reset the edit flag after fetching data
-        }
-     return FutureBuilder<void>(
-          future: _dataFuture,
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<RefreshHome>(builder: (context, refresh, child) {
+      if (refresh.shouldRefresh) {
+        posts = [];
+        fetchdata();
+        refresh.resetRefresh(); // Reset the edit flag after fetching data
+      }
+      return FutureBuilder<void>(
+        future: _dataFuture,
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.white,
+              child: const SizedBox(
+                height: 20,
+                width: 20,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            if (isloading) {
               return Container(
                 color: Colors.white,
-                child: const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: Center(
+                child: const Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
                     child: CircularProgressIndicator(),
                   ),
                 ),
               );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
             } else {
-               if (isloading)
-          {
-      return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-          }
-          else{
               return Consumer<LockPost>(builder: (context, lockPost, child) {
-
                 return RefreshIndicator(
-        onRefresh: () async {
-          print('asjdkjasdn');
-          setState(() {
-            _dataFuture = fetchdata(isRefresh: true);
-          });
-        }, 
-             child:    ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  itemCount: posts.length,
-                  controller: controller,
-                  itemBuilder: (context, index) {
-                    var imageurl = null;
-                    if (posts[index].images != null) {
-                      imageurl = posts[index].images?[0].path;
-                    }
+                  onRefresh: () async {
+                    print('asjdkjasdn');
+                    setState(() {
+                      _dataFuture = fetchdata(isRefresh: true);
+                    });
+                  },
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: posts.length,
+                    controller: controller,
+                    itemBuilder: (context, index) {
+                      var imageurl = null;
+                      if (posts[index].images != null) {
+                        imageurl = posts[index].images?[0].path;
+                      }
 
-                    print(posts[index].isReposted);
-                    {
-                      if (posts[index].isReposted) {
-                        return Repost(
-                            description: posts[index].description,
+                      print(posts[index].isReposted);
+                      {
+                        if (posts[index].isReposted) {
+                          return Repost(
+                              description: posts[index].description,
+                              id: posts[index].id,
+                              name: posts[index].username,
+                              title: posts[index].title,
+                              originalID: posts[index].originalPostID,
+                              date: posts[index].createdAt.toString(),
+                              likes: posts[index].upvotesCount -
+                                  posts[index].downvotesCount,
+                              commentsCount: posts[index].commentsCount,
+                              communityName: posts[index].communityName,
+                              isLocked: posts[index].lockedFlag,
+                              vote: posts[index].vote);
+                        }
+                        if (posts[index].nsfwFlag == true ||
+                            posts[index].spoilerFlag == true) {
+                          return CollapsePost(
                             id: posts[index].id,
+                            // profileImageUrl: posts[index].profilePic!,
                             name: posts[index].username,
                             title: posts[index].title,
-                            originalID: posts[index].originalPostID,
                             date: posts[index].createdAt.toString(),
-                            likes: posts[index].upvotesCount -
-                                posts[index].downvotesCount,
-                            commentsCount: posts[index].commentsCount,
                             communityName: posts[index].communityName,
                             isLocked: posts[index].lockedFlag,
-                            vote: posts[index].vote);
-                      }
-                      if (posts[index].nsfwFlag == true ||
-                          posts[index].spoilerFlag == true) {
-                        return CollapsePost(
-                          id: posts[index].id,
+                            isNSFW: posts[index].nsfwFlag,
+                            isSpoiler: posts[index].spoilerFlag,
+                          );
+                        }
+
+                        return Post(
                           // profileImageUrl: posts[index].profilePic!,
                           name: posts[index].username,
+                          vote: posts[index].vote,
                           title: posts[index].title,
+                          postContent: posts[index].description,
                           date: posts[index].createdAt.toString(),
+                          likes: posts[index].upvotesCount -
+                              posts[index].downvotesCount,
+                          commentsCount: posts[index].commentsCount,
+                          linkUrl: posts[index].linkUrl,
+                          imageUrl: imageurl,
+                          videoUrl: posts[index].videos?[0].path,
+                          poll: posts[index].poll,
+                          id: posts[index].id,
                           communityName: posts[index].communityName,
                           isLocked: posts[index].lockedFlag,
-                          isNSFW: posts[index].nsfwFlag,
-                          isSpoiler: posts[index].spoilerFlag,
                         );
                       }
-
-                      return Post(
-                        // profileImageUrl: posts[index].profilePic!,
-                        name: posts[index].username,
-                        vote: posts[index].vote,
-                        title: posts[index].title,
-                        postContent: posts[index].description,
-                        date: posts[index].createdAt.toString(),
-                        likes: posts[index].upvotesCount -
-                            posts[index].downvotesCount,
-                        commentsCount: posts[index].commentsCount,
-                        linkUrl: posts[index].linkUrl,
-                        imageUrl: imageurl,
-                        videoUrl: posts[index].videos?[0].path,
-                        poll: posts[index].poll,
-                        id: posts[index].id,
-                        communityName: posts[index].communityName,
-                        isLocked: posts[index].lockedFlag,
-                      );
-                    }
-                  },
-                ),);
+                    },
+                  ),
+                );
               });
             }
-            }
-          },
-        
-    );});
+          }
+        },
+      );
+    });
   }
 }

@@ -18,8 +18,7 @@ class Listing extends StatefulWidget {
   final int? comId;
   final UserAbout? userData;
 
-  const Listing({super.key, required this.type,
-  this.comId, this.userData});
+  const Listing({super.key, required this.type, this.comId, this.userData});
   @override
   State<Listing> createState() => _Listing();
 }
@@ -28,20 +27,19 @@ final postService = GetIt.instance.get<PostService>();
 
 List<TrendingItem?> trends = [];
 
-  late Future<void> _dataFuture;
-  bool isloading=false;
-
+late Future<void> _dataFuture;
+bool isloading = false;
 
 class _Listing extends State<Listing> {
   String dropdownvalue = 'Hot';
-Future<void> FetchTrendingPosts ()async
-{
-    bool isloading=true;
+  Future<void> FetchTrendingPosts() async {
+    bool isloading = true;
 
-trends=await postService.getTrendingPosts();
-    isloading=false;
-}
-bool refresh=false;
+    trends = await postService.getTrendingPosts();
+    isloading = false;
+  }
+
+  bool refresh = false;
   // List of items in our dropdown menu
   var items = [
     'Hot',
@@ -52,87 +50,77 @@ bool refresh=false;
   ];
 
   // List of items in our dropdown menu
-@override
+  @override
   void initState() {
     super.initState();
-    _dataFuture = FetchTrendingPosts(); 
- 
-    
+    _dataFuture = FetchTrendingPosts();
   }
+
   @override
   Widget build(BuildContext context) {
-       var postController = context.read<RefreshHome>();
-    return 
-    Container(
+    var postController = context.read<RefreshHome>();
+    return Container(
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
-          (widget.type=="popular")?
-          Container(
-            child:const Align(
-              alignment: Alignment.topCenter,
-              child:Text('Trending Today'))
-           ,):Container(),
-          
-        
-        
-          (widget.type == "popular") 
-              ? SizedBox(
-                height:  MediaQuery.of(context).size.height * 0.2,
- 
-                child: FutureBuilder<void>(
-      future: _dataFuture,
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-           return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          if (isloading)
-          {
-      return Container(
-            color: Colors.white,
-            child: const Center(
-              child: SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(),
-              ),
-            ),
-          );
-          }
-          else{
-
-             return    ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: trends.length,
-                  itemBuilder: (context, index) {
-                    return TrendingPost(
-                      title: trends[index]!.title,
-                      imageUrl: trends[index]!.picture.path,
-                    );
-                  },
-                );};}}),)
-
-
-
+          (widget.type == "popular")
+              ? Container(
+                  child: const Align(
+                      alignment: Alignment.topCenter,
+                      child: Text('Trending Today')),
+                )
               : Container(),
-
-
-
-
+          (widget.type == "popular")
+              ? SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  child: FutureBuilder<void>(
+                      future: _dataFuture,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<void> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Container(
+                            color: Colors.white,
+                            child: const Center(
+                              child: SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          if (isloading) {
+                            return Container(
+                              color: Colors.white,
+                              child: const Center(
+                                child: SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: trends.length,
+                              itemBuilder: (context, index) {
+                                return TrendingPost(
+                                  title: trends[index]!.title,
+                                  imageUrl: trends[index]!.picture.path,
+                                );
+                              },
+                            );
+                          }
+                          ;
+                        }
+                      }),
+                )
+              : Container(),
           ListTile(
-
             leading: Container(
               // width: 71,
               // height: 70,
@@ -158,7 +146,6 @@ bool refresh=false;
               ),
             ),
           ),
-     
           if (dropdownvalue == 'Hot')
             Expanded(
               child: HotListing(
@@ -170,14 +157,14 @@ bool refresh=false;
             Expanded(
               child: BestListing(
                 type: widget.type,
-                    userData: widget.userData,
+                userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "New")
             Expanded(
               child: NewListing(
                 type: widget.type,
-                    userData: widget.userData,
+                userData: widget.userData,
               ),
             ),
           if (dropdownvalue == "Top")
@@ -191,7 +178,7 @@ bool refresh=false;
             Expanded(
               child: RisingListing(
                 type: widget.type,
-                 userData: widget.userData,
+                userData: widget.userData,
               ),
             ),
         ],

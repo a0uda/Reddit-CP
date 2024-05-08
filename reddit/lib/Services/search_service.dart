@@ -60,8 +60,8 @@ class SearchService {
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> foundComm =
           List<Map<String, dynamic>>.from(decodedData['content']);
-      print("yaba");
-      print(foundComm);
+      // print("yaba");
+      // print(foundComm);
       return foundComm; //badrrr
     }
   }

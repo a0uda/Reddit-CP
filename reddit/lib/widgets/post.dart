@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -66,25 +67,28 @@ class Post extends StatefulWidget {
   final String communityName;
   final bool isLocked;
   final int vote;
+  final isPostMod;
 
-  Post(
-      {super.key,
-      required this.id,
-      // required this.profileImageUrl,
-      required this.name,
-      required this.title,
-      required this.postContent,
-      required this.date,
-      required this.likes,
-      required this.commentsCount,
-      this.imageUrl,
-      this.linkUrl,
-      this.videoUrl,
-      this.poll,
-      this.pollExpired,
-      required this.communityName,
-      required this.isLocked,
-      required this.vote});
+  Post({
+    super.key,
+    required this.id,
+    // required this.profileImageUrl,
+    required this.name,
+    required this.title,
+    required this.postContent,
+    required this.date,
+    required this.likes,
+    required this.commentsCount,
+    this.imageUrl,
+    this.linkUrl,
+    this.videoUrl,
+    this.poll,
+    this.pollExpired,
+    required this.communityName,
+    required this.isLocked,
+    required this.vote,
+    this.isPostMod = false,
+  });
 
   @override
   PostState createState() => PostState();
@@ -215,12 +219,21 @@ class PostState extends State<Post> {
                         alignment: Alignment.centerLeft,
                         child: (widget.communityName != "")
                             ? InkWell(
-                                onTap: () {
+                                onTap: () async {
                                   //TODO: go to community
+                                  await userController.getUserModerated();
                                   bool isMod = userController
-                                      .userAbout!.moderatedCommunities!
-                                      .any((element) =>
-                                          element.name == widget.communityName);
+                                      .userModeratedCommunities!
+                                      .any((comm) =>
+                                          comm.name == widget.communityName);
+                                  var moderatorProvider =
+                                      context.read<ModeratorProvider>();
+                                  if (isMod) {
+                                    await moderatorProvider.getModAccess(
+                                        userController.userAbout!.username,
+                                        widget.communityName);
+                                  }
+                                  //IS MOD HENA.
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => (CommunityLayout(
                                             desktopLayout: DesktopCommunityPage(

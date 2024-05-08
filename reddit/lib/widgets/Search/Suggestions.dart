@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Services/search_service.dart';
@@ -26,7 +27,6 @@ class _SuggestCommunitiesState extends State<SuggestCommunities> {
 
   Future<void> fetchCommunities() async {
     if (widget.search != "") {
-    print(widget.search.length);
       foundCommunities =
           await searchService.getSearchCommunities(widget.search, 1, 5);
     }
@@ -35,7 +35,6 @@ class _SuggestCommunitiesState extends State<SuggestCommunities> {
   @override
   void initState() {
     super.initState();
-    print("ehh el neza");
   }
 
   @override
@@ -64,12 +63,20 @@ class _SuggestCommunitiesState extends State<SuggestCommunities> {
                   (community) => Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
                     child: ListTile(
-                      onTap: () {
-                        bool isMod = userController
-                            .userAbout!.moderatedCommunities!
-                            .any((comm) => comm.name == community["name"]);
+                      onTap: () async {
                         moderatorController.profilePictureURL =
                             community["profile_picture"];
+
+                        await userController.getUserModerated();
+                        bool isMod = userController.userModeratedCommunities!
+                            .any((comm) => comm.name == community["name"]);
+                        var moderatorProvider =
+                            context.read<ModeratorProvider>();
+                        if (isMod) {
+                          await moderatorProvider.getModAccess(
+                              userController.userAbout!.username,
+                              community["name"]);
+                        }
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => (CommunityLayout(
                                   desktopLayout: DesktopCommunityPage(

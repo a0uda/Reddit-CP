@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/widgets/best_listing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ModeratorController {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
 
   String communityName = "";
+  ModeratorItem modAccess = ModeratorItem(
+      everything: false,
+      managePostsAndComments: false,
+      manageSettings: false,
+      manageUsers: false,
+      username: "");
   List<Map<String, dynamic>> approvedUsers = [];
   List<Map<String, dynamic>> bannedUsers = [];
   List<Map<String, dynamic>> mutedUsers = [];
@@ -240,13 +249,19 @@ class ScheduledProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitScheduledPost(
-      String communityName, String post_id) async {
+  Future<void> submitScheduledPost(String communityName, String post_id) async {
     await moderatorService.submitScheduledPost(
-        postId: post_id,
-        communityName: communityName);
-    moderatorController.scheduled =
-        await moderatorService.getScheduled(communityName);
+        postId: post_id, communityName: communityName);
+    // moderatorController.scheduled =
+    //     await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> cancelScheduledPost(String communityName, String post_id) async {
+    await moderatorService.cancelScheduledPost(
+        postId: post_id, communityName: communityName);
+    // moderatorController.scheduled =
+    //     await moderatorService.getScheduled(communityName);
     notifyListeners();
   }
 }
@@ -280,6 +295,16 @@ class ModeratorProvider extends ChangeNotifier {
     moderatorController.moderators =
         await moderatorService.getModerators(communityName);
     notifyListeners();
+  }
+
+  Future<void> getModAccess(String username, String communityName) async {
+    moderatorController.moderators =
+        await moderatorService.getModerators(communityName);
+    moderatorController.modAccess = ModeratorItem.fromJson(moderatorController
+        .moderators
+        .firstWhere((mod) => mod["username"] == username));
+    // print("badr test access");
+    // print(moderatorController.modAccess.everything);
   }
 }
 

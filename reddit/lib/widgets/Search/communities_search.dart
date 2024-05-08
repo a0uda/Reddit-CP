@@ -50,12 +50,16 @@ class _CommunitiesSearchState extends State<CommunitiesSearch> {
     });
   }
 
-  void navigateToCommunity(String name, String pp) {
-    List<CommunityBackend> moderated =
-        userController.userAbout!.moderatedCommunities ?? [];
-    moderatorController.profilePictureURL = pp;
-    bool isMod = moderated.any((element) => element.name == name);
+  void navigateToCommunity(String name, String pp) async {
     moderatorController.communityName = name;
+    await userController.getUserModerated();
+    bool isMod = userController.userModeratedCommunities!
+        .any((comm) => comm.name == name);
+    var moderatorProvider = context.read<ModeratorProvider>();
+    if (isMod) {
+      await moderatorProvider.getModAccess(
+          userController.userAbout!.username, name);
+    }
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => (CommunityLayout(

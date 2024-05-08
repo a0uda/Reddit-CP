@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -20,6 +22,8 @@ class CommentUI extends StatefulWidget {
 class _CommentUIState extends State<CommentUI> {
   late dynamic comment;
   final UserService userService = GetIt.instance.get<UserService>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   String formatDateTime(String dateTimeString) {
     final DateTime now = DateTime.now();
@@ -56,6 +60,7 @@ class _CommentUIState extends State<CommentUI> {
 
   @override
   Widget build(BuildContext context) {
+    print(comment);
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
@@ -72,23 +77,44 @@ class _CommentUIState extends State<CommentUI> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () {
-              bool isMod = userController.userAbout!.moderatedCommunities!.any(
-                  (element) =>
-                      element.name == comment["post_id"]["community_name"]);
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => (CommunityLayout(
-                    desktopLayout: DesktopCommunityPage(
+            onTap: () async {
+              // bool isMod = userController.userAbout!.moderatedCommunities!.any(
+              //     (element) =>
+              //         element.name == comment["post_id"]["community_name"]);
+              if (comment["post_id"]["post_in_community_flag"]) {
+                await userController.getUserModerated();
+                bool isMod = userController.userModeratedCommunities!.any(
+                    (comm) =>
+                        comm.name == comment["post_id"]["community_name"]);
+                var moderatorProvider = context.read<ModeratorProvider>();
+                if (isMod) {
+                  await moderatorProvider.getModAccess(
+                      userController.userAbout!.username,
+                      comment["post_id"]["community_name"]);
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => (CommunityLayout(
+                      desktopLayout: DesktopCommunityPage(
+                          isMod: isMod,
+                          communityName: comment["post_id"]["community_name"]),
+                      mobileLayout: MobileCommunityPage(
                         isMod: isMod,
-                        communityName: comment["post_id"]["community_name"]),
-                    mobileLayout: MobileCommunityPage(
-                      isMod: isMod,
-                      communityName: comment["post_id"]["community_name"],
-                    ),
-                  )),
-                ),
-              );
+                        communityName: comment["post_id"]["community_name"],
+                      ),
+                    )),
+                  ),
+                );
+              } else {
+                UserAbout otherUserData =
+                    await (userService.getUserAbout(comment["username"]))!;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(otherUserData, 'other'),
+                  ),
+                );
+              }
             },
             child: Row(
               children: [
@@ -108,9 +134,11 @@ class _CommentUIState extends State<CommentUI> {
                   width: 5,
                 ),
                 Text(
-                  comment["post_id"]["post_in_community_flag"]
-                      ? "r/${comment["post_id"]["community_name"]}"
-                      : "u/${comment["post_id"]["username"]}",
+                  comment["post_id"] != null
+                      ? (comment["post_id"]["post_in_community_flag"])
+                          ? "r/${comment["post_id"]["community_name"]}"
+                          : "u/${comment["post_id"]["username"]}"
+                      : "",
                   style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 11,

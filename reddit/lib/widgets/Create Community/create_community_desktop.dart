@@ -4,9 +4,11 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/best_listing.dart';
 
 class CreateCommunityPopup extends StatefulWidget {
   const CreateCommunityPopup({super.key});
@@ -18,6 +20,7 @@ class CreateCommunityPopup extends StatefulWidget {
 class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
   TextEditingController inputController = TextEditingController();
   final moderatorController = GetIt.instance.get<ModeratorController>();
+  final UserController userController = GetIt.instance.get<UserController>();
 
   int maxCounter = 21;
   int remainingCharacters = 21;
@@ -126,6 +129,12 @@ class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
           communityName: inputController.text,
           pictureUrl: "https://avatars.githubusercontent.com/u/95462348");
       // ignore: use_build_context_synchronously
+      moderatorController.modAccess = ModeratorItem(
+          everything: true,
+          managePostsAndComments: true,
+          manageSettings: true,
+          manageUsers: true,
+          username: userController.userAbout!.username);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => (CommunityLayout(

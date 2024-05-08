@@ -35,8 +35,6 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
         }
       }
       postsFetched = true;
-      print(scheduledPosts.length);
-      print(recurringPosts.length);
       setState(() {
         scheduledPosts = scheduledPosts;
         recurringPosts = recurringPosts;
@@ -52,92 +50,104 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Consumer<ScheduledProvider>(
-      builder: (context, scheduledProvider, child) {
-        return FutureBuilder<void>(
-          future: fetchScheduled(),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Text('none');
-              case ConnectionState.waiting:
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 30.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    postsFetched = false;
-                    await fetchScheduled();
-                  },
-                  child: SingleChildScrollView(
-                    child: Container(
-                      color: Colors.grey[200],
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          (screenWidth > 700)
-                              ? AppBar(
-                                  leading: const SizedBox(
-                                    width: 0,
+
+    return FutureBuilder<void>(
+      future: fetchScheduled(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return const Text('none');
+          case ConnectionState.waiting:
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 30.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            return Consumer<ScheduledProvider>(
+                builder: (context, scheduledProvider, child) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  postsFetched = false;
+                  await fetchScheduled();
+                },
+                child: SingleChildScrollView(
+                  child: Container(
+                    color: Colors.grey[200],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        (screenWidth > 700)
+                            ? AppBar(
+                                leading: const SizedBox(
+                                  width: 0,
+                                ),
+                                title: const Text(
+                                  'Scheduled posts',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  title: const Text(
-                                    'Scheduled posts',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.black,
+                                ),
+                              )
+                            : const SizedBox(),
+                        recurringPosts.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 18.0, top: 10, bottom: 10),
+                                child: Text(
+                                  "RECURRING POSTS",
+                                  style: TextStyle(
+                                      color: Colors.grey[700],
                                       fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          recurringPosts.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 18.0, top: 10, bottom: 10),
-                                  child: Text(
-                                    "RECURRING POSTS",
-                                    style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          ...recurringPosts
-                              .map((item) => PostScheduled(item: item)),
-                          scheduledPosts.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 18.0, top: 10, bottom: 10),
-                                  child: Text(
-                                    "SCHEDULED POSTS",
-                                    style: TextStyle(
-                                        color: Colors.grey[700],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12),
-                                  ),
-                                )
-                              : const SizedBox(),
-                          ...scheduledPosts
-                              .map((item) => PostScheduled(item: item)),
-                        ],
-                      ),
+                                      fontSize: 12),
+                                ),
+                              )
+                            : const SizedBox(),
+                        ...recurringPosts.map((item) => PostScheduled(
+                              item: item,
+                              fetch: () {
+                                setState(() {
+                                  postsFetched = false;
+                                });
+                              },
+                            )),
+                        scheduledPosts.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 18.0, top: 10, bottom: 10),
+                                child: Text(
+                                  "SCHEDULED POSTS",
+                                  style: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                              )
+                            : const SizedBox(),
+                        ...scheduledPosts.map((item) => PostScheduled(
+                              item: item,
+                              fetch: () {
+                                setState(() {
+                                  postsFetched = false;
+                                });
+                              },
+                            )),
+                      ],
                     ),
                   ),
-                );
-              default:
-                return const Text('badr');
-            }
-          },
-        );
+                ),
+              );
+            });
+          default:
+            return const Text('badr');
+        }
       },
     );
   }
