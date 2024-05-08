@@ -4,6 +4,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/post_mod_queue.dart';
 
+
 class ModQueues extends StatefulWidget {
   const ModQueues({super.key});
 
@@ -29,6 +30,7 @@ class _ModQueuesState extends State<ModQueues> {
       required String postsOrComments,
       required String queueType}) async {
     print('Ana gowa el fetch function');
+    print(moderatorController.communityName);
     print(needReviewTitle);
     print(postsAndCommentsTitle);
     print(newestFirstTitle);
@@ -136,6 +138,7 @@ class _ModQueuesState extends State<ModQueues> {
                                 moderatorController.queuePosts[index];
                             return PostModQueue(
                               post: item,
+                              queueType: needReviewTitle,
                             );
                           },
                         );
@@ -169,6 +172,7 @@ class _ModQueuesState extends State<ModQueues> {
                                     moderatorController.queuePosts[index];
                                 return PostModQueue(
                                   post: item,
+                                   queueType: needReviewTitle,
                                 );
                               },
                             );
@@ -202,6 +206,7 @@ class _ModQueuesState extends State<ModQueues> {
                                         .queuePosts[index];
                                     return PostModQueue(
                                       post: item,
+                                       queueType: needReviewTitle,
                                     );
                                   },
                                 );
@@ -368,7 +373,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               newestFirstDisplay = value;
             });
-            widget.changeNewestFirstText(value);
+            widget.changeNewestFirstText('Newest First');
           });
         },
         'bool': true
@@ -380,7 +385,7 @@ class _ModQueuesBarState extends State<ModQueuesBar> {
             setState(() {
               newestFirstDisplay = value;
             });
-            widget.changeNewestFirstText(value);
+            widget.changeNewestFirstText('Oldest First');
           });
         },
         'bool': false

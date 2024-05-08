@@ -152,6 +152,12 @@ void main() async {
       ChangeNotifierProvider(
         create: (context) => Chat(),
       )
+      ChangeNotifierProvider(
+        create: (context) => handleObjectionProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => handleUnmoderatedProvider(),
+      ),
     ],
     child: const MyApp(),
   ));

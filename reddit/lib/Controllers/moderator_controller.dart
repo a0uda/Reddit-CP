@@ -33,6 +33,7 @@ class ModeratorController {
     nsfwFlag: false,
   );
   bool joinedFlag = false;
+  List<bool> isPostInCommunity = [];
   String membersCount = "0";
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
@@ -114,6 +115,7 @@ class ModeratorController {
         timeFilter: timeFilter,
         postsOrComments: postsOrComments,
         queueType: queueType);
+    isPostInCommunity = queuePosts.map((e) => e.postInCommunityFlag).toList();
     print('Mohy beyshoof el unmoderated fel controller');
     print(queuePosts);
   }
@@ -498,6 +500,55 @@ class IsJoinedProvider extends ChangeNotifier {
       {required String communityName, required bool isJoined}) async {
     await moderatorService.leaveCommunity(communityName: communityName);
     moderatorController.joinedFlag = isJoined;
+    notifyListeners();
+  }
+}
+
+class handleObjectionProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleObjection({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el handle objection approve w remove fel provider');
+    print(itemID);
+    print(itemType);
+    await moderatorService.handleObjection(
+      communityName: communityName,
+      objectionType: objectionType,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
+    notifyListeners();
+  }
+}
+
+class handleUnmoderatedProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleUnmoderated({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el unmoderated approve w remove fel provider');
+
+    await moderatorService.handleUnmoderatedItem(
+      communityName: communityName,
+      objectionType: objectionType,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
     notifyListeners();
   }
 }

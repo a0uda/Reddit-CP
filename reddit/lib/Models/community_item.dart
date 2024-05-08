@@ -100,6 +100,9 @@ class QueuesPostItem {
     required this.communityName,
     required this.nsfwFlag,
     required this.spoilerFlag,
+    required this.postInCommunityFlag,
+    required this.postID,
+    required this.itemID,
   });
   ModeratorDetails moderatorDetails;
   List<dynamic> queuePostImage;
@@ -114,7 +117,10 @@ class QueuesPostItem {
   String communityName;
   bool nsfwFlag;
   bool spoilerFlag;
+  bool postInCommunityFlag;
   String profilePicture = '';
+  String postID;
+  String itemID;
 
   Future<String> getProfilePicture(
       String username, String communityName) async {
