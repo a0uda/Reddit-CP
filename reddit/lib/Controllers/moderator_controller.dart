@@ -106,7 +106,6 @@ class ModeratorController {
         timeFilter: timeFilter,
         postsOrComments: postsOrComments,
         queueType: queueType);
-    isPostInCommunity = queuePosts.map((e) => e.postInCommunityFlag).toList();
     print('Mohy beyshoof el unmoderated fel controller');
     print(queuePosts);
   }
@@ -242,11 +241,9 @@ class ScheduledProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitScheduledPost(
-      String communityName, String post_id) async {
+  Future<void> submitScheduledPost(String communityName, String post_id) async {
     await moderatorService.submitScheduledPost(
-        postId: post_id,
-        communityName: communityName);
+        postId: post_id, communityName: communityName);
     moderatorController.scheduled =
         await moderatorService.getScheduled(communityName);
     notifyListeners();
@@ -520,6 +517,28 @@ class handleUnmoderatedProvider extends ChangeNotifier {
     await moderatorService.handleUnmoderatedItem(
       communityName: communityName,
       objectionType: objectionType,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
+    notifyListeners();
+  }
+}
+
+class handleEditItemProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleEditItem({
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el unmoderated approve w remove fel provider');
+
+    await moderatorService.handleEditItem(
+      communityName: communityName,
       itemType: itemType,
       action: action,
       itemID: itemID,

@@ -151,12 +151,15 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => Chat(),
-      )
+      ),
       ChangeNotifierProvider(
         create: (context) => handleObjectionProvider(),
       ),
       ChangeNotifierProvider(
         create: (context) => handleUnmoderatedProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => handleEditItemProvider(),
       ),
     ],
     child: const MyApp(),

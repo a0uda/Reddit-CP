@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/post_item.dart';
+import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 
 // ignore: must_be_immutable
@@ -21,8 +24,10 @@ class _PostModQueueState extends State<PostModQueue> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
 
   bool? isMuted;
-  bool? isApproved;
+  bool? isApprovedUser;
   bool? isBanned;
+  bool isRemoved = false;
+  bool isApproved = false;
 
   String? removalReasons;
   String? reportedReason;
@@ -32,6 +37,7 @@ class _PostModQueueState extends State<PostModQueue> {
     final screenSize = MediaQuery.of(context).size;
     var QueuesProvider = context.read<handleObjectionProvider>();
     var QueuesUnmoderatedProvider = context.read<handleUnmoderatedProvider>();
+    var QueuesEditItemProvider = context.read<handleEditItemProvider>();
 
     return Padding(
       padding: const EdgeInsets.only(left: 3.0),
@@ -100,7 +106,7 @@ class _PostModQueueState extends State<PostModQueue> {
                                   ),
                                   ListTile(
                                     leading: const Icon(Icons.check),
-                                    title: Text(isApproved != null
+                                    title: Text(isApprovedUser != null
                                         ? 'Approve user'
                                         : 'Unapprove User'),
                                     onTap: () {},
@@ -203,43 +209,59 @@ class _PostModQueueState extends State<PostModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                var itemType;
-                                                if (widget
-                                                    .post.postInCommunityFlag) {
-                                                  itemType = 'post';
-                                                } else {
-                                                  itemType = 'post';
-                                                }
                                                 if (widget.queueType ==
                                                     'unmoderated') {
                                                   print(
                                                       'ana hena bab3at request');
                                                   print(widget.queueType);
-                                                  print(itemType);
+                                                  print('post');
                                                   print(widget.post.postID);
                                                   await QueuesUnmoderatedProvider
                                                       .handleUnmoderated(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'post',
                                                     action: 'approve',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
+                                                } else if (widget.queueType ==
+                                                    'edited') {
+                                                  await QueuesEditItemProvider
+                                                      .handleEditItem(
+                                                    itemType: 'post',
+                                                    action: 'approve',
+                                                    communityName:
+                                                        moderatorController
+                                                            .communityName,
+                                                    itemID: widget.post.postID,
+                                                  );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
                                                 } else {
                                                   await QueuesProvider
                                                       .handleObjection(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'post',
                                                     action: 'approve',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
                                                 }
                                               },
                                             ),
@@ -265,38 +287,54 @@ class _PostModQueueState extends State<PostModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                var itemType;
-                                                if (widget
-                                                    .post.postInCommunityFlag) {
-                                                  itemType = 'post';
-                                                } else {
-                                                  itemType = 'comment';
-                                                }
                                                 if (widget.queueType ==
                                                     'unmoderated') {
                                                   await QueuesUnmoderatedProvider
                                                       .handleUnmoderated(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'post',
                                                     action: 'remove',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
+                                                } else if (widget.queueType ==
+                                                    'edited') {
+                                                  await QueuesEditItemProvider
+                                                      .handleEditItem(
+                                                    itemType: 'post',
+                                                    action: 'remove',
+                                                    communityName:
+                                                        moderatorController
+                                                            .communityName,
+                                                    itemID: widget.post.postID,
+                                                  );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
                                                 } else {
                                                   await QueuesProvider
                                                       .handleObjection(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'post',
                                                     action: 'remove',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
                                                 }
                                               },
                                             ),
@@ -388,7 +426,7 @@ class _PostModQueueState extends State<PostModQueue> {
             const SizedBox(
               height: 8,
             ),
-            widget.queueType == 'removed'
+            widget.queueType == 'removed' && isApproved
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Row(
@@ -398,93 +436,346 @@ class _PostModQueueState extends State<PostModQueue> {
                           height: 17,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.5),
-                            color: const Color.fromARGB(255, 246, 204, 212),
+                            color: const Color.fromARGB(255, 192, 236, 187),
                           ),
                           child: const Icon(
-                            Icons.close,
+                            Icons.check,
                             size: 13,
-                            color: Color.fromARGB(255, 169, 100, 75),
+                            color: Color.fromARGB(255, 48, 108, 45),
                           ),
                         ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        widget.post.moderatorDetails.removed.type != ""
-                            ? Text(
-                                " Removed: ${widget.post.moderatorDetails.removed.type}",
-                                style: TextStyle(
-                                    color: const Color.fromARGB(
-                                        255, 170, 170, 170),
-                                    fontSize: 14),
-                              )
-                            : Text(
-                                'Removed',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: const Color.fromARGB(
-                                        255, 170, 170, 170)),
-                              ),
-                        const SizedBox(
-                          width: 5,
+                        SizedBox(width: 3),
+                        Text(
+                          'Approved',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: const Color.fromARGB(255, 170, 170, 170),
+                          ),
                         ),
                       ],
                     ),
                   )
-                : (widget.queueType == 'reported'
+                : widget.queueType == 'removed' && !isApproved && !isRemoved
                     ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4.0,
-                        ),
-                        child: IntrinsicWidth(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 4),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: const Color.fromARGB(255, 254, 244, 190),
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 17,
+                              height: 17,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.5),
+                                color: const Color.fromARGB(255, 246, 204, 212),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 13,
+                                color: Color.fromARGB(255, 169, 100, 75),
+                              ),
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  CupertinoIcons.flag,
-                                  size: 20,
-                                  color: Color.fromARGB(255, 93, 79, 20),
-                                  weight: 500,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                widget.post.moderatorDetails.reported.type != ""
+                            SizedBox(width: 3),
+                            widget.post.moderatorDetails.removed.removedBy !=
+                                        "" &&
+                                    widget.post.moderatorDetails.spammed.flag ==
+                                        false
+                                ? Text(
+                                    " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                    style: TextStyle(
+                                      color: const Color.fromARGB(
+                                          255, 170, 170, 170),
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                : widget.post.moderatorDetails.spammed.flag ==
+                                        true
                                     ? Text(
-                                        " Reported: ${widget.post.moderatorDetails.reported.type}",
+                                        " Removed as a spam",
                                         style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 170, 170, 170),
-                                            fontSize: 14),
+                                          color: const Color.fromARGB(
+                                              255, 170, 170, 170),
+                                          fontSize: 14,
+                                        ),
                                       )
                                     : Text(
-                                        'Reported',
+                                        'Removed',
                                         style: TextStyle(
-                                            fontSize: 14,
-                                            color: const Color.fromARGB(
-                                                255, 170, 170, 170)),
+                                          fontSize: 14,
+                                          color: const Color.fromARGB(
+                                              255, 170, 170, 170),
+                                        ),
                                       ),
-                                const SizedBox(
-                                  width: 5,
+                            const SizedBox(width: 5),
+                          ],
+                        ),
+                      )
+                    : widget.queueType == 'reported' && isApproved
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 17,
+                                  height: 17,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.5),
+                                    color: const Color.fromARGB(
+                                        255, 192, 236, 187),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    size: 13,
+                                    color: Color.fromARGB(255, 48, 108, 45),
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  'Approved',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: const Color.fromARGB(
+                                        255, 170, 170, 170),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      )
-                    : const SizedBox()),
-            const SizedBox(
-              height: 8,
-            ),
+                          )
+                        : widget.queueType == 'reported' && isRemoved
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 17,
+                                      height: 17,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.5),
+                                        color: const Color.fromARGB(
+                                            255, 246, 204, 212),
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 13,
+                                        color:
+                                            Color.fromARGB(255, 169, 100, 75),
+                                      ),
+                                    ),
+                                    SizedBox(width: 3),
+                                    widget.post.moderatorDetails.removed
+                                                    .removedBy !=
+                                                "" &&
+                                            widget.post.moderatorDetails.spammed
+                                                    .flag ==
+                                                false
+                                        ? Text(
+                                            " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 170, 170, 170),
+                                              fontSize: 14,
+                                            ),
+                                          )
+                                        : widget.post.moderatorDetails.spammed
+                                                    .flag ==
+                                                true
+                                            ? Text(
+                                                " Removed as a spam",
+                                                style: TextStyle(
+                                                  color: const Color.fromARGB(
+                                                      255, 170, 170, 170),
+                                                  fontSize: 14,
+                                                ),
+                                              )
+                                            : Text(
+                                                'Removed',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: const Color.fromARGB(
+                                                      255, 170, 170, 170),
+                                                ),
+                                              ),
+                                  ],
+                                ),
+                              )
+                            : widget.queueType == 'reported' &&
+                                    !isApproved &&
+                                    !isRemoved
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IntrinsicWidth(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: const Color.fromARGB(
+                                              255, 254, 244, 190),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              CupertinoIcons.flag,
+                                              size: 20,
+                                              color: Color.fromARGB(
+                                                  255, 93, 79, 20),
+                                              weight: 500,
+                                            ),
+                                            SizedBox(width: 4),
+                                            widget.post.moderatorDetails
+                                                        .reported.type !=
+                                                    ""
+                                                ? Text(
+                                                    " Reported: ${widget.post.moderatorDetails.reported.type}",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                      fontSize: 14,
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    'Reported',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                    ),
+                                                  ),
+                                            const SizedBox(width: 5),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : widget.queueType == 'edited' && isApproved
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 17,
+                                              height: 17,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.5),
+                                                color: const Color.fromARGB(
+                                                    255, 192, 236, 187),
+                                              ),
+                                              child: const Icon(
+                                                Icons.check,
+                                                size: 13,
+                                                color: Color.fromARGB(
+                                                    255, 48, 108, 45),
+                                              ),
+                                            ),
+                                            SizedBox(width: 3),
+                                            Text(
+                                              'Approved',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: const Color.fromARGB(
+                                                    255, 170, 170, 170),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : widget.queueType == 'edited' && isRemoved
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 17,
+                                                  height: 17,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.5),
+                                                    color: const Color.fromARGB(
+                                                        255, 246, 204, 212),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    size: 13,
+                                                    color: Color.fromARGB(
+                                                        255, 169, 100, 75),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 3),
+                                                widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .removed
+                                                                .removedBy !=
+                                                            "" &&
+                                                        widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .spammed
+                                                                .flag ==
+                                                            false
+                                                    ? Text(
+                                                        " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                                        style: TextStyle(
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              170, 170, 170),
+                                                          fontSize: 14,
+                                                        ),
+                                                      )
+                                                    : widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .spammed
+                                                                .flag ==
+                                                            true
+                                                        ? Text(
+                                                            " Removed as a spam",
+                                                            style: TextStyle(
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  170,
+                                                                  170,
+                                                                  170),
+                                                              fontSize: 14,
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            'Removed',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  170,
+                                                                  170,
+                                                                  170),
+                                                            ),
+                                                          ),
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(),
+            const SizedBox(height: 8),
             const Divider(
               color: Colors.grey,
               height: 2,
-            )
+            ),
           ],
         ),
       ),
@@ -504,19 +795,30 @@ class CommentsModQueue extends StatefulWidget {
 
 class _CommentsModQueueState extends State<CommentsModQueue> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
+  final postService = GetIt.instance.get<PostService>();
 
+  PostItem? postItem;
   bool? isMuted;
-  bool? isApproved;
   bool? isBanned;
+
+  bool? isApprovedUser;
+
+  bool isApproved = false;
+  bool isRemoved = false;
 
   String? removalReasons;
   String? reportedReason;
+
+  Future<void> getPostByID(String postID) async {
+    postItem = await postService.getPostById(postID);
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     var QueuesProvider = context.read<handleObjectionProvider>();
     var QueuesUnmoderatedProvider = context.read<handleUnmoderatedProvider>();
+    var QueuesEditItemProvider = context.read<handleEditItemProvider>();
 
     return Padding(
       padding: const EdgeInsets.only(left: 3.0),
@@ -526,7 +828,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => CommentsDesktop(
-                postId: widget.post.postID,
+                postId: widget.post.itemID,
               ),
               //Navigate to Post pagee.. Badrrr
             ),
@@ -585,7 +887,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                   ),
                                   ListTile(
                                     leading: const Icon(Icons.check),
-                                    title: Text(isApproved != null
+                                    title: Text(isApprovedUser != null
                                         ? 'Approve user'
                                         : 'Unapprove User'),
                                     onTap: () {},
@@ -689,12 +991,6 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                               ),
                                               onTap: () async {
                                                 var itemType;
-                                                if (widget
-                                                    .post.postInCommunityFlag) {
-                                                  itemType = 'post';
-                                                } else {
-                                                  itemType = 'comment';
-                                                }
                                                 if (widget.queueType ==
                                                     'unmoderated') {
                                                   print(
@@ -707,25 +1003,48 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                                       .handleUnmoderated(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'comment',
                                                     action: 'approve',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
+                                                } else if (widget.queueType ==
+                                                    'edited') {
+                                                  await QueuesEditItemProvider
+                                                      .handleEditItem(
+                                                    itemType: 'comment',
+                                                    action: 'approve',
+                                                    communityName:
+                                                        moderatorController
+                                                            .communityName,
+                                                    itemID: widget.post.postID,
+                                                  );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
                                                 } else {
                                                   await QueuesProvider
                                                       .handleObjection(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'comment',
                                                     action: 'approve',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = true;
+                                                    isRemoved = false;
+                                                  });
                                                 }
                                               },
                                             ),
@@ -751,37 +1070,54 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                var itemType;
-                                                if (widget
-                                                    .post.postInCommunityFlag) {
-                                                  itemType = 'post';
-                                                } else {
-                                                  itemType = 'comment';
-                                                }
                                                 if (widget.queueType ==
                                                     'unmoderated') {
                                                   await QueuesUnmoderatedProvider
                                                       .handleUnmoderated(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'comment',
                                                     action: 'remove',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
                                                     itemID: widget.post.postID,
                                                   );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
+                                                } else if (widget.queueType ==
+                                                    'edited') {
+                                                  await QueuesEditItemProvider
+                                                      .handleEditItem(
+                                                    itemType: 'comment',
+                                                    action: 'remove',
+                                                    communityName:
+                                                        moderatorController
+                                                            .communityName,
+                                                    itemID: widget.post.postID,
+                                                  );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
                                                 } else {
                                                   await QueuesProvider
                                                       .handleObjection(
                                                     objectionType:
                                                         widget.queueType,
-                                                    itemType: itemType,
+                                                    itemType: 'comment',
                                                     action: 'remove',
                                                     communityName:
                                                         moderatorController
                                                             .communityName,
-                                                  itemID: widget.post.postID,);
+                                                    itemID: widget.post.postID,
+                                                  );
+                                                  setState(() {
+                                                    isApproved = false;
+                                                    isRemoved = true;
+                                                  });
                                                 }
                                               },
                                             ),
@@ -844,15 +1180,31 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.post.postTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    FutureBuilder(
+                        future: getPostByID(widget.post.itemID),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: LoadingAnimationWidget.twoRotatingArc(
+                                  color:
+                                      const Color.fromARGB(255, 172, 172, 172),
+                                  size: 30),
+                            );
+                          } else {
+                            final postTitle = postItem?.title ?? '';
+                            return Text(
+                              postTitle,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            );
+                          }
+                        }),
                     Row(children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        height: 8,
-                        width: 4,
+                        margin: const EdgeInsets.only(left: 4, right: 8),
+                        height: 15,
+                        width: 5,
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 0, 110, 200),
                           borderRadius: BorderRadius.circular(2),
@@ -884,7 +1236,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
             const SizedBox(
               height: 8,
             ),
-            widget.queueType == 'removed'
+            widget.queueType == 'removed' && isApproved
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
                     child: Row(
@@ -894,93 +1246,346 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                           height: 17,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.5),
-                            color: const Color.fromARGB(255, 246, 204, 212),
+                            color: const Color.fromARGB(255, 192, 236, 187),
                           ),
                           child: const Icon(
-                            Icons.close,
+                            Icons.check,
                             size: 13,
-                            color: Color.fromARGB(255, 169, 100, 75),
+                            color: Color.fromARGB(255, 48, 108, 45),
                           ),
                         ),
-                        SizedBox(
-                          width: 3,
-                        ),
-                        widget.post.moderatorDetails.removed.type != ""
-                            ? Text(
-                                " Removed: ${widget.post.moderatorDetails.removed.type}",
-                                style: TextStyle(
-                                    color: const Color.fromARGB(
-                                        255, 170, 170, 170),
-                                    fontSize: 14),
-                              )
-                            : Text(
-                                'Removed',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: const Color.fromARGB(
-                                        255, 170, 170, 170)),
-                              ),
-                        const SizedBox(
-                          width: 5,
+                        SizedBox(width: 3),
+                        Text(
+                          'Approved',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: const Color.fromARGB(255, 170, 170, 170),
+                          ),
                         ),
                       ],
                     ),
                   )
-                : (widget.queueType == 'reported'
+                : widget.queueType == 'removed' && !isApproved && !isRemoved
                     ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4.0,
-                        ),
-                        child: IntrinsicWidth(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 2, horizontal: 4),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: const Color.fromARGB(255, 254, 244, 190),
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 17,
+                              height: 17,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.5),
+                                color: const Color.fromARGB(255, 246, 204, 212),
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 13,
+                                color: Color.fromARGB(255, 169, 100, 75),
+                              ),
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  CupertinoIcons.flag,
-                                  size: 20,
-                                  color: Color.fromARGB(255, 93, 79, 20),
-                                  weight: 500,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                widget.post.moderatorDetails.reported.type != ""
+                            SizedBox(width: 3),
+                            widget.post.moderatorDetails.removed.removedBy !=
+                                        "" &&
+                                    widget.post.moderatorDetails.spammed.flag ==
+                                        false
+                                ? Text(
+                                    " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                    style: TextStyle(
+                                      color: const Color.fromARGB(
+                                          255, 170, 170, 170),
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                : widget.post.moderatorDetails.spammed.flag ==
+                                        true
                                     ? Text(
-                                        " Reported: ${widget.post.moderatorDetails.reported.type}",
+                                        " Removed as a spam",
                                         style: TextStyle(
-                                            color: const Color.fromARGB(
-                                                255, 170, 170, 170),
-                                            fontSize: 14),
+                                          color: const Color.fromARGB(
+                                              255, 170, 170, 170),
+                                          fontSize: 14,
+                                        ),
                                       )
                                     : Text(
-                                        'Reported',
+                                        'Removed',
                                         style: TextStyle(
-                                            fontSize: 14,
-                                            color: const Color.fromARGB(
-                                                255, 170, 170, 170)),
+                                          fontSize: 14,
+                                          color: const Color.fromARGB(
+                                              255, 170, 170, 170),
+                                        ),
                                       ),
-                                const SizedBox(
-                                  width: 5,
+                            const SizedBox(width: 5),
+                          ],
+                        ),
+                      )
+                    : widget.queueType == 'reported' && isApproved
+                        ? Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 17,
+                                  height: 17,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.5),
+                                    color: const Color.fromARGB(
+                                        255, 192, 236, 187),
+                                  ),
+                                  child: const Icon(
+                                    Icons.check,
+                                    size: 13,
+                                    color: Color.fromARGB(255, 48, 108, 45),
+                                  ),
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  'Approved',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: const Color.fromARGB(
+                                        255, 170, 170, 170),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      )
-                    : const SizedBox()),
-            const SizedBox(
-              height: 8,
-            ),
+                          )
+                        : widget.queueType == 'reported' && isRemoved
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 17,
+                                      height: 17,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(8.5),
+                                        color: const Color.fromARGB(
+                                            255, 246, 204, 212),
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 13,
+                                        color:
+                                            Color.fromARGB(255, 169, 100, 75),
+                                      ),
+                                    ),
+                                    SizedBox(width: 3),
+                                    widget.post.moderatorDetails.removed
+                                                    .removedBy !=
+                                                "" &&
+                                            widget.post.moderatorDetails.spammed
+                                                    .flag ==
+                                                false
+                                        ? Text(
+                                            " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                            style: TextStyle(
+                                              color: const Color.fromARGB(
+                                                  255, 170, 170, 170),
+                                              fontSize: 14,
+                                            ),
+                                          )
+                                        : widget.post.moderatorDetails.spammed
+                                                    .flag ==
+                                                true
+                                            ? Text(
+                                                " Removed as a spam",
+                                                style: TextStyle(
+                                                  color: const Color.fromARGB(
+                                                      255, 170, 170, 170),
+                                                  fontSize: 14,
+                                                ),
+                                              )
+                                            : Text(
+                                                'Removed',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: const Color.fromARGB(
+                                                      255, 170, 170, 170),
+                                                ),
+                                              ),
+                                  ],
+                                ),
+                              )
+                            : widget.queueType == 'reported' &&
+                                    !isApproved &&
+                                    !isRemoved
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4.0),
+                                    child: IntrinsicWidth(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 2, horizontal: 4),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: const Color.fromARGB(
+                                              255, 254, 244, 190),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              CupertinoIcons.flag,
+                                              size: 20,
+                                              color: Color.fromARGB(
+                                                  255, 93, 79, 20),
+                                              weight: 500,
+                                            ),
+                                            SizedBox(width: 4),
+                                            widget.post.moderatorDetails
+                                                        .reported.type !=
+                                                    ""
+                                                ? Text(
+                                                    " Reported: ${widget.post.moderatorDetails.reported.type}",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                      fontSize: 14,
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    'Reported',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              170,
+                                                              170,
+                                                              170),
+                                                    ),
+                                                  ),
+                                            const SizedBox(width: 5),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : widget.queueType == 'edited' && isApproved
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4.0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              width: 17,
+                                              height: 17,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.5),
+                                                color: const Color.fromARGB(
+                                                    255, 192, 236, 187),
+                                              ),
+                                              child: const Icon(
+                                                Icons.check,
+                                                size: 13,
+                                                color: Color.fromARGB(
+                                                    255, 48, 108, 45),
+                                              ),
+                                            ),
+                                            SizedBox(width: 3),
+                                            Text(
+                                              'Approved',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: const Color.fromARGB(
+                                                    255, 170, 170, 170),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : widget.queueType == 'edited' && isRemoved
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4.0),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: 17,
+                                                  height: 17,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.5),
+                                                    color: const Color.fromARGB(
+                                                        255, 246, 204, 212),
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.close,
+                                                    size: 13,
+                                                    color: Color.fromARGB(
+                                                        255, 169, 100, 75),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 3),
+                                                widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .removed
+                                                                .removedBy !=
+                                                            "" &&
+                                                        widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .spammed
+                                                                .flag ==
+                                                            false
+                                                    ? Text(
+                                                        " Removed by: ${widget.post.moderatorDetails.removed.removedBy}",
+                                                        style: TextStyle(
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              170, 170, 170),
+                                                          fontSize: 14,
+                                                        ),
+                                                      )
+                                                    : widget
+                                                                .post
+                                                                .moderatorDetails
+                                                                .spammed
+                                                                .flag ==
+                                                            true
+                                                        ? Text(
+                                                            " Removed as a spam",
+                                                            style: TextStyle(
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  170,
+                                                                  170,
+                                                                  170),
+                                                              fontSize: 14,
+                                                            ),
+                                                          )
+                                                        : Text(
+                                                            'Removed',
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  170,
+                                                                  170,
+                                                                  170),
+                                                            ),
+                                                          ),
+                                              ],
+                                            ),
+                                          )
+                                        : SizedBox(),
+            const SizedBox(height: 8),
             const Divider(
               color: Colors.grey,
               height: 2,
-            )
+            ),
           ],
         ),
       ),
