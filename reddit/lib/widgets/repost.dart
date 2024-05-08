@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
@@ -12,6 +15,7 @@ import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Moderator/modal_for_remals.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
@@ -67,6 +71,8 @@ class Repost extends StatefulWidget {
   final String communityName;
   bool isLocked;
   String? description;
+  ModeratorDetails? moderatorDetails;
+  bool isPostMod;
   final int vote;
   bool deleted;
   bool isSaved;
@@ -75,24 +81,27 @@ class Repost extends StatefulWidget {
 
   OnClearEdit? onclearEdit;
 
-  Repost(
-      {super.key,
-      required this.id,
-      // required this.profileImageUrl,
-      required this.deleted,
-      required this.name,
-      required this.title,
-      required this.originalID,
-      required this.date,
-      required this.likes,
-      this.onclearDelete,
-      this.onclearEdit,
-      required this.commentsCount,
-      required this.isSaved,
-      required this.communityName,
-      required this.isLocked,
-      this.description,
-      required this.vote});
+  Repost({
+    super.key,
+    required this.id,
+    // required this.profileImageUrl,
+    required this.deleted,
+    required this.name,
+    required this.title,
+    required this.originalID,
+    required this.date,
+    required this.likes,
+    this.onclearDelete,
+    this.onclearEdit,
+    required this.commentsCount,
+    required this.isSaved,
+    required this.communityName,
+    required this.isLocked,
+    this.description,
+    required this.vote,
+    this.isPostMod = false,
+    this.moderatorDetails,
+  });
 
   @override
   RepostState createState() => RepostState();
@@ -109,6 +118,9 @@ class RepostState extends State<Repost> {
   bool issaved = false;
   bool upVote = false;
   bool downVote = false;
+  bool spammedFlag = false;
+  bool approvedFlag = false;
+  bool removedPost = false;
 
   late Future fetch;
   CommunityController communityController =
@@ -185,6 +197,9 @@ class RepostState extends State<Repost> {
   void initState() {
     super.initState();
     fetch = loadOriginalPost();
+    spammedFlag = widget.moderatorDetails!.spammedFlag ?? false;
+    approvedFlag = widget.moderatorDetails!.approvedFlag ?? false;
+    removedPost = widget.moderatorDetails!.removedFlag ?? false;
 
     if (widget.vote == 1) {
       upVote = true;
@@ -214,6 +229,14 @@ class RepostState extends State<Repost> {
     void _handleLockChanged(bool newValue) {
       setState(() {
         widget.isLocked = newValue;
+      });
+    }
+
+    void moderatorHandleLock() async {
+      var postLockController = context.read<LockPost>();
+      postLockController.lockPost(widget.id);
+      setState(() {
+        widget.isLocked = !widget.isLocked;
       });
     }
 
@@ -515,7 +538,7 @@ class RepostState extends State<Repost> {
                         ],
                       ),
                       trailing: SizedBox(
-                        width: 75,
+                        width: 100,
                         child: Row(
                           children: [
                             if (widget.isLocked == true)
@@ -523,6 +546,22 @@ class RepostState extends State<Repost> {
                                 Icons.lock,
                                 color: Colors.amberAccent[700],
                               ),
+                            (spammedFlag)
+                                ? Icon(
+                                    Icons.free_cancellation_outlined,
+                                    color: Colors.red[800],
+                                  )
+                                : (approvedFlag)
+                                    ? Icon(
+                                        Icons.check,
+                                        color: Colors.green[600],
+                                      )
+                                    : (removedPost)
+                                        ? Icon(
+                                            Icons.delete_outline,
+                                            color: Colors.red[800],
+                                          )
+                                        : const SizedBox(),
                             Align(
                               alignment: Alignment.centerRight,
                               child: (userController.userAbout != null)
@@ -1322,6 +1361,85 @@ class RepostState extends State<Repost> {
                               ),
                             ),
                           ),
+                          widget.isPostMod ? Spacer() : const SizedBox(),
+                          widget.isPostMod
+                              ? ElevatedButton.icon(
+                                  onPressed: () async {
+                                    var objection =
+                                        context.read<handleObjectionProvider>();
+                                    showOptions(
+                                      communityName: widget.communityName,
+                                      context: context,
+                                      isApproved: approvedFlag ?? false,
+                                      isRemoved: removedPost ?? false,
+                                      lockComments: widget.isLocked ?? false,
+                                      removedAsSpam: spammedFlag ?? false,
+                                      handleLock: (lock) {
+                                        moderatorHandleLock();
+                                      },
+                                      handleRemoveAsSpam: () async {
+                                        await objection.objectItem(
+                                            id: widget.id,
+                                            itemType: "post",
+                                            objectionType: "spammed",
+                                            communityName:
+                                                widget.communityName);
+                                        setState(() {
+                                          spammedFlag = true;
+                                          approvedFlag = false;
+                                          removedPost = false;
+                                        });
+                                      },
+                                      handleApprove: () async {
+                                        var queuesProvider = context
+                                            .read<handleUnmoderatedProvider>();
+                                        await queuesProvider.handleUnmoderated(
+                                          objectionType: "unmoderated",
+                                          itemType: 'post',
+                                          action: 'approve',
+                                          communityName: widget.communityName,
+                                          itemID: widget.id,
+                                        );
+                                        setState(() {
+                                          approvedFlag = true;
+                                          spammedFlag = false;
+                                          removedPost = false;
+                                        });
+                                      },
+                                      handleRemovePost:
+                                          (removalReaosnTitle) async {
+                                        var umoderated = context
+                                            .read<handleUnmoderatedProvider>();
+                                        await umoderated.handleUnmoderated(
+                                          objectionType: "unmoderated",
+                                          itemType: 'post',
+                                          action: 'remove',
+                                          communityName: widget.communityName,
+                                          itemID: widget.id,
+                                        );
+
+                                        setState(() {
+                                          approvedFlag = false;
+                                          spammedFlag = false;
+                                          removedPost = true;
+                                        });
+                                      },
+                                    );
+                                  },
+                                  icon: Icon(
+                                    Icons.shield_outlined,
+                                    color: Colors.black,
+                                  ),
+                                  label: SizedBox(),
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                                    elevation: 0,
+                                    backgroundColor: Colors.transparent,
+                                    surfaceTintColor: Colors.transparent,
+                                    shadowColor: Colors.transparent,
+                                  ),
+                                )
+                              : const SizedBox(),
                         ],
                       ),
                     ),
@@ -1332,4 +1450,112 @@ class RepostState extends State<Repost> {
           )
         : Container();
   }
+}
+
+void showOptions({
+  required BuildContext context,
+  bool isApproved = false,
+  bool isRemoved = false,
+  bool removedAsSpam = false,
+  bool lockComments = false,
+  required String communityName,
+  required final Function(bool lock) handleLock,
+  required final Function() handleRemoveAsSpam,
+  required final Function() handleApprove,
+  required final Function(String title) handleRemovePost,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isApproved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Approve post',
+                style:
+                    TextStyle(color: isApproved ? Colors.grey : Colors.black),
+              ),
+              onTap: isApproved
+                  ? null
+                  : () {
+                      //approve
+                      handleApprove();
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.xmark,
+                color: isRemoved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove post',
+                style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
+              ),
+              onTap: isRemoved
+                  ? null
+                  : () async {
+                      //remove
+                      await showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ModalForReasons(
+                            handleRemove: (value) {
+                              handleRemovePost(value);
+                              print("TITLE");
+                              print(value);
+                            },
+                            communityName: "badrmoderatorrrr",
+                          );
+                        },
+                      );
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.free_cancellation_outlined,
+                color: removedAsSpam ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove as spam',
+                style: TextStyle(
+                    color: removedAsSpam ? Colors.grey : Colors.black),
+              ),
+              onTap: removedAsSpam
+                  ? null
+                  : () {
+                      handleRemoveAsSpam();
+                      Navigator.of(context).pop();
+                      //as spam
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.lock,
+                color: lockComments ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                lockComments ? 'Unlock comments' : 'Lock Comments',
+              ),
+              onTap: () {
+                //lock comments
+                handleLock(!lockComments);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

@@ -130,6 +130,10 @@ class NewListingBuild extends State<NewListing> {
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved!,
                 deleted: posts[index].isRemoved,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
+                moderatorDetails: posts[index].moderatorDetails,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -168,6 +172,7 @@ class NewListingBuild extends State<NewListing> {
               isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
+              moderatorDetails: posts[index].moderatorDetails,
             );
           }
         }

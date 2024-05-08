@@ -54,7 +54,7 @@ class BestListingBuild extends State<BestListing> {
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username , page);
+      posts = await postService.getMyPosts(username, page);
       //print(username);
     } else if (widget.type == "comm") {
       post = await postService.getCommunityPosts(
@@ -128,6 +128,10 @@ class BestListingBuild extends State<BestListing> {
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved!,
                 deleted: posts[index].isRemoved,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
+                moderatorDetails: posts[index].moderatorDetails,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -162,10 +166,11 @@ class BestListingBuild extends State<BestListing> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved!,
+              deleted: posts[index].isRemoved,
               isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
-              deleted: posts[index].isRemoved,
+              moderatorDetails: posts[index].moderatorDetails,
             );
           }
         }

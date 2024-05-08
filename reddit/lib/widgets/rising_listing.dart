@@ -128,6 +128,10 @@ class RandomListingBuild extends State<RandomListing> {
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved!,
                 deleted: posts[index].isRemoved,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
+                moderatorDetails: posts[index].moderatorDetails,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -165,6 +169,7 @@ class RandomListingBuild extends State<RandomListing> {
               isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
+              moderatorDetails: posts[index].moderatorDetails,
             );
           }
         }

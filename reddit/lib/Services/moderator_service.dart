@@ -272,6 +272,8 @@ class ModeratorMockService {
                 message: rem["reason_message"] ?? "",
               ))
           .toList();
+      print("REMOVALL");
+      print(response.body);
       return removal; //badrr
     }
   }
@@ -1466,7 +1468,7 @@ class ModeratorMockService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(
-        'https://redditech.me/backend/communities/handle-objection/$communityName');
+        'https://redditech.me/backend/communities/handle-unmoderated-item/$communityName');
     final response = await http.post(
       url,
       headers: {
@@ -1483,6 +1485,39 @@ class ModeratorMockService {
         },
       ),
     );
+    print("removeeee");
     print(response.body);
+  }
+
+  Future<void> objectItem(
+      {required String id,
+      required String itemType,
+      required String objectionType,
+      // required String objectionTypeValue,
+      required String communityName}) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/object-item/$communityName');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode(
+          {
+            "item_id": id,
+            "item_type": itemType,
+            "objection_type": objectionType,
+            // "objection_type_value": "Hate"
+          },
+        ),
+      );
+      print("OBJECT ITEM");
+      print(response.body);
+    }
   }
 }

@@ -85,14 +85,14 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                   elevation: 0,
                                   backgroundColor:
                                       const Color.fromARGB(255, 42, 101, 210)),
-                              onPressed: () {
+                              onPressed: moderatorController.modAccess.manageUsers ? () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
                                         const AddApprovedUser(),
                                   ),
                                 );
-                              }, // Approve user Badrrr ele hya add
+                              } : null, // Approve user Badrrr ele hya add
                               child: const Text(
                                 "Approve User",
                                 style: TextStyle(

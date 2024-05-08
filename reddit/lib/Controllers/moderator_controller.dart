@@ -89,6 +89,7 @@ class ModeratorController {
   }
 
   Future<void> getRemoval(String communityName) async {
+    print("here");
     removalReasons = await moderatorService.getRemovalReason(communityName);
   }
 
@@ -526,6 +527,22 @@ class handleObjectionProvider extends ChangeNotifier {
       itemID: itemID,
     );
     notifyListeners();
+  }
+
+  Future<void> objectItem(
+      {required String id,
+      required String itemType,
+      required String objectionType,
+      required String communityName}) async {
+    if (testing) {
+    } else {
+      await moderatorService.objectItem(
+          id: id,
+          itemType: itemType,
+          objectionType: objectionType,
+          communityName: communityName);
+      notifyListeners();
+    }
   }
 }
 

@@ -27,7 +27,7 @@ class TopListing extends StatefulWidget {
 
 class TopListingBuild extends State<TopListing> {
   ScrollController controller = ScrollController();
-   final ModeratorController moderatorController =
+  final ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
   int page = 1;
   // List of items in our dropdown menu
@@ -53,7 +53,7 @@ class TopListingBuild extends State<TopListing> {
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
-      posts = await postService.getMyPosts(username , page);
+      posts = await postService.getMyPosts(username, page);
       //print(username);
     } else if (widget.type == "comm") {
       post = await postService.getCommunityPosts(
@@ -114,20 +114,24 @@ class TopListingBuild extends State<TopListing> {
           if (posts[index].isRemoved == false) {
             if (posts[index].isReposted) {
               return Repost(
-                 deleted:  posts[index].isRemoved,
-                  description: posts[index].description,
-                  id: posts[index].id,
-                  name: posts[index].username,
-                  title: posts[index].title,
-                  originalID: posts[index].originalPostID,
-                  date: posts[index].createdAt.toString(),
-                  likes:
-                      posts[index].upvotesCount - posts[index].downvotesCount,
-                  commentsCount: posts[index].commentsCount,
-                  communityName: posts[index].communityName,
-                  isLocked: posts[index].lockedFlag,
-                  isSaved: posts[index].isSaved!,
-                  vote: posts[index].vote);
+                deleted: posts[index].isRemoved,
+                description: posts[index].description,
+                id: posts[index].id,
+                name: posts[index].username,
+                title: posts[index].title,
+                originalID: posts[index].originalPostID,
+                date: posts[index].createdAt.toString(),
+                likes: posts[index].upvotesCount - posts[index].downvotesCount,
+                commentsCount: posts[index].commentsCount,
+                communityName: posts[index].communityName,
+                isLocked: posts[index].lockedFlag,
+                isSaved: posts[index].isSaved!,
+                vote: posts[index].vote,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
+                moderatorDetails: posts[index].moderatorDetails,
+              );
             }
             if (posts[index].nsfwFlag == true ||
                 posts[index].spoilerFlag == true) {
@@ -147,7 +151,7 @@ class TopListingBuild extends State<TopListing> {
               // profileImageUrl: posts[index].profilePic!,
               name: posts[index].username,
               vote: posts[index].vote,
-   deleted:  posts[index].isRemoved,
+              deleted: posts[index].isRemoved,
               title: posts[index].title,
               postContent: posts[index].description,
               date: posts[index].createdAt.toString(),
@@ -161,9 +165,10 @@ class TopListingBuild extends State<TopListing> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved!,
-              isPostMod: (widget.commmunityName!= "" &&
+              isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
+              moderatorDetails: posts[index].moderatorDetails,
             );
           }
         }

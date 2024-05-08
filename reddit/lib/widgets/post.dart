@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/moderator_item.dart';
@@ -13,6 +16,7 @@ import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Moderator/modal_for_remals.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
@@ -121,6 +125,9 @@ class PostState extends State<Post> {
   CommunityService communityService = GetIt.instance.get<CommunityService>();
   UserController userController = GetIt.instance.get<UserController>();
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  bool spammedFlag = false;
+  bool approvedFlag = false;
+  bool removedPost = false;
 
   ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
@@ -197,6 +204,9 @@ class PostState extends State<Post> {
 
   @override
   void initState() {
+    spammedFlag = widget.moderatorDetails!.spammedFlag ?? false;
+    approvedFlag = widget.moderatorDetails!.approvedFlag ?? false;
+    removedPost = widget.moderatorDetails!.removedFlag ?? false;
     super.initState();
     if (widget.vote == 1) {
       upVote = true;
@@ -217,6 +227,14 @@ class PostState extends State<Post> {
     void _handleLockChanged(bool newValue) {
       setState(() {
         widget.isLocked = newValue;
+      });
+    }
+
+    void moderatorHandleLock() async {
+      var postLockController = context.read<LockPost>();
+      postLockController.lockPost(widget.id);
+      setState(() {
+        widget.isLocked = !widget.isLocked;
       });
     }
 
@@ -517,7 +535,7 @@ class PostState extends State<Post> {
                   ],
                 ),
                 trailing: SizedBox(
-                  width: 75,
+                  width: 100,
                   child: Row(
                     children: [
                       if (widget.isLocked == true)
@@ -525,6 +543,22 @@ class PostState extends State<Post> {
                           Icons.lock,
                           color: Colors.amberAccent[700],
                         ),
+                      (spammedFlag)
+                          ? Icon(
+                              Icons.free_cancellation_outlined,
+                              color: Colors.red[800],
+                            )
+                          : (approvedFlag)
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.green[600],
+                                )
+                              : (removedPost)
+                                  ? Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red[800],
+                                    )
+                                  : const SizedBox(),
                       Align(
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
@@ -953,19 +987,65 @@ class PostState extends State<Post> {
                     widget.isPostMod ? Spacer() : const SizedBox(),
                     widget.isPostMod
                         ? ElevatedButton.icon(
-                            onPressed: () {
+                            onPressed: () async {
+                              var objection =
+                                  context.read<handleObjectionProvider>();
                               showOptions(
-                                  context: context,
-                                  isApproved:
-                                      widget.moderatorDetails?.approvedFlag ??
-                                          false,
-                                  isRemoved:
-                                      widget.moderatorDetails?.removedFlag ??
-                                          false,
-                                  lockComments: widget.isLocked ?? false,
-                                  removedAsSpam:
-                                      widget.moderatorDetails?.spammedFlag ??
-                                          false);
+                                communityName: widget.communityName,
+                                context: context,
+                                isApproved: approvedFlag ?? false,
+                                isRemoved: removedPost ?? false,
+                                lockComments: widget.isLocked ?? false,
+                                removedAsSpam: spammedFlag ?? false,
+                                handleLock: (lock) {
+                                  moderatorHandleLock();
+                                },
+                                handleRemoveAsSpam: () async {
+                                  await objection.objectItem(
+                                      id: widget.id,
+                                      itemType: "post",
+                                      objectionType: "spammed",
+                                      communityName: widget.communityName);
+                                  setState(() {
+                                    spammedFlag = true;
+                                    approvedFlag = false;
+                                    removedPost = false;
+                                  });
+                                },
+                                handleApprove: () async {
+                                  var queuesProvider =
+                                      context.read<handleUnmoderatedProvider>();
+                                  await queuesProvider.handleUnmoderated(
+                                    objectionType: "unmoderated",
+                                    itemType: 'post',
+                                    action: 'approve',
+                                    communityName: widget.communityName,
+                                    itemID: widget.id,
+                                  );
+                                  setState(() {
+                                    approvedFlag = true;
+                                    spammedFlag = false;
+                                    removedPost = false;
+                                  });
+                                },
+                                handleRemovePost: (removalReaosnTitle) async {
+                                  var umoderated =
+                                      context.read<handleUnmoderatedProvider>();
+                                  await umoderated.handleUnmoderated(
+                                    objectionType: "unmoderated",
+                                    itemType: 'post',
+                                    action: 'remove',
+                                    communityName: widget.communityName,
+                                    itemID: widget.id,
+                                  );
+
+                                  setState(() {
+                                    approvedFlag = false;
+                                    spammedFlag = false;
+                                    removedPost = true;
+                                  });
+                                },
+                              );
                             },
                             icon: Icon(
                               Icons.shield_outlined,
@@ -998,6 +1078,11 @@ void showOptions({
   bool isRemoved = false,
   bool removedAsSpam = false,
   bool lockComments = false,
+  required String communityName,
+  required final Function(bool lock) handleLock,
+  required final Function() handleRemoveAsSpam,
+  required final Function() handleApprove,
+  required final Function(String title) handleRemovePost,
 }) {
   showDialog(
     context: context,
@@ -1018,9 +1103,13 @@ void showOptions({
                 style:
                     TextStyle(color: isApproved ? Colors.grey : Colors.black),
               ),
-              onTap: () {
-                //approve
-              },
+              onTap: isApproved
+                  ? null
+                  : () {
+                      //approve
+                      handleApprove();
+                      Navigator.of(context).pop();
+                    },
             ),
             ListTile(
               leading: Icon(
@@ -1031,9 +1120,26 @@ void showOptions({
                 'Remove post',
                 style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
               ),
-              onTap: () {
-                //remove
-              },
+              onTap: isRemoved
+                  ? null
+                  : () async {
+                      //remove
+                      await showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ModalForReasons(
+                            handleRemove: (value) {
+                              handleRemovePost(value);
+                              print("TITLE");
+                              print(value);
+                            },
+                            communityName: "badrmoderatorrrr",
+                          );
+                        },
+                      );
+                      Navigator.of(context).pop();
+                    },
             ),
             ListTile(
               leading: Icon(
@@ -1045,9 +1151,13 @@ void showOptions({
                 style: TextStyle(
                     color: removedAsSpam ? Colors.grey : Colors.black),
               ),
-              onTap: () {
-                //as spam
-              },
+              onTap: removedAsSpam
+                  ? null
+                  : () {
+                      handleRemoveAsSpam();
+                      Navigator.of(context).pop();
+                      //as spam
+                    },
             ),
             ListTile(
               leading: Icon(
@@ -1055,12 +1165,12 @@ void showOptions({
                 color: lockComments ? Colors.grey : Colors.black,
               ),
               title: Text(
-                'Lock Comments',
-                style:
-                    TextStyle(color: lockComments ? Colors.grey : Colors.black),
+                lockComments ? 'Unlock comments' : 'Lock Comments',
               ),
               onTap: () {
                 //lock comments
+                handleLock(!lockComments);
+                Navigator.of(context).pop();
               },
             ),
           ],

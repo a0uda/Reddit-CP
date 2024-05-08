@@ -128,6 +128,10 @@ class HotListingBuild extends State<HotListing> {
                 isLocked: posts[index].lockedFlag,
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved ?? false,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
+                moderatorDetails: posts[index].moderatorDetails,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -162,10 +166,9 @@ class HotListingBuild extends State<HotListing> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved ?? false,
-              // isPostMod: (widget.commmunityName!= "" &&
-              //     (moderatorController.modAccess.everything ||
-              //         moderatorController.modAccess.managePostsAndComments)),
-              isPostMod: true,
+              isPostMod: (widget.commmunityName != "" &&
+                  (moderatorController.modAccess.everything ||
+                      moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
             );
           }

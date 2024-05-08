@@ -300,15 +300,15 @@ class PostService {
     }
   }
 
-  Future<List<PostItem>> getMyPosts(String username,int page) async {
+  Future<List<PostItem>> getMyPosts(String username, int page) async {
     if (testing) {
       var filteredPosts =
           posts.where((post) => post.username == username).toList();
       return filteredPosts;
     } else {
       print(username);
-      final url =
-          Uri.parse('https://redditech.me/backend/users/posts/$username?page=$page');
+      final url = Uri.parse(
+          'https://redditech.me/backend/users/posts/$username?page=$page');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -551,13 +551,14 @@ class PostService {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      print("HENA");
       final response = await http.patch(
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
         body: json.encode({"is_post": true, "id": id}),
       );
-      //print('lock');
-      //print(response.statusCode);
+      print('lock');
+      print(response.body);
     }
   }
 
@@ -572,14 +573,13 @@ class PostService {
     }
   }
 
-  Future <List<PostItem>> getHistoryPost(int page) async{
+  Future<List<PostItem>> getHistoryPost(int page) async {
     if (testing) {
       return posts;
     } else {
-      
-     {
-      final url =
-          Uri.parse('https://redditech.me/backend/users/history-posts?page=$page');
+      {
+        final url = Uri.parse(
+            'https://redditech.me/backend/users/history-posts?page=$page');
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? token = prefs.getString('token');
