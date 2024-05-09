@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
+import 'package:reddit/widgets/listing.dart';
 import 'package:reddit/widgets/mobile_appbar.dart';
 
 class MobileCommunityPage extends StatefulWidget {
@@ -187,6 +189,13 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                       isJoined: isJoined,
                       isMod: widget.isMod,
                     ),
+                  ),
+                ),
+                SliverFillRemaining(
+                  child: Listing(
+                    type: 'comm',
+                    commName: widget.communityName,
+                    
                   ),
                 ),
               ],

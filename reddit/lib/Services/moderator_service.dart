@@ -1480,6 +1480,7 @@ class ModeratorMockService {
           "item_id": itemID,
           "item_type": itemType,
           "action": action,
+          "objection_type": objectionType,
         },
       ),
     );  
@@ -1496,7 +1497,7 @@ class ModeratorMockService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     final url = Uri.parse(
-        'https://redditech.me/backend/communities/handle-objection/$communityName');
+        'https://redditech.me/backend/communities/edit-item/$communityName');
     final response = await http.post(
       url,
       headers: {

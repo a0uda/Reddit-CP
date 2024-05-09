@@ -17,20 +17,30 @@ class ChangeProfilePicture extends StatefulWidget {
 }
 
 class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   String? bannerimagepath;
   String? profileImagePath;
   bool isSaved = true;
   bool doneSaved = false;
+  late bool hasPermission;
 
-    final moderatorController = GetIt.instance.get<ModeratorController>();
+  void checkPermission() {
+    if (moderatorController.modAccess.everything &&
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     bannerimagepath = moderatorController.bannerPictureURL;
     profileImagePath = moderatorController.profilePictureURL;
+    checkPermission();
   }
-  
 
   Future<void> _pickImage(bool isBanner, bool isCamera) async {
     var pickedFile;
@@ -170,8 +180,12 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
         actions: <Widget>[
           TextButton(
             onPressed: () async {
-               await profileBannerProvider.updateProfilePicture(communityName: moderatorController.communityName, pictureUrl: profileImagePath!);
-               await profileBannerProvider.updateBannerPicture(communityName: moderatorController.communityName, pictureUrl: bannerimagepath!);
+              await profileBannerProvider.updateProfilePicture(
+                  communityName: moderatorController.communityName,
+                  pictureUrl: profileImagePath!);
+              await profileBannerProvider.updateBannerPicture(
+                  communityName: moderatorController.communityName,
+                  pictureUrl: bannerimagepath!);
               // ignore: use_build_context_synchronously
               Navigator.pop(context);
             },
@@ -295,7 +309,7 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
         child: Stack(
           children: [
             GestureDetector(
-              onTap: () => selectBannerProfile(true),
+              onTap: hasPermission ? () => selectBannerProfile(true) : () => {},
               child: DottedBorder(
                 borderType: BorderType.RRect,
                 dashPattern: const [10, 4],
@@ -332,7 +346,8 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
               top: 1 / 5 * MediaQuery.of(context).size.height - 50,
               left: 20,
               child: GestureDetector(
-                onTap: () => selectBannerProfile(false),
+                onTap:
+                    hasPermission ? () => selectBannerProfile(false) : () => {},
                 child: Stack(
                   alignment: Alignment.center,
                   children: [

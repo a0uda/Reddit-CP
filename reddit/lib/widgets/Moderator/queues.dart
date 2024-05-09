@@ -54,7 +54,8 @@ class _ModQueuesState extends State<ModQueues> {
 
     List<Future<void>> futures = moderatorController.queuePosts
         .map((post) => post.getProfilePicture(
-            post.username, moderatorController.communityName))
+            post.username, moderatorController.communityName)
+            )
         .toList();
     await Future.wait(futures);
   }
@@ -99,9 +100,7 @@ class _ModQueuesState extends State<ModQueues> {
           ),
         ),
         actions: <Widget>[
-          IconButton(
-              onPressed: refreshData,
-              icon: const Icon(Icons.refresh))
+          IconButton(onPressed: refreshData, icon: const Icon(Icons.refresh))
         ],
         leading: (screenWidth < 700)
             ? IconButton(

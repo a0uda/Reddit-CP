@@ -5,8 +5,6 @@ import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
-import 'package:reddit/widgets/best_listing.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ModeratorController {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
@@ -252,14 +250,11 @@ class ScheduledProvider extends ChangeNotifier {
   }
 
   Future<void> submitScheduledPost(String communityName, String post_id) async {
-    Future<void> submitScheduledPost(
-        String communityName, String post_id) async {
-      await moderatorService.submitScheduledPost(
-          postId: post_id, communityName: communityName);
-      // moderatorController.scheduled =
-      //     await moderatorService.getScheduled(communityName);
-      notifyListeners();
-    }
+    await moderatorService.submitScheduledPost(
+        postId: post_id, communityName: communityName);
+    // moderatorController.scheduled =
+    //     await moderatorService.getScheduled(communityName);
+    notifyListeners();
   }
 
   Future<void> cancelScheduledPost(String communityName, String post_id) async {
