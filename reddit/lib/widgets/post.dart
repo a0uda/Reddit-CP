@@ -88,6 +88,7 @@ class Post extends StatefulWidget {
   bool deleted;
   OnClearDelete? onclearDelete;
   OnClearEdit? onclearEdit;
+  OnLock? onLock;
 
   Post({
     super.key,
@@ -113,6 +114,7 @@ class Post extends StatefulWidget {
     this.isPostMod = false,
     required this.isSaved,
     this.moderatorDetails,
+    this.onLock,
   });
 
   @override
@@ -204,9 +206,9 @@ class PostState extends State<Post> {
 
   @override
   void initState() {
-    spammedFlag = widget.moderatorDetails!.spammedFlag ?? false;
-    approvedFlag = widget.moderatorDetails!.approvedFlag ?? false;
-    removedPost = widget.moderatorDetails!.removedFlag ?? false;
+    spammedFlag = widget.moderatorDetails?.spammedFlag ?? false;
+    approvedFlag = widget.moderatorDetails?.approvedFlag ?? false;
+    removedPost = widget.moderatorDetails?.removedFlag ?? false;
     super.initState();
     if (widget.vote == 1) {
       upVote = true;
@@ -225,6 +227,7 @@ class PostState extends State<Post> {
     }
 
     void _handleLockChanged(bool newValue) {
+      widget.onLock!(widget.id, newValue);
       setState(() {
         widget.isLocked = newValue;
       });
@@ -257,8 +260,10 @@ class PostState extends State<Post> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  CommentsDesktop(postId: widget.id), // pass the post ID here
+              builder: (context) => CommentsDesktop(
+                postId: widget.id,
+                isModInComment: widget.isPostMod,
+              ), // pass the post ID here
             ),
           ),
         },
@@ -543,22 +548,24 @@ class PostState extends State<Post> {
                           Icons.lock,
                           color: Colors.amberAccent[700],
                         ),
-                      (spammedFlag)
-                          ? Icon(
-                              Icons.free_cancellation_outlined,
-                              color: Colors.red[800],
-                            )
-                          : (approvedFlag)
+                      (widget.isPostMod)
+                          ? (spammedFlag)
                               ? Icon(
-                                  Icons.check,
-                                  color: Colors.green[600],
+                                  Icons.free_cancellation_outlined,
+                                  color: Colors.red[800],
                                 )
-                              : (removedPost)
+                              : (approvedFlag)
                                   ? Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.red[800],
+                                      Icons.check,
+                                      color: Colors.green[600],
                                     )
-                                  : const SizedBox(),
+                                  : (removedPost)
+                                      ? Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.red[800],
+                                        )
+                                      : const SizedBox()
+                          : const SizedBox(),
                       Align(
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
@@ -745,8 +752,9 @@ class PostState extends State<Post> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => CommentsDesktop(
-                                      postId:
-                                          widget.id), // pass the post ID here
+                                    postId: widget.id,
+                                    isModInComment: widget.isPostMod,
+                                  ), // pass the post ID here
                                 ),
                               );
                             },

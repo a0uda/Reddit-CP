@@ -48,6 +48,7 @@ class _PostModQueueState extends State<PostModQueue> {
             MaterialPageRoute(
               builder: (context) => CommentsDesktop(
                 postId: widget.post.postID,
+                isModInComment: true,
               ),
               //Navigate to Post pagee.. Badrrr
             ),
@@ -829,6 +830,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
             MaterialPageRoute(
               builder: (context) => CommentsDesktop(
                 postId: widget.post.itemID,
+                isModInComment: true,
               ),
               //Navigate to Post pagee.. Badrrr
             ),

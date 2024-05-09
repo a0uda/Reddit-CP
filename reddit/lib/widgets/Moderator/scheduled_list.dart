@@ -70,76 +70,78 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
             }
             return Consumer<ScheduledProvider>(
                 builder: (context, scheduledProvider, child) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  postsFetched = false;
-                  await fetchScheduled();
-                },
-                child: SingleChildScrollView(
-                  child: Container(
-                    color: Colors.grey[200],
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        (screenWidth > 700)
-                            ? AppBar(
-                                leading: const SizedBox(
-                                  width: 0,
-                                ),
-                                title: const Text(
-                                  'Scheduled posts',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+              return Scaffold(
+                appBar: (screenWidth > 700)
+                    ? AppBar(
+                        // leading: const SizedBox(
+                        //   width: 0,
+                        // ),
+                        title: const Text(
+                          'Scheduled posts',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : null,
+                body: RefreshIndicator(
+                  onRefresh: () async {
+                    postsFetched = false;
+                    await fetchScheduled();
+                  },
+                  child: SingleChildScrollView(
+                    child: Container(
+                      color: Colors.grey[200],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          recurringPosts.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18.0, top: 10, bottom: 10),
+                                  child: Text(
+                                    "RECURRING POSTS",
+                                    style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12),
                                   ),
-                                ),
-                              )
-                            : const SizedBox(),
-                        recurringPosts.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 18.0, top: 10, bottom: 10),
-                                child: Text(
-                                  "RECURRING POSTS",
-                                  style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12),
-                                ),
-                              )
-                            : const SizedBox(),
-                        ...recurringPosts.map((item) => PostScheduled(
-                              item: item,
-                              fetch: () {
-                                setState(() {
-                                  postsFetched = false;
-                                });
-                              },
-                            )),
-                        scheduledPosts.isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 18.0, top: 10, bottom: 10),
-                                child: Text(
-                                  "SCHEDULED POSTS",
-                                  style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12),
-                                ),
-                              )
-                            : const SizedBox(),
-                        ...scheduledPosts.map((item) => PostScheduled(
-                              item: item,
-                              fetch: () {
-                                setState(() {
-                                  postsFetched = false;
-                                });
-                              },
-                            )),
-                      ],
+                                )
+                              : const SizedBox(),
+                          ...recurringPosts.map((item) => PostScheduled(
+                                item: item,
+                                fetch: () {
+                                  setState(() {
+                                    postsFetched = false;
+                                  });
+                                },
+                              )),
+                          scheduledPosts.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 18.0, top: 10, bottom: 10),
+                                  child: Text(
+                                    "SCHEDULED POSTS",
+                                    style: TextStyle(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12),
+                                  ),
+                                )
+                              : const SizedBox(),
+                          ...scheduledPosts.map((item) => PostScheduled(
+                                item: item,
+                                fetch: () {
+                                  setState(() {
+                                    postsFetched = false;
+                                  });
+                                },
+                              )),
+                        ],
+                      ),
                     ),
                   ),
                 ),

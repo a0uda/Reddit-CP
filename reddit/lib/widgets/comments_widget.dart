@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/post_item.dart';
@@ -11,8 +12,15 @@ import 'package:reddit/widgets/repost.dart';
 
 class CommentsWidget extends StatefulWidget {
   final String postId;
+  final bool isModInComment;
+  final communityName;
 
-  const CommentsWidget({Key? key, required this.postId}) : super(key: key);
+  const CommentsWidget(
+      {Key? key,
+      required this.postId,
+      this.isModInComment = false,
+      this.communityName = ""})
+      : super(key: key);
 
   @override
   State<CommentsWidget> createState() => CommentsWidgetState();
@@ -47,6 +55,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
   @override
   Widget build(BuildContext context) {
     final UserController userController = GetIt.instance.get<UserController>();
+    final ModeratorController moderatorController =
+        GetIt.instance.get<ModeratorController>();
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -71,6 +81,11 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             isSaved: post!.isSaved!,
                             vote: post!.vote,
                             deleted: post!.isRemoved ?? false,
+                            isPostMod: (widget.isModInComment &&
+                                (moderatorController.modAccess.everything ||
+                                    moderatorController
+                                        .modAccess.managePostsAndComments)),
+                            moderatorDetails: post!.moderatorDetails,
                           )
                         : Post(
                             vote: post!.vote,
@@ -89,6 +104,11 @@ class CommentsWidgetState extends State<CommentsWidget> {
                             isLocked: post!.lockedFlag,
                             isSaved: post!.isSaved!,
                             deleted: post!.isRemoved ?? false,
+                            isPostMod: (widget.isModInComment &&
+                                (moderatorController.modAccess.everything ||
+                                    moderatorController
+                                        .modAccess.managePostsAndComments)),
+                            moderatorDetails: post!.moderatorDetails,
                           ),
                   ),
                   if (comments != null && comments!.isNotEmpty)
@@ -102,6 +122,7 @@ class CommentsWidgetState extends State<CommentsWidget> {
                           comment: comment,
                           isSaved: comment.saved ?? false,
                           likes: comment.upvotesCount - comment.downvotesCount,
+                          isModInComment: widget.isModInComment,
                         );
                       },
                     ),

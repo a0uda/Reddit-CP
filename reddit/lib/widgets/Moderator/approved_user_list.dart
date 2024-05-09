@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -66,6 +67,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
             children: [
               (screenWidth > 700)
                   ? AppBar(
+                    surfaceTintColor: Colors.white,
                       leading: const SizedBox(
                         width: 0,
                       ),
@@ -85,14 +87,20 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                   elevation: 0,
                                   backgroundColor:
                                       const Color.fromARGB(255, 42, 101, 210)),
-                              onPressed: moderatorController.modAccess.manageUsers ? () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AddApprovedUser(),
-                                  ),
-                                );
-                              } : null, // Approve user Badrrr ele hya add
+                              onPressed: () {
+                                if ((moderatorController.modAccess.everything ||
+                                    moderatorController
+                                        .modAccess.manageUsers)) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddApprovedUser(),
+                                    ),
+                                  );
+                                } else {
+                                  showError(context);
+                                }
+                              }, // Approve user Badrrr ele hya add
                               child: const Text(
                                 "Approve User",
                                 style: TextStyle(
@@ -208,18 +216,28 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                                       Icons.do_disturb_alt),
                                                   title: const Text("Remove"),
                                                   onTap: () async {
-                                                    await approvedUserProvider
-                                                        .removeApprovedUsers(
-                                                            item["username"],
+                                                    if ((moderatorController
+                                                            .modAccess
+                                                            .everything ||
+                                                        moderatorController
+                                                            .modAccess
+                                                            .manageUsers)) {
+                                                      await approvedUserProvider
+                                                          .removeApprovedUsers(
+                                                              item["username"],
+                                                              moderatorController
+                                                                  .communityName);
+                                                      setState(() {
+                                                        usersFetched = true;
+                                                        foundUsers =
                                                             moderatorController
-                                                                .communityName);
-                                                    setState(() {
-                                                      usersFetched = true;
-                                                      foundUsers =
-                                                          moderatorController
-                                                              .approvedUsers;
-                                                    });
-                                                    Navigator.of(context).pop();
+                                                                .approvedUsers;
+                                                      });
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    } else {
+                                                      showError(context);
+                                                    }
                                                   },
                                                 ),
                                               ],
@@ -229,6 +247,17 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
                                       );
                                     },
                                     icon: const Icon(Icons.more_horiz)),
+                                onTap: () async {
+                                  UserAbout otherUserData = (await (userService
+                                      .getUserAbout(item["username"])))!;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfileScreen(otherUserData, 'other'),
+                                    ),
+                                  );
+                                },
                               ),
                             );
                           },
@@ -245,4 +274,58 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
       );
     });
   }
+}
+
+void showError(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: const Text(
+              'You do not have permission to change this setting',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: const Text(
+                  'Please contact the owner of the community for more information',
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 37, 79, 165),
+                    side: const BorderSide(
+                        color: Color.fromARGB(255, 37, 79, 165)),
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 16, top: 16, bottom: 16),
+                  ),
+                  child: const Text(
+                    'OK',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      });
 }

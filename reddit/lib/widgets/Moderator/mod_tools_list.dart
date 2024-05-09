@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 
 class ModToolsList extends StatelessWidget {
   final bool isMobile;
   final Function(int) changePage;
-  const ModToolsList(
-      {super.key, required this.isMobile, required this.changePage});
+  ModToolsList({super.key, required this.isMobile, required this.changePage});
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
 
   @override
   Widget build(BuildContext context) {
@@ -153,9 +156,12 @@ class ModToolsList extends StatelessWidget {
           trailing: isMobile
               ? const Icon(Icons.arrow_forward_rounded)
               : const SizedBox(),
-          onTap: () {
-            changePage(9);
-          },
+          onTap: (moderatorController.modAccess.everything ||
+                  moderatorController.modAccess.managePostsAndComments)
+              ? () {
+                  changePage(9);
+                }
+              : null,
         ),
         ListTile(
           leading: const Icon(Icons.rule),

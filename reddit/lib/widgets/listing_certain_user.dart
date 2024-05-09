@@ -15,6 +15,7 @@ import 'package:reddit/Models/user_about.dart';
 final userController = GetIt.instance.get<UserController>();
 typedef OnClearDelete = void Function(String postid);
 typedef OnClearEdit = void Function(String postid, String text);
+typedef OnLock = void Function(String postid, bool lock);
 
 class ListingCertainUser extends StatefulWidget {
   final UserAbout? userData;
@@ -30,6 +31,14 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
     for (var post in posts) {
       if (post.id == postid) {
         post.description = text;
+      }
+    }
+  }
+
+  void handleLockChange(String postid, bool lock) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.lockedFlag = lock;
       }
     }
   }
@@ -63,6 +72,8 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
     // Remove objects from list1 if their IDs match any in list2
     post.removeWhere((item1) => posts.any((item2) => item1.id == item2.id));
     post.removeWhere((item1) => item1.isRemoved == true);
+    print("tracinggggg");
+    print(post);
     setState(() {
       posts.addAll(post);
       isloading = false;
@@ -113,23 +124,23 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
           if (posts[index].isRemoved == false) {
             if (posts[index].isReposted) {
               return Repost(
-                  onclearDelete: handledeleteChanged,
-                  onclearEdit: handleEditChanged,
-                  deleted: posts[index].isRemoved,
-                  description: posts[index].description,
-                  id: posts[index].id,
-                  name: posts[index].username,
-                  title: posts[index].title,
-                  originalID: posts[index].originalPostID,
-                  date: posts[index].createdAt.toString(),
-                  likes:
-                      posts[index].upvotesCount - posts[index].downvotesCount,
-                  commentsCount: posts[index].commentsCount,
-                  communityName: posts[index].communityName,
-                  isLocked: posts[index].lockedFlag,
-                  vote: posts[index].vote,
-                  isSaved: posts[index].isSaved ?? false,
-                  );
+                onclearDelete: handledeleteChanged,
+                onclearEdit: handleEditChanged,
+                onLock: handleLockChange,
+                deleted: posts[index].isRemoved,
+                description: posts[index].description,
+                id: posts[index].id,
+                name: posts[index].username,
+                title: posts[index].title,
+                originalID: posts[index].originalPostID,
+                date: posts[index].createdAt.toString(),
+                likes: posts[index].upvotesCount - posts[index].downvotesCount,
+                commentsCount: posts[index].commentsCount,
+                communityName: posts[index].communityName,
+                isLocked: posts[index].lockedFlag,
+                vote: posts[index].vote,
+                isSaved: posts[index].isSaved ?? false,
+              );
             }
             if (posts[index].nsfwFlag == true ||
                 posts[index].spoilerFlag == true) {
@@ -149,6 +160,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
               // profileImageUrl: posts[index].profilePic!,
               onclearDelete: handledeleteChanged,
               onclearEdit: handleEditChanged,
+              onLock: handleLockChange,
               name: posts[index].username,
               vote: posts[index].vote,
               deleted: posts[index].isRemoved,
@@ -165,6 +177,7 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved ?? false,
+              
             );
           } else {
             return Container();

@@ -7,7 +7,9 @@ import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_modderator.dart';
+import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 
+// ignore: must_be_immutable
 class ModeratorsList extends StatefulWidget {
   bool isInvite;
   String msgID;
@@ -168,29 +170,35 @@ class _ModeratorsListState extends State<ModeratorsList>
                       ),
                     ),
                     actions: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor:
-                                    const Color.fromARGB(255, 42, 101, 210)),
-                            onPressed: () {
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 42, 101, 210)),
+                          onPressed: () {
+                            if (moderatorController.modAccess.everything ||
+                                moderatorController.modAccess.manageUsers) {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => const AddModerator(),
                                 ),
                               );
-                            }, // add mod Badrrr ele hya add
-                            child: const Text(
-                              "Invite user as mod",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                            } else {
+                              showError(context);
+                            }
+                          }, // add mod Badrrr ele hya add
+                          child: const Text(
+                            "Invite user as mod",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
-                        )
-                      ])
+                        ),
+                      )
+                    ],
+                  )
                 : const SizedBox(),
             TextField(
               onChanged: searchUsers,
@@ -227,195 +235,233 @@ class _ModeratorsListState extends State<ModeratorsList>
             ),
             Expanded(
               child: TabBarView(
-                controller: TabController(
-                  length: 2,
-                  vsync: this,
-                  initialIndex: currentIndex,
-                ),
-                children: [
-                  // Tab 1 content
-                  RefreshIndicator(
-                    onRefresh: () async {
-                      userFetched = false;
-                      await fetchModerators();
-                    },
-                    child: FutureBuilder<void>(
-                      future: fetchModerators(),
-                      builder:
-                          (BuildContext context, AsyncSnapshot<void> snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.none:
-                            return const Text('none');
-                          case ConnectionState.waiting:
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          case ConnectionState.done:
-                            if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            return Column(
-                              children: [
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: foundUsers.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      final item = foundUsers[index];
-                                      final moderatorSince = DateTime.parse(
-                                          item["moderator_since"]!);
-                                      return Card(
-                                        elevation: 0,
-                                        margin:
-                                            const EdgeInsets.only(bottom: 1),
-                                        color: Colors.white,
-                                        child: ListTile(
-                                          tileColor: Colors.white,
-                                          leading: CircleAvatar(
-                                            backgroundImage: AssetImage(
-                                                item["profile_picture"]!),
-                                            radius: 15,
-                                          ),
-                                          title: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "u/${item["username"]!}",
-                                              ),
-                                              Text(
-                                                '${moderatorSince.day}-${moderatorSince.month}-${moderatorSince.year}',
-                                                style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 10),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
-                            );
-                          default:
-                            return const Text('badr');
-                        }
-                      },
-                    ),
+                  controller: TabController(
+                    length: 2,
+                    vsync: this,
+                    initialIndex: currentIndex,
                   ),
-
-                  // Tab 2 content
-                  Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: foundeditableUsers.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final item = foundeditableUsers[index];
-                            final moderatorSince =
-                                DateTime.parse(item["moderator_since"]!);
-                            return Card(
-                              elevation: 0,
-                              margin: const EdgeInsets.only(bottom: 1),
-                              color: Colors.white,
-                              child: ListTile(
-                                tileColor: Colors.white,
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(item["profile_picture"]!),
-                                  radius: 15,
-                                ),
-                                title: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "u/${item["username"]!}",
-                                    ),
-                                    Text(
-                                      '${moderatorSince.day}-${moderatorSince.month}-${moderatorSince.year}',
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 10),
-                                    )
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        backgroundColor: Colors.white,
-                                        context: context,
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 20.0),
-                                            child: ListView(
-                                              shrinkWrap: true,
+                  children: [
+                    // Tab 1 content
+                    RefreshIndicator(
+                      onRefresh: () async {
+                        userFetched = false;
+                        await fetchModerators();
+                      },
+                      child: FutureBuilder<void>(
+                        future: fetchModerators(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<void> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                              return const Text('none');
+                            case ConnectionState.waiting:
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            case ConnectionState.done:
+                              if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              }
+                              return Column(
+                                children: [
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: foundUsers.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        final item = foundUsers[index];
+                                        final moderatorSince = DateTime.parse(
+                                            item["moderator_since"]!);
+                                        return Card(
+                                          elevation: 0,
+                                          margin:
+                                              const EdgeInsets.only(bottom: 1),
+                                          color: Colors.white,
+                                          child: ListTile(
+                                            onTap: () async {
+                                              UserAbout otherUserData =
+                                                  (await (userService
+                                                      .getUserAbout(
+                                                          item["username"])))!;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ProfileScreen(
+                                                          otherUserData,
+                                                          'other'),
+                                                ),
+                                              );
+                                            },
+                                            tileColor: Colors.white,
+                                            leading: CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  item["profile_picture"]!),
+                                              radius: 15,
+                                            ),
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                ListTile(
-                                                  leading:
-                                                      const Icon(Icons.person),
-                                                  title: const Text(
-                                                      "View Profile"),
-                                                  onTap: () async {
-                                                    //navigate to profile of this mod Badrr
-                                                    UserAbout otherUserData =
-                                                        (await (userService
-                                                            .getUserAbout(item[
-                                                                "username"])))!;
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ProfileScreen(
-                                                                otherUserData,
-                                                                'other'),
-                                                      ),
-                                                    );
-                                                  },
+                                                Text(
+                                                  "u/${item["username"]!}",
                                                 ),
-                                                ListTile(
-                                                  leading: const Icon(
-                                                      Icons.do_disturb_alt),
-                                                  title: const Text("Remove"),
-                                                  onTap: () async {
-                                                    //remove mod
-                                                    await moderatorProvider
-                                                        .removeAsMod(
-                                                            item["username"],
-                                                            moderatorController
-                                                                .communityName);
-                                                    setState(() {
-                                                      foundUsers =
-                                                          moderatorController
-                                                              .moderators;
-                                                      editableMods =
-                                                          moderatorController
-                                                              .moderators
-                                                              .sublist(
-                                                                  startIndex!);
-                                                      foundeditableUsers =
-                                                          editableMods;
-                                                      userFetched = true;
-                                                    });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
+                                                Text(
+                                                  '${moderatorSince.day}-${moderatorSince.month}-${moderatorSince.year}',
+                                                  style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10),
+                                                )
                                               ],
                                             ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.more_horiz)),
-                              ),
-                            );
-                          },
-                        ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            default:
+                              return const Text('badr');
+                          }
+                        },
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+
+                    // Tab 2 content
+                    Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: foundeditableUsers.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = foundeditableUsers[index];
+                              final moderatorSince =
+                                  DateTime.parse(item["moderator_since"]!);
+                              return Card(
+                                elevation: 0,
+                                margin: const EdgeInsets.only(bottom: 1),
+                                color: Colors.white,
+                                child: ListTile(
+                                  tileColor: Colors.white,
+                                  leading: CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage(item["profile_picture"]!),
+                                    radius: 15,
+                                  ),
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "u/${item["username"]!}",
+                                      ),
+                                      Text(
+                                        '${moderatorSince.day}-${moderatorSince.month}-${moderatorSince.year}',
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 10),
+                                      )
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          backgroundColor: Colors.white,
+                                          context: context,
+                                          builder: (context) {
+                                            return Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 20.0),
+                                              child: ListView(
+                                                shrinkWrap: true,
+                                                children: [
+                                                  ListTile(
+                                                    leading: const Icon(
+                                                        Icons.person),
+                                                    title: const Text(
+                                                        "View Profile"),
+                                                    onTap: () async {
+                                                      //navigate to profile of this mod Badrr
+                                                      UserAbout otherUserData =
+                                                          (await (userService
+                                                              .getUserAbout(item[
+                                                                  "username"])))!;
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ProfileScreen(
+                                                                  otherUserData,
+                                                                  'other'),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                  ListTile(
+                                                    leading: const Icon(
+                                                        Icons.do_disturb_alt),
+                                                    title: const Text("Remove"),
+                                                    onTap: () async {
+                                                      //remove mod
+                                                      if (moderatorController
+                                                              .modAccess
+                                                              .everything ||
+                                                          moderatorController
+                                                              .modAccess
+                                                              .manageUsers) {
+                                                        await moderatorProvider
+                                                            .removeAsMod(
+                                                                item[
+                                                                    "username"],
+                                                                moderatorController
+                                                                    .communityName);
+                                                        setState(() {
+                                                          foundUsers =
+                                                              moderatorController
+                                                                  .moderators;
+                                                          editableMods =
+                                                              moderatorController
+                                                                  .moderators
+                                                                  .sublist(
+                                                                      startIndex!);
+                                                          foundeditableUsers =
+                                                              editableMods;
+                                                          userFetched = true;
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        });
+                                                      } else {
+                                                        showError(context);
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(Icons.more_horiz)),
+                                  onTap: () async {
+                                    UserAbout otherUserData =
+                                        (await (userService
+                                            .getUserAbout(item["username"])))!;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                            otherUserData, 'other'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
             ),
           ],
         ),

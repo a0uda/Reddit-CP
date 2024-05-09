@@ -78,6 +78,7 @@ class Comments {
       subredditName: json['community_name'],
       moderatorDetails: json['moderator_details'] != null
           ? ModeratorDetails(
+              approvedFlag: json['moderator_details']['approved_flag'],
               approvedBy: json['moderator_details']['approved_by'],
               approvedDate: json['moderator_details']['approved_date'],
               removedBy: json['moderator_details']['removed_by'],
@@ -115,6 +116,4 @@ class ModeratorDetails {
     this.spammedFlag,
     this.approvedFlag,
   });
-
-  
 }

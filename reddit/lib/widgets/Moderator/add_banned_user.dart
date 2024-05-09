@@ -14,16 +14,19 @@ class AddBannedUser extends StatefulWidget {
   String? modNote;
   int? banPeriod;
   String? banNote;
+  final bool fromQueues;
 
-  AddBannedUser(
-      {super.key,
-      required this.seeDetails,
-      this.username,
-      this.permanentFlag,
-      this.banReason,
-      this.banNote,
-      this.banPeriod,
-      this.modNote});
+  AddBannedUser({
+    super.key,
+    required this.seeDetails,
+    this.username,
+    this.permanentFlag,
+    this.banReason,
+    this.banNote,
+    this.banPeriod,
+    this.modNote,
+    this.fromQueues = false,
+  });
 
   @override
   State<AddBannedUser> createState() => _AddBannedUserState();
@@ -59,12 +62,13 @@ class _AddBannedUserState extends State<AddBannedUser> {
   @override
   void initState() {
     super.initState();
-    if (widget.seeDetails) {
+    if (widget.seeDetails || widget.fromQueues) {
       userNameController.text = widget.username ?? "";
       permanentIsChecked = widget.permanentFlag!;
       banReasonController.text = widget.banReason ?? "";
       modNoteController.text = widget.modNote ?? "";
-      banPeriodController.text = widget.permanentFlag! ? "" : widget.banPeriod!.toString();
+      banPeriodController.text =
+          widget.permanentFlag! ? "" : widget.banPeriod!.toString();
       noteController.text = widget.banNote ?? "";
       // if (!widget.permanentFlag!) {
       //   DateTime receivedDate = DateTime.parse(widget.banPeriod!.toString());
@@ -85,7 +89,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
       communityName: moderatorController.communityName,
       permanentFlag: permanentIsChecked,
       reasonForBan: banReasonController.text,
-      bannedUntil: banPeriodController.text .toString(),
+      bannedUntil: banPeriodController.text.toString(),
       modNote: modNoteController.text,
       noteForBanMessage: noteController.text,
     );
@@ -127,7 +131,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                             communityName: moderatorController.communityName,
                             permanentFlag: permanentIsChecked,
                             reasonForBan: banReasonController.text,
-                            bannedUntil:  banPeriodController.text ,
+                            bannedUntil: banPeriodController.text,
                             modNote: modNoteController.text,
                             noteForBanMessage: noteController.text,
                           );
@@ -164,7 +168,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                 Container(
                   color: Colors.grey[200],
                   child: TextFormField(
-                    enabled: !widget.seeDetails,
+                    enabled: !widget.seeDetails || !widget.fromQueues,
                     cursorColor: Colors.blue,
                     controller: userNameController,
                     onChanged: (value) => {

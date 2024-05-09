@@ -1482,9 +1482,11 @@ class ModeratorMockService {
           "action": action,
         },
       ),
-    );
+    );  
+    print("approvingggggg");
     print(response.body);
   }
+
   Future<void> handleEditItem({
     required String itemType,
     required String action,
@@ -1536,7 +1538,6 @@ class ModeratorMockService {
             "item_id": id,
             "item_type": itemType,
             "objection_type": objectionType,
-            // "objection_type_value": "Hate"
           },
         ),
       );
@@ -1545,4 +1546,3 @@ class ModeratorMockService {
     }
   }
 }
-

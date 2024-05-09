@@ -76,6 +76,7 @@ class Repost extends StatefulWidget {
   final int vote;
   bool deleted;
   bool isSaved;
+  OnLock? onLock;
 
   OnClearDelete? onclearDelete;
 
@@ -101,6 +102,7 @@ class Repost extends StatefulWidget {
     required this.vote,
     this.isPostMod = false,
     this.moderatorDetails,
+    this.onLock,
   });
 
   @override
@@ -197,9 +199,9 @@ class RepostState extends State<Repost> {
   void initState() {
     super.initState();
     fetch = loadOriginalPost();
-    spammedFlag = widget.moderatorDetails!.spammedFlag ?? false;
-    approvedFlag = widget.moderatorDetails!.approvedFlag ?? false;
-    removedPost = widget.moderatorDetails!.removedFlag ?? false;
+    spammedFlag = widget.moderatorDetails?.spammedFlag ?? false;
+    approvedFlag = widget.moderatorDetails?.approvedFlag ?? false;
+    removedPost = widget.moderatorDetails?.removedFlag ?? false;
 
     if (widget.vote == 1) {
       upVote = true;
@@ -227,6 +229,7 @@ class RepostState extends State<Repost> {
     }
 
     void _handleLockChanged(bool newValue) {
+      widget.onLock!(widget.id, newValue);
       setState(() {
         widget.isLocked = newValue;
       });
@@ -241,8 +244,9 @@ class RepostState extends State<Repost> {
     }
 
     String userType;
-
-    return (widget.deleted != false)
+    print("yarabbb");
+    print(widget.deleted);
+    return (widget.deleted == false)
         ? SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             child: InkWell(
@@ -251,7 +255,9 @@ class RepostState extends State<Repost> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CommentsDesktop(
-                        postId: widget.id), // pass the post ID here
+                      postId: widget.id,
+                      isModInComment: widget.isPostMod,
+                    ), // pass the post ID here
                   ),
                 ),
               },
@@ -546,22 +552,24 @@ class RepostState extends State<Repost> {
                                 Icons.lock,
                                 color: Colors.amberAccent[700],
                               ),
-                            (spammedFlag)
-                                ? Icon(
-                                    Icons.free_cancellation_outlined,
-                                    color: Colors.red[800],
-                                  )
-                                : (approvedFlag)
+                            (widget.isPostMod)
+                                ? (spammedFlag)
                                     ? Icon(
-                                        Icons.check,
-                                        color: Colors.green[600],
+                                        Icons.free_cancellation_outlined,
+                                        color: Colors.red[800],
                                       )
-                                    : (removedPost)
+                                    : (approvedFlag)
                                         ? Icon(
-                                            Icons.delete_outline,
-                                            color: Colors.red[800],
+                                            Icons.check,
+                                            color: Colors.green[600],
                                           )
-                                        : const SizedBox(),
+                                        : (removedPost)
+                                            ? Icon(
+                                                Icons.delete_outline,
+                                                color: Colors.red[800],
+                                              )
+                                            : const SizedBox()
+                                : const SizedBox(),
                             Align(
                               alignment: Alignment.centerRight,
                               child: (userController.userAbout != null)
@@ -633,9 +641,11 @@ class RepostState extends State<Repost> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => CommentsDesktop(
-                                                postId: post!
-                                                    .id), // pass the post ID here
+                                            builder: (context) =>
+                                                CommentsDesktop(
+                                              postId: post!.id,
+                                              isModInComment: widget.isPostMod,
+                                            ), // pass the post ID here
                                           ),
                                         ),
                                       },
@@ -1099,8 +1109,9 @@ class RepostState extends State<Repost> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => CommentsDesktop(
-                                            postId: widget
-                                                .id), // pass the post ID here
+                                          postId: widget.id,
+                                          isModInComment: widget.isPostMod,
+                                        ), // pass the post ID here
                                       ),
                                     );
                                   },

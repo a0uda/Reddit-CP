@@ -1,12 +1,15 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/comments_service.dart';
 import 'package:reddit/Services/user_service.dart';
+import 'package:reddit/widgets/Moderator/modal_for_remals.dart';
 import 'package:reddit/widgets/comments_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,12 +45,14 @@ class Comment extends StatefulWidget {
   int likes;
   bool isSaved;
   bool isComingFromSaved;
+  final bool isModInComment;
   Comment({
     super.key,
     required this.comment,
     required this.isSaved,
     this.isComingFromSaved = false,
     required this.likes,
+    this.isModInComment = false,
   });
 
   @override
@@ -66,10 +71,16 @@ class _CommentState extends State<Comment> {
   final CommentsService commentService = GetIt.instance.get<CommentsService>();
   late SharedPreferences prefs;
   late String username;
+  bool spammedFlag = false;
+  bool approvedFlag = false;
+  bool removedPost = false;
 
   @override
   void initState() {
     super.initState();
+    spammedFlag = widget.comment.moderatorDetails?.spammedFlag ?? false;
+    approvedFlag = widget.comment.moderatorDetails?.approvedFlag ?? false;
+    removedPost = widget.comment.moderatorDetails?.removedFlag ?? false;
     if (widget.comment.vote == 1) {
       upVote = true;
       upVoteColor = Colors.blue;
@@ -209,6 +220,100 @@ class _CommentState extends State<Comment> {
                         fontSize: 12,
                         color: Color.fromARGB(255, 117, 116, 115)),
                   ),
+                  widget.isModInComment ? Spacer() : const SizedBox(),
+                  (widget.isModInComment)
+                      ? (spammedFlag)
+                          ? Icon(
+                              Icons.free_cancellation_outlined,
+                              color: Colors.red[800],
+                            )
+                          : (approvedFlag)
+                              ? Icon(
+                                  Icons.check,
+                                  color: Colors.green[600],
+                                )
+                              : (removedPost)
+                                  ? Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red[800],
+                                    )
+                                  : const SizedBox()
+                      : const SizedBox(),
+                  widget.isModInComment
+                      ? ElevatedButton.icon(
+                          onPressed: () async {
+                            var objection =
+                                context.read<handleObjectionProvider>();
+                            showOptions(
+                              communityName: widget.comment.subredditName ?? "",
+                              context: context,
+                              isApproved: approvedFlag ?? false,
+                              isRemoved: removedPost ?? false,
+                              removedAsSpam: spammedFlag ?? false,
+                              handleRemoveAsSpam: () async {
+                                await objection.objectItem(
+                                    id: widget.comment.id!,
+                                    itemType: "comment",
+                                    objectionType: "spammed",
+                                    communityName:
+                                        widget.comment.subredditName ?? "");
+                                setState(() {
+                                  spammedFlag = true;
+                                  approvedFlag = false;
+                                  removedPost = false;
+                                });
+                              },
+                              handleApprove: () async {
+                                var queuesProvider =
+                                    context.read<handleUnmoderatedProvider>();
+                                await queuesProvider.handleUnmoderated(
+                                  objectionType: "unmoderated",
+                                  itemType: 'comment',
+                                  action: 'approve',
+                                  communityName:
+                                      widget.comment.subredditName ?? "",
+                                  itemID: widget.comment.id ?? "",
+                                );
+                                setState(() {
+                                  approvedFlag = true;
+                                  spammedFlag = false;
+                                  removedPost = false;
+                                });
+                              },
+                              handleRemovePost: (removalReaosnTitle) async {
+                                var umoderated =
+                                    context.read<handleUnmoderatedProvider>();
+                                await umoderated.handleUnmoderated(
+                                  objectionType: "unmoderated",
+                                  itemType: 'comment',
+                                  action: 'remove',
+                                  communityName:
+                                      widget.comment.subredditName ?? "",
+                                  itemID: widget.comment.id ?? "",
+                                );
+
+                                setState(() {
+                                  approvedFlag = false;
+                                  spammedFlag = false;
+                                  removedPost = true;
+                                });
+                              },
+                            );
+                          },
+                          icon: Icon(
+                            Icons.shield_outlined,
+                            color: Colors.black,
+                          ),
+                          label: SizedBox(),
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            surfaceTintColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),
@@ -411,4 +516,110 @@ class _CommentState extends State<Comment> {
       ),
     );
   }
+}
+
+void showOptions({
+  required BuildContext context,
+  bool isApproved = false,
+  bool isRemoved = false,
+  bool removedAsSpam = false,
+  required String communityName,
+  required final Function() handleRemoveAsSpam,
+  required final Function() handleApprove,
+  required final Function(String title) handleRemovePost,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isApproved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Approve comment',
+                style:
+                    TextStyle(color: isApproved ? Colors.grey : Colors.black),
+              ),
+              onTap: isApproved
+                  ? null
+                  : () {
+                      //approve
+                      handleApprove();
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.xmark,
+                color: isRemoved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove comment',
+                style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
+              ),
+              onTap: isRemoved
+                  ? null
+                  : () async {
+                      //remove
+                      await showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ModalForReasons(
+                            handleRemove: (value) {
+                              handleRemovePost(value);
+                              print("TITLE");
+                              print(value);
+                            },
+                            communityName: "badrmoderatorrrr",
+                          );
+                        },
+                      );
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.free_cancellation_outlined,
+                color: removedAsSpam ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove as spam',
+                style: TextStyle(
+                    color: removedAsSpam ? Colors.grey : Colors.black),
+              ),
+              onTap: removedAsSpam
+                  ? null
+                  : () {
+                      handleRemoveAsSpam();
+                      Navigator.of(context).pop();
+                      //as spam
+                    },
+            ),
+            // ListTile(
+            //   leading: Icon(
+            //     CupertinoIcons.lock,
+            //     color: lockComments ? Colors.grey : Colors.black,
+            //   ),
+            //   title: Text(
+            //     lockComments ? 'Unlock comments' : 'Lock Comments',
+            //   ),
+            //   onTap: () {
+            //     //lock comments
+            //     handleLock(!lockComments);
+            //     Navigator.of(context).pop();
+            //   },
+            // ),
+          ],
+        ),
+      );
+    },
+  );
 }

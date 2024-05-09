@@ -110,10 +110,10 @@ class HotListingBuild extends State<HotListing> {
           if (posts[index].images != null) {
             imageurl = posts[index].images?[0].path;
           }
-
           print(posts[index].isReposted);
           if (posts[index].isRemoved == false) {
             if (posts[index].isReposted) {
+              print("FLAGG");
               return Repost(
                 description: posts[index].description,
                 deleted: posts[index].isRemoved,
@@ -146,6 +146,9 @@ class HotListingBuild extends State<HotListing> {
                 isLocked: posts[index].lockedFlag,
                 isNSFW: posts[index].nsfwFlag,
                 isSpoiler: posts[index].spoilerFlag,
+                isPostMod: (widget.commmunityName != "" &&
+                    (moderatorController.modAccess.everything ||
+                        moderatorController.modAccess.managePostsAndComments)),
               );
             }
             return Post(

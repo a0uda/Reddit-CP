@@ -252,12 +252,14 @@ class ScheduledProvider extends ChangeNotifier {
   }
 
   Future<void> submitScheduledPost(String communityName, String post_id) async {
-  Future<void> submitScheduledPost(String communityName, String post_id) async {
-    await moderatorService.submitScheduledPost(
-        postId: post_id, communityName: communityName);
-    // moderatorController.scheduled =
-    //     await moderatorService.getScheduled(communityName);
-    notifyListeners();
+    Future<void> submitScheduledPost(
+        String communityName, String post_id) async {
+      await moderatorService.submitScheduledPost(
+          postId: post_id, communityName: communityName);
+      // moderatorController.scheduled =
+      //     await moderatorService.getScheduled(communityName);
+      notifyListeners();
+    }
   }
 
   Future<void> cancelScheduledPost(String communityName, String post_id) async {
@@ -306,6 +308,8 @@ class ModeratorProvider extends ChangeNotifier {
     moderatorController.modAccess = ModeratorItem.fromJson(moderatorController
         .moderators
         .firstWhere((mod) => mod["username"] == username));
+    print("YARAABBBB");
+    print(moderatorController.modAccess.managePostsAndComments);
     // print("badr test access");
     // print(moderatorController.modAccess.everything);
   }
