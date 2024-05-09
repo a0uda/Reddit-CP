@@ -5,8 +5,6 @@ import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
-import 'package:reddit/widgets/best_listing.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ModeratorController {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();

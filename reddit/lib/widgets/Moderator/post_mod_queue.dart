@@ -1,13 +1,15 @@
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/community_item.dart';
 import 'package:reddit/Models/post_item.dart';
+import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
@@ -26,47 +28,167 @@ class PostModQueue extends StatefulWidget {
 class _PostModQueueState extends State<PostModQueue> {
   final moderatorController = GetIt.instance.get<ModeratorController>();
   final UserService userService = GetIt.instance.get<UserService>();
+  final userController = GetIt.instance.get<UserController>();
 
-  bool? isMuted;
-  bool? isApprovedUser;
-  bool? isBanned;
+  bool isApprovedUser = false;
+  bool isBannedUser = false;
+  bool isMutedUser = false;
   bool isRemoved = false;
   bool isApproved = false;
+  bool usersFetchedApproved = false;
+  bool usersFetchedBanned = false;
+  bool usersFetchedMuted = false;
 
   String? removalReasons;
   String? reportedReason;
 
-  List<Map<String, dynamic>> foundUsers = [];
-  bool usersFetched = false;
+  List<Map<String, dynamic>> foundBannedUsers = [];
+  List<Map<String, dynamic>> foundApprovedUsers = [];
+  List<Map<String, dynamic>> foundMutedUsers = [];
+
+  late bool hasPostPermission;
+  late bool hasUsersPermission;
+
+  void checkPostPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.managePostsAndComments) {
+      hasPostPermission = true;
+    } else {
+      hasPostPermission = false;
+    }
+  }
+
+  void checkUsersPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageUsers) {
+      hasUsersPermission = true;
+    } else {
+      hasUsersPermission = false;
+    }
+  }
 
   Future<void> fetchBannedUsers() async {
-    if (!usersFetched) {
+    if (!usersFetchedBanned) {
       await moderatorController
           .getBannedUsers(moderatorController.communityName);
       setState(() {
-        foundUsers = moderatorController.bannedUsers;
-        usersFetched = true;
+        foundBannedUsers = moderatorController.bannedUsers;
+        usersFetchedBanned = true;
       });
     }
   }
 
   Future<void> fetchApprovedUsers() async {
-    if (!usersFetched) {
+    if (!usersFetchedApproved) {
       await moderatorController
           .getApprovedUser(moderatorController.communityName);
       setState(() {
-        foundUsers = moderatorController.approvedUsers;
-        usersFetched = true;
+        foundApprovedUsers = moderatorController.approvedUsers;
+        usersFetchedApproved = true;
       });
     }
   }
-  
+
+  Future<void> fetchMutedUsers() async {
+    if (!usersFetchedMuted) {
+      await moderatorController
+          .getMutedUsers(moderatorController.communityName);
+      setState(() {
+        foundMutedUsers = moderatorController.mutedUsers;
+        usersFetchedMuted = true;
+      });
+    }
+  }
+
+  Future<void> checkApprovedUser() async {
+    await fetchApprovedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isApprovedUser = true;
+        });
+      }
+    }
+  }
+
+  addApprovedUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.addApprovedUsers(
+        widget.post.username, moderatorController.communityName);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> removeApprovedUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.removeApprovedUsers(
+        widget.post.username, moderatorController.communityName);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> checkBannedUser() async {
+    await fetchBannedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isBannedUser = true;
+        });
+      }
+    }
+  }
+
+  Future<void> checkMutedUser() async {
+    await fetchMutedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isMutedUser = true;
+        });
+      }
+    }
+  }
+
+  String formatDateTime(String dateTimeString) {
+    final DateTime now = DateTime.now();
+    final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+    final Duration difference = now.difference(parsedDateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}sec';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays}d';
+    } else {
+      final int months = now.month -
+          parsedDateTime.month +
+          (now.year - parsedDateTime.year) * 12;
+      if (months < 12) {
+        return '$months mth';
+      } else {
+        final int years = now.year - parsedDateTime.year;
+        return '$years yrs';
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkPostPermission();
+    checkUsersPermission();
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     var QueuesProvider = context.read<handleObjectionProvider>();
     var QueuesUnmoderatedProvider = context.read<handleUnmoderatedProvider>();
     var QueuesEditItemProvider = context.read<handleEditItemProvider>();
+    var mutedUserProvider = context.read<MutedUserProvider>();
+    double desktopFactor = MediaQuery.of(context).size.width > 700 ? 1.3 : 1;
 
     return Padding(
       padding: const EdgeInsets.only(left: 3.0),
@@ -99,13 +221,13 @@ class _PostModQueueState extends State<PostModQueue> {
                             ListTile(
                               leading: widget.post.profilePicture != ""
                                   ? CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage("images/Greddit.png"),
+                                      backgroundImage: NetworkImage(
+                                          widget.post.profilePicture),
                                       radius: 24,
                                     )
                                   : CircleAvatar(
-                                      backgroundImage: AssetImage(
-                                          'assets/images/Greddit.png'),
+                                      backgroundImage:
+                                          AssetImage('images/Greddit.png'),
                                       radius: 24,
                                     ),
                               title: Text(
@@ -121,6 +243,46 @@ class _PostModQueueState extends State<PostModQueue> {
                                   color: Color.fromARGB(255, 113, 113, 113),
                                 ),
                               ),
+                              onTap: () {
+                                String userType =
+                                    userController.userAbout!.username ==
+                                            widget.post.username
+                                        ? 'me'
+                                        : 'other';
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FutureBuilder<UserAbout?>(
+                                      future: userService
+                                          .getUserAbout(widget.post.username),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Container(
+                                            color: Colors.white,
+                                            child: const Center(
+                                                child: SizedBox(
+                                              height: 30,
+                                              width: 30,
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          return ProfileScreen(
+                                            snapshot.data,
+                                            userType,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             const SizedBox(height: 16),
                             Padding(
@@ -128,42 +290,435 @@ class _PostModQueueState extends State<PostModQueue> {
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Column(
                                 children: [
-                                  ListTile(
-                                    leading: const Icon(CupertinoIcons.nosign),
-                                    title: Text(isMuted != null
-                                        ? 'Mute user'
-                                        : 'Unmute User'),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkMutedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading:
+                                              const Icon(CupertinoIcons.nosign),
+                                          title: Text(isMutedUser
+                                              ? 'Unmute user'
+                                              : 'Mute User'),
+                                          onTap: () async {
+                                            if (hasUsersPermission) {
+                                              if (!isMutedUser) {
+                                                await mutedUserProvider
+                                                    .addMutedUsers(
+                                                        widget.post.username,
+                                                        moderatorController
+                                                            .communityName);
+                                                Navigator.pop(context);
+                                              } else {
+                                                await mutedUserProvider
+                                                    .unMuteUser(
+                                                        widget.post.username,
+                                                        moderatorController
+                                                            .communityName);
+                                                Navigator.pop(context);
+                                              }
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
                                     thickness: 1,
                                   ),
-                                  ListTile(
-                                    leading: const Icon(Icons.check),
-                                    title: Text(isApprovedUser != null
-                                        ? 'Approve user'
-                                        : 'Unapprove User'),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkApprovedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading: const Icon(Icons.check),
+                                          title: Text(isApprovedUser
+                                              ? 'Unpprove user'
+                                              : 'Approve User'),
+                                          onTap: () async {
+                                            if (hasUsersPermission) {
+                                              if (!isApprovedUser) {
+                                                await addApprovedUser();
+                                              } else {
+                                                await removeApprovedUser();
+                                              }
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
                                     thickness: 1,
                                   ),
-                                  ListTile(
-                                    leading: const Icon(
-                                      Icons.gavel,
-                                      color: Color.fromARGB(255, 149, 9, 38),
-                                    ),
-                                    title: Text(
-                                      isBanned != null
-                                          ? 'Ban user'
-                                          : 'Unban User',
-                                      style: const TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 149, 9, 38)),
-                                    ),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkBannedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.gavel,
+                                            color:
+                                                Color.fromARGB(255, 149, 9, 38),
+                                          ),
+                                          title: Text(
+                                            isBannedUser
+                                                ? 'Unban user'
+                                                : 'Ban User',
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 149, 9, 38)),
+                                          ),
+                                          onTap: () {
+                                            if (hasUsersPermission) {
+                                              // Navigator.of(context)
+                                              //     .push(MaterialPageRoute(
+                                              //   builder: (context) =>
+                                              //       AddBannedUser(),
+                                              // ));
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
@@ -202,7 +757,7 @@ class _PostModQueueState extends State<PostModQueue> {
                             height: 0, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.post.createdAt,
+                        formatDateTime(widget.post.createdAt),
                         style: const TextStyle(color: Colors.grey, height: 0),
                       )
                     ],
@@ -250,59 +805,195 @@ class _PostModQueueState extends State<PostModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                if (widget.queueType ==
-                                                    'unmoderated') {
-                                                  print(
-                                                      'ana hena bab3at request');
-                                                  print(widget.queueType);
-                                                  print('post');
-                                                  print(widget.post.postID);
-                                                  await QueuesUnmoderatedProvider
-                                                      .handleUnmoderated(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'post',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
-                                                } else if (widget.queueType ==
-                                                    'edited') {
-                                                  await QueuesEditItemProvider
-                                                      .handleEditItem(
-                                                    itemType: 'post',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
+                                                if (hasPostPermission) {
+                                                  if (widget.queueType ==
+                                                      'unmoderated') {
+                                                    print(
+                                                        'ana hena bab3at request');
+                                                    print(widget.queueType);
+                                                    print('post');
+                                                    print(widget.post.postID);
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  } else if ((widget
+                                                      .post
+                                                      .moderatorDetails
+                                                      .removed
+                                                      .flag)) {
+                                                    print(
+                                                        'ana hena bab3at request');
+                                                    print(widget.queueType);
+                                                    print('post');
+                                                    print(widget.post.postID);
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  } else if (widget.queueType ==
+                                                      'edited') {
+                                                    await QueuesEditItemProvider
+                                                        .handleEditItem(
+                                                      itemType: 'post',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  } else {
+                                                    await QueuesProvider
+                                                        .handleObjection(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  }
                                                 } else {
-                                                  await QueuesProvider
-                                                      .handleObjection(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'post',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'You do not have permission to change this setting',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 16),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          content: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    const Text(
+                                                                  'Please contact the owner of the community for more information',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .left,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    OutlinedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  style: OutlinedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165),
+                                                                    side: const BorderSide(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                                  ),
+                                                                  child:
+                                                                      const Text(
+                                                                    'OK',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
                                                 }
                                               },
                                             ),
@@ -328,54 +1019,191 @@ class _PostModQueueState extends State<PostModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                if (widget.queueType ==
-                                                    'unmoderated') {
-                                                  await QueuesUnmoderatedProvider
-                                                      .handleUnmoderated(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'post',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
-                                                } else if (widget.queueType ==
-                                                    'edited') {
-                                                  await QueuesEditItemProvider
-                                                      .handleEditItem(
-                                                    itemType: 'post',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
+                                                if (hasPostPermission) {
+                                                  if (widget.queueType ==
+                                                          'unmoderated' ||
+                                                      widget
+                                                          .post
+                                                          .moderatorDetails
+                                                          .removed
+                                                          .flag) {
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  } else if ((widget
+                                                      .post
+                                                      .moderatorDetails
+                                                      .removed
+                                                      .flag)) {
+                                                    print(
+                                                        'ana hena bab3at request');
+                                                    print(widget.queueType);
+                                                    print('post');
+                                                    print(widget.post.postID);
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                  } else if (widget.queueType ==
+                                                      'edited') {
+                                                    await QueuesEditItemProvider
+                                                        .handleEditItem(
+                                                      itemType: 'post',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  } else {
+                                                    await QueuesProvider
+                                                        .handleObjection(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'post',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  }
                                                 } else {
-                                                  await QueuesProvider
-                                                      .handleObjection(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'post',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'You do not have permission to change this setting',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 16),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          content: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    const Text(
+                                                                  'Please contact the owner of the community for more information',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .left,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    OutlinedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  style: OutlinedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165),
+                                                                    side: const BorderSide(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                                  ),
+                                                                  child:
+                                                                      const Text(
+                                                                    'OK',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
                                                 }
                                               },
                                             ),
@@ -440,7 +1268,9 @@ class _PostModQueueState extends State<PostModQueue> {
                   children: [
                     Text(
                       widget.post.postTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(widget.post.postDescription),
                   ],
@@ -454,10 +1284,19 @@ class _PostModQueueState extends State<PostModQueue> {
                             ? screenSize.height * 0.1
                             : screenSize.height * 0.2,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.network(
-                            widget.post.queuePostImage[0].imagePath,
-                            fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Container(
+                            width: 80.0 * desktopFactor,
+                            height: 60.0 * desktopFactor,
+                            child: ImageFiltered(
+                              imageFilter: widget.post.nsfwFlag
+                                  ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
+                                  : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                              child: Image.network(
+                                widget.post.queuePostImage[0].imageLink,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                       )
@@ -975,19 +1814,159 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
   final postService = GetIt.instance.get<PostService>();
 
   PostItem? postItem;
-  bool? isMuted;
-  bool? isBanned;
-
-  bool? isApprovedUser;
-
-  bool isApproved = false;
+  bool isApprovedUser = false;
+  bool isBannedUser = false;
+  bool isMutedUser = false;
   bool isRemoved = false;
+  bool isApproved = false;
+  bool usersFetchedApproved = false;
+  bool usersFetchedBanned = false;
+  bool usersFetchedMuted = false;
 
   String? removalReasons;
   String? reportedReason;
 
+  List<Map<String, dynamic>> foundBannedUsers = [];
+  List<Map<String, dynamic>> foundApprovedUsers = [];
+  List<Map<String, dynamic>> foundMutedUsers = [];
+
+  late bool hasPostPermission;
+  late bool hasUsersPermission;
+
+  void checkPostPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.managePostsAndComments) {
+      hasPostPermission = true;
+    } else {
+      hasPostPermission = false;
+    }
+  }
+
+  void checkUsersPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageUsers) {
+      hasUsersPermission = true;
+    } else {
+      hasUsersPermission = false;
+    }
+  }
+
+  Future<void> fetchBannedUsers() async {
+    if (!usersFetchedBanned) {
+      await moderatorController
+          .getBannedUsers(moderatorController.communityName);
+      setState(() {
+        foundBannedUsers = moderatorController.bannedUsers;
+        usersFetchedBanned = true;
+      });
+    }
+  }
+
+  Future<void> fetchApprovedUsers() async {
+    if (!usersFetchedApproved) {
+      await moderatorController
+          .getApprovedUser(moderatorController.communityName);
+      setState(() {
+        foundApprovedUsers = moderatorController.approvedUsers;
+        usersFetchedApproved = true;
+      });
+    }
+  }
+
+  Future<void> fetchMutedUsers() async {
+    if (!usersFetchedMuted) {
+      await moderatorController
+          .getMutedUsers(moderatorController.communityName);
+      setState(() {
+        foundMutedUsers = moderatorController.mutedUsers;
+        usersFetchedMuted = true;
+      });
+    }
+  }
+
+  Future<void> checkApprovedUser() async {
+    await fetchApprovedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isApprovedUser = true;
+        });
+      }
+    }
+  }
+
+  Future<void> addApprovedUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.addApprovedUsers(
+        widget.post.username, moderatorController.communityName);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> removeApprovedUser() async {
+    var approvedUserProvider = context.read<ApprovedUserProvider>();
+    await approvedUserProvider.removeApprovedUsers(
+        widget.post.username, moderatorController.communityName);
+    Navigator.of(context).pop();
+  }
+
+  Future<void> checkBannedUser() async {
+    await fetchBannedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isBannedUser = true;
+        });
+      }
+    }
+  }
+
+  Future<void> checkMutedUser() async {
+    await fetchMutedUsers();
+    for (var user in foundApprovedUsers) {
+      if (user['username'] == widget.post.username) {
+        setState(() {
+          isMutedUser = true;
+        });
+      }
+    }
+  }
+
   Future<void> getPostByID(String postID) async {
     postItem = await postService.getPostById(postID);
+  }
+
+  String formatDateTime(String dateTimeString) {
+    final DateTime now = DateTime.now();
+    final DateTime parsedDateTime = DateTime.parse(dateTimeString);
+
+    final Duration difference = now.difference(parsedDateTime);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}sec';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h';
+    } else if (difference.inDays < 30) {
+      return '${difference.inDays}d';
+    } else {
+      final int months = now.month -
+          parsedDateTime.month +
+          (now.year - parsedDateTime.year) * 12;
+      if (months < 12) {
+        return '$months mth';
+      } else {
+        final int years = now.year - parsedDateTime.year;
+        return '$years yrs';
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkPostPermission();
+    checkUsersPermission();
   }
 
   @override
@@ -996,6 +1975,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
     var QueuesProvider = context.read<handleObjectionProvider>();
     var QueuesUnmoderatedProvider = context.read<handleUnmoderatedProvider>();
     var QueuesEditItemProvider = context.read<handleEditItemProvider>();
+    var mutedUserProvider = context.read<MutedUserProvider>();
     double desktopFactor = MediaQuery.of(context).size.width > 700 ? 1.3 : 1;
 
     return Padding(
@@ -1052,42 +2032,435 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Column(
                                 children: [
-                                  ListTile(
-                                    leading: const Icon(CupertinoIcons.nosign),
-                                    title: Text(isMuted != null
-                                        ? 'Mute user'
-                                        : 'Unmute User'),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkMutedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading:
+                                              const Icon(CupertinoIcons.nosign),
+                                          title: Text(isMutedUser
+                                              ? 'Unmute user'
+                                              : 'Mute User'),
+                                          onTap: () async {
+                                            if (hasUsersPermission) {
+                                              if (!isMutedUser) {
+                                                await mutedUserProvider
+                                                    .addMutedUsers(
+                                                        widget.post.username,
+                                                        moderatorController
+                                                            .communityName);
+                                                Navigator.pop(context);
+                                              } else {
+                                                await mutedUserProvider
+                                                    .unMuteUser(
+                                                        widget.post.username,
+                                                        moderatorController
+                                                            .communityName);
+                                                Navigator.pop(context);
+                                              }
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
                                     thickness: 1,
                                   ),
-                                  ListTile(
-                                    leading: const Icon(Icons.check),
-                                    title: Text(isApprovedUser != null
-                                        ? 'Approve user'
-                                        : 'Unapprove User'),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkApprovedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading: const Icon(Icons.check),
+                                          title: Text(isApprovedUser
+                                              ? 'Unpprove user'
+                                              : 'Approve User'),
+                                          onTap: () async {
+                                            if (hasUsersPermission) {
+                                              if (!isApprovedUser) {
+                                                await addApprovedUser();
+                                              } else {
+                                                await removeApprovedUser();
+                                              }
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
                                     thickness: 1,
                                   ),
-                                  ListTile(
-                                    leading: const Icon(
-                                      Icons.gavel,
-                                      color: Color.fromARGB(255, 149, 9, 38),
-                                    ),
-                                    title: Text(
-                                      isBanned != null
-                                          ? 'Ban user'
-                                          : 'Unban User',
-                                      style: const TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 149, 9, 38)),
-                                    ),
-                                    onTap: () {},
+                                  FutureBuilder(
+                                    future: checkBannedUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: LoadingAnimationWidget
+                                              .twoRotatingArc(
+                                                  color: const Color.fromARGB(
+                                                      255, 172, 172, 172),
+                                                  size: 30),
+                                        );
+                                      } else {
+                                        return ListTile(
+                                          leading: const Icon(
+                                            Icons.gavel,
+                                            color:
+                                                Color.fromARGB(255, 149, 9, 38),
+                                          ),
+                                          title: Text(
+                                            isBannedUser
+                                                ? 'Unban user'
+                                                : 'Ban User',
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 149, 9, 38)),
+                                          ),
+                                          onTap: () {
+                                            if (hasUsersPermission) {
+                                              // Navigator.of(context)
+                                              //     .push(MaterialPageRoute(
+                                              //   builder: (context) =>
+                                              //       AddBannedUser(),
+                                              // ));
+                                            } else {
+                                              showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return CupertinoAlertDialog(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4),
+                                                        child: const Text(
+                                                          'You do not have permission to change this setting',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      content: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'Please contact the owner of the community for more information',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child:
+                                                                OutlinedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              style:
+                                                                  OutlinedButton
+                                                                      .styleFrom(
+                                                                backgroundColor:
+                                                                    const Color
+                                                                        .fromARGB(
+                                                                        255,
+                                                                        37,
+                                                                        79,
+                                                                        165),
+                                                                side: const BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                              ),
+                                                              child: const Text(
+                                                                'OK',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    );
+                                                  });
+                                            }
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
                                   const Divider(
                                     color: Color.fromARGB(255, 205, 205, 205),
@@ -1120,7 +2493,7 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                             height: 0, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        widget.post.createdAt,
+                        formatDateTime(widget.post.createdAt),
                         style: const TextStyle(color: Colors.grey, height: 0),
                       )
                     ],
@@ -1168,61 +2541,169 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                var itemType;
-                                                if (widget.queueType ==
-                                                    'unmoderated') {
-                                                  print(
-                                                      'ana hena bab3at request');
-                                                  print(widget.queueType);
-                                                  print(itemType);
-                                                  print(widget.post.postID);
+                                                if (hasPostPermission) {
+                                                  if (widget.queueType ==
+                                                      'unmoderated') {
+                                                    print(
+                                                        'ana hena bab3at request');
+                                                    print(widget.queueType);
+                                                    print(widget.post.postID);
 
-                                                  await QueuesUnmoderatedProvider
-                                                      .handleUnmoderated(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'comment',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
-                                                } else if (widget.queueType ==
-                                                    'edited') {
-                                                  await QueuesEditItemProvider
-                                                      .handleEditItem(
-                                                    itemType: 'comment',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'comment',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  } else if (widget.queueType ==
+                                                      'edited') {
+                                                    await QueuesEditItemProvider
+                                                        .handleEditItem(
+                                                      itemType: 'comment',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  } else {
+                                                    await QueuesProvider
+                                                        .handleObjection(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'comment',
+                                                      action: 'approve',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = true;
+                                                      isRemoved = false;
+                                                    });
+                                                  }
                                                 } else {
-                                                  await QueuesProvider
-                                                      .handleObjection(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'comment',
-                                                    action: 'approve',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = true;
-                                                    isRemoved = false;
-                                                  });
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'You do not have permission to change this setting',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 16),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          content: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    const Text(
+                                                                  'Please contact the owner of the community for more information',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .left,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    OutlinedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  style: OutlinedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165),
+                                                                    side: const BorderSide(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                                  ),
+                                                                  child:
+                                                                      const Text(
+                                                                    'OK',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
                                                 }
                                               },
                                             ),
@@ -1248,54 +2729,164 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                                                 style: TextStyle(fontSize: 16),
                                               ),
                                               onTap: () async {
-                                                if (widget.queueType ==
-                                                    'unmoderated') {
-                                                  await QueuesUnmoderatedProvider
-                                                      .handleUnmoderated(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'comment',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
-                                                } else if (widget.queueType ==
-                                                    'edited') {
-                                                  await QueuesEditItemProvider
-                                                      .handleEditItem(
-                                                    itemType: 'comment',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
+                                                if (hasPostPermission) {
+                                                  if (widget.queueType ==
+                                                      'unmoderated') {
+                                                    await QueuesUnmoderatedProvider
+                                                        .handleUnmoderated(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'comment',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  } else if (widget.queueType ==
+                                                      'edited') {
+                                                    await QueuesEditItemProvider
+                                                        .handleEditItem(
+                                                      itemType: 'comment',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  } else {
+                                                    await QueuesProvider
+                                                        .handleObjection(
+                                                      objectionType:
+                                                          widget.queueType,
+                                                      itemType: 'comment',
+                                                      action: 'remove',
+                                                      communityName:
+                                                          moderatorController
+                                                              .communityName,
+                                                      itemID:
+                                                          widget.post.postID,
+                                                    );
+                                                    setState(() {
+                                                      isApproved = false;
+                                                      isRemoved = true;
+                                                    });
+                                                  }
                                                 } else {
-                                                  await QueuesProvider
-                                                      .handleObjection(
-                                                    objectionType:
-                                                        widget.queueType,
-                                                    itemType: 'comment',
-                                                    action: 'remove',
-                                                    communityName:
-                                                        moderatorController
-                                                            .communityName,
-                                                    itemID: widget.post.postID,
-                                                  );
-                                                  setState(() {
-                                                    isApproved = false;
-                                                    isRemoved = true;
-                                                  });
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return CupertinoAlertDialog(
+                                                          title: Container(
+                                                            margin:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            child: const Text(
+                                                              'You do not have permission to change this setting',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 16),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .left,
+                                                            ),
+                                                          ),
+                                                          content: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    const Text(
+                                                                  'Please contact the owner of the community for more information',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .left,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                child:
+                                                                    OutlinedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  style: OutlinedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165),
+                                                                    side: const BorderSide(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            37,
+                                                                            79,
+                                                                            165)),
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            16,
+                                                                        top: 16,
+                                                                        bottom:
+                                                                            16),
+                                                                  ),
+                                                                  child:
+                                                                      const Text(
+                                                                    'OK',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
                                                 }
                                               },
                                             ),
@@ -1373,8 +2964,10 @@ class _CommentsModQueueState extends State<CommentsModQueue> {
                             final postTitle = postItem?.title ?? '';
                             return Text(
                               postTitle,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.grey),
                             );
                           }
                         }),

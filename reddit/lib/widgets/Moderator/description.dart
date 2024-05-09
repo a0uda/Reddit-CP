@@ -27,14 +27,25 @@ class _ModDescriptionState extends State<ModDescription> {
   late String communityName;
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
+  late bool hasPermission;
+
+  void checkPermission() {
+    if (moderatorController.modAccess.everything &&
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     remainingCharacters = maxCounter;
     communityName = moderatorController.communityName;
-
+    checkPermission();
     fetchGeneralSettings();
+
   }
 
   Future<void> fetchGeneralSettings() async {
@@ -73,25 +84,28 @@ class _ModDescriptionState extends State<ModDescription> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: (!isSaved) ? null : () async{
-              await settingsProvider.setGeneralSettings(
-                communityName: moderatorController.communityName,
-                general: GeneralSettings(
-                    communityID:
-                        moderatorController.generalSettings.communityID,
-                    communityTitle:
-                        moderatorController.generalSettings.communityTitle,
-                    communityDescription: inputController.text,
-                    communityType:
-                        moderatorController.generalSettings.communityType,
-                    nsfwFlag: moderatorController.generalSettings.nsfwFlag),
-              );
-              setState(() {
-                doneSaved = true;
-              });
-              // ignore: use_build_context_synchronously
-              Navigator.pop(context);
-            },
+            onPressed: (!isSaved)
+                ? null
+                : () async {
+                    await settingsProvider.setGeneralSettings(
+                      communityName: moderatorController.communityName,
+                      general: GeneralSettings(
+                          communityID:
+                              moderatorController.generalSettings.communityID,
+                          communityTitle: moderatorController
+                              .generalSettings.communityTitle,
+                          communityDescription: inputController.text,
+                          communityType:
+                              moderatorController.generalSettings.communityType,
+                          nsfwFlag:
+                              moderatorController.generalSettings.nsfwFlag),
+                    );
+                    setState(() {
+                      doneSaved = true;
+                    });
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
             child: Text(
               'Save',
               style: TextStyle(
@@ -228,6 +242,7 @@ class _ModDescriptionState extends State<ModDescription> {
             ),
             TextField(
               controller: inputController,
+              readOnly: !hasPermission,
               maxLines: null,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
