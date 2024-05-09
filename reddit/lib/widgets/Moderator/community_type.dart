@@ -29,7 +29,7 @@ class _CommunityTypeState extends State<CommunityType> {
   late bool hasPermission;
 
   void checkPermission() {
-    if (moderatorController.modAccess.everything &&
+    if (moderatorController.modAccess.everything ||
         moderatorController.modAccess.manageSettings) {
       hasPermission = true;
     } else {
@@ -444,7 +444,7 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
   late bool hasPermission;
 
   void checkPermission() {
-    if (moderatorController.modAccess.everything &&
+    if (moderatorController.modAccess.everything ||
         moderatorController.modAccess.manageSettings) {
       hasPermission = true;
     } else {

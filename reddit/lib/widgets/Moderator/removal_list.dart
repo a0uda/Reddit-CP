@@ -22,7 +22,7 @@ class _RemovalListState extends State<RemovalList> {
   late bool hasPermission;
 
   void checkPermission() {
-    if (moderatorController.modAccess.everything &&
+    if (moderatorController.modAccess.everything ||
         moderatorController.modAccess.manageSettings) {
       hasPermission = true;
     } else {

@@ -28,7 +28,7 @@ class _ModCommNameState extends State<ModCommName> {
 
   void checkPermission()
   {
-    if(moderatorController.modAccess.everything && moderatorController.modAccess.manageSettings)
+    if(moderatorController.modAccess.everything || moderatorController.modAccess.manageSettings)
     {
       hasPermission = true;
     }

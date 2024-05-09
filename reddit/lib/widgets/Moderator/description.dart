@@ -30,7 +30,7 @@ class _ModDescriptionState extends State<ModDescription> {
   late bool hasPermission;
 
   void checkPermission() {
-    if (moderatorController.modAccess.everything &&
+    if (moderatorController.modAccess.everything ||
         moderatorController.modAccess.manageSettings) {
       hasPermission = true;
     } else {

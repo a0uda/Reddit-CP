@@ -21,7 +21,7 @@ class _RemovalReasonsState extends State<RemovalReasons> {
   late bool hasPermission;
 
   void checkPermission() {
-    if (moderatorController.modAccess.everything &&
+    if (moderatorController.modAccess.everything ||
         moderatorController.modAccess.manageSettings) {
       hasPermission = true;
     } else {
