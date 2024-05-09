@@ -15,6 +15,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
        deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -30,6 +32,7 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+        pollVote: null,
   ),
   Post(
         vote: 0,
@@ -45,6 +48,7 @@ final List<Post> testPosts = [
     commentsCount: 1,
     communityName: "r/FlutterDev",
         deleted:  false,
+        pollVote: null,
   ),
   Post(
         vote: 0,
@@ -60,6 +64,7 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
         deleted:  false,
         isSaved: false,
+        pollVote: null,
   ),
   Post(
         deleted:  false,
@@ -75,6 +80,8 @@ final List<Post> testPosts = [
     likes: 4,
     commentsCount: 1,
     communityName: "r/FlutterDev",
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -90,6 +97,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -105,6 +114,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -120,6 +131,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -135,6 +148,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -150,6 +165,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
     deleted: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -165,6 +182,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
     deleted: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -180,6 +199,8 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
     deleted: false,
+    pollExpired: false,
+    pollVote: null,
   ),
   Post(
     vote: 0,
@@ -195,5 +216,7 @@ final List<Post> testPosts = [
     communityName: "r/FlutterDev",
     isSaved: false,
         deleted:  false,
+    pollExpired: false,
+    pollVote: null,
   ),
 ];

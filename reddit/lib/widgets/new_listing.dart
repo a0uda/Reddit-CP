@@ -173,6 +173,8 @@ class NewListingBuild extends State<NewListing> {
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
+              pollExpired: posts[index].pollExpired!,
+                          pollVote: posts[index].pollVote!,
             );
           }
         }

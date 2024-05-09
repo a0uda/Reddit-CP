@@ -109,6 +109,8 @@ class CommentsWidgetState extends State<CommentsWidget> {
                                     moderatorController
                                         .modAccess.managePostsAndComments)),
                             moderatorDetails: post!.moderatorDetails,
+                            pollExpired: post!.pollExpired!,
+                            pollVote: post!.pollVote!,
                           ),
                   ),
                   if (comments != null && comments!.isNotEmpty)

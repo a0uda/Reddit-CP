@@ -1107,6 +1107,7 @@ class UserService {
       );
 
       final token = response.headers['authorization'];
+      print("inside login token");
       print(token);
       print(response.body);
       if (response.statusCode == 200) {
@@ -1153,8 +1154,6 @@ class UserService {
           await googleSignIn.signIn();
       final GoogleSignInAuthentication? googleSignInAuthentication =
           await googleSignInAccount?.authentication;
-
-      // The access token can be used to authenticate with your backend
       var accessToken = googleSignInAuthentication!.accessToken;
 
       if (accessToken != null) {
@@ -1623,6 +1622,7 @@ class UserService {
           'password': password,
         }),
       );
+      print('in disconnect from google');
       print(response.body);
       print(response.statusCode);
 

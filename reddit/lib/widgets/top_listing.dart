@@ -169,6 +169,8 @@ class TopListingBuild extends State<TopListing> {
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
+              pollExpired: posts[index].pollExpired!,
+              pollVote: posts[index].pollVote!,
             );
           }
         }

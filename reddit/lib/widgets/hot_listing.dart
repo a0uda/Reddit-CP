@@ -173,6 +173,8 @@ class HotListingBuild extends State<HotListing> {
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
+              pollExpired: posts[index].pollExpired!,
+              pollVote: posts[index].pollVote!,
             );
           }
         }

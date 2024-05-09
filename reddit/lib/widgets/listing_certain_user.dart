@@ -177,7 +177,8 @@ class ListingCertainUserScreen extends State<ListingCertainUser> {
               communityName: posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved ?? false,
-              
+              pollExpired: posts[index].pollExpired!,
+              pollVote: posts[index].pollVote!,
             );
           } else {
             return Container();
