@@ -1,30 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
+import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/muted_users_list.dart';
-
-// List<Map<String, String>> mutedUsers = [
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Mutedd",
-//     "muteTime": "1 mo ago",
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "muteTime": "1 mo ago"
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "muteTime": "1 mo ago"
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "muteTime": "1 mo ago"
-//   },
-// ];
 
 class MutedUsers extends StatefulWidget {
   const MutedUsers({super.key});
@@ -34,6 +14,8 @@ class MutedUsers extends StatefulWidget {
 }
 
 class _MutedUsersState extends State<MutedUsers> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,11 +28,16 @@ class _MutedUsersState extends State<MutedUsers> {
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const AddMutedUser(),
-                    ),
-                  );
+                  if (moderatorController.modAccess.everything ||
+                      moderatorController.modAccess.manageUsers) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AddMutedUser(),
+                      ),
+                    );
+                  } else {
+                    showError(context);
+                  }
                 },
                 icon: const Icon(CupertinoIcons.add)),
           ) //Badrr navigate to mute user page

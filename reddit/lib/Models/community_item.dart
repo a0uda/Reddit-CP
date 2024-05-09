@@ -1,6 +1,8 @@
 import 'package:get_it/get_it.dart';
+import 'package:reddit/Models/profile_settings.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/Services/user_service.dart';
 
 class CommunityItem {
   CommunityItem({
@@ -100,6 +102,10 @@ class QueuesPostItem {
     required this.communityName,
     required this.nsfwFlag,
     required this.spoilerFlag,
+    required this.postInCommunityFlag,
+    required this.postID,
+    required this.itemID,
+    required this.commentInCommunityFlag,
   });
   ModeratorDetails moderatorDetails;
   List<dynamic> queuePostImage;
@@ -114,16 +120,24 @@ class QueuesPostItem {
   String communityName;
   bool nsfwFlag;
   bool spoilerFlag;
+  bool postInCommunityFlag;
+  bool commentInCommunityFlag;
   String profilePicture = '';
+  String postID;
+  String itemID;
 
   Future<String> getProfilePicture(
       String username, String communityName) async {
-    final moderatorService = GetIt.instance.get<ModeratorMockService>();
+    //final moderatorService = GetIt.instance.get<ModeratorMockService>();
+    final userService = GetIt.instance.get<UserService>();
 
-    Map<String, dynamic> comm =
-        await moderatorService.getCommunityInfo(communityName: communityName);
-    profilePicture = comm["communityProfilePicture"];
-
+    ProfileSettings? userInPost =
+        await userService.getProfileSettings(username);
+    if (userInPost != null) {
+      print(userInPost.profilePicture!);
+      this.profilePicture = userInPost.profilePicture!;
+    }
+    
     return profilePicture;
   }
 }
@@ -135,7 +149,6 @@ class ModeratorDetails {
     required this.spammed,
     required this.removed,
     required this.editHistory,
-
   });
   Unmoderated unmoderated;
   Reported reported;

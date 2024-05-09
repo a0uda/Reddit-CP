@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/message_item.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -28,6 +30,8 @@ class MessagesPage extends StatefulWidget {
 class MessagesState extends State<MessagesPage> {
   final userService = GetIt.instance.get<UserService>();
   final userController = GetIt.instance.get<UserController>();
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   @override
   Widget build(BuildContext context) {
     var followerfollowingcontroller =
@@ -39,8 +43,7 @@ class MessagesState extends State<MessagesPage> {
         return FutureBuilder<List<dynamic>>(
           future: Future.wait([
             myProvider.getUserMessages(),
-            userController
-                .getFollowing(userController.userAbout!.username)
+            userController.getFollowing(userController.userAbout!.username)
           ]),
           builder:
               (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -117,7 +120,7 @@ class MessagesState extends State<MessagesPage> {
                                     title: Row(
                                       children: [
                                         GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             if (messageReceiver != 'reddit') {
                                               if (receiverType == 'user') {
                                                 var userType = userController
@@ -182,23 +185,50 @@ class MessagesState extends State<MessagesPage> {
                                                 } else {
                                                   isMod = false;
                                                 }
+                                                var moderatorProvider = context
+                                                    .read<ModeratorProvider>();
+                                                if (isMod) {
+                                                  await moderatorProvider
+                                                      .getModAccess(
+                                                          userController
+                                                              .userAbout!
+                                                              .username,
+                                                          messageReceiver!);
+                                                } else {
+                                                  moderatorProvider
+                                                          .moderatorController
+                                                          .modAccess =
+                                                      ModeratorItem(
+                                                          everything: false,
+                                                          managePostsAndComments:
+                                                              false,
+                                                          manageSettings: false,
+                                                          manageUsers: false,
+                                                          username:
+                                                              userController
+                                                                  .userAbout!
+                                                                  .username);
+                                                }
+                                                //IS MOD HENA.
+                                                // IS MOD HENA
                                                 Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            (CommunityLayout(
-                                                              desktopLayout:
-                                                                  DesktopCommunityPage(
-                                                                      isMod:
-                                                                          isMod,
-                                                                      communityName:
-                                                                          messageReceiver!),
-                                                              mobileLayout:
-                                                                  MobileCommunityPage(
-                                                                isMod: isMod,
-                                                                communityName:
-                                                                    messageReceiver,
-                                                              ),
-                                                            ))));
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        (CommunityLayout(
+                                                      desktopLayout:
+                                                          DesktopCommunityPage(
+                                                              isMod: isMod,
+                                                              communityName:
+                                                                  messageReceiver!),
+                                                      mobileLayout:
+                                                          MobileCommunityPage(
+                                                        isMod: isMod,
+                                                        communityName:
+                                                            messageReceiver,
+                                                      ),
+                                                    )),
+                                                  ),
+                                                );
                                               }
                                             }
                                           },

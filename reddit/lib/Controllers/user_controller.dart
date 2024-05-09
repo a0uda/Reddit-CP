@@ -128,6 +128,8 @@ class UserController {
 
   Future<void> getUserModerated() async {
     userModeratedCommunities = await userService.getUserModerated();
+    // print("moderated communities");
+    // print(userModeratedCommunities?[0].name);
   }
 
   Future<int> getUnreadNotificationsCount() async {

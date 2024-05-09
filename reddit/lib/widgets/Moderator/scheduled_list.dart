@@ -35,8 +35,6 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
         }
       }
       postsFetched = true;
-      print(scheduledPosts.length);
-      print(recurringPosts.length);
       setState(() {
         scheduledPosts = scheduledPosts;
         recurringPosts = recurringPosts;
@@ -52,26 +50,43 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Consumer<ScheduledProvider>(
-      builder: (context, scheduledProvider, child) {
-        return FutureBuilder<void>(
-          future: fetchScheduled(),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Text('none');
-              case ConnectionState.waiting:
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 30.0),
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                return RefreshIndicator(
+
+    return FutureBuilder<void>(
+      future: fetchScheduled(),
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return const Text('none');
+          case ConnectionState.waiting:
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(top: 30.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            return Consumer<ScheduledProvider>(
+                builder: (context, scheduledProvider, child) {
+              return Scaffold(
+                appBar: (screenWidth > 700)
+                    ? AppBar(
+                        // leading: const SizedBox(
+                        //   width: 0,
+                        // ),
+                        title: const Text(
+                          'Scheduled posts',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+                    : null,
+                body: RefreshIndicator(
                   onRefresh: () async {
                     postsFetched = false;
                     await fetchScheduled();
@@ -83,21 +98,6 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          (screenWidth > 700)
-                              ? AppBar(
-                                  leading: const SizedBox(
-                                    width: 0,
-                                  ),
-                                  title: const Text(
-                                    'Scheduled posts',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(),
                           recurringPosts.isNotEmpty
                               ? Padding(
                                   padding: const EdgeInsets.only(
@@ -111,8 +111,14 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
                                   ),
                                 )
                               : const SizedBox(),
-                          ...recurringPosts
-                              .map((item) => PostScheduled(item: item)),
+                          ...recurringPosts.map((item) => PostScheduled(
+                                item: item,
+                                fetch: () {
+                                  setState(() {
+                                    postsFetched = false;
+                                  });
+                                },
+                              )),
                           scheduledPosts.isNotEmpty
                               ? Padding(
                                   padding: const EdgeInsets.only(
@@ -126,18 +132,24 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
                                   ),
                                 )
                               : const SizedBox(),
-                          ...scheduledPosts
-                              .map((item) => PostScheduled(item: item)),
+                          ...scheduledPosts.map((item) => PostScheduled(
+                                item: item,
+                                fetch: () {
+                                  setState(() {
+                                    postsFetched = false;
+                                  });
+                                },
+                              )),
                         ],
                       ),
                     ),
                   ),
-                );
-              default:
-                return const Text('badr');
-            }
-          },
-        );
+                ),
+              );
+            });
+          default:
+            return const Text('badr');
+        }
       },
     );
   }

@@ -24,6 +24,19 @@ class _ModCommNameState extends State<ModCommName> {
   late String communityName;
   late final bool communityFlag;
   late GeneralSettings communityGeneralSettings;
+  late bool hasPermission;
+
+  void checkPermission()
+  {
+    if(moderatorController.modAccess.everything || moderatorController.modAccess.manageSettings)
+    {
+      hasPermission = true;
+    }
+    else
+    {
+      hasPermission = false;
+    }
+  }
 
   int maxCounter = 90;
   int remainingCharacters = 90;
@@ -36,6 +49,7 @@ class _ModCommNameState extends State<ModCommName> {
     super.initState();
     remainingCharacters = maxCounter;
     communityName = moderatorController.communityName;
+    checkPermission();
   }
 
   Future<void> fetchGeneralSettings() async {
@@ -232,6 +246,7 @@ class _ModCommNameState extends State<ModCommName> {
                 ),
                 TextField(
                   controller: inputController,
+                  readOnly: !hasPermission,
                   maxLines: null,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,

@@ -132,6 +132,7 @@ class SavedScreen extends State<Saved> {
                             name: posts[index].username,
                             title: posts[index].title,
                             postContent: posts[index].description!,
+                            deleted: posts[index].isRemoved,
                             date: posts[index].createdAt.toString(),
                             likes: posts[index].upvotesCount -
                                 posts[index].downvotesCount,

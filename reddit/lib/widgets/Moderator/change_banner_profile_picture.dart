@@ -17,20 +17,30 @@ class ChangeProfilePicture extends StatefulWidget {
 }
 
 class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
   String? bannerimagepath;
   String? profileImagePath;
   bool isSaved = true;
   bool doneSaved = false;
+  late bool hasPermission;
 
-    final moderatorController = GetIt.instance.get<ModeratorController>();
+  void checkPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     bannerimagepath = moderatorController.bannerPictureURL;
     profileImagePath = moderatorController.profilePictureURL;
+    checkPermission();
   }
-  
 
   Future<void> _pickImage(bool isBanner, bool isCamera) async {
     var pickedFile;
@@ -170,8 +180,12 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
         actions: <Widget>[
           TextButton(
             onPressed: () async {
-               await profileBannerProvider.updateProfilePicture(communityName: moderatorController.communityName, pictureUrl: profileImagePath!);
-               await profileBannerProvider.updateBannerPicture(communityName: moderatorController.communityName, pictureUrl: bannerimagepath!);
+              await profileBannerProvider.updateProfilePicture(
+                  communityName: moderatorController.communityName,
+                  pictureUrl: profileImagePath!);
+              await profileBannerProvider.updateBannerPicture(
+                  communityName: moderatorController.communityName,
+                  pictureUrl: bannerimagepath!);
               // ignore: use_build_context_synchronously
               Navigator.pop(context);
             },
@@ -295,7 +309,69 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
         child: Stack(
           children: [
             GestureDetector(
-              onTap: () => selectBannerProfile(true),
+              onTap: hasPermission
+                  ? () => selectBannerProfile(true)
+                  : () => {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CupertinoAlertDialog(
+                                title: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: const Text(
+                                    'You do not have permission to change this setting',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                content: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: const Text(
+                                        'Please contact the owner of the community for more information',
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        style: OutlinedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 37, 79, 165),
+                                          side: const BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 37, 79, 165)),
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              right: 16,
+                                              top: 16,
+                                              bottom: 16),
+                                        ),
+                                        child: const Text(
+                                          'OK',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            })
+                      },
               child: DottedBorder(
                 borderType: BorderType.RRect,
                 dashPattern: const [10, 4],
@@ -332,7 +408,71 @@ class _ChangeProfilePictureState extends State<ChangeProfilePicture> {
               top: 1 / 5 * MediaQuery.of(context).size.height - 50,
               left: 20,
               child: GestureDetector(
-                onTap: () => selectBannerProfile(false),
+                onTap: hasPermission
+                    ? () => selectBannerProfile(false)
+                    : () => {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CupertinoAlertDialog(
+                                  title: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: const Text(
+                                      'You do not have permission to change this setting',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: const Text(
+                                          'Please contact the owner of the community for more information',
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 37, 79, 165),
+                                            side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 37, 79, 165)),
+                                            padding: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 16,
+                                                top: 16,
+                                                bottom: 16),
+                                          ),
+                                          child: const Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              })
+                        },
                 child: Stack(
                   alignment: Alignment.center,
                   children: [

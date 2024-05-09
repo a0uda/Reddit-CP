@@ -12,18 +12,21 @@ class AddBannedUser extends StatefulWidget {
   bool? permanentFlag;
   String? banReason;
   String? modNote;
-  String? banPeriod;
+  int? banPeriod;
   String? banNote;
+  final bool fromQueues;
 
-  AddBannedUser(
-      {super.key,
-      required this.seeDetails,
-      this.username,
-      this.permanentFlag,
-      this.banReason,
-      this.banNote,
-      this.banPeriod,
-      this.modNote});
+  AddBannedUser({
+    super.key,
+    required this.seeDetails,
+    this.username,
+    this.permanentFlag,
+    this.banReason,
+    this.banNote,
+    this.banPeriod,
+    this.modNote,
+    this.fromQueues = false,
+  });
 
   @override
   State<AddBannedUser> createState() => _AddBannedUserState();
@@ -59,33 +62,34 @@ class _AddBannedUserState extends State<AddBannedUser> {
   @override
   void initState() {
     super.initState();
-    if (widget.seeDetails) {
+    if (widget.seeDetails || widget.fromQueues) {
       userNameController.text = widget.username ?? "";
       permanentIsChecked = widget.permanentFlag!;
       banReasonController.text = widget.banReason ?? "";
       modNoteController.text = widget.modNote ?? "";
-      banPeriodController.text = widget.permanentFlag! ? "" : widget.banPeriod!;
+      banPeriodController.text =
+          widget.permanentFlag! ? "" : widget.banPeriod!.toString();
       noteController.text = widget.banNote ?? "";
-      if (!widget.permanentFlag!) {
-        DateTime receivedDate = DateTime.parse(widget.banPeriod!);
-        Duration difference = receivedDate.difference(DateTime.now());
-        banPeriodController.text = "${difference.inDays}";
-      }
+      // if (!widget.permanentFlag!) {
+      //   DateTime receivedDate = DateTime.parse(widget.banPeriod!.toString());
+      //   Duration difference = receivedDate.difference(DateTime.now());
+      //   banPeriodController.text = "${difference.inDays}";
+      // }
     }
   }
 
   banUser() async {
     var bannedUserProvider = context.read<BannedUserProvider>();
-    if (banPeriodController.text != "") {
-      banDate = DateTime.now()
-          .add(Duration(days: int.parse(banPeriodController.text)));
-    }
+    // if (banPeriodController.text != "") {
+    //   banDate = DateTime.now()
+    //       .add(Duration(days: int.parse(banPeriodController.text)));
+    // }
     await bannedUserProvider.addBannedUsers(
       username: userNameController.text,
       communityName: moderatorController.communityName,
       permanentFlag: permanentIsChecked,
       reasonForBan: banReasonController.text,
-      bannedUntil: banPeriodController.text != "" ? banDate.toString() : "",
+      bannedUntil: banPeriodController.text.toString(),
       modNote: modNoteController.text,
       noteForBanMessage: noteController.text,
     );
@@ -117,16 +121,17 @@ class _AddBannedUserState extends State<AddBannedUser> {
                     ? () async {
                         //print(banPeriodController.text);
                         if (widget.seeDetails) {
-                          if (banPeriodController.text != "") {
-                            banDate = DateTime.now().add(Duration(
-                                days: int.parse(banPeriodController.text)));
-                          }
+                          // if (banPeriodController.text != "") {
+                          //   // banDate = DateTime.now().add(Duration(
+                          //   //     days: int.parse(banPeriodController.text)));
+
+                          // }
                           await bannedUserProvider.updateBannedUser(
                             username: userNameController.text,
                             communityName: moderatorController.communityName,
                             permanentFlag: permanentIsChecked,
                             reasonForBan: banReasonController.text,
-                            bannedUntil:  banPeriodController.text != "" ? banDate.toString() : "",
+                            bannedUntil: banPeriodController.text,
                             modNote: modNoteController.text,
                             noteForBanMessage: noteController.text,
                           );
@@ -163,7 +168,7 @@ class _AddBannedUserState extends State<AddBannedUser> {
                 Container(
                   color: Colors.grey[200],
                   child: TextFormField(
-                    enabled: !widget.seeDetails,
+                    enabled: !widget.seeDetails || !widget.fromQueues,
                     cursorColor: Colors.blue,
                     controller: userNameController,
                     onChanged: (value) => {

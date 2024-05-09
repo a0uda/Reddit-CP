@@ -5,8 +5,8 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
-import 'package:reddit/test_files/test_users.dart';
 import 'package:reddit/widgets/Moderator/add_muted_user.dart';
+import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 
 class MutedUsersList extends StatefulWidget {
   const MutedUsersList({super.key});
@@ -80,29 +80,35 @@ class _MutedUsersListState extends State<MutedUsersList> {
                         ),
                       ),
                       actions: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 42, 101, 210)),
-                              onPressed: () {
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor:
+                                    const Color.fromARGB(255, 42, 101, 210)),
+                            onPressed: () {
+                              if (moderatorController.modAccess.everything ||
+                                  moderatorController.modAccess.manageUsers) {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => const AddMutedUser(),
                                   ),
                                 );
-                              }, // Ban user Badrrr ele hya add
-                              child: const Text(
-                                "Mute User",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              } else {
+                                showError(context);
+                              }
+                            }, // Ban user Badrrr ele hya add
+                            child: const Text(
+                              "Mute User",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
-                          )
-                        ])
+                          ),
+                        )
+                      ],
+                    )
                   : const SizedBox(),
               TextField(
                 onChanged: searchUsers,
@@ -202,18 +208,28 @@ class _MutedUsersListState extends State<MutedUsersList> {
                                                   title: const Text("Unmute"),
                                                   onTap: () async {
                                                     //unmute badrrr
-                                                    await mutedUserProvider
-                                                        .unMuteUser(
-                                                            item["username"],
+                                                    if (moderatorController
+                                                            .modAccess
+                                                            .everything ||
+                                                        moderatorController
+                                                            .modAccess
+                                                            .manageUsers) {
+                                                      await mutedUserProvider
+                                                          .unMuteUser(
+                                                              item["username"],
+                                                              moderatorController
+                                                                  .communityName);
+                                                      setState(() {
+                                                        usersFetched = true;
+                                                        foundUsers =
                                                             moderatorController
-                                                                .communityName);
-                                                    setState(() {
-                                                      usersFetched = true;
-                                                      foundUsers =
-                                                          moderatorController
-                                                              .mutedUsers;
-                                                    });
-                                                    Navigator.of(context).pop();
+                                                                .mutedUsers;
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      });
+                                                    } else {
+                                                      showError(context);
+                                                    }
                                                   },
                                                 ),
                                               ],

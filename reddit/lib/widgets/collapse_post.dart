@@ -27,6 +27,7 @@ String formatDateTime(String dateTimeString) {
     }
   }
 }
+
 class CollapsePost extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
@@ -37,6 +38,7 @@ class CollapsePost extends StatefulWidget {
   final bool isLocked;
   final bool isNSFW;
   final bool isSpoiler;
+  final bool isPostMod;
 
   CollapsePost({
     super.key,
@@ -49,6 +51,7 @@ class CollapsePost extends StatefulWidget {
     required this.isLocked,
     required this.isNSFW,
     required this.isSpoiler,
+    this.isPostMod = false,
   });
 
   @override
@@ -88,18 +91,20 @@ class _CollapsePostState extends State<CollapsePost> {
             title: Text(widget.communityName),
             subtitle: Text(widget.name),
             trailing: Text(
-                        ' ${formatDateTime(widget.date)}',
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Color.fromARGB(255, 117, 116, 115)),
-                      ),
+              ' ${formatDateTime(widget.date)}',
+              style: const TextStyle(
+                  fontSize: 12, color: Color.fromARGB(255, 117, 116, 115)),
+            ),
             onTap: () => {
               // open this post TODO
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => CommentsDesktop(
-                      postId: widget.id), // pass the post ID here
+                    postId: widget.id,
+                    isModInComment: widget.isPostMod,
+                  ), // pass the post ID here
                 ),
               ),
             },

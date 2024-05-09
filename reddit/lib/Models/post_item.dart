@@ -8,7 +8,7 @@ class PostItem {
   final String userId;
   final String username;
   final String title;
-  final String? description;
+  String? description;
   final DateTime createdAt;
   final DateTime? editedAt;
   final DateTime? deletedAt;
@@ -38,9 +38,9 @@ class PostItem {
   final UserDetails? userDetails;
   final int vote;
   final String originalPostID;
-  final bool isRemoved;
   final bool? pollExpired;
   bool? isSaved;
+  bool isRemoved;
   String? pollVote;
   PostItem({
     required this.id,
@@ -134,8 +134,21 @@ class PostItem {
       isRemoved: json['deleted'],
       poll: poll,
       pollExpired: json['polls_voting_is_expired_flag'],
-      isSaved: json['saved'],
-      pollVote: json['poll_vote'] ?? "",
+      isSaved: json['saved'] ?? false,
+      moderatorDetails: json['moderator_details'] != null
+          ? ModeratorDetails(
+              approvedBy: json['moderator_details']['approved_by'],
+              approvedDate: json['moderator_details']['approved_date'],
+              removedBy: json['moderator_details']['removed_by'],
+              removedDate: json['moderator_details']['removed_date'],
+              spammedBy: json['moderator_details']['spammed_by'],
+              spammedType: json['moderator_details']['spammed_type'],
+              removedFlag: json['moderator_details']['removed_flag'],
+              spammedFlag: json['moderator_details']['spammed_flag'],
+              approvedFlag: json['moderator_details']['approved_flag'],
+            )
+          : null,
+             pollVote: json['poll_vote'] ?? "",
     );
   }
 }

@@ -72,6 +72,17 @@ class _PostTypesState extends State<PostTypesContent> {
   bool isVideoImageVisible = true;
   bool toggleOptionsTypeVisiblity = false;
 
+  late bool hasPermission;
+
+  void checkPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -107,6 +118,8 @@ class _PostTypesState extends State<PostTypesContent> {
     initPollState = moderatorController.postTypesAndOptions["allowPolls"];
     initVideoState = moderatorController.postTypesAndOptions["allowVideo"];
     initTextState = moderatorController.postTypesAndOptions["postTypes"];
+
+    checkPermission();
   }
 
   void changeTextShown(String newText) {
@@ -191,23 +204,26 @@ class _PostTypesState extends State<PostTypesContent> {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: (!isSaved) ? null: () async {
-              await settingsProvider.setCommunityPostSetting(
-                communityName: communityName,
-                allowImages:
-                    moderatorController.postTypesAndOptions["allowImages"],
-                allowPolls:
-                    moderatorController.postTypesAndOptions["allowPolls"],
-                allowVideo:
-                    moderatorController.postTypesAndOptions["allowVideo"],
-                postTypes: moderatorController.postTypesAndOptions["postTypes"],
-              );
-              setState(() {
-                doneSaved = true;
-              });
-              // ignore: use_build_context_synchronously
-              Navigator.pop(context);
-            },
+            onPressed: (!isSaved)
+                ? null
+                : () async {
+                    await settingsProvider.setCommunityPostSetting(
+                      communityName: communityName,
+                      allowImages: moderatorController
+                          .postTypesAndOptions["allowImages"],
+                      allowPolls:
+                          moderatorController.postTypesAndOptions["allowPolls"],
+                      allowVideo:
+                          moderatorController.postTypesAndOptions["allowVideo"],
+                      postTypes:
+                          moderatorController.postTypesAndOptions["postTypes"],
+                    );
+                    setState(() {
+                      doneSaved = true;
+                    });
+                    // ignore: use_build_context_synchronously
+                    Navigator.pop(context);
+                  },
             child: Text(
               'Save',
               style: TextStyle(
@@ -360,20 +376,84 @@ class _PostTypesState extends State<PostTypesContent> {
                   ]),
                 ),
                 onTap: () {
-                  showModalBottomSheet<void>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OptionsWidget(
-                            changeTextShown: changeTextShown,
-                            chooseAny: chooseAny,
-                            chooseLink: chooseLink,
-                            chooseText: chooseText,
-                            isAnyIconPressed: isAnyIconPressed,
-                            isLinkOnlyIconPressed: isLinkOnlyIconPressed,
-                            isTextOnlyIconPressed: isTextOnlyIconPressed,
-                            falseVideoImageVisiblity: falseVideoImageVisiblity,
-                            trueVideoImageVisibility: trueVideoImageVisiblity);
-                      });
+                  if (hasPermission) {
+                    showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OptionsWidget(
+                              changeTextShown: changeTextShown,
+                              chooseAny: chooseAny,
+                              chooseLink: chooseLink,
+                              chooseText: chooseText,
+                              isAnyIconPressed: isAnyIconPressed,
+                              isLinkOnlyIconPressed: isLinkOnlyIconPressed,
+                              isTextOnlyIconPressed: isTextOnlyIconPressed,
+                              falseVideoImageVisiblity:
+                                  falseVideoImageVisiblity,
+                              trueVideoImageVisibility:
+                                  trueVideoImageVisiblity);
+                        });
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            title: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: const Text(
+                                'You do not have permission to change this setting',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: const Text(
+                                    'Please contact the owner of the community for more information',
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 37, 79, 165),
+                                      side: const BorderSide(
+                                          color:
+                                              Color.fromARGB(255, 37, 79, 165)),
+                                      padding: const EdgeInsets.only(
+                                          left: 20,
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16),
+                                    ),
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        });
+                  }
                 },
               ),
               //Image Posts
@@ -399,13 +479,80 @@ class _PostTypesState extends State<PostTypesContent> {
                         value: moderatorController
                             .postTypesAndOptions["allowImages"],
                         onChanged: (newValue) {
-                          moderatorController
-                              .postTypesAndOptions["allowImages"] = newValue;
-                          setState(
-                            () {
-                              checkInitSaveState();
-                            },
-                          );
+                          if (hasPermission) {
+                            moderatorController
+                                .postTypesAndOptions["allowImages"] = newValue;
+                            setState(
+                              () {
+                                checkInitSaveState();
+                              },
+                            );
+                          } else {
+                            moderatorController
+                                    .postTypesAndOptions["allowImages"] =
+                                initImageState;
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CupertinoAlertDialog(
+                                    title: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: const Text(
+                                        'You do not have permission to change this setting',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    content: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          child: const Text(
+                                            'Please contact the owner of the community for more information',
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 37, 79, 165),
+                                              side: const BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 37, 79, 165)),
+                                              padding: const EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 16,
+                                                  top: 16,
+                                                  bottom: 16),
+                                            ),
+                                            child: const Text(
+                                              'OK',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                });
+                          }
                         },
                         activeTrackColor:
                             const Color.fromARGB(255, 0, 110, 200),
@@ -413,12 +560,75 @@ class _PostTypesState extends State<PostTypesContent> {
                         inactiveTrackColor:
                             const Color.fromARGB(255, 242, 242, 242),
                       ),
-                      onTap: () => setState(() {
-                        moderatorController.postTypesAndOptions["allowImages"] =
-                            !moderatorController
-                                .postTypesAndOptions["allowImages"];
-                        checkInitSaveState();
-                      }),
+                      onTap: hasPermission
+                          ? () => setState(() {
+                                moderatorController
+                                        .postTypesAndOptions["allowImages"] =
+                                    !moderatorController
+                                        .postTypesAndOptions["allowImages"];
+                                checkInitSaveState();
+                              })
+                          : () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CupertinoAlertDialog(
+                                  title: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: const Text(
+                                      'You do not have permission to change this setting',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: const Text(
+                                          'Please contact the owner of the community for more information',
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 37, 79, 165),
+                                            side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 37, 79, 165)),
+                                            padding: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 16,
+                                                top: 16,
+                                                bottom: 16),
+                                          ),
+                                          child: const Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
                     )
                   : const SizedBox(),
               //Video Posts
@@ -444,13 +654,81 @@ class _PostTypesState extends State<PostTypesContent> {
                         value: moderatorController
                             .postTypesAndOptions["allowVideo"],
                         onChanged: (newValue) {
-                          setState(
-                            () {
-                              moderatorController
-                                  .postTypesAndOptions["allowVideo"] = newValue;
-                              checkInitSaveState();
-                            },
-                          );
+                          if (hasPermission) {
+                            setState(
+                              () {
+                                moderatorController
+                                        .postTypesAndOptions["allowVideo"] =
+                                    newValue;
+                                checkInitSaveState();
+                              },
+                            );
+                          } else {
+                            moderatorController
+                                    .postTypesAndOptions["allowVideo"] =
+                                initVideoState;
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return CupertinoAlertDialog(
+                                    title: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      child: const Text(
+                                        'You do not have permission to change this setting',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    content: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          child: const Text(
+                                            'Please contact the owner of the community for more information',
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            style: OutlinedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 37, 79, 165),
+                                              side: const BorderSide(
+                                                  color: Color.fromARGB(
+                                                      255, 37, 79, 165)),
+                                              padding: const EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 16,
+                                                  top: 16,
+                                                  bottom: 16),
+                                            ),
+                                            child: const Text(
+                                              'OK',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                });
+                          }
                         },
                         activeTrackColor:
                             const Color.fromARGB(255, 0, 110, 200),
@@ -458,12 +736,75 @@ class _PostTypesState extends State<PostTypesContent> {
                         inactiveTrackColor:
                             const Color.fromARGB(255, 242, 242, 242),
                       ),
-                      onTap: () => setState(() {
-                        moderatorController.postTypesAndOptions["allowVideo"] =
-                            !moderatorController
-                                .postTypesAndOptions["allowVideo"];
-                        checkInitSaveState();
-                      }),
+                      onTap: hasPermission
+                          ? () => setState(() {
+                                moderatorController
+                                        .postTypesAndOptions["allowVideo"] =
+                                    !moderatorController
+                                        .postTypesAndOptions["allowVideo"];
+                                checkInitSaveState();
+                              })
+                          : () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CupertinoAlertDialog(
+                                  title: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: const Text(
+                                      'You do not have permission to change this setting',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: const Text(
+                                          'Please contact the owner of the community for more information',
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 37, 79, 165),
+                                            side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 37, 79, 165)),
+                                            padding: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 16,
+                                                top: 16,
+                                                bottom: 16),
+                                          ),
+                                          child: const Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }),
                     )
                   : const SizedBox(),
               //Poll Posts
@@ -487,23 +828,149 @@ class _PostTypesState extends State<PostTypesContent> {
                 trailing: Switch(
                   value: moderatorController.postTypesAndOptions["allowPolls"],
                   onChanged: (newValue) {
-                    setState(
-                      () {
-                        moderatorController.postTypesAndOptions["allowPolls"] =
-                            newValue;
-                        checkInitSaveState();
-                      },
-                    );
+                    if (hasPermission) {
+                      setState(
+                        () {
+                          moderatorController
+                              .postTypesAndOptions["allowPolls"] = newValue;
+                          checkInitSaveState();
+                        },
+                      );
+                    } else {
+                      moderatorController.postTypesAndOptions["allowPolls"] =
+                          initPollState;
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return CupertinoAlertDialog(
+                              title: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                child: const Text(
+                                  'You do not have permission to change this setting',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: const Text(
+                                      'Please contact the owner of the community for more information',
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: OutlinedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 37, 79, 165),
+                                        side: const BorderSide(
+                                            color: Color.fromARGB(
+                                                255, 37, 79, 165)),
+                                        padding: const EdgeInsets.only(
+                                            left: 20,
+                                            right: 16,
+                                            top: 16,
+                                            bottom: 16),
+                                      ),
+                                      child: const Text(
+                                        'OK',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          });
+                    }
                   },
                   activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
                   inactiveThumbColor: Colors.white,
                   inactiveTrackColor: const Color.fromARGB(255, 242, 242, 242),
                 ),
-                onTap: () => setState(() {
-                  moderatorController.postTypesAndOptions["allowPolls"] =
-                      !moderatorController.postTypesAndOptions["allowPolls"];
-                  checkInitSaveState();
-                }),
+                onTap: hasPermission
+                    ? () => setState(() {
+                          moderatorController
+                                  .postTypesAndOptions["allowPolls"] =
+                              !moderatorController
+                                  .postTypesAndOptions["allowPolls"];
+                          checkInitSaveState();
+                        })
+                    : () => showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CupertinoAlertDialog(
+                            title: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: const Text(
+                                'You do not have permission to change this setting',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: const Text(
+                                    'Please contact the owner of the community for more information',
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 37, 79, 165),
+                                      side: const BorderSide(
+                                          color:
+                                              Color.fromARGB(255, 37, 79, 165)),
+                                      padding: const EdgeInsets.only(
+                                          left: 20,
+                                          right: 16,
+                                          top: 16,
+                                          bottom: 16),
+                                    ),
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }),
               ),
             ],
           ),

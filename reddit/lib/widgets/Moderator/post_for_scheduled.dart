@@ -5,11 +5,13 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 
 class PostScheduled extends StatefulWidget {
+  final VoidCallback fetch;
   final Map<String, dynamic> item;
-  const PostScheduled({super.key, required this.item});
+  const PostScheduled({super.key, required this.item, required this.fetch});
 
   @override
   State<PostScheduled> createState() => _PostScheduledState();
@@ -116,12 +118,18 @@ class _PostScheduledState extends State<PostScheduled> {
                             padding: const EdgeInsets.all(0)),
                         onPressed: () async {
                           //badrrrrr submit
-                          var scheduledProvider =
-                              context.read<ScheduledProvider>();
-                          await scheduledProvider.submitScheduledPost(
-                              moderatorController.communityName,
-                              widget.item["_id"]);
-                          
+                          if (moderatorController.modAccess.everything ||
+                              moderatorController
+                                  .modAccess.managePostsAndComments) {
+                            var scheduledProvider =
+                                context.read<ScheduledProvider>();
+                            await scheduledProvider.submitScheduledPost(
+                                moderatorController.communityName,
+                                widget.item["_id"]);
+                            widget.fetch();
+                          } else {
+                            showError(context);
+                          }
                         },
                         icon: Icon(
                           CupertinoIcons.paperplane_fill,
@@ -144,13 +152,19 @@ class _PostScheduledState extends State<PostScheduled> {
                     ),
                     onPressed: () {
                       //badrrrrr
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditScheduledPost(
-                            postId: widget.item["_id"],
+                      if (moderatorController.modAccess.everything ||
+                          moderatorController
+                              .modAccess.managePostsAndComments) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => EditScheduledPost(
+                              postId: widget.item["_id"],
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        showError(context);
+                      }
                     },
                     icon: Icon(
                       Icons.edit,
@@ -169,66 +183,78 @@ class _PostScheduledState extends State<PostScheduled> {
                       surfaceTintColor: Colors.transparent,
                     ),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.white,
-                            content: const Text(
-                              'Are you sure you want to cancel this scheduled post?',
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            actionsAlignment: MainAxisAlignment.center,
-                            actions: <Widget>[
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  backgroundColor: Colors.grey[300],
-                                  foregroundColor:
-                                      const Color.fromARGB(255, 109, 109, 110),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                    side: const BorderSide(
-                                        color: Color.fromARGB(0, 238, 12, 0)),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Go Back',
+                      if (moderatorController.modAccess.everything ||
+                          moderatorController
+                              .modAccess.managePostsAndComments) {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              content: const Text(
+                                'Are you sure you want to cancel this scheduled post?',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  //cancell posttttt.
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 255, 17, 0),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                    side: const BorderSide(
-                                      color: Color.fromARGB(0, 240, 6, 6),
+                              actionsAlignment: MainAxisAlignment.center,
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    backgroundColor: Colors.grey[300],
+                                    foregroundColor: const Color.fromARGB(
+                                        255, 109, 109, 110),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                      side: const BorderSide(
+                                          color: Color.fromARGB(0, 238, 12, 0)),
                                     ),
                                   ),
+                                  child: const Text(
+                                    'Go Back',
+                                  ),
                                 ),
-                                child: const Text('Cancel Post'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    var scheduledProvider =
+                                        context.read<ScheduledProvider>();
+                                    await scheduledProvider.cancelScheduledPost(
+                                        moderatorController.communityName,
+                                        widget.item["_id"]);
+                                    widget.fetch();
+                                    Navigator.of(context).pop();
+                                    //cancell posttttt.
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 255, 17, 0),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(40),
+                                      side: const BorderSide(
+                                        color: Color.fromARGB(0, 240, 6, 6),
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Text('Cancel Post'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        showError(context);
+                      }
                     },
                     icon: Icon(
                       Icons.delete_outline_rounded,
@@ -247,47 +273,3 @@ class _PostScheduledState extends State<PostScheduled> {
     );
   }
 }
-
-// {
-//       "scheduling_details": {
-//         "repetition_option": "none",
-//         "schedule_date": "2025-05-04T03:11:00.000Z"
-//       },
-//       "user_details": {
-//         "total_views": 0,
-//         "upvote_rate": 0,
-//         "total_shares": 0
-//       },
-//       "_id": "6635f035a08ae9782c6e7ee3",
-//       "title": "Back to the future",
-//       "description": "This is a description for my test post.",
-//       "created_at": "2024-05-04T08:22:14.641Z",
-//       "edited_at": null,
-//       "deleted_at": null,
-//       "deleted": false,
-//       "type": "text",
-//       "link_url": null,
-//       "images": [],
-//       "videos": [],
-//       "polls": [],
-//       "polls_voting_length": 3,
-//       "polls_voting_is_expired_flag": false,
-//       "post_in_community_flag": true,
-//       "community_name": "Adams_Group",
-//       "comments_count": 0,
-//       "views_count": 0,
-//       "shares_count": 0,
-//       "upvotes_count": 1,
-//       "downvotes_count": 0,
-//       "oc_flag": true,
-//       "spoiler_flag": false,
-//       "nsfw_flag": false,
-//       "locked_flag": false,
-//       "allowreplies_flag": true,
-//       "set_suggested_sort": "None (Recommended)",
-//       "scheduled_flag": false,
-//       "is_reposted_flag": false,
-//       "user_id": "663561b6720b7a2283bd8277",
-//       "username": "fatema",
-//       "__v": 0
-//     }

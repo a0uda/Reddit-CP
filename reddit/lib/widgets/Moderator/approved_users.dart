@@ -1,31 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/widgets/Moderator/add_approved_user.dart';
 import 'package:reddit/widgets/Moderator/approved_user_list.dart';
-
-// List<Map<String, String>> approvedUsers = [
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "approved",
-//     "jointime": "1 mo ago",
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "jointime": "1 mo ago"
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "jointime": "1 mo ago"
-//   },
-//   {
-//     "pictureUrl": "images/Greddit.png",
-//     "username": "Purple-7544",
-//     "jointime": "1 mo ago"
-//   },
-// ];
-
 
 class ApprovedUsers extends StatefulWidget {
   const ApprovedUsers({super.key});
@@ -35,6 +13,8 @@ class ApprovedUsers extends StatefulWidget {
 }
 
 class _ApprovedUsersState extends State<ApprovedUsers> {
+  final ModeratorController moderatorController =
+      GetIt.instance.get<ModeratorController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,11 +27,16 @@ class _ApprovedUsersState extends State<ApprovedUsers> {
             padding: const EdgeInsets.all(8.0),
             child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const AddApprovedUser(),
-                    ),
-                  );
+                  if (moderatorController.modAccess.everything ||
+                      moderatorController.modAccess.manageUsers) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const AddApprovedUser(),
+                      ),
+                    );
+                  } else {
+                    showError(context);
+                  }
                 },
                 icon: const Icon(CupertinoIcons.add)),
           ) //implement add in mock badrrrr

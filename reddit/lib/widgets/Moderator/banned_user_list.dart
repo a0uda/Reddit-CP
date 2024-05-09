@@ -6,6 +6,7 @@ import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Moderator/add_banned_user.dart';
+import 'package:reddit/widgets/Moderator/approved_user_list.dart';
 
 class BannedUsersList extends StatefulWidget {
   const BannedUsersList({super.key});
@@ -78,14 +79,16 @@ class _BannedUsersListState extends State<BannedUsersList> {
                         ),
                       ),
                       actions: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 42, 101, 210)),
-                              onPressed: () {
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor:
+                                    const Color.fromARGB(255, 42, 101, 210)),
+                            onPressed: () {
+                              if (moderatorController.modAccess.everything ||
+                                  moderatorController.modAccess.manageUsers) {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => AddBannedUser(
@@ -93,16 +96,20 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                     ),
                                   ),
                                 );
-                              }, // Ban user Badrrr ele hya add
-                              child: const Text(
-                                "Ban User",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              } else {
+                                showError(context);
+                              }
+                            }, // Ban user Badrrr ele hya add
+                            child: const Text(
+                              "Ban User",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
-                          )
-                        ])
+                          ),
+                        )
+                      ],
+                    )
                   : const SizedBox(),
               TextField(
                 onChanged: searchUsers,
@@ -145,11 +152,29 @@ class _BannedUsersListState extends State<BannedUsersList> {
                               color: Colors.white,
                               child: ListTile(
                                 tileColor: Colors.white,
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage(item["profile_picture"]!),
-                                  radius: 15,
-                                ),
+                                onTap: () async {
+                                  UserAbout otherUserData = (await (userService
+                                      .getUserAbout(item["username"])))!;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProfileScreen(otherUserData, 'other'),
+                                    ),
+                                  );
+                                },
+                                leading: (item["profile_picture"] != null &&
+                                        item["profile_picture"] != "")
+                                    ? CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            item["profile_picture"]!),
+                                        radius: 15,
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage:
+                                            AssetImage("images/Greddit.png"),
+                                        radius: 15,
+                                      ),
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -182,26 +207,36 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                                       const Text("See details"),
                                                   onTap: () {
                                                     //navigate to banned details of this user Badrr
-                                                    Navigator.of(context).push(
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            AddBannedUser(
-                                                          seeDetails: true,
-                                                          username:
-                                                              item["username"],
-                                                          banReason: item[
-                                                              "reason_for_ban"],
-                                                          modNote:
-                                                              item["mod_note"],
-                                                          permanentFlag: item[
-                                                              "permanent_flag"],
-                                                          banNote: item[
-                                                              "note_for_ban_message"],
-                                                          banPeriod: item[
-                                                              "banned_until"],
+                                                    if (moderatorController
+                                                            .modAccess
+                                                            .everything ||
+                                                        moderatorController
+                                                            .modAccess
+                                                            .manageUsers) {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              AddBannedUser(
+                                                            seeDetails: true,
+                                                            username: item[
+                                                                "username"],
+                                                            banReason: item[
+                                                                "reason_for_ban"],
+                                                            modNote: item[
+                                                                "mod_note"],
+                                                            permanentFlag: item[
+                                                                "permanent_flag"],
+                                                            banNote: item[
+                                                                "note_for_ban_message"],
+                                                            banPeriod: item[
+                                                                "banned_until"],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    );
+                                                      );
+                                                    } else {
+                                                      showError(context);
+                                                    }
                                                   },
                                                 ),
                                                 ListTile(
@@ -232,18 +267,28 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                                   title: const Text("Unban"),
                                                   onTap: () async {
                                                     //unban badrrr
-                                                    await bannedUserProvider
-                                                        .unBanUsers(
-                                                            item["username"],
+                                                    if (moderatorController
+                                                            .modAccess
+                                                            .everything ||
+                                                        moderatorController
+                                                            .modAccess
+                                                            .manageUsers) {
+                                                      await bannedUserProvider
+                                                          .unBanUsers(
+                                                              item["username"],
+                                                              moderatorController
+                                                                  .communityName);
+                                                      setState(() {
+                                                        usersFetched = true;
+                                                        foundUsers =
                                                             moderatorController
-                                                                .communityName);
-                                                    setState(() {
-                                                      usersFetched = true;
-                                                      foundUsers =
-                                                          moderatorController
-                                                              .bannedUsers;
-                                                    });
-                                                    Navigator.of(context).pop();
+                                                                .bannedUsers;
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      });
+                                                    } else {
+                                                      showError(context);
+                                                    }
                                                   },
                                                 ),
                                               ],

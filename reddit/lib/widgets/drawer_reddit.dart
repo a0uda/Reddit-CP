@@ -4,9 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/Models/community_item.dart';
-import 'package:reddit/Pages/community_page.dart';
-import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/drawer_tile.dart';
 import 'package:reddit/widgets/mobile_layout.dart';
 import 'package:reddit/widgets/responsive_layout.dart';
@@ -32,7 +29,10 @@ class _DrawerRedditState extends State<DrawerReddit> {
 
   Future<void> fetchUserCommunities() async {
     await userController.getUserCommunities();
+    print("henaa");
+    print(userController.userCommunities);
     await userController.getUserModerated();
+     print("moderated");
   }
 
   @override
@@ -191,11 +191,9 @@ class _DrawerRedditState extends State<DrawerReddit> {
                                         endIndent: 30,
                                       )
                                     : const SizedBox(),
-                                (userController.userAbout
-                                                ?.moderatedCommunities !=
+                                (userController.userModeratedCommunities !=
                                             null &&
-                                        userController.userAbout
-                                                ?.moderatedCommunities !=
+                                        userController.userModeratedCommunities !=
                                             [])
                                     ? DrawerTile(
                                         tileTitle: "MODERATION",
@@ -219,48 +217,3 @@ class _DrawerRedditState extends State<DrawerReddit> {
         ));
   }
 }
-
-
-// List<Map<String, dynamic>> communites = [
-//   {
-//     'name': "r/mostafa",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//       communityMembersNo: community.,
-      
-//     )
-//   },
-//   {
-//     'name': "r/badr",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//     )
-//   },
-//   {
-//     'name': "r/badrinho",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//     )
-//   },
-// ];
-// List<Map<String, dynamic>> moderatorCommunities = [
-//   {
-//     'name': "r/mostafa",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//     )
-//   },
-//   {
-//     'name': "r/badr",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//     )
-//   },
-//   {
-//     'name': "r/badrinho",
-//     'communityPage': CommunityPage(
-//       communityDescription: "nas betheb fouda",
-//     )
-//   },
-// ];
-

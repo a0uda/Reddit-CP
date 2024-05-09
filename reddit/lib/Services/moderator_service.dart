@@ -177,6 +177,41 @@ class ModeratorMockService {
     }
   }
 
+  Future<int> cancelScheduledPost({
+    required String postId,
+    required String communityName,
+  }) async {
+    if (testing) {
+      // List<RulesItem> foundRules = communities
+      //     .firstWhere((community) => community.communityName == )
+      //     .communityRules;
+      return 200;
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token'); //badrr
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/cancel-scheduled-post/$communityName');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode({
+          "post_id": postId,
+        }),
+      );
+      print("POST cancled");
+      print(response.body);
+      if (json.decode(response.body)["message"] != null) {
+        return 201;
+      } else {
+        return 400;
+      }
+    }
+  }
+
   Future<List<RulesItem>> getRules(String communityName) async {
     if (testing) {
       List<RulesItem> foundRules = communities
@@ -237,6 +272,8 @@ class ModeratorMockService {
                 message: rem["reason_message"] ?? "",
               ))
           .toList();
+      print("REMOVALL");
+      print(response.body);
       return removal; //badrr
     }
   }
@@ -718,6 +755,7 @@ class ModeratorMockService {
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> mutedUsers =
           List<Map<String, dynamic>>.from(decodedData);
+      print(decodedData);
       return mutedUsers; //badrrr
     }
   }
@@ -754,6 +792,8 @@ class ModeratorMockService {
           'action': "mute",
         }),
       );
+      print("badr mute user");
+      print(response.body);
     }
   }
 
@@ -802,8 +842,8 @@ class ModeratorMockService {
           'Authorization': token!,
         },
       );
-      print("fouda");
-      print(response.body);
+      // print("fouda");
+      // print(response.body);
       final decodedData = json.decode(response.body);
       final List<Map<String, dynamic>> moderators =
           List<Map<String, dynamic>>.from(decodedData);
@@ -1280,76 +1320,230 @@ class ModeratorMockService {
       headers: {'Content-Type': 'application/json', 'Authorization': token!},
     );
     print('Ana hena ba3d mayrooh el link');
+    print(response.body);
     final List<dynamic> decodedSettings = json.decode(response.body);
     print('Ana hena hatab3 el decoded settings');
     print(decodedSettings);
     try {
-      final List<QueuesPostItem> queuesPostItem = decodedSettings.map((post) {
-        final List<QueuePostImage> images = post["images"] != null
-            ? List<QueuePostImage>.from(post["images"].map((image) {
-                print('image type: ${image.runtimeType}');
-                return QueuePostImage(
-                  imagePath: image["path"],
-                  imageCaption: image["caption"],
-                  imageLink: image["link"],
-                );
-              }))
-            : [];
+      final List<QueuesPostItem> queuesPostItem = decodedSettings.map(
+        (post) {
+          final List<QueuePostImage> images =
+              post["images"] != null && post["images"].isNotEmpty
+                  ? List<QueuePostImage>.from(post["images"].map((image) {
+                      print('image type: ${image.runtimeType}');
+                      return QueuePostImage(
+                        imagePath: image["path"] ?? "",
+                        imageCaption: image["caption"] ?? "",
+                        imageLink: image["link"] ?? "",
+                      );
+                    }))
+                  : [];
 
-        final List<EditHistory> editHistory = post["edit_history"] != null
-            ? List<EditHistory>.from(post["edit_history"].map((item) {
-                return EditHistory(
-                  editedAt: item["moderator_details"]["edited_at"],
-                  approvedEditFlag: item["moderator_details"]
-                      ["approved_edit_flag"],
-                  removedEditFlag: item["moderator_details"]
-                      ["removed_edit_flag"],
-                );
-              }))
-            : [];
-        print('Ana batba3 el posts');
-        print(post);
-        return QueuesPostItem(
-          queuePostImage: images,
-          moderatorDetails: ModeratorDetails(
-              unmoderated: Unmoderated(
-                  approvedFlag: post["moderator_details"]["unmoderated"]
-                      ["approved"]["flag"]),
-              reported: Reported(
-                flag: post["moderator_details"]["reported"]["flag"],
-                type: post["moderator_details"]["reported"]["type"] ?? "",
-                confirmed: post["moderator_details"]["reported"]["confirmed"],
-              ),
-              spammed: Spammed(
-                  flag: post["moderator_details"]["spammed"]["flag"],
-                  type: post["moderator_details"]["spammed"]["type"] ?? "",
-                  confirmed: post["moderator_details"]["spammed"]["confirmed"]),
-              removed: Removed(
-                flag: post["moderator_details"]["removed"]["flag"],
-                removedDate: post["moderator_details"]["removed"]["date"],
-                type: post["moderator_details"]["removed"]["type"] ?? "",
-                confirmed: post["moderator_details"]["removed"]["confirmed"],
-                removedBy: post["moderator_details"]["removed"]["by"],
-              ),
-              editHistory: editHistory),
-          postTitle: post["title"],
-          postDescription: post["description"],
-          createdAt: post["created_at"],
-          editedAt: post["edited_at"] ?? '',
-          deletedAt: post["deleted_at"] ?? '',
-          isDeleted: post["deleted"],
-          username: post["username"],
-          communityName: post["community_name"],
-          nsfwFlag: post["nsfw_flag"],
-          spoilerFlag: post["spoiler_flag"],
-        );
-      }).toList();
+          final List<EditHistory> editHistory = post["edit_history"] != null &&
+                  post["images"].isNotEmpty
+              ? List<EditHistory>.from(post["edit_history"].map((item) {
+                  return EditHistory(
+                    editedAt:
+                        item["community_moderator_details"]["edited_at"] ?? "",
+                    approvedEditFlag: item["community_moderator_details"]
+                            ["approved_edit_flag"] ??
+                        "",
+                    removedEditFlag: item["community_moderator_details"]
+                            ["removed_edit_flag"] ??
+                        "",
+                  );
+                }))
+              : [];
+
+          print('Ana batba3 el posts');
+          print(post);
+          return QueuesPostItem(
+            queuePostImage: images,
+            moderatorDetails: ModeratorDetails(
+                unmoderated: Unmoderated(
+                    approvedFlag: post["community_moderator_details"]
+                            ["unmoderated"]["approved"]["flag"] ??
+                        false),
+                reported: Reported(
+                  flag: post["community_moderator_details"]["reported"]
+                          ["flag"] ??
+                      false,
+                  type: post["community_moderator_details"]["reported"]
+                          ["type"] ??
+                      "",
+                  confirmed: post["community_moderator_details"]["reported"]
+                          ["confirmed"] ??
+                      false,
+                ),
+                spammed: Spammed(
+                    flag: post["community_moderator_details"]["spammed"]
+                            ["flag"] ??
+                        false,
+                    type: post["community_moderator_details"]["spammed"]
+                            ["type"] ??
+                        "",
+                    confirmed: post["community_moderator_details"]["spammed"]
+                            ["confirmed"] ??
+                        false),
+                removed: Removed(
+                  flag: post["community_moderator_details"]["removed"]
+                          ["flag"] ??
+                      false,
+                  removedDate: post["community_moderator_details"]["removed"]
+                          ["date"] ??
+                      "",
+                  type: post["community_moderator_details"]["removed"]
+                          ["type"] ??
+                      "",
+                  confirmed: post["community_moderator_details"]["removed"]
+                          ["confirmed"] ??
+                      false,
+                  removedBy: post["community_moderator_details"]["removed"]
+                          ["by"] ??
+                      "",
+                ),
+                editHistory: editHistory),
+            postTitle: post["title"] ?? "",
+            postDescription: post["description"] ?? "",
+            createdAt: post["created_at"] ?? "",
+            editedAt: post["edited_at"] ?? '',
+            deletedAt: post["deleted_at"] ?? '',
+            isDeleted: post["deleted"] ?? false,
+            username: post["username"],
+            communityName: post["community_name"] ?? "",
+            nsfwFlag: post["nsfw_flag"] ?? false,
+            spoilerFlag: post["spoiler_flag"] ?? false,
+            postInCommunityFlag: post["post_in_community_flag"] ?? false,
+            postID: post["_id"] ?? "",
+            itemID: post["post_id"] ?? "",
+            commentInCommunityFlag: post["comment_in_community_flag"] ?? true,
+          );
+        },
+      ).toList();
       // print('Bashoof el donya ba3d ghabay');
       // print(queuesPostItem);
       return queuesPostItem;
     } catch (e) {
       print('Error occurred while decoding: $e');
       return [];
+    }
+  }
+
+  Future<void> handleObjection({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/handle-objection/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "item_id": itemID,
+          "item_type": itemType,
+          "objection_type": objectionType,
+          "action": action,
+        },
+      ),
+    );
+    print(response.body);
+  }
+
+  Future<void> handleUnmoderatedItem({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/handle-unmoderated-item/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "item_id": itemID,
+          "item_type": itemType,
+          "action": action,
+          "objection_type": objectionType,
+        },
+      ),
+    );  
+    print("approvingggggg");
+    print(response.body);
+  }
+
+  Future<void> handleEditItem({
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url = Uri.parse(
+        'https://redditech.me/backend/communities/edit-item/$communityName');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: json.encode(
+        {
+          "item_id": itemID,
+          "item_type": itemType,
+          "action": action,
+        },
+      ),
+    );
+    print("removeeee");
+    print(response.body);
+  }
+
+  Future<void> objectItem(
+      {required String id,
+      required String itemType,
+      required String objectionType,
+      // required String objectionTypeValue,
+      required String communityName}) async {
+    if (testing) {
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final url = Uri.parse(
+          'https://redditech.me/backend/communities/object-item/$communityName');
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token!,
+        },
+        body: json.encode(
+          {
+            "item_id": id,
+            "item_type": itemType,
+            "objection_type": objectionType,
+          },
+        ),
+      );
+      print("OBJECT ITEM");
+      print(response.body);
     }
   }
 }

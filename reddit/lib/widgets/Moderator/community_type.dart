@@ -26,6 +26,17 @@ class _CommunityTypeState extends State<CommunityType> {
   late String initCommunityType;
   late final bool initCommunityFlag;
 
+  late bool hasPermission;
+
+  void checkPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
+
   String publicSubtitle = 'Anyone can see and participate in this community.';
   String restrictedSubtitle =
       'Anyone can see, join or vote in this community, but you control who posts and comments.';
@@ -56,6 +67,8 @@ class _CommunityTypeState extends State<CommunityType> {
 
     initCommunityType = moderatorController.generalSettings.communityType;
     initCommunityFlag = moderatorController.generalSettings.nsfwFlag;
+
+    checkPermission();
   }
 
   Future<void> fetchGeneralSettings() async {
@@ -295,12 +308,79 @@ class _CommunityTypeState extends State<CommunityType> {
                     Switch(
                       value: moderatorController.generalSettings.nsfwFlag,
                       onChanged: (newValue) {
-                        moderatorController.generalSettings.nsfwFlag = newValue;
-                        setState(() {
-                          if (moderatorController.generalSettings.nsfwFlag !=
-                              initCommunityFlag) {}
-                        });
-                        checkInitState();
+                        if (hasPermission) {
+                          moderatorController.generalSettings.nsfwFlag =
+                              newValue;
+                          setState(() {
+                            if (moderatorController.generalSettings.nsfwFlag !=
+                                initCommunityFlag) {}
+                          });
+                          checkInitState();
+                        } else {
+                          moderatorController.generalSettings.nsfwFlag =
+                              initCommunityFlag;
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CupertinoAlertDialog(
+                                  title: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: const Text(
+                                      'You do not have permission to change this setting',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                  content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: const Text(
+                                          'Please contact the owner of the community for more information',
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 37, 79, 165),
+                                            side: const BorderSide(
+                                                color: Color.fromARGB(
+                                                    255, 37, 79, 165)),
+                                            padding: const EdgeInsets.only(
+                                                left: 20,
+                                                right: 16,
+                                                top: 16,
+                                                bottom: 16),
+                                          ),
+                                          child: const Text(
+                                            'OK',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              });
+                        }
                       },
                       activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
                       inactiveThumbColor: Colors.white,
@@ -349,6 +429,7 @@ class SingleThumbSlider extends StatefulWidget {
 }
 
 class _SingleThumbSliderState extends State<SingleThumbSlider> {
+  final moderatorController = GetIt.instance.get<ModeratorController>();
   late double startValue;
   double endValue = 100;
 
@@ -360,6 +441,17 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
   Color greyColor = const Color.fromARGB(255, 216, 216, 216);
   Color darkGreyColor = const Color.fromARGB(255, 100, 101, 100);
 
+  late bool hasPermission;
+
+  void checkPermission() {
+    if (moderatorController.modAccess.everything ||
+        moderatorController.modAccess.manageSettings) {
+      hasPermission = true;
+    } else {
+      hasPermission = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -370,6 +462,7 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
     } else if (widget.titleText == widget.privateText) {
       startValue = 100;
     }
+    checkPermission();
   }
 
   @override
@@ -389,21 +482,29 @@ class _SingleThumbSliderState extends State<SingleThumbSlider> {
           divisions: 2,
           value: startValue,
           onChanged: (newValue) {
-            setState(() {
-              startValue = newValue;
-            });
+            if (hasPermission) {
+              setState(() {
+                startValue = newValue;
+              });
+            } else {
+              setState(() {
+                startValue = startValue;
+              });
+            }
           },
           onChangeEnd: (newValue) {
-            setState(() {
-              if (newValue < 25) {
-                startValue = 0;
-              } else if (newValue >= 25 && newValue <= 75) {
-                startValue = 50;
-              } else {
-                startValue = 100;
-              }
-              adjustTitleAndSubtitleText(startValue);
-            });
+            if (hasPermission) {
+              setState(() {
+                if (newValue < 25) {
+                  startValue = 0;
+                } else if (newValue >= 25 && newValue <= 75) {
+                  startValue = 50;
+                } else {
+                  startValue = 100;
+                }
+                adjustTitleAndSubtitleText(startValue);
+              });
+            }
             widget.isSavedFunction(newCommnuityType);
           }),
     );

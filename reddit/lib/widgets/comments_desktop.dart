@@ -21,7 +21,9 @@ final widgetsHomePage = [
 
 class CommentsDesktop extends StatefulWidget {
   final String postId;
-  const CommentsDesktop({super.key, required this.postId});
+  final bool isModInComment;
+  const CommentsDesktop(
+      {super.key, required this.postId, this.isModInComment = false});
 
   @override
   State<CommentsDesktop> createState() => _CommentsDesktopState();
@@ -42,7 +44,10 @@ class _CommentsDesktopState extends State<CommentsDesktop> {
         appBar: AppBar(
           title: const Text("Comments"),
         ),
-        body: CommentsWidget(postId: widget.postId),
+        body: CommentsWidget(
+          postId: widget.postId,
+          isModInComment: widget.isModInComment,
+        ),
       );
     }
     return Scaffold(
@@ -65,7 +70,10 @@ class _CommentsDesktopState extends State<CommentsDesktop> {
             ),
             Expanded(
               flex: 4,
-              child: CommentsWidget(postId: widget.postId),
+              child: CommentsWidget(
+                postId: widget.postId,
+                isModInComment: widget.isModInComment,
+              ),
             ),
 
             // rest of the desktop home page

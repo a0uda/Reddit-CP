@@ -149,9 +149,12 @@ class _DesktopCommunityPageState extends State<DesktopCommunityPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Expanded(
+                          Expanded(
                             flex: 3,
-                            child: Listing(type: 'home'),
+                            child: Listing(
+                              type: 'comm',
+                              commName: widget.communityName,
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(

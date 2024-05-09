@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/active_communities.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -97,7 +99,7 @@ class TabBarPostsState extends State<TabBarPosts> {
                                           SizedBox(
                                             width: 160,
                                             child: GestureDetector(
-                                              onTap: () {
+                                              onTap: () async {
                                                 List<CommunityBackend>
                                                     moderatedCammunities =
                                                     userController.userAbout!
@@ -113,23 +115,49 @@ class TabBarPostsState extends State<TabBarPosts> {
                                                 } else {
                                                   isMod = false;
                                                 }
+                                                var moderatorProvider = context
+                                                    .read<ModeratorProvider>();
+                                                if (isMod) {
+                                                  await moderatorProvider
+                                                      .getModAccess(
+                                                          userController
+                                                              .userAbout!
+                                                              .username,
+                                                          community.name);
+                                                } else {
+                                                  moderatorProvider
+                                                          .moderatorController
+                                                          .modAccess =
+                                                      ModeratorItem(
+                                                          everything: false,
+                                                          managePostsAndComments:
+                                                              false,
+                                                          manageSettings: false,
+                                                          manageUsers: false,
+                                                          username:
+                                                              userController
+                                                                  .userAbout!
+                                                                  .username);
+                                                }
                                                 Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            (CommunityLayout(
-                                                              desktopLayout: DesktopCommunityPage(
-                                                                  isMod: isMod,
-                                                                  communityName:
-                                                                      community
-                                                                          .name),
-                                                              mobileLayout:
-                                                                  MobileCommunityPage(
-                                                                isMod: isMod,
-                                                                communityName:
-                                                                    community
-                                                                        .name,
-                                                              ),
-                                                            ))));
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        (CommunityLayout(
+                                                      desktopLayout:
+                                                          DesktopCommunityPage(
+                                                              isMod: isMod,
+                                                              communityName:
+                                                                  community
+                                                                      .name),
+                                                      mobileLayout:
+                                                          MobileCommunityPage(
+                                                        isMod: isMod,
+                                                        communityName:
+                                                            community.name,
+                                                      ),
+                                                    )),
+                                                  ),
+                                                );
                                               },
                                               child: Card(
                                                 color: Colors.white,

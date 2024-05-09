@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Models/community_item.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/removal.dart';
 import 'package:reddit/Models/rules_item.dart';
 import 'package:reddit/Services/moderator_service.dart';
@@ -9,6 +10,12 @@ class ModeratorController {
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
 
   String communityName = "";
+  ModeratorItem modAccess = ModeratorItem(
+      everything: false,
+      managePostsAndComments: false,
+      manageSettings: false,
+      manageUsers: false,
+      username: "");
   List<Map<String, dynamic>> approvedUsers = [];
   List<Map<String, dynamic>> bannedUsers = [];
   List<Map<String, dynamic>> mutedUsers = [];
@@ -24,6 +31,7 @@ class ModeratorController {
     nsfwFlag: false,
   );
   bool joinedFlag = false;
+  List<bool> isPostInCommunity = [];
   String membersCount = "0";
   Map<String, dynamic> postTypesAndOptions = {};
   String profilePictureURL = "images/logo-mobile.png";
@@ -79,6 +87,7 @@ class ModeratorController {
   }
 
   Future<void> getRemoval(String communityName) async {
+    print("here");
     removalReasons = await moderatorService.getRemovalReason(communityName);
   }
 
@@ -240,13 +249,19 @@ class ScheduledProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submitScheduledPost(
-      String communityName, String post_id) async {
+  Future<void> submitScheduledPost(String communityName, String post_id) async {
     await moderatorService.submitScheduledPost(
-        postId: post_id,
-        communityName: communityName);
-    moderatorController.scheduled =
-        await moderatorService.getScheduled(communityName);
+        postId: post_id, communityName: communityName);
+    // moderatorController.scheduled =
+    //     await moderatorService.getScheduled(communityName);
+    notifyListeners();
+  }
+
+  Future<void> cancelScheduledPost(String communityName, String post_id) async {
+    await moderatorService.cancelScheduledPost(
+        postId: post_id, communityName: communityName);
+    // moderatorController.scheduled =
+    //     await moderatorService.getScheduled(communityName);
     notifyListeners();
   }
 }
@@ -280,6 +295,18 @@ class ModeratorProvider extends ChangeNotifier {
     moderatorController.moderators =
         await moderatorService.getModerators(communityName);
     notifyListeners();
+  }
+
+  Future<void> getModAccess(String username, String communityName) async {
+    moderatorController.moderators =
+        await moderatorService.getModerators(communityName);
+    moderatorController.modAccess = ModeratorItem.fromJson(moderatorController
+        .moderators
+        .firstWhere((mod) => mod["username"] == username));
+    print("YARAABBBB");
+    print(moderatorController.modAccess.managePostsAndComments);
+    // print("badr test access");
+    // print(moderatorController.modAccess.everything);
   }
 }
 
@@ -473,6 +500,93 @@ class IsJoinedProvider extends ChangeNotifier {
       {required String communityName, required bool isJoined}) async {
     await moderatorService.leaveCommunity(communityName: communityName);
     moderatorController.joinedFlag = isJoined;
+    notifyListeners();
+  }
+}
+
+class handleObjectionProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleObjection({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el handle objection approve w remove fel provider');
+    print(itemID);
+    print(itemType);
+    await moderatorService.handleObjection(
+      communityName: communityName,
+      objectionType: objectionType,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
+    notifyListeners();
+  }
+
+  Future<void> objectItem(
+      {required String id,
+      required String itemType,
+      required String objectionType,
+      required String communityName}) async {
+    if (testing) {
+    } else {
+      await moderatorService.objectItem(
+          id: id,
+          itemType: itemType,
+          objectionType: objectionType,
+          communityName: communityName);
+      notifyListeners();
+    }
+  }
+}
+
+class handleUnmoderatedProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleUnmoderated({
+    required String objectionType,
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el unmoderated approve w remove fel provider');
+
+    await moderatorService.handleUnmoderatedItem(
+      communityName: communityName,
+      objectionType: objectionType,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
+    notifyListeners();
+  }
+}
+
+class handleEditItemProvider extends ChangeNotifier {
+  final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  final moderatorController = GetIt.instance.get<ModeratorController>();
+
+  Future<void> handleEditItem({
+    required String itemType,
+    required String action,
+    required String communityName,
+    required String itemID,
+  }) async {
+    print('Ana ba test el unmoderated approve w remove fel provider');
+
+    await moderatorService.handleEditItem(
+      communityName: communityName,
+      itemType: itemType,
+      action: action,
+      itemID: itemID,
+    );
     notifyListeners();
   }
 }

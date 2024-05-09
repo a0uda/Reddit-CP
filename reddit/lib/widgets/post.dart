@@ -1,14 +1,24 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/comments.dart';
+import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
+import 'package:reddit/widgets/Moderator/modal_for_remals.dart';
 import 'package:reddit/widgets/comments_desktop.dart';
+import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
 import 'package:reddit/widgets/share_post.dart';
@@ -25,6 +35,8 @@ import 'package:reddit/widgets/add_text_share.dart';
 
 typedef OnSaveChanged = void Function(bool isSaved);
 typedef OnlockChanged = void Function(bool isLocked);
+typedef OnEditChanged = void Function(String description);
+typedef OnDeleteChanged = void Function(bool delete);
 typedef OnPollVote = void Function(String id, int index, String username);
 String formatDateTime(String dateTimeString) {
   final DateTime now = DateTime.now();
@@ -58,7 +70,7 @@ class Post extends StatefulWidget {
   // final String? profileImageUrl;
   final String name;
   final String title;
-  final String? postContent;
+  String? postContent;
   final String date;
   int likes;
   final int commentsCount;
@@ -71,7 +83,13 @@ class Post extends StatefulWidget {
   final String communityName;
   bool isLocked;
   final int vote;
+  final bool isPostMod;
   bool isSaved;
+  ModeratorDetails? moderatorDetails;
+  bool deleted;
+  OnClearDelete? onclearDelete;
+  OnClearEdit? onclearEdit;
+  OnLock? onLock;
   String? pollVote;
 
   Post(
@@ -84,15 +102,21 @@ class Post extends StatefulWidget {
       required this.date,
       required this.likes,
       required this.commentsCount,
+      required this.deleted,
+      this.onclearDelete,
+      this.onclearEdit,
       this.imageUrl,
       this.linkUrl,
       this.videoUrl,
       this.poll,
-      required this.pollExpired,
+      this.pollExpired,
       required this.communityName,
       required this.isLocked,
       required this.vote,
+      this.isPostMod = false,
       required this.isSaved,
+      this.moderatorDetails,
+      this.onLock,
       required this.pollVote});
 
   @override
@@ -105,6 +129,9 @@ class PostState extends State<Post> {
   CommunityService communityService = GetIt.instance.get<CommunityService>();
   UserController userController = GetIt.instance.get<UserController>();
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  bool spammedFlag = false;
+  bool approvedFlag = false;
+  bool removedPost = false;
 
   ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
@@ -117,8 +144,22 @@ class PostState extends State<Post> {
   bool ishovering = false;
   Color? upVoteColor;
   Color? downVoteColor;
+  String? editPostContent;
 
   // bool isMyPost = postService.isMyPost(widget.postId!, username);
+
+  void handleEditChanged(String postcontent) {
+    setState(() {
+      widget.postContent = postcontent;
+      widget.onclearEdit!(widget.id, postcontent);
+    });
+  }
+
+  void handledeleteChanged(bool delete) {
+    setState(() {
+      widget.onclearDelete!(widget.id);
+    });
+  }
 
   void incrementCounter() {
     setState(() {
@@ -167,8 +208,10 @@ class PostState extends State<Post> {
 
   @override
   void initState() {
+    spammedFlag = widget.moderatorDetails?.spammedFlag ?? false;
+    approvedFlag = widget.moderatorDetails?.approvedFlag ?? false;
+    removedPost = widget.moderatorDetails?.removedFlag ?? false;
     super.initState();
-
     if (widget.vote == 1) {
       upVote = true;
     } else if (widget.vote == -1) {
@@ -186,8 +229,17 @@ class PostState extends State<Post> {
     }
 
     void _handleLockChanged(bool newValue) {
+      widget.onLock!(widget.id, newValue);
       setState(() {
         widget.isLocked = newValue;
+      });
+    }
+
+    void moderatorHandleLock() async {
+      var postLockController = context.read<LockPost>();
+      postLockController.lockPost(widget.id);
+      setState(() {
+        widget.isLocked = !widget.isLocked;
       });
     }
 
@@ -222,8 +274,10 @@ class PostState extends State<Post> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  CommentsDesktop(postId: widget.id), // pass the post ID here
+              builder: (context) => CommentsDesktop(
+                postId: widget.id,
+                isModInComment: widget.isPostMod,
+              ), // pass the post ID here
             ),
           ),
         },
@@ -317,12 +371,34 @@ class PostState extends State<Post> {
                         alignment: Alignment.centerLeft,
                         child: (widget.communityName != "")
                             ? InkWell(
-                                onTap: () {
+                                onTap: () async {
                                   //TODO: go to community
+                                  await userController.getUserModerated();
+                                  print("nav");
+                                  print(
+                                      userController.userModeratedCommunities);
                                   bool isMod = userController
-                                      .userAbout!.moderatedCommunities!
-                                      .any((element) =>
-                                          element.name == widget.communityName);
+                                      .userModeratedCommunities!
+                                      .any((comm) =>
+                                          comm.name == widget.communityName);
+                                  var moderatorProvider =
+                                      context.read<ModeratorProvider>();
+                                  if (isMod) {
+                                    await moderatorProvider.getModAccess(
+                                        userController.userAbout!.username,
+                                        widget.communityName);
+                                  } else {
+                                    moderatorProvider
+                                            .moderatorController.modAccess =
+                                        ModeratorItem(
+                                            everything: false,
+                                            managePostsAndComments: false,
+                                            manageSettings: false,
+                                            manageUsers: false,
+                                            username: userController
+                                                .userAbout!.username);
+                                  }
+                                  //IS MOD HENA.
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => (CommunityLayout(
                                             desktopLayout: DesktopCommunityPage(
@@ -478,7 +554,7 @@ class PostState extends State<Post> {
                   ],
                 ),
                 trailing: SizedBox(
-                  width: 75,
+                  width: 100,
                   child: Row(
                     children: [
                       if (widget.isLocked == true)
@@ -486,6 +562,24 @@ class PostState extends State<Post> {
                           Icons.lock,
                           color: Colors.amberAccent[700],
                         ),
+                      (widget.isPostMod)
+                          ? (spammedFlag)
+                              ? Icon(
+                                  Icons.free_cancellation_outlined,
+                                  color: Colors.red[800],
+                                )
+                              : (approvedFlag)
+                                  ? Icon(
+                                      Icons.check,
+                                      color: Colors.green[600],
+                                    )
+                                  : (removedPost)
+                                      ? Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.red[800],
+                                        )
+                                      : const SizedBox()
+                          : const SizedBox(),
                       Align(
                         alignment: Alignment.centerRight,
                         child: (userController.userAbout != null)
@@ -497,6 +591,8 @@ class PostState extends State<Post> {
                                 username: widget.name,
                                 onSaveChanged: _handleSaveChanged,
                                 onLockChanged: _handleLockChanged,
+                                onEditChanged: handleEditChanged,
+                                onDeleteChanged: handledeleteChanged,
                               )
                             : Container(),
                       ),
@@ -680,8 +776,9 @@ class PostState extends State<Post> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => CommentsDesktop(
-                                      postId:
-                                          widget.id), // pass the post ID here
+                                    postId: widget.id,
+                                    isModInComment: widget.isPostMod,
+                                  ), // pass the post ID here
                                 ),
                               );
                             },
@@ -919,6 +1016,83 @@ class PostState extends State<Post> {
                         ),
                       ),
                     ),
+                    widget.isPostMod ? Spacer() : const SizedBox(),
+                    widget.isPostMod
+                        ? ElevatedButton.icon(
+                            onPressed: () async {
+                              var objection =
+                                  context.read<handleObjectionProvider>();
+                              showOptions(
+                                communityName: widget.communityName,
+                                context: context,
+                                isApproved: approvedFlag ?? false,
+                                isRemoved: removedPost ?? false,
+                                lockComments: widget.isLocked ?? false,
+                                removedAsSpam: spammedFlag ?? false,
+                                handleLock: (lock) {
+                                  moderatorHandleLock();
+                                },
+                                handleRemoveAsSpam: () async {
+                                  await objection.objectItem(
+                                      id: widget.id,
+                                      itemType: "post",
+                                      objectionType: "spammed",
+                                      communityName: widget.communityName);
+                                  setState(() {
+                                    spammedFlag = true;
+                                    approvedFlag = false;
+                                    removedPost = false;
+                                  });
+                                },
+                                handleApprove: () async {
+                                  var queuesProvider =
+                                      context.read<handleUnmoderatedProvider>();
+                                  await queuesProvider.handleUnmoderated(
+                                    objectionType: "unmoderated",
+                                    itemType: 'post',
+                                    action: 'approve',
+                                    communityName: widget.communityName,
+                                    itemID: widget.id,
+                                  );
+                                  setState(() {
+                                    approvedFlag = true;
+                                    spammedFlag = false;
+                                    removedPost = false;
+                                  });
+                                },
+                                handleRemovePost: (removalReaosnTitle) async {
+                                  var umoderated =
+                                      context.read<handleUnmoderatedProvider>();
+                                  await umoderated.handleUnmoderated(
+                                    objectionType: "unmoderated",
+                                    itemType: 'post',
+                                    action: 'remove',
+                                    communityName: widget.communityName,
+                                    itemID: widget.id,
+                                  );
+
+                                  setState(() {
+                                    approvedFlag = false;
+                                    spammedFlag = false;
+                                    removedPost = true;
+                                  });
+                                },
+                              );
+                            },
+                            icon: Icon(
+                              Icons.shield_outlined,
+                              color: Colors.black,
+                            ),
+                            label: SizedBox(),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                            ),
+                          )
+                        : const SizedBox(),
                   ],
                 ),
               ),
@@ -928,4 +1102,112 @@ class PostState extends State<Post> {
       ),
     );
   }
+}
+
+void showOptions({
+  required BuildContext context,
+  bool isApproved = false,
+  bool isRemoved = false,
+  bool removedAsSpam = false,
+  bool lockComments = false,
+  required String communityName,
+  required final Function(bool lock) handleLock,
+  required final Function() handleRemoveAsSpam,
+  required final Function() handleApprove,
+  required final Function(String title) handleRemovePost,
+}) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(
+                Icons.check,
+                color: isApproved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Approve post',
+                style:
+                    TextStyle(color: isApproved ? Colors.grey : Colors.black),
+              ),
+              onTap: isApproved
+                  ? null
+                  : () {
+                      //approve
+                      handleApprove();
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.xmark,
+                color: isRemoved ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove post',
+                style: TextStyle(color: isRemoved ? Colors.grey : Colors.black),
+              ),
+              onTap: isRemoved
+                  ? null
+                  : () async {
+                      //remove
+                      await showModalBottomSheet(
+                        backgroundColor: Colors.white,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return ModalForReasons(
+                            handleRemove: (value) {
+                              handleRemovePost(value);
+                              print("TITLE");
+                              print(value);
+                            },
+                            communityName: "badrmoderatorrrr",
+                          );
+                        },
+                      );
+                      Navigator.of(context).pop();
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                Icons.free_cancellation_outlined,
+                color: removedAsSpam ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                'Remove as spam',
+                style: TextStyle(
+                    color: removedAsSpam ? Colors.grey : Colors.black),
+              ),
+              onTap: removedAsSpam
+                  ? null
+                  : () {
+                      handleRemoveAsSpam();
+                      Navigator.of(context).pop();
+                      //as spam
+                    },
+            ),
+            ListTile(
+              leading: Icon(
+                CupertinoIcons.lock,
+                color: lockComments ? Colors.grey : Colors.black,
+              ),
+              title: Text(
+                lockComments ? 'Unlock comments' : 'Lock Comments',
+              ),
+              onTap: () {
+                //lock comments
+                handleLock(!lockComments);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }
