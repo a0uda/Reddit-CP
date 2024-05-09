@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/account_settings_item.dart';
 import 'package:reddit/widgets/custom_settings_tile.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,7 +18,9 @@ class _GenderTileState extends State<GenderTile> {
     final UserController userController = GetIt.instance.get<UserController>();
     final AccountSettingsController accountSettingsController =
         context.read<AccountSettingsController>();
-    String gender = userController.userAbout!.gender!;
+    Future<AccountSettings>? accountSettings =
+        userController.getAccountSettings(userController.userAbout!.username);
+    String gender = userController.accountSettings!.gender;
     return Consumer<AccountSettingsController>(
         builder: (context, accountSettingsController, child) {
       return CustomSettingsTile(
@@ -64,6 +67,8 @@ class _GenderTileState extends State<GenderTile> {
                           await accountSettingsController.changeGender(gender);
                       if (changed) {
                         setState(() {
+                          accountSettings = userController.getAccountSettings(
+                              userController.userAbout!.username);
                           gender = value;
                         });
                       }
@@ -83,6 +88,8 @@ class _GenderTileState extends State<GenderTile> {
                             .changeGender(gender);
                         if (changed) {
                           setState(() {
+                            accountSettings = userController.getAccountSettings(
+                                userController.userAbout!.username);
                             gender = value;
                           });
                         }
@@ -101,6 +108,8 @@ class _GenderTileState extends State<GenderTile> {
                             .changeGender(gender);
                         if (changed) {
                           setState(() {
+                            accountSettings = userController.getAccountSettings(
+                                userController.userAbout!.username);
                             gender = value;
                           });
                         }
