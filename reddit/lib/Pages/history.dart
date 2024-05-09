@@ -113,21 +113,21 @@ class HistoryScreen extends State<History> {
             if (posts[index].isRemoved == false) {
               if (posts[index].isReposted) {
                 return Repost(
-                    deleted: posts[index].isRemoved,
-                    description: posts[index].description,
-                    id: posts[index].id,
-                    name: posts[index].username,
-                    title: posts[index].title,
-                    originalID: posts[index].originalPostID,
-                    date: posts[index].createdAt.toString(),
-                    likes:
-                        posts[index].upvotesCount - posts[index].downvotesCount,
-                    commentsCount: posts[index].commentsCount,
-                    communityName: posts[index].communityName,
-                    isLocked: posts[index].lockedFlag,
-                    vote: posts[index].vote,
-                    isSaved: posts[index].isSaved ?? false,
-                    );
+                  deleted: posts[index].isRemoved,
+                  description: posts[index].description,
+                  id: posts[index].id,
+                  name: posts[index].username,
+                  title: posts[index].title,
+                  originalID: posts[index].originalPostID,
+                  date: posts[index].createdAt.toString(),
+                  likes:
+                      posts[index].upvotesCount - posts[index].downvotesCount,
+                  commentsCount: posts[index].commentsCount,
+                  communityName: posts[index].communityName,
+                  isLocked: posts[index].lockedFlag,
+                  vote: posts[index].vote,
+                  isSaved: posts[index].isSaved ?? false,
+                );
               }
               if (posts[index].nsfwFlag == true ||
                   posts[index].spoilerFlag == true) {
@@ -161,6 +161,8 @@ class HistoryScreen extends State<History> {
                 communityName: posts[index].communityName,
                 isLocked: posts[index].lockedFlag,
                 isSaved: posts[index].isSaved! ?? false,
+                pollExpired: posts[index].pollExpired!,
+                pollVote: posts[index].pollVote!,
               );
             }
           }
