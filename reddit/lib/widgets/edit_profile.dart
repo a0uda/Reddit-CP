@@ -36,12 +36,11 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   late bool activeCommunity;
   late bool contentVisibility;
   bool _dataFetched = false;
-  bool testing = false;
+  bool testing = true;
 
   @override
   void initState() {
     super.initState();
-    testing = const bool.fromEnvironment('testing');
     nameController = TextEditingController(
         text: userController.userAbout?.displayName ?? '');
     aboutController =

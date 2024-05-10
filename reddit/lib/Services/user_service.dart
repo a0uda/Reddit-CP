@@ -22,7 +22,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:google_sign_in/google_sign_in.dart';
 
-bool testing = const bool.fromEnvironment('testing');
+bool testing = true;
 
 class UserService {
   void addUser() {
@@ -188,12 +188,6 @@ class UserService {
       List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
-      List<BlockedUsersItem> blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      followers.removeWhere((element) => blockedUsers
-          .any((blockedUser) => blockedUser.username == element.username));
       return followers.length;
     } else {
       // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -221,12 +215,6 @@ class UserService {
       List<FollowersFollowingItem> followers = users
           .firstWhere((element) => element.userAbout.username == username)
           .followers!;
-      List<BlockedUsersItem> blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      followers.removeWhere((element) => blockedUsers
-          .any((blockedUser) => blockedUser.username == element.username));
       return followers;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -258,12 +246,6 @@ class UserService {
       List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
-      List<BlockedUsersItem> blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      following.removeWhere((element) => blockedUsers
-          .any((blockedUser) => blockedUser.username == element.username));
       return following.length;
     } else {
       // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -291,12 +273,10 @@ class UserService {
       List<FollowersFollowingItem> following = users
           .firstWhere((element) => element.userAbout.username == username)
           .following!;
-      List<BlockedUsersItem> blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      following.removeWhere((element) => blockedUsers
-          .any((blockedUser) => blockedUser.username == element.username));
+      print('following in userService');
+      for (var user in following) {
+        print(user.username);
+      }
       return following;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();

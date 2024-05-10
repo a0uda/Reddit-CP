@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../test_files/test_posts.dart';
 
-bool testing = const bool.fromEnvironment('testing');
+bool testing =  true;
 
 class CommentsService {
   Future<List<Comments>> getCommentByPostId(String postId) async {

@@ -49,50 +49,5 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Signed up successfully!'), findsOneWidget);
     });
-
-    // testWidgets('Incorrect Username', (WidgetTester tester) async {
-    //   await tester.pumpWidget(const MaterialApp(home: LoginPage()));
-
-    //   await tester.enterText(find.byType(TextField).first, 'Purple');
-    //   await tester.enterText(find.byType(TextField).last, 'rawan1234');
-
-    //   await tester.pumpAndSettle();
-
-    //   final continueButtonFinder = find.text('Continue');
-
-    //   expect(continueButtonFinder, findsOneWidget);
-
-    //   await tester.ensureVisible(continueButtonFinder);
-
-    //   await tester.pump();
-
-    //   await tester.tap(continueButtonFinder);
-
-    //   await tester.pumpAndSettle();
-
-    //   expect(find.text('Incorrect username or password'), findsOneWidget);
-    // });
-    // testWidgets('Incorrect Password', (WidgetTester tester) async {
-    //   await tester.pumpWidget(const MaterialApp(home: LoginPage()));
-
-    //   await tester.enterText(find.byType(TextField).first, 'Purple-7544');
-    //   await tester.enterText(find.byType(TextField).last, 'rawan');
-
-    //   await tester.pumpAndSettle();
-
-    //   final continueButtonFinder = find.text('Continue');
-
-    //   expect(continueButtonFinder, findsOneWidget);
-
-    //   await tester.ensureVisible(continueButtonFinder);
-
-    //   await tester.pump();
-
-    //   await tester.tap(continueButtonFinder);
-
-    //   await tester.pumpAndSettle();
-
-    //   expect(find.text('Incorrect username or password'), findsOneWidget);
-    // });
   });
 }

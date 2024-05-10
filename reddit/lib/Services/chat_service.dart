@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
 
 
-bool testing = const bool.fromEnvironment('testing');
+bool testing = true;
 
 class ChatsService {
 
