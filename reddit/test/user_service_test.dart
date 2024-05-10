@@ -420,5 +420,67 @@ void main() {
 
       expect(userSocialLinks!.any((element) => element.id == id), false);
     });
+    test('removeBannerPicture removes the banner picture of a user', () async {
+      var username = 'jane123';
+
+      await userService.removeBannerPicture(username);
+
+      var userAbout = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout;
+
+      expect(userAbout.bannerPicture, null);
+    });
+    test('removeProfilePicture removes the profile picture of a user',
+        () async {
+      var username = 'jane123';
+
+      await userService.removeProfilePicture(username);
+
+      var userAbout = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout;
+
+      expect(userAbout.profilePicture, null);
+    });
+    test('editSocialLink edits a social link of a user', () async {
+      var username = 'jane123';
+      var id = '0';
+      var displayText = 'new_display_text';
+      var customUrl = 'new_custom_url';
+
+      await userService.editSocialLink(username, id, displayText, customUrl);
+
+      var socialLink = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks!
+          .firstWhere((element) => element.id == id);
+
+      expect(socialLink.displayText, displayText);
+      expect(socialLink.username, displayText);
+      expect(socialLink.customUrl, customUrl);
+    });
+    test(
+        'getMessages returns the messages of a user excluding messages from blocked users',
+        () async {
+      var username = 'jane123';
+
+      var messages = await userService.getMessages(username);
+
+      var expectedMessages = List.from(users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages!);
+      var blockedUsers = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .safetySettings!
+          .blockedUsers;
+      expectedMessages.removeWhere((element) => blockedUsers.any(
+          (blockedUser) =>
+              blockedUser.username == element.senderUsername ||
+              blockedUser.username == element.receiverUsername));
+
+      expect(messages, expectedMessages);
+    });
   });
 }
