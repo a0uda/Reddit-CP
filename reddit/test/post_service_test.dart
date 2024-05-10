@@ -1,14 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
-import 'package:reddit/Models/followers_following_item.dart';
-import 'package:reddit/Models/image_item.dart';
-import 'package:reddit/Models/poll_item.dart';
-import 'package:reddit/Models/post_item.dart';
-import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
-import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/test_files/test_posts.dart';
 import 'package:reddit/test_files/test_users.dart';
 
