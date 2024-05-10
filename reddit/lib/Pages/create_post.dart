@@ -27,6 +27,11 @@ import '../Models/video_item.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
+TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
+  TextEditingController URLController = TextEditingController();
+  TextEditingController questionController = TextEditingController();
+
 class CreatePost extends StatefulWidget {
   final String? currentCommunity;
   final String? communityName;
@@ -216,11 +221,7 @@ class _CreatePostState extends State<CreatePost> {
     }
   }
 
-  TextEditingController titleController = TextEditingController();
-  TextEditingController bodyController = TextEditingController();
-  // ignore: non_constant_identifier_names
-  TextEditingController URLController = TextEditingController();
-  TextEditingController questionController = TextEditingController();
+  
   final List<bool> _selections = List.generate(2, (index) => false);
   bool showLinkField = false;
   String type = 'text';

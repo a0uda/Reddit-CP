@@ -128,6 +128,7 @@ class PostService {
     return 200;
   }
 
+
   List<PostItem> fetchPosts() {
     if (testing) {
       return posts;
