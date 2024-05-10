@@ -357,5 +357,55 @@ void main() {
 
       expect(profileSettings, expectedProfileSettings);
     });
+    test('getActiveCommunities returns the active communities of a user',
+        () async {
+      var username = 'jane123';
+
+      var activeCommunitiesResult =
+          await userService.getActiveCommunities(username);
+
+      var expectedActiveCommunities = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .activecommunities;
+      var expectedShowActiveCommunities = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .profileSettings!
+          .activeCommunity;
+
+      expect(
+          activeCommunitiesResult.activeCommunities, expectedActiveCommunities);
+      expect(activeCommunitiesResult.showActiveCommunities,
+          expectedShowActiveCommunities);
+    });
+    test('markAllMessagesRead marks all messages of a user as read', () async {
+      var username = 'jane123';
+
+      await userService.markAllMessagesRead(username);
+
+      var userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+
+      for (var msg in userMessages!) {
+        expect(msg.unreadFlag, false);
+      }
+    });
+    test('markoneMessageRead marks a specific message of a user read',
+        () async {
+      var username = 'jane123';
+      var msgId = ['1'];
+
+      await userService.markoneMessageRead(username, msgId);
+
+      var userMessages = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .usermessages;
+
+      for (var msg in userMessages!) {
+        if (msgId.contains(msg.id)) {
+          expect(msg.unreadFlag, false);
+        }
+      }
+    });
   });
 }
