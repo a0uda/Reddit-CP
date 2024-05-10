@@ -33,8 +33,7 @@ final List<UserItem> users = [
           username: 'rawan_adel165',
           displayText: 'rawan_adel165',
           type: 'instagram',
-          customUrl:
-              "https://redditech.me/backend/users/signup-google",
+          customUrl: "https://redditech.me/backend/users/signup-google",
         ),
         SocialLlinkItem(
           id: '1',
@@ -230,7 +229,7 @@ final List<UserItem> users = [
     usermessages: List.from(userMessages[1]),
   ),
   UserItem(
-    savedCommentsIds: [],
+    savedCommentsIds: ['comment1'],
     userAbout: UserAbout(
       id: '2',
       createdAt: '5 March 2024',
@@ -362,12 +361,12 @@ final List<UserItem> users = [
   ),
 ];
 
-
-List <ActiveCommunities> communities=[
+List<ActiveCommunities> communities = [
   ActiveCommunities(
     id: '0',
     name: 'Flutter',
-    description: 'Flutter is Google’s UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.',
+    description:
+        'Flutter is Google’s UI toolkit for building natively compiled applications for mobile, web, and desktop from a single codebase.',
     title: 'Flutter',
     profilePicture: 'images/Greddit.png',
     bannerPicture: 'images/Greddit.png',
@@ -376,7 +375,8 @@ List <ActiveCommunities> communities=[
   ActiveCommunities(
     id: '1',
     name: 'Dart',
-    description: 'Dart is a client-optimized language for fast apps on any platform',
+    description:
+        'Dart is a client-optimized language for fast apps on any platform',
     title: 'Dart',
     profilePicture: 'images/Greddit.png',
     bannerPicture: 'images/Greddit.png',
@@ -385,7 +385,8 @@ List <ActiveCommunities> communities=[
   ActiveCommunities(
     id: '2',
     name: 'Firebase',
-    description: 'Firebase is a platform developed by Google for creating mobile and web applications.',
+    description:
+        'Firebase is a platform developed by Google for creating mobile and web applications.',
     title: 'Firebase',
     profilePicture: 'images/Greddit.png',
     bannerPicture: 'images/Greddit.png',
@@ -394,7 +395,8 @@ List <ActiveCommunities> communities=[
   ActiveCommunities(
     id: '3',
     name: 'Android',
-    description: 'Android is a mobile operating system based on a modified version of the Linux kernel and other open source software.',
+    description:
+        'Android is a mobile operating system based on a modified version of the Linux kernel and other open source software.',
     title: 'Android',
     profilePicture: 'images/Greddit.png',
     bannerPicture: 'images/Greddit.png',
