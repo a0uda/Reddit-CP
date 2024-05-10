@@ -39,6 +39,7 @@ class CreatePost extends StatefulWidget {
 
   @override
   State<CreatePost> createState() => _CreatePostState();
+
 }
 
 class _CreatePostState extends State<CreatePost> {
@@ -173,13 +174,6 @@ class _CreatePostState extends State<CreatePost> {
     super.initState();
     fetchUserCommunities();
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   _videoPlayerController?.dispose();
-  // }
-
   Future<void> _pickVideo() async {
     final pickedFile =
         await ImagePicker().pickVideo(source: ImageSource.gallery);
@@ -654,12 +648,6 @@ class _CreatePostState extends State<CreatePost> {
                                         ),
                                       ),
                                     ]),
-                                    // TextField(
-                                    //   controller: questionController,
-                                    //   onChanged: (value) => question = value,
-                                    //   decoration: const InputDecoration(
-                                    //       labelText: 'Question'),
-                                    // ),
                                     TextField(
                                       onChanged: (value) => options[0] = value,
                                       decoration: const InputDecoration(
