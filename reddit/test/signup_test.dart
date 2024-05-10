@@ -49,5 +49,191 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Signed up successfully!'), findsOneWidget);
     });
+    testWidgets('Navigate to Login Page', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      final signupButtonFinder = find.text('Log In');
+
+      expect(signupButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(signupButtonFinder);
+
+      await tester.tap(signupButtonFinder);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LoginPage), findsOneWidget);
+    });
+
+    testWidgets('InValid Email, valid Username,valid Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'abdullah');
+      await tester.enterText(passwordField, 'abdullah1234');
+      await tester.enterText(emailField, 'abdullah');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Enter a valid email'), findsOneWidget);
+    });
+
+    testWidgets('Valid Email, valid Username,InValid Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'abdullah');
+      await tester.enterText(passwordField, '1234');
+      await tester.enterText(emailField, 'abdullah@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Password must be at least 8 characters long'),
+          findsOneWidget);
+    });
+    testWidgets('Existing Email, Valid Username,Valid Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'rawan');
+      await tester.enterText(passwordField, '12345678');
+      await tester.enterText(emailField, 'rawan7544@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Email already exists'), findsOneWidget);
+    });
+
+    testWidgets('empty field Email, Valid Username,Valid Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'rawan');
+      await tester.enterText(passwordField, '12345678');
+      await tester.enterText(emailField, '');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Email is required'), findsOneWidget);
+    });
+    testWidgets('valid Email, empty field Username,Valid Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, '');
+      await tester.enterText(passwordField, '12345678');
+      await tester.enterText(emailField, 'r@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Username is required'), findsOneWidget);
+    });
+    testWidgets('valid Email, valid Username,empty field Password',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'roro');
+      await tester.enterText(passwordField, '');
+      await tester.enterText(emailField, 'r@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Password is required'), findsOneWidget);
+    });
+    testWidgets('username same as password', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'roro1234');
+      await tester.enterText(passwordField, 'roro1234');
+      await tester.enterText(emailField, 'r@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Username cannot be same as password'), findsOneWidget);
+    });
+
+    testWidgets('Existing username', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: SignUpPage()));
+
+      var usernameField = find.byKey(Key('UsernameField'));
+      var passwordField = find.byKey(Key('PasswordField'));
+      var emailField = find.byKey(Key('EmailField'));
+      var maleRadioField = find.byKey(Key('MaleRadio'));
+
+      await tester.enterText(usernameField, 'Purple-7544');
+      await tester.enterText(passwordField, '12345678');
+      await tester.enterText(emailField, 'r@gmail.com');
+      await tester.tap(maleRadioField);
+      final continueButtonFinder = find.byKey(Key('Continue'));
+      expect(continueButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(continueButtonFinder);
+      await tester.tap(continueButtonFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('Username already exists'), findsOneWidget);
+    });
   });
 }

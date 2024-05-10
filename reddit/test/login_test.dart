@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/Pages/sign_up.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Pages/forgot_password.dart';
+import 'package:reddit/Pages/forgot_username.dart';
+import 'package:reddit/widgets/responsive_layout.dart';
 
 void main() {
   setUp(() {
@@ -85,6 +89,54 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Incorrect username or password'), findsOneWidget);
+    });
+
+    testWidgets('Navigate to Forgot Username Page',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+
+      final forgetUsernameFinder = find.text('Forgot Username?');
+
+      expect(forgetUsernameFinder, findsOneWidget);
+
+      await tester.ensureVisible(forgetUsernameFinder);
+
+      await tester.tap(forgetUsernameFinder);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ForgotUsernamePage), findsOneWidget);
+    });
+
+    testWidgets('Navigate to Forgot Password Page',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+
+      final forgetUsernameFinder = find.text('Forgot Password?');
+
+      expect(forgetUsernameFinder, findsOneWidget);
+
+      await tester.ensureVisible(forgetUsernameFinder);
+
+      await tester.tap(forgetUsernameFinder);
+
+      await tester.pumpAndSettle();
+      expect(find.byType(ForgotPasswordPage), findsOneWidget);
+    });
+    testWidgets('Navigate to Signup Page', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: LoginPage()));
+
+      final signupButtonFinder = find.text('Sign Up');
+
+      expect(signupButtonFinder, findsOneWidget);
+
+      await tester.ensureVisible(signupButtonFinder);
+
+      await tester.tap(signupButtonFinder);
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SignUpPage), findsOneWidget);
     });
   });
 }
