@@ -13,6 +13,7 @@ class ProfileHeaderLeftSide extends StatelessWidget {
   final userService = GetIt.instance.get<UserService>();
   UserAbout userData;
   final String userType;
+  bool testing = true;
 
   ProfileHeaderLeftSide(this.userData, this.userType, {super.key});
 
@@ -34,7 +35,8 @@ class ProfileHeaderLeftSide extends StatelessWidget {
               userData = userController.userAbout!;
             }
             return userData.profilePicture == null ||
-                    userData.profilePicture == ''
+                    userData.profilePicture == '' ||
+                    testing
                 ? const CircleAvatar(
                     radius: 50,
                     backgroundImage: AssetImage('images/Greddit.png'),

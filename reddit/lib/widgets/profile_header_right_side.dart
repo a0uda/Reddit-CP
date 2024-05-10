@@ -95,9 +95,11 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                         .isEmpty) {
                       await followerFollowingController
                           .followUser(userData.username);
+                      print('3mlt follow');
                     } else {
                       await followerFollowingController
                           .unfollowUser(userData.username);
+                      print('3mlt unfollow');
                     }
                     setState(() {
                       _dataFetched = false;

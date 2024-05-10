@@ -144,20 +144,12 @@ class UserController {
   }
 
   Future<List<FollowersFollowingItem>> getFollowers(String username) async {
-    print('getting followers');
     followers = await userService.getFollowers(username);
-    for (var item in followers!) {
-      print(item.username);
-    }
     return followers!;
   }
 
   Future<List<FollowersFollowingItem>> getFollowing(String username) async {
-    print('getting following');
     following = await userService.getFollowing(username);
-    for (var item in following!) {
-      print(item.username);
-    }
     return following!;
   }
 }
@@ -187,7 +179,6 @@ class SocialLinksController extends ChangeNotifier {
   final UserService userService = GetIt.instance.get<UserService>();
   final UserController userController = GetIt.instance.get<UserController>();
   List<SocialLlinkItem>? socialLinks = [];
-  bool testing = const bool.fromEnvironment('testing');
 
   void getSocialLinks() {
     socialLinks = userController.userAbout!.socialLinks;
@@ -278,14 +269,16 @@ class FollowerFollowingController extends ChangeNotifier {
 
   Future<void> followUser(String username) async {
     await userService.followUser(username, userController.userAbout!.username);
-    following = await userController.getFollowing(username);
+    following = await userController.getFollowing(userController.userAbout!.username);
+    followers = await userController.getFollowers(userController.userAbout!.username);
     notifyListeners();
   }
 
   Future<void> unfollowUser(String username) async {
     await userService.unfollowUser(
         username, userController.userAbout!.username);
-    following = await userController.getFollowing(username);
+    following = await userController.getFollowing(userController.userAbout!.username);
+    followers = await userController.getFollowers(userController.userAbout!.username);
     notifyListeners();
   }
 }

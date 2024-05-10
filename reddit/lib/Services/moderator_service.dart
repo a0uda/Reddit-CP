@@ -11,7 +11,7 @@ import 'package:reddit/widgets/Moderator/edit_scheduled_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-bool testing = const bool.fromEnvironment('testing');
+bool testing = true;
 
 class ModeratorMockService {
   Future<List<Map<String, dynamic>>> getScheduled(String community) async {

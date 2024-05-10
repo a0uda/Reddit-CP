@@ -152,10 +152,29 @@ class FollowerListState extends State<FollowerList> {
             .getFollowers(userController.userAbout!.username);
         following = await userController
             .getFollowing(userController.userAbout!.username);
+
+        print('in followers list');
+        print('dol following');
+        for (var user in followers!) {
+          print(user.username);
+        }
+        print('dol followers');
+        for (var user in following!) {
+          print(user.username);
+        }
       } else {
         followers = userController.followers;
         following = userController.following;
         _firstTime = true;
+         print('in followers list');
+        print('dol followers');
+        for (var user in followers!) {
+          print(user.username);
+        }
+        print('dol following');
+        for (var user in following!) {
+          print(user.username);
+        }
       }
     } else {
       followers = userController.followers!.where((follower) {

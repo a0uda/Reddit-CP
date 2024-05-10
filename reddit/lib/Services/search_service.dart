@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class SearchService {
-  bool testing = const bool.fromEnvironment('testing');
+  bool testing = true;
 
   Future<List<Map<String, dynamic>>> getSearchUsers(
       String searchWord, int pageNum) async {
