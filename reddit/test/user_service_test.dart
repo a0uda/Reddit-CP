@@ -407,5 +407,18 @@ void main() {
         }
       }
     });
+    test('deleteSocialLink deletes a social link of a user', () async {
+      var username = 'Purple-7544';
+      var id = '0';
+
+      await userService.deleteSocialLink(username, id);
+
+      var userSocialLinks = users
+          .firstWhere((element) => element.userAbout.username == username)
+          .userAbout
+          .socialLinks;
+
+      expect(userSocialLinks!.any((element) => element.id == id), false);
+    });
   });
 }
