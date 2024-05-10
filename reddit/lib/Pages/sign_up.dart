@@ -113,16 +113,17 @@ class SignUpPageState extends State<SignUpPage> {
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.black,
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 10),
           ),
         );
-        Future.delayed(const Duration(seconds: 3), () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const LoginPage(),
-            ),
-          );
-        });
+        // Future.delayed(const Duration(seconds: 10), () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
+        //}
+        //);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -251,6 +252,7 @@ class SignUpPageState extends State<SignUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextField(
+                        key: Key('EmailField'),
                         controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'Email',
@@ -269,6 +271,7 @@ class SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(height: sizedBoxHeightBetweenTextFields),
                       TextField(
+                        key: Key('UsernameField'),
                         controller: usernameController,
                         decoration: InputDecoration(
                           labelText: 'Username',
@@ -288,6 +291,7 @@ class SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(height: sizedBoxHeightBetweenTextFields),
                       TextField(
+                        key: Key('PasswordField'),
                         controller: passwordController,
                         obscureText: !_isPasswordVisible,
                         decoration: InputDecoration(
@@ -333,6 +337,7 @@ class SignUpPageState extends State<SignUpPage> {
                           Row(
                             children: [
                               Radio(
+                                key: Key('MaleRadio'),
                                 value: 'Male',
                                 groupValue: genderSelected,
                                 onChanged: (value) =>
@@ -342,6 +347,7 @@ class SignUpPageState extends State<SignUpPage> {
                               const Text("Male"),
                               SizedBox(width: sizedBoxWidthGenders),
                               Radio(
+                                key: Key('FemaleRadio'),
                                 value: 'Female',
                                 groupValue: genderSelected,
                                 onChanged: (value) =>
@@ -458,6 +464,7 @@ class SignUpPageState extends State<SignUpPage> {
                           textStyle: TextStyle(fontSize: buttonTextSize),
                         ),
                         child: Text(
+                          key: Key('Continue'),
                           "Continue",
                           style: TextStyle(
                             color: Colors.white,

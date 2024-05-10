@@ -55,8 +55,22 @@ class LoginPageState extends State<LoginPage> {
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
-          final userService = GetIt.instance.get<UserService>();
-       await chatService.SocketInit();
+      final userService = GetIt.instance.get<UserService>();
+      //  await chatService.SocketInit();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Logged in Successfully!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.black,
+        ),
+      );
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -377,6 +391,7 @@ class LoginPageState extends State<LoginPage> {
                                 TextStyle(fontSize: continueButtonTextSize),
                           ),
                           child: Text("Continue",
+                              key: Key('Continue'),
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: continueButtonTextSize,

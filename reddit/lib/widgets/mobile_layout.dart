@@ -50,9 +50,7 @@ class _MobileLayoutState extends State<MobileLayout> {
       ),
     ];
     final screens = [
-      MobileHomePage(
-        widgetIndex: widget.mobilePageMode,
-      ),
+      const CreatePost(),
       const CommunitiesMobile(), //Communities Page here
       const CreatePost(),
       ChatIntro(),

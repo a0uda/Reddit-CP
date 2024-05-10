@@ -36,10 +36,12 @@ class EditProfileScreenState extends State<EditProfileScreen> {
   late bool activeCommunity;
   late bool contentVisibility;
   bool _dataFetched = false;
+  bool testing = false;
 
   @override
   void initState() {
     super.initState();
+    testing = const bool.fromEnvironment('testing');
     nameController = TextEditingController(
         text: userController.userAbout?.displayName ?? '');
     aboutController =
@@ -273,7 +275,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                         alignment: Alignment.center,
                         children: [
                           _bannerimagepath != null &&
-                                  _bannerimagepath!.isNotEmpty
+                                  _bannerimagepath!.isNotEmpty &&
+                                  !testing
                               ? Image.network(
                                   _bannerimagepath!,
                                   fit: BoxFit.fill,
@@ -309,7 +312,8 @@ class EditProfileScreenState extends State<EditProfileScreen> {
                               width: 2, // Border width
                             ),
                             image: _profileImagePath != null &&
-                                    _profileImagePath!.isNotEmpty
+                                    _profileImagePath!.isNotEmpty &&
+                                    !testing
                                 ? DecorationImage(
                                     image: NetworkImage(_profileImagePath!),
                                     fit: BoxFit.cover,

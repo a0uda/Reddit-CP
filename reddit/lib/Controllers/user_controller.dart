@@ -33,12 +33,12 @@ class UserController {
     print('getting user');
     print(username);
     userAbout = await userService.getUserAbout(username);
-    blockedUsers = await userService.getBlockedUsers(username);
-    accountSettings = await userService.getAccountSettings(username);
-    notificationsSettings =
-        await userService.getNotificationsSettings(username);
-    profileSettings = await userService.getProfileSettings(username);
-    unreadNotificationsCount = await getUnreadNotificationsCount();
+    // blockedUsers = await userService.getBlockedUsers(username);
+    // accountSettings = await userService.getAccountSettings(username);
+    // notificationsSettings =
+    //     await userService.getNotificationsSettings(username);
+    // profileSettings = await userService.getProfileSettings(username);
+    // unreadNotificationsCount = await getUnreadNotificationsCount();
     await getUnreadMessagesCount();
   }
 

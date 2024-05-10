@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:reddit/Pages/home_page.dart';
 import 'package:reddit/Pages/login.dart';
+import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/Controllers/user_controller.dart';
-import 'package:reddit/widgets/mobile_layout.dart';
-import 'package:reddit/widgets/responsive_layout.dart';
 
 void main() {
   setUp(() {
@@ -15,11 +13,10 @@ void main() {
     GetIt.instance.registerLazySingleton<UserService>(() => UserService());
     GetIt.instance
         .registerLazySingleton<UserController>(() => UserController());
+    GetIt.instance.registerLazySingleton<ChatsService>(() => ChatsService());
   });
   tearDown(() {
-    GetIt.instance.unregister<PostService>();
-    GetIt.instance.unregister<UserService>();
-    GetIt.instance.unregister<UserController>();
+    GetIt.instance.reset();
   });
 
   group('Login Test', () {
@@ -42,10 +39,7 @@ void main() {
       await tester.tap(continueButtonFinder);
 
       await tester.pumpAndSettle();
-
-      // final homePageFinder = find.byType(ResponsiveLayout);
-      // expect(homePageFinder, findsOneWidget);
-      // await tester.ensureVisible(homePageFinder);
+      expect(find.text('Incorrect username or password'), findsNothing);
     });
 
     testWidgets('Incorrect Username', (WidgetTester tester) async {

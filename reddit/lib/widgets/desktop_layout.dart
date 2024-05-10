@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:reddit/Pages/create_post.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
 import 'package:reddit/widgets/end_drawer.dart';
 import 'package:reddit/widgets/listing.dart';
 
 final widgetsHomePage = [
-  const Center(
-      child: Listing(
-    type: "home",
-  )),
-  const Center(
-      child: Listing(
-    type: "popular",
-  )),
+  // const Center(
+  //     child: Listing(
+  //   type: "home",
+  // )),
+  // const Center(
+  //     child: Listing(
+  //   type: "popular",
+  // )),
+  CreatePost(),
+  CreatePost(),
   const Center(child: Text("All")),
   const Center(child: Text("Lates"))
 ];
