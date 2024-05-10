@@ -331,7 +331,7 @@ class PostService {
     }
   }
 
-  List<PostItem> getPostsById(int id) {
+  List<PostItem> getPostsById(String id) {
     if (testing) {
       var filteredPosts = posts.where((post) => post.id == id).toList();
       return filteredPosts;

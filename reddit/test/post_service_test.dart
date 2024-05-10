@@ -1,15 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
-import 'package:reddit/Models/followers_following_item.dart';
-import 'package:reddit/Models/image_item.dart';
-import 'package:reddit/Models/poll_item.dart';
-import 'package:reddit/Models/post_item.dart';
-import 'package:reddit/Models/video_item.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
-import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/test_files/test_posts.dart';
+import 'package:reddit/test_files/test_users.dart';
 
 import 'notification_test.dart';
 
@@ -53,8 +47,6 @@ void main() {
       expect(posts.length, expectedPostCount);
     });
 
-    
-
     test('test_addPost_handlesImagePost', () async {
       // Arrange
       final expectedPostCount = posts.length + 1;
@@ -83,40 +75,114 @@ void main() {
       expect(posts.length, expectedPostCount);
       expect(posts.last.type, 'image');
     });
-  });
 
-  group('PostService', () {
-    late PostService postService;
-    late MockUserService mockUserService;
-    late MockClient mockClient;
+    test('getMyPosts returns posts for the given username', () async {
+      final username = users[1].userAbout.username;
+      final page = 1;
 
-    setUp(() {
-      GetIt.instance.registerSingleton<UserService>(MockUserService());
-      mockUserService = GetIt.instance<UserService>() as MockUserService;
-      mockClient = MockClient();
-      postService = PostService();
+      final posts = await postService.getMyPosts(username, page);
+
+      expect(posts, isNotEmpty);
+      expect(posts.every((post) => post.username == username), isTrue);
     });
 
-    // test('test_getPosts_withTestingTrue', () async {
-    //   // Arrange
-    //   final followers = [
-    //     FollowersFollowingItem(username: 'user1'),
-    //     FollowersFollowingItem(username: 'user2')
-    //   ];
-    //   when(mockUserService.getFollowers('testUser'))
-    //       .thenAnswer((_) async => followers);
+    test('getPostsById returns posts for the given id', () {
+      final id = "1";
 
-    //   // Act
-    //   final result = await postService.getPosts('testUser', 'best', 1);
+      final posts = postService.getPostsById(id);
 
-    //   // Assert
-    //   expect(result, isA<List<PostItem>>());
-    //   expect(result.length, 2);
-    //   expect(result[0].username, 'user1');
-    //   expect(result[1].username, 'user2');
-    // });
+      expect(posts, isNotEmpty);
+      expect(posts.every((post) => post.id == id), isTrue);
+    });
 
-    
-   
+    test('getPopularPosts returns popular posts', () {
+      final posts = postService.getPopularPosts();
+
+      expect(posts, isNotEmpty);
+      expect(posts, equals(popularPosts));
+    });
+test('upVote increases upvotesCount for the given post id', () async {
+      final id = '1';
+
+      final initialUpvotesCount = posts.firstWhere((post) => post.id == id).upvotesCount;
+
+      await postService.upVote(id);
+
+      final updatedUpvotesCount = posts.firstWhere((post) => post.id == id).upvotesCount;
+
+      expect(updatedUpvotesCount, equals(initialUpvotesCount + 1));
+    });
+
+    test('downVote increases downvotesCount for the given post id', () async {
+      final id = '1';
+
+      final initialDownvotesCount = posts.firstWhere((post) => post.id == id).downvotesCount;
+
+      await postService.downVote(id);
+
+      final updatedDownvotesCount = posts.firstWhere((post) => post.id == id).downvotesCount;
+
+      expect(updatedDownvotesCount, equals(initialDownvotesCount + 1));
+    });
+test('submitReport adds a report for the given post id and reason', () async {
+      final id = 'testId';
+      final reason = 'testReason';
+
+      await postService.submitReport(id, reason);
+
+      final report = reportPosts.firstWhere((report) => report.id == id && report.reason == reason);
+
+      expect(report, isNotNull);
+    });
+
+    test('savePost adds a save item for the given post id and username', () async {
+      final id = 'testId';
+      final username = 'testUsername';
+
+      await postService.savePost(id, username);
+
+      final saveItem = savedPosts.firstWhere((item) => item.id == id && item.username == username);
+
+      expect(saveItem, isNotNull);
+    });
+
+    test('getSavePost returns saved posts for the given username', () async {
+      final username = users[1].userAbout.username;
+
+      final savedPosts = await postService.getSavePost(username);
+
+      expect(savedPosts, isEmpty);
+    });
+
+
+    test('getPostById returns post for the given post id', () async {
+      final postId = '1';
+
+      final post = await postService.getPostById(postId);
+
+      expect(post, isNotNull);
+      expect(post!.id, equals(postId));
+    });
+
+    test('lockUnlockPost toggles lockedFlag for the given post id', () async {
+      final id = '1';
+
+      final initialLockedFlag = posts.firstWhere((post) => post.id == id).lockedFlag;
+
+      await postService.lockUnlockPost(id);
+
+      final updatedLockedFlag = posts.firstWhere((post) => post.id == id).lockedFlag;
+
+      expect(updatedLockedFlag, equals(!initialLockedFlag));
+    });
+
+    test('isMyPost returns true if the post with the given id belongs to the given username', () {
+      final postId = '1';
+      final username = users[1].userAbout.username;
+
+      final isMyPost = postService.isMyPost(postId, username);
+
+      expect(isMyPost, equals(posts.firstWhere((post) => post.id == postId).username == username));
+    });
   });
 }
