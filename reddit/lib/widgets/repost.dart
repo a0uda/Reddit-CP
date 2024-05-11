@@ -158,10 +158,9 @@ class RepostState extends State<Repost> {
   }
 
   Future<void> fetchCommPicture() async {
-      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
-          communityName: widget.communityName);
-      profilePicture = comm['communityProfilePicture'];
-    
+    Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+        communityName: widget.communityName);
+    profilePicture = comm['communityProfilePicture'];
   }
 
   Future<void> fetchRepostPicture(String name) async {
@@ -176,8 +175,9 @@ class RepostState extends State<Repost> {
   }
 
   Future<void> loadOriginalPost() async {
+    print("HEERRREEEE");
     post = await postService.getPostById(widget.originalID);
-    if (post!.inCommunityFlag!) {
+    if (post!.inCommunityFlag! || (post!.communityName != "")) {
       fetchRepostCommPic = fetchRepostCommPicture(post!.communityName);
     } else {
       fetchRepostPic = fetchRepostPicture(post!.username);

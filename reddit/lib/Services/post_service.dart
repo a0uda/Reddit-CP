@@ -543,7 +543,7 @@ class PostService {
         url,
         headers: {'Content-Type': 'application/json', 'Authorization': token!},
       );
-      //rint('post');
+      print('post');
       print(response.body);
       //print(json.decode(response.body)['post']);
 

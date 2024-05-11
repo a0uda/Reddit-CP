@@ -851,6 +851,8 @@ class PostState extends State<Post> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return AlertDialog(
+                                                      backgroundColor: Colors.white,
+                                                      surfaceTintColor: Colors.white,
                                                       scrollable: true,
                                                       content: Builder(
                                                         builder: ((context) {
