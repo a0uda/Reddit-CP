@@ -127,6 +127,8 @@ Widget buildUpdateEmail(String email, context) => CustomSettingsTile(
 Widget buildAddPassword(context) {
   final UserController userController = GetIt.instance.get<UserController>();
   bool isSetPass = userController.userAbout!.isPasswordSetFlag!;
+  print('is set');
+  print(isSetPass);
   return CustomSettingsTile(
     title: isSetPass ? 'Change password' : 'Add password',
     leading: const Icon(Icons.settings_outlined),
