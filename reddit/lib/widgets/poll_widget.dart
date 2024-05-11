@@ -51,87 +51,79 @@ class _PollViewState extends State<PollView> {
       ...{for (var v in widget.option2UserVotes) v: 1},
     };
     //first two elements in widget.options
-    options = [
-      widget.options[0],
-      widget.options[1]
-    ];
+    options = [widget.options[0], widget.options[1]];
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Polls(
-            key: widget.key,
-            children: options
-                .map((option) => Polls.options(
-                    title: option.keys.first, value: option.values.first))
-                .toList(),
-            optionBarRadius: 24,
-            borderWidth: 1,
-            optionHeight: 40,
-            optionSpacing: 8,
-            question: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                widget.question,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            pollStyle: const TextStyle(
+      body: Polls(
+        key: widget.key,
+        children: options
+            .map((option) => Polls.options(
+                title: option.keys.first, value: option.values.first))
+            .toList(),
+        optionBarRadius: 25,
+        borderWidth: 1,
+        optionHeight: 40,
+        optionSpacing: 8,
+        question: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.question,
+            style: const TextStyle(
               color: Colors.black,
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
-            currentUser: user,
-            creatorID: creator,
-            voteData: usersWhoVoted,
-            userChoice: usersWhoVoted[user],
-            onVoteBackgroundColor: Colors.lightBlueAccent,
-            leadingBackgroundColor: Colors.lightBlue,
-            backgroundColor: Colors.white,
-            voteCastedBackgroundColor: const Color.fromARGB(255, 230, 231, 232),
-            allowCreatorVote: true,
-            onVote: (choice) {
-              if (widget.isExpired) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Poll Results'),
-                      content: Column(
-                        children: widget.options.map((option) {
-                          return Text(
-                              '${option.keys.first}: ${option.values.first}');
-                        }).toList(),
-                      ),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('OK'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-                return;
-              }
-              setState(() {
-                usersWhoVoted[user] = choice;
-                widget.options[choice][widget.options[choice].keys.first] =
-                    widget.options[choice][widget.options[choice].keys.first]! +
-                        1.0;
-                widget.onPollVote(widget.id, choice, user);
-                postService.updatePoll(
-                    widget.id, choice, widget.optionId[choice], username);
-              });
-            },
           ),
         ),
+        pollStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+        currentUser: user,
+        creatorID: creator,
+        voteData: usersWhoVoted,
+        userChoice: usersWhoVoted[user],
+        onVoteBackgroundColor: Colors.lightBlueAccent,
+        leadingBackgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.white,
+        voteCastedBackgroundColor: const Color.fromARGB(255, 230, 231, 232),
+        allowCreatorVote: true,
+        onVote: (choice) {
+          if (widget.isExpired) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Poll Results'),
+                  content: Column(
+                    children: options.map((option) {
+                      return Text(
+                          '${option.keys.first}: ${option.values.first}');
+                    }).toList(),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+            return;
+          }
+          setState(() {
+            usersWhoVoted[user] = choice;
+            widget.options[choice][widget.options[choice].keys.first] =
+                widget.options[choice][widget.options[choice].keys.first]! +
+                    1.0;
+            widget.onPollVote(widget.id, choice, user);
+            postService.updatePoll(
+                widget.id, choice, widget.optionId[choice], username);
+          });
+        },
       ),
     );
   }
