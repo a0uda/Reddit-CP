@@ -214,12 +214,10 @@ class PostState extends State<Post> {
 
   Future<void> fetchCommPicture() async {
     if (!pictureFetched) {
-      if (widget.communityName != "") {
         Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
             communityName: widget.communityName);
         profilePicture = comm['communityProfilePicture'];
         pictureFetched = true;
-      }
     }
   }
 
