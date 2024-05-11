@@ -39,6 +39,7 @@ class _PollViewState extends State<PollView> {
   String username = "king@mail.com";
   Map<String, int> usersWhoVoted = {};
   String creator = "eddy@mail.com";
+  List<Map<String, double>> options = [];
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +50,18 @@ class _PollViewState extends State<PollView> {
       ...{for (var v in widget.option1UserVotes) v: 0},
       ...{for (var v in widget.option2UserVotes) v: 1},
     };
+    //first two elements in widget.options
+    options = [
+      widget.options[0],
+      widget.options[1]
+    ];
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Polls(
             key: widget.key,
-            children: widget.options
+            children: options
                 .map((option) => Polls.options(
                     title: option.keys.first, value: option.values.first))
                 .toList(),

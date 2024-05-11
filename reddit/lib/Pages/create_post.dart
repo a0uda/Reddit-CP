@@ -279,6 +279,7 @@ class _CreatePostState extends State<CreatePost> {
               padding: const EdgeInsets.only(right: 8.0),
               child: ElevatedButton(
                 onPressed: (() async => {
+                  
                       if (titleController.text.isEmpty)
                         {
                           showDialog(
@@ -375,7 +376,7 @@ class _CreatePostState extends State<CreatePost> {
                                   _selections[0],
                                   !(selectedCommunity == "Select Community")),
                             },
-                          //print(_selections),
+                          print(_selections),
                           if (await response == 400)
                             {
                               showDialog(

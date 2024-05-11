@@ -207,16 +207,19 @@ class PostState extends State<Post> {
     if (!pictureFetched) {
       UserAbout user = await userService.getUserAbout(widget.name!)!;
       profilePicture = user.profilePicture;
+
       pictureFetched = true;
     }
   }
 
   Future<void> fetchCommPicture() async {
     if (!pictureFetched) {
-      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
-          communityName: widget.communityName);
-      profilePicture = comm['communityProfilePicture'];
-      pictureFetched = true;
+      if (widget.communityName != "") {
+        Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+            communityName: widget.communityName);
+        profilePicture = comm['communityProfilePicture'];
+        pictureFetched = true;
+      }
     }
   }
 
@@ -373,7 +376,6 @@ class PostState extends State<Post> {
                         child: (widget.communityName != "")
                             ? InkWell(
                                 onTap: () async {
-                                  //TODO: go to community
                                   await userController.getUserModerated();
                                   print("nav");
                                   print(
