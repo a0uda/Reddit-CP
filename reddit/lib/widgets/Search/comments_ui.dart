@@ -136,7 +136,7 @@ class _CommentUIState extends State<CommentUI> {
                       )
                     : const CircleAvatar(
                         backgroundImage:
-                            AssetImage("images/default_reddit.png"),
+                            AssetImage("images/Greddit.png"),
                         radius: 12,
                       ),
                 const SizedBox(

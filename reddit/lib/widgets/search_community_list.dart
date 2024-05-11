@@ -115,8 +115,8 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                         isScrollControlled: true,
                                         builder: (BuildContext context) {
                                           return Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white),
+                                          decoration: BoxDecoration(color: Colors.white,
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24))),
                                             height: heigth * 0.8,
                                             width: screenWidth,
                                             padding: const EdgeInsets.all(16.0),

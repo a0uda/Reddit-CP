@@ -159,6 +159,7 @@ class _PostScheduledState extends State<PostScheduled> {
                           MaterialPageRoute(
                             builder: (context) => EditScheduledPost(
                               postId: widget.item["_id"],
+                              isLinkPost: false,
                             ),
                           ),
                         );

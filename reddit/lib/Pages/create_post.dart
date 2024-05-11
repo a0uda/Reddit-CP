@@ -345,15 +345,15 @@ class _CreatePostState extends State<CreatePost> {
                                   imageSelected
                                       ? [
                                           ImageItem(
-                                              path: _image!.path,
-                                              link: imageUrl!)
+                                              link: _image!.path,
+                                              path: imageUrl!)
                                         ]
                                       : null,
                                   videoSelected
                                       ? [
                                           VideoItem(
-                                              path: _video!.path,
-                                              link: videoUrl!)
+                                              link: _video!.path,
+                                              path: videoUrl!)
                                         ]
                                       : null,
                                   pollSelected

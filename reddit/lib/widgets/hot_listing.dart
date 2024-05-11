@@ -124,7 +124,7 @@ class HotListingBuild extends State<HotListing> {
                 date: posts[index].createdAt.toString(),
                 likes: posts[index].upvotesCount - posts[index].downvotesCount,
                 commentsCount: posts[index].commentsCount,
-                communityName: posts[index].communityName,
+                communityName: widget.type == "comm" ? "" : posts[index].communityName,
                 isLocked: posts[index].lockedFlag,
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved ?? false,
@@ -166,7 +166,7 @@ class HotListingBuild extends State<HotListing> {
               videoUrl: posts[index].videos?[0].path,
               poll: posts[index].poll,
               id: posts[index].id,
-              communityName: posts[index].communityName,
+              communityName: widget.type == "comm" ? "" : posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved ?? false,
               isPostMod: (widget.commmunityName != "" &&

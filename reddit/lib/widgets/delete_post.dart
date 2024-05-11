@@ -60,14 +60,14 @@ class _DeletePostState extends State<DeletePost> {
                
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                        backgroundColor: const Color.fromARGB(255, 242, 243, 245),),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close, color:const Color.fromARGB(255, 109, 109, 110)),
                     label: Text(
                       'No',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: const Color.fromARGB(255, 109, 109, 110)),
                     ),
                   ),
                 ),
@@ -77,7 +77,7 @@ class _DeletePostState extends State<DeletePost> {
 
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                        backgroundColor: const Color.fromARGB(255, 240, 6, 6)),
                     onPressed: () {
               postController.DeletePost(widget.postId);
         postController.shouldRefresh=true;

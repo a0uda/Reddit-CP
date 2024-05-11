@@ -245,6 +245,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   backgroundColor: const Color.fromARGB(255, 242, 243, 245),
+                  surfaceTintColor: const Color.fromARGB(255, 242, 243, 245),
                   foregroundColor: const Color.fromARGB(255, 109, 109, 110),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40),

@@ -1294,7 +1294,7 @@ class _PostModQueueState extends State<PostModQueue> {
                                   ? ImageFilter.blur(sigmaX: 5, sigmaY: 5)
                                   : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
                               child: Image.network(
-                                widget.post.queuePostImage[0].imageLink,
+                                widget.post.queuePostImage[0].imagePath,
                                 fit: BoxFit.cover,
                               ),
                             ),

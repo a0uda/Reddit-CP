@@ -79,7 +79,7 @@ class _AddtextShareState extends State<AddtextShare> {
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                      backgroundColor: const Color.fromARGB(255, 3, 55, 146)),
                   onPressed: () {
 
                     if (widget.comName != "") {

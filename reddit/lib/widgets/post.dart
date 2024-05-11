@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/post_controller.dart';
@@ -129,9 +130,13 @@ class PostState extends State<Post> {
   CommunityService communityService = GetIt.instance.get<CommunityService>();
   UserController userController = GetIt.instance.get<UserController>();
   final moderatorService = GetIt.instance.get<ModeratorMockService>();
+  String? profilePicture;
   bool spammedFlag = false;
   bool approvedFlag = false;
   bool removedPost = false;
+  bool pictureFetched = false;
+  late Future fetchPic;
+  late Future fetchCommPic;
 
   ModeratorController moderatorController =
       GetIt.instance.get<ModeratorController>();
@@ -206,6 +211,23 @@ class PostState extends State<Post> {
     });
   }
 
+  Future<void> fetchPicture() async {
+    if (!pictureFetched) {
+      UserAbout user = await userService.getUserAbout(widget.name!)!;
+      profilePicture = user.profilePicture;
+      pictureFetched = true;
+    }
+  }
+
+  Future<void> fetchCommPicture() async {
+    if (!pictureFetched) {
+      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+          communityName: widget.communityName);
+      profilePicture = comm['communityProfilePicture'];
+      pictureFetched = true;
+    }
+  }
+
   @override
   void initState() {
     spammedFlag = widget.moderatorDetails?.spammedFlag ?? false;
@@ -217,6 +239,8 @@ class PostState extends State<Post> {
     } else if (widget.vote == -1) {
       downVote = true;
     }
+    fetchPic = fetchPicture();
+    fetchCommPic = fetchCommPicture();
   }
   // List of items in our dropdown menu
 
@@ -295,10 +319,10 @@ class PostState extends State<Post> {
             children: <Widget>[
               ListTile(
                 leading: widget.communityName == ''
-                    ? FutureBuilder<UserAbout>(
-                        future: userService.getUserAbout(widget.name!),
+                    ? FutureBuilder<void>(
+                        future: fetchPic,
                         builder: (BuildContext context,
-                            AsyncSnapshot<UserAbout> snapshot) {
+                            AsyncSnapshot<void> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const CircularProgressIndicator();
@@ -306,13 +330,8 @@ class PostState extends State<Post> {
                             print("el sora");
                             return Text('Error: ${snapshot.error}');
                           } else {
-                            print('in comment');
-                            print(snapshot.data!);
-                            print('username in comment');
-                            print(widget.name!);
-                            print(snapshot.data!.profilePicture!);
-                            if (snapshot.data!.profilePicture == null ||
-                                snapshot.data!.profilePicture!.isEmpty) {
+                            if (profilePicture == null ||
+                                profilePicture!.isEmpty) {
                               return const CircleAvatar(
                                 radius: 15,
                                 backgroundImage:
@@ -320,19 +339,17 @@ class PostState extends State<Post> {
                               );
                             } else {
                               return CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    snapshot.data!.profilePicture!),
+                                backgroundImage: NetworkImage(profilePicture!),
                                 radius: 15,
                               );
                             }
                           }
                         },
                       )
-                    : FutureBuilder<Map<String, dynamic>>(
-                        future: moderatorService.getCommunityInfo(
-                            communityName: widget.communityName),
+                    : FutureBuilder<void>(
+                        future: fetchCommPic,
                         builder: (BuildContext context,
-                            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                            AsyncSnapshot<void> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const CircularProgressIndicator();
@@ -340,15 +357,8 @@ class PostState extends State<Post> {
                             print("el sora");
                             return Text('Error: ${snapshot.error}');
                           } else {
-                            print('in comment');
-                            print(snapshot.data!);
-                            print('username in comment');
-                            print(widget.name!);
-                            print(snapshot.data!['communityProfilePicture']);
-                            if (snapshot.data!['communityProfilePicture'] ==
-                                    null ||
-                                snapshot.data!['communityProfilePicture']!
-                                    .isEmpty) {
+                            if (profilePicture == null ||
+                                profilePicture!.isEmpty) {
                               return const CircleAvatar(
                                 radius: 15,
                                 backgroundImage:
@@ -356,8 +366,7 @@ class PostState extends State<Post> {
                               );
                             } else {
                               return CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    snapshot.data!['communityProfilePicture']!),
+                                backgroundImage: NetworkImage(profilePicture!),
                                 radius: 15,
                               );
                             }
@@ -486,11 +495,13 @@ class PostState extends State<Post> {
                                 ),
                               ),
                       ),
-                      Text(
-                        '  • ${formatDateTime(widget.date)}',
-                        style: const TextStyle(
-                            fontSize: 12,
-                            color: Color.fromARGB(255, 117, 116, 115)),
+                      Flexible(
+                        child: Text(
+                          '  • ${formatDateTime(widget.date)}',
+                          style: const TextStyle(
+                              fontSize: 12,
+                              color: Color.fromARGB(255, 117, 116, 115)),
+                        ),
                       ),
                     ]),
                     if (widget.communityName != "")
@@ -553,30 +564,34 @@ class PostState extends State<Post> {
                       ),
                   ],
                 ),
-                trailing: SizedBox(
-                  width: 100,
+                trailing: IntrinsicWidth(
                   child: Row(
                     children: [
+                      Spacer(),
                       if (widget.isLocked == true)
                         Icon(
                           Icons.lock,
                           color: Colors.amberAccent[700],
+                          size: 15,
                         ),
                       (widget.isPostMod)
                           ? (spammedFlag)
                               ? Icon(
                                   Icons.free_cancellation_outlined,
                                   color: Colors.red[800],
+                                  size: 15,
                                 )
                               : (approvedFlag)
                                   ? Icon(
                                       Icons.check,
                                       color: Colors.green[600],
+                                      size: 15,
                                     )
                                   : (removedPost)
                                       ? Icon(
                                           Icons.delete_outline,
                                           color: Colors.red[800],
+                                          size: 15,
                                         )
                                       : const SizedBox()
                           : const SizedBox(),
@@ -927,7 +942,11 @@ class PostState extends State<Post> {
                             isScrollControlled: true,
                             builder: (BuildContext context) {
                               return Container(
-                                decoration: BoxDecoration(color: Colors.white),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(24),
+                                        topRight: Radius.circular(24))),
                                 height: heigth * 0.4,
                                 width: width,
                                 padding: const EdgeInsets.all(16.0),
@@ -954,7 +973,16 @@ class PostState extends State<Post> {
                                           isScrollControlled: true,
                                           builder: (BuildContext context) {
                                             return Container(
-                                              color: Colors.white,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  24),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  24))),
                                               height: heigth * 0.9,
                                               width: width,
                                               padding:
@@ -980,7 +1008,14 @@ class PostState extends State<Post> {
                                             builder: (BuildContext context) {
                                               return Container(
                                                 decoration: BoxDecoration(
-                                                    color: Colors.white),
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft: Radius
+                                                                .circular(24),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    24))),
                                                 height: heigth * 0.8,
                                                 width: width,
                                                 padding:

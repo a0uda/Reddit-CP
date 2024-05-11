@@ -67,6 +67,11 @@ class _ConversationListState extends State<ConversationList> {
             Expanded(
               child: Row(
                 children: <Widget>[
+                  widget.imageUrl == "" ?
+                  CircleAvatar(
+                    backgroundImage: AssetImage("./images/Greddit.png"),
+                    maxRadius: 20,
+                  ):
                   CircleAvatar(
                     backgroundImage: NetworkImage(widget.imageUrl),
                     maxRadius: 20,

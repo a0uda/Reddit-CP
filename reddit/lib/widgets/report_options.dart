@@ -75,12 +75,16 @@ class Report extends State<ReportOptions> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                            color: isSelected ? Colors.deepOrange : Colors.grey,
+                            color: isSelected
+                                ? const Color.fromARGB(255, 3, 55, 146)
+                                : Colors.grey,
                             width: 2)),
                     child: Text(
                       hobby,
                       style: TextStyle(
-                          color: isSelected ? Colors.deepOrange : Colors.grey,
+                          color: isSelected
+                              ? const Color.fromARGB(255, 3, 55, 146)
+                              : Colors.grey,
                           fontSize: 14),
                     ),
                   )),
@@ -185,9 +189,15 @@ class Report extends State<ReportOptions> {
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
+                          //barrierColor: Colors.transparent,
                           builder: (BuildContext context) {
-                            return SizedBox(
-                                height: heigth * 0.9,
+                            return Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(24),
+                                        topRight: Radius.circular(24))),
+                                height: heigth * 0.85,
                                 width: width,
                                 child: Column(children: [
                                   const ListTile(
@@ -206,16 +216,19 @@ class Report extends State<ReportOptions> {
                   else
                     {
                       ///Todo submit report
-                      isUser?userService.reportUser(username, selectedreport): postService.submitReport(widget.postId, selectedreport),
+                      isUser
+                          ? userService.reportUser(username, selectedreport)
+                          : postService.submitReport(
+                              widget.postId, selectedreport),
 
                       showModalBottomSheet(
                           context: context,
-                          isScrollControlled: true,
                           builder: (BuildContext context) {
-                            return SizedBox(
+                            return Container(
+                              decoration: BoxDecoration(color: Colors.white),
                               height: heigth * 0.5,
                               width: width,
-                              child: const Column(
+                              child: Column(
                                 children: [
                                   Icon(
                                     Icons.verified,
@@ -240,13 +253,13 @@ class Report extends State<ReportOptions> {
               if (selectedreport == "") {
                 return Colors.grey;
               } else {
-                return Colors.deepOrange;
+                return const Color.fromARGB(255, 3, 55, 146);
               }
             }),
           ),
           child: const Text(
             'Next',
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
           ),
         ),
       )

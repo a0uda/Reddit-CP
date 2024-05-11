@@ -15,6 +15,7 @@ class ProfileHeader extends StatelessWidget {
   UserAbout userData;
   final String userType;
   ProfileHeader(this.userData, this.userType, {super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<BannerPictureController>(
@@ -97,6 +98,8 @@ class ProfileHeader extends StatelessWidget {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
+          var heigth = MediaQuery.of(context).size.height;
+          var width = MediaQuery.of(context).size.width;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -134,7 +137,8 @@ class ProfileHeader extends StatelessWidget {
                                       MediaQuery.of(context).size.width * 0.33,
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      backgroundColor: Colors.grey[300],
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 242, 243, 245),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(20.0),
@@ -146,7 +150,8 @@ class ProfileHeader extends StatelessWidget {
                                     child: Text(
                                       'CANCEL',
                                       style: TextStyle(
-                                        color: Colors.grey[500],
+                                        color: const Color.fromARGB(
+                                            255, 109, 109, 110),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -200,25 +205,28 @@ class ProfileHeader extends StatelessWidget {
                         Navigator.of(context).pop(),
                         showModalBottomSheet(
                             context: context,
+                            isScrollControlled: true,
                             builder: (BuildContext context) {
                               return SizedBox(
+                                  height: heigth * 0.75,
+                                  width: width,
                                   child: Column(children: [
-                                const ListTile(
-                                  leading: Text(
-                                    "Submit report",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ),
-                                const ListTile(
-                                  leading: Text(
-                                      "Thanks for looking out for yourself"),
-                                ),
-                                ReportOptions(
-                                  postId: "12345",
-                                  isUser: true,
-                                  username: userData.username,
-                                )
-                              ]));
+                                    const ListTile(
+                                      leading: Text(
+                                        "Submit report",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                    const ListTile(
+                                      leading: Text(
+                                          "Thanks for looking out for yourself"),
+                                    ),
+                                    ReportOptions(
+                                      postId: "12345",
+                                      isUser: true,
+                                      username: userData.username,
+                                    )
+                                  ]));
                             })
                       },
                   child: const Row(

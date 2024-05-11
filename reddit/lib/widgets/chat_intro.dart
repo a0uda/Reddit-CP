@@ -16,10 +16,12 @@ class _ChatIntroState extends State<ChatIntro> {
   ChatsService chatService = GetIt.instance.get<ChatsService>();
   late Io.Socket socket;
   List<ChatUsers> chatUsers = [];
+  List<ChatUsers> foundChats = [];
   late Future<void> _dataFuture;
 
   Future<void> fetchChats() async {
     chatUsers = await chatService.getChats();
+    foundChats = chatUsers;
     print(chatUsers);
     SocketInit();
   }
@@ -36,6 +38,15 @@ class _ChatIntroState extends State<ChatIntro> {
     }));
   }
 
+  void searchUsers(String search) {
+    setState(() {
+      foundChats = chatUsers.where((user) {
+        final name = user.name.toString().toLowerCase();
+        return name.contains(search.toLowerCase());
+      }).toList();
+    });
+  }
+
   void update() {
     setState(() {});
   }
@@ -49,7 +60,6 @@ class _ChatIntroState extends State<ChatIntro> {
   @override
   void initState() {
     super.initState();
-
     _dataFuture = fetchChats();
   }
 
@@ -88,7 +98,8 @@ class _ChatIntroState extends State<ChatIntro> {
                     ),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                          backgroundColor:
+                              const Color.fromARGB(255, 3, 55, 146)),
                       onPressed: () {
                         //            Navigator.push(
                         //   context,
@@ -97,9 +108,7 @@ class _ChatIntroState extends State<ChatIntro> {
                         //         AddChat(),
                         //   ),
                         // );
-                        showSearch(
-                            context: context, delegate: ChatSearch());
-
+                        showSearch(context: context, delegate: ChatSearch());
                       },
                       icon: Icon(Icons.add, color: Colors.white),
                       label: Text(
@@ -129,22 +138,23 @@ class _ChatIntroState extends State<ChatIntro> {
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(color: Colors.grey.shade100)),
                 ),
+                onChanged: searchUsers,
               ),
             ),
             FutureBuilder<void>(
                 future: _dataFuture,
                 builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
                   return ListView.builder(
-                    itemCount: chatUsers.length,
+                    itemCount: foundChats.length,
                     shrinkWrap: true,
                     padding: EdgeInsets.only(top: 16),
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return ConversationList(
-                        name: chatUsers[index].name,
-                        messageText: chatUsers[index].messageText,
-                        imageUrl: chatUsers[index].imageURL,
-                        time: chatUsers[index].time.split('T')[0],
+                        name: foundChats[index].name,
+                        messageText: foundChats[index].messageText,
+                        imageUrl: foundChats[index].imageURL,
+                        time: foundChats[index].time.split('T')[0],
                         isMessageRead:
                             (index == 0 || index == 3) ? true : false,
                       );

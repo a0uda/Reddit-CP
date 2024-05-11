@@ -115,13 +115,13 @@ class _Listing extends State<Listing> {
                               itemCount: trends.length,
                               itemBuilder: (context, index) {
                                 return TrendingPost(
-                                  title: trends[index]!.title,
-                                  imageUrl: trends[index]!.picture.path,
+                                  title: trends[index]?.title ?? "",
+                                  imageUrl: trends[index]?.picture ?? "",
                                 );
                               },
                             );
                           }
-                          ;
+                          
                         }
                       }),
                 )

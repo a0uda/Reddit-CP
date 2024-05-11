@@ -73,7 +73,7 @@ class _EditPostState extends State<EditPost> {
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 253, 119, 10)),
+                      backgroundColor: const Color.fromARGB(255, 3, 55, 146)),
                   onPressed: () {
               
                       postController.EditPost(widget.postId, bodyController.text);

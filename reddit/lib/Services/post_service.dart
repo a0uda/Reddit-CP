@@ -274,7 +274,7 @@ class PostService {
 
   Future<List<TrendingItem?>> getTrendingPosts() async {
     if (testing) {
-      return trendingPosts;
+      return [];
     } else {
       final url = Uri.parse('https://redditech.me/backend/posts/trending');
 
@@ -287,14 +287,14 @@ class PostService {
           'Authorization': token.toString()
         },
       );
-      // print('trenddddddddddd');
-      // print(response.body);
+      print('trenddddddddddd');
+      print(response.body);
       final List<dynamic> jsonlist = json.decode(response.body)['content'];
       final List<TrendingItem?> postsItem = jsonlist.map((jsonitem) {
-        if (jsonitem["images"].length == 0) {
-          print(jsonitem);
-          return TrendingItem.fromJson(jsonitem);
-        }
+        // if (jsonitem["images"].length == 0) {
+        //   print(jsonitem);
+        return TrendingItem.fromJson(jsonitem);
+        // }
       }).toList();
       return postsItem;
     }
