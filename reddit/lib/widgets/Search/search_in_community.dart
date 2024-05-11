@@ -172,8 +172,8 @@ class _SearchInCommunityState extends State<SearchInCommunity> {
                       });
                     },
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Search r/${widget.communityName}'),
+                      border: InputBorder.none,
+                    ),
                   ),
                 )
               ],
