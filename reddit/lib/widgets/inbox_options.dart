@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/user_controller.dart';
+import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/Services/notifications_service.dart';
 import 'package:reddit/widgets/notifications_settings.dart';
 
@@ -142,13 +143,26 @@ void addNewMessage(BuildContext context,
                         receiverUsernameController.text.isNotEmpty &&
                         subjectContentController.text.isNotEmpty) {
                       bool success =
-                          await context.read<MessagesOperations>().sendMessage(
+                          await userService.sendNewMessage(
+                                userController.userAbout!.username,
                                 receiverUsernameController.text,
                                 messageContentController.text,
                                 subjectContentController.text,
                               );
                       if (success) {
-                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Message sent successfully.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            duration: Duration(seconds: 1),
+                            backgroundColor: Colors.black,
+                          ),
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -184,7 +198,9 @@ void addNewMessage(BuildContext context,
                       );
                     }
                   },
-                  child: Text("SEND",
+                  child: Text(
+                    key: Key('Send'),
+                    "SEND",
                       style: TextStyle(
                         color: Colors.blue[900],
                         fontWeight: FontWeight.bold,
@@ -199,6 +215,7 @@ void addNewMessage(BuildContext context,
               child: Column(
                 children: [
                   TextField(
+                    key:Key('Username'),
                     controller: receiverUsernameController
                       ..text = isProfilePage ? 'u/$receiverUsername' : '',
                     decoration: isProfilePage
@@ -222,6 +239,7 @@ void addNewMessage(BuildContext context,
                   ),
                   const SizedBox(height: 10),
                   TextField(
+                    key:Key('Subject'),
                     controller: subjectContentController,
                     decoration: const InputDecoration(
                       hintText: 'Subject',
@@ -230,6 +248,7 @@ void addNewMessage(BuildContext context,
                   ),
                   const SizedBox(height: 10),
                   TextField(
+                    key:Key('Message'),
                     controller: messageContentController,
                     decoration: const InputDecoration(
                       hintText: 'Message',

@@ -724,41 +724,27 @@ class UserService {
   Future<bool> sendNewMessage(String senderUsername, String receiverUsername,
       String message, String subject) async {
     if (testing) {
-      List<BlockedUsersItem> blockedUsers = users
+      List<Messages>? userMessages = users
           .firstWhere((element) => element.userAbout.username == senderUsername)
-          .safetySettings!
-          .blockedUsers;
-      if (users.any((element) =>
-                  element.userAbout.username == receiverUsername) ==
-              false ||
-          (blockedUsers
-                  .any((element) => element.username == receiverUsername) ==
-              true)) {
-        return false;
-      } else {
-        List<Messages>? userMessages = users
-            .firstWhere(
-                (element) => element.userAbout.username == senderUsername)
-            .usermessages;
-        userMessages?.add(Messages(
-          id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
-              .toString(),
-          senderUsername: senderUsername,
-          senderType: 'user',
-          receiverUsername: receiverUsername,
-          receiverType: 'user',
-          senderVia: null,
-          message: message,
-          createdAt: DateTime.now().toString(),
-          unreadFlag: true,
-          isSent: true,
-          isReply: false,
-          parentMessageId: null,
-          subject: subject,
-          isInvitation: false,
-        ));
-        return true;
-      }
+          .usermessages;
+      userMessages?.add(Messages(
+        id: (int.parse(userMessages[userMessages.length - 1].id) + 1)
+            .toString(),
+        senderUsername: senderUsername,
+        senderType: 'user',
+        receiverUsername: receiverUsername,
+        receiverType: 'user',
+        senderVia: null,
+        message: message,
+        createdAt: DateTime.now().toString(),
+        unreadFlag: true,
+        isSent: true,
+        isReply: false,
+        parentMessageId: null,
+        subject: subject,
+        isInvitation: false,
+      ));
+      return true;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');

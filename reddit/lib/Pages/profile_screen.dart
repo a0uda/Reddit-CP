@@ -12,7 +12,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 229, 228, 228),
       body: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Column(
           children: <Widget>[
             ProfileHeader(userData!, userType),
@@ -24,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 tabs: [
-                  Tab(text: 'Posts'),
+                  // Tab(text: 'Posts'),
                   Tab(text: 'Comments'),
                   Tab(text: 'About'),
                 ],

@@ -2,6 +2,7 @@ import 'package:reddit/Models/comments.dart';
 
 final List<Comments> comments = [
   Comments(
+    postTitle: 'Test1',
     id: '1',
     postId: '1',
     userId: 'user1',
@@ -31,6 +32,7 @@ final List<Comments> comments = [
     vote: 1,
   ),
   Comments(
+    postTitle: 'Test2',
     id: '2',
     postId: '1',
     userId: 'user2',

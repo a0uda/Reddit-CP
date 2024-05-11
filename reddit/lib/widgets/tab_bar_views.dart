@@ -12,10 +12,10 @@ class TabBarViews extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabBarView(
       children: [
-        TabBarPosts(
-          userData: userData,
-          userType: userType,
-        ),
+        // TabBarPosts(
+        //   userData: userData,
+        //   userType: userType,
+        // ),
         TabBarComments(userData: userData),
         TabBarAbout(userData,userType),
       ],

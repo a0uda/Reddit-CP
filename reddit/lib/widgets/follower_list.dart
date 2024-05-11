@@ -42,6 +42,7 @@ class FollowerListState extends State<FollowerList> {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
+          key:Key('Search'),
           onSubmitted: searchfollowers,
           controller: followerNameController,
           decoration: const InputDecoration(
