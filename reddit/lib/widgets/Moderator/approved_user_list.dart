@@ -67,7 +67,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
             children: [
               (screenWidth > 700)
                   ? AppBar(
-                    surfaceTintColor: Colors.white,
+                      surfaceTintColor: Colors.white,
                       leading: const SizedBox(
                         width: 0,
                       ),
@@ -277,6 +277,7 @@ class _ApprovedUserListState extends State<ApprovedUserList> {
 }
 
 void showError(BuildContext context) {
+  print("hereeeee");
   showDialog(
       context: context,
       builder: (BuildContext context) {
