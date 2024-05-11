@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit/widgets/chat_screen.dart';
 import 'package:reddit/widgets/edit_profile.dart';
 import 'package:share_plus/share_plus.dart';
 import '../Services/user_service.dart';
@@ -159,6 +160,16 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                 ? Padding(
                     padding: const EdgeInsets.only(top: 20, left: 5),
                     child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => (ChatPage(
+                                name: userData.username,
+                                image: userData.profilePicture!)),
+                          ),
+                        );
+                      },
                       icon: const Icon(Icons.message,
                           color: Colors.white, size: 30),
                       style: TextButton.styleFrom(
@@ -171,7 +182,6 @@ class _ProfileHeaderRightSideState extends State<ProfileHeaderRightSide> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
                     ),
                   )
                 : Container(),
