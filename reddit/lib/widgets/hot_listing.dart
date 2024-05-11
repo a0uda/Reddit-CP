@@ -50,7 +50,9 @@ class HotListingBuild extends State<HotListing> {
         post = await postService.getPosts(user, "hot", page);
         page = page + 1;
       } else {
-        posts = postService.fetchPosts();
+        post = await postService.getGuestPosts("hot", page);
+        page = page + 1;
+
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
@@ -209,8 +211,8 @@ class HotListingBuild extends State<HotListing> {
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
-              pollExpired: posts[index].pollExpired!,
-              pollVote: posts[index].pollVote!,
+              pollExpired: posts[index].pollExpired ?? false,
+              pollVote: posts[index].pollVote ?? "",
               onclearEdit: handleEditChanged,
               onclearDelete: handleDeleteListingChanged,
               onLock: handleLockChange,

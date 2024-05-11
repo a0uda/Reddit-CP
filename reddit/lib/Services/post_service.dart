@@ -135,7 +135,6 @@ class PostService {
       return posts;
     }
   }
-
   Future<List<PostItem>> getPosts(
       String username, String sortingType, int page) async {
     if (testing) {
@@ -183,6 +182,65 @@ class PostService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token.toString()
+        },
+      );
+      print(response.body);
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonlist = json.decode(response.body)['content'];
+        final List<PostItem> postsItem = jsonlist.map((jsonitem) {
+          return PostItem.fromJson(jsonitem);
+        }).toList();
+
+        return postsItem;
+      } else {
+        List<PostItem> nullPost = [];
+        return nullPost;
+      }
+    }
+  }
+
+  Future<List<PostItem>> getGuestPosts(
+       String sortingType, int page) async {
+    if (testing) {
+      final userService = GetIt.instance.get<UserService>();
+      // print(usernames);
+      
+      return [];
+    } else {
+      Map<String, String> queryparams = {
+        'page': page.toString(),
+        'pageSize': '10'
+      };
+
+      print(queryparams.toString());
+      var url = Uri.parse('https://redditech.me/backend/listing/posts/best')
+          .replace(queryParameters: queryparams);
+
+      if (sortingType == "best") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/best')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "hot") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/hot')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "new") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/new')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "top") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/top')
+            .replace(queryParameters: queryparams);
+      } else if (sortingType == "random") {
+        url = Uri.parse('https://redditech.me/backend/listing/posts/random')
+            .replace(queryParameters: queryparams);
+        print(url);
+        print(page);
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
         },
       );
       print(response.body);
@@ -541,7 +599,7 @@ class PostService {
       String? token = prefs.getString('token');
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+        headers: {'Content-Type': 'application/json', 'Authorization': token?? ""},
       );
       print('post');
       print(response.body);

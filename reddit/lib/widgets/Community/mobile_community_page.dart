@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
@@ -5,10 +6,14 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
+import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/Pages/history.dart';
+import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
+import 'package:reddit/widgets/Search/search_in_community.dart';
 import 'package:reddit/widgets/desktop_appbar.dart';
 import 'package:reddit/widgets/desktop_layout.dart';
 import 'package:reddit/widgets/drawer_reddit.dart';
@@ -38,6 +43,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
   String? buttonState;
   final CommunityController communityController =
       GetIt.instance.get<CommunityController>();
+  final UserController userController = GetIt.instance.get<UserController>();
 
   Future<void> fetchCommunityInfo() async {
     if (!communityInfoFetched) {
@@ -136,6 +142,7 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool userLoggedIn = userController.userAbout != null;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 242, 242, 242),
       appBar: MediaQuery.of(context).size.width > 700
@@ -147,18 +154,94 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                 isInCommunity: true,
               ),
             )
-          : PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: MobileAppBar(
-                logoTapped: logoTapped,
-                communityName: widget.communityName,
-                isInCommunity: true,
+          : AppBar(
+              leading: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50), // Make it circular
+                  color: Colors.grey[800]!.withOpacity(0.5),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
+              flexibleSpace: Container(
+                decoration: (moderatorController.bannerPictureURL != "")
+                    ? BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              moderatorController.bannerPictureURL),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              'images/active_community_default_banner.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              ),
+              actions: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(right: 10.0, top: 3, bottom: 3),
+                  child: Container(
+                    height: kToolbarHeight,
+                    width: kToolbarHeight,
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(50), // Make it circular
+                      color: Colors.grey[800]!.withOpacity(0.5),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        CupertinoIcons.search,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => SearchInCommunity(
+                              communityName: widget.communityName,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                userLoggedIn
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: Consumer<ProfilePictureController>(builder:
+                            (context, profilepicturecontroller, child) {
+                          return GestureDetector(
+                            child: userController.userAbout!.profilePicture ==
+                                        null ||
+                                    userController
+                                        .userAbout!.profilePicture!.isEmpty
+                                ? const CircleAvatar(
+                                    radius: kToolbarHeight / 2 - 8,
+                                    backgroundImage:
+                                        AssetImage('images/Greddit.png'),
+                                  )
+                                : CircleAvatar(
+                                    radius: kToolbarHeight / 2 - 8,
+                                    backgroundImage: NetworkImage(userController
+                                        .userAbout!.profilePicture!),
+                                  ),
+                            onTap: () {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                          );
+                        }))
+                    : const SizedBox(),
+              ],
             ),
-      drawer: MediaQuery.of(context).size.width < 700
-          ? const DrawerReddit(indexOfPage: 0, inHome: true)
-          : null,
-      endDrawer: EndDrawerReddit(),
+      endDrawer: userLoggedIn ? EndDrawerReddit() : Container(),
       body: Row(
         children: [
           MediaQuery.of(context).size.width > 700
@@ -195,7 +278,6 @@ class _MobileCommunityPageState extends State<MobileCommunityPage> {
                   child: Listing(
                     type: 'comm',
                     commName: widget.communityName,
-                    
                   ),
                 ),
               ],
@@ -364,9 +446,14 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else {
+                        print("Commmunittyyyyyy");
+                        print(moderatorController.profilePictureURL);
                         return CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              moderatorController.profilePictureURL),
+                          backgroundImage: NetworkImage((moderatorController
+                                      .profilePictureURL ==
+                                  "")
+                              ? "https://avatars.githubusercontent.com/u/95462348"
+                              : moderatorController.profilePictureURL),
                           backgroundColor: Colors.white,
                           radius: 20,
                         );
@@ -447,37 +534,41 @@ class _MobileCommunityPageBarState extends State<MobileCommunityPageBar> {
                               const Color.fromARGB(255, 0, 69, 172),
                           foregroundColour: Colors.white,
                         )
-                      : FutureBuilder(
-                          future: fetchCommunityInfo(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else {
-                              return OutlineButtonWidget(
-                                moderatorController.joinedFlag
-                                    ? 'Joined'
-                                    : 'Join',
-                                () async {
-                                  setButton(moderatorController.joinedFlag);
-                                },
-                                backgroundColour: moderatorController.joinedFlag
-                                    ? Colors.white
-                                    : const Color.fromARGB(255, 69, 72, 78),
-                                borderColor: moderatorController.joinedFlag
-                                    ? Colors.black
-                                    : Colors.transparent,
-                                foregroundColour: moderatorController.joinedFlag
-                                    ? Colors.black
-                                    : Colors.white,
-                              );
-                            }
-                          },
-                        ),
+                      : userController.userAbout != null
+                          ? FutureBuilder(
+                              future: fetchCommunityInfo(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else {
+                                  return OutlineButtonWidget(
+                                    moderatorController.joinedFlag
+                                        ? 'Joined'
+                                        : 'Join',
+                                    () async {
+                                      setButton(moderatorController.joinedFlag);
+                                    },
+                                    backgroundColour: moderatorController
+                                            .joinedFlag
+                                        ? Colors.white
+                                        : const Color.fromARGB(255, 69, 72, 78),
+                                    borderColor: moderatorController.joinedFlag
+                                        ? Colors.black
+                                        : Colors.transparent,
+                                    foregroundColour:
+                                        moderatorController.joinedFlag
+                                            ? Colors.black
+                                            : Colors.white,
+                                  );
+                                }
+                              },
+                            )
+                          : const SizedBox(),
                 ],
               ),
             ),

@@ -102,6 +102,7 @@ class EndDrawerReddit extends StatelessWidget {
               bool isloggedout = await userService.logout();
               if (isloggedout) {
                 userController.userAbout = null;
+                userController.Destructor();
                 await chatservice.SocketClose();
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();

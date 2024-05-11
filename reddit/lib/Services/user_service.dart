@@ -48,7 +48,7 @@ class UserService {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token!,
+          'Authorization': token ?? "",
         },
       );
       print('in get user about');

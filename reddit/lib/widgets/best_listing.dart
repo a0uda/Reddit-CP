@@ -50,7 +50,8 @@ class BestListingBuild extends State<BestListing> {
         post = await postService.getPosts(user, "best", page);
         page = page + 1;
       } else {
-        posts = postService.fetchPosts();
+        post = await postService.getGuestPosts("best", page);
+        page = page + 1;
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;

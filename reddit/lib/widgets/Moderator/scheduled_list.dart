@@ -92,6 +92,7 @@ class _ScheduledPostsListState extends State<ScheduledPostsList> {
                     await fetchScheduled();
                   },
                   child: SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
                     child: Container(
                       color: Colors.grey[200],
                       child: Column(

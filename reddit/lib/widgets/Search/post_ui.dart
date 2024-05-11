@@ -7,6 +7,7 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/user_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
@@ -70,14 +71,21 @@ class _PostUIState extends State<PostUI> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CommentsDesktop(
-              postId: post["_id"],
+        if (userController.userAbout != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CommentsDesktop(
+                postId: post["_id"],
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LoginPage()),
+            (Route<dynamic> route) => false,
+          );
+        }
       },
       child: Column(
         children: [
@@ -92,17 +100,30 @@ class _PostUIState extends State<PostUI> {
                     GestureDetector(
                       onTap: () async {
                         if (post["post_in_community_flag"]) {
-                          bool isMod = userController
-                              .userAbout!.moderatedCommunities!
-                              .any((element) =>
-                                  element.name == post["community_name"]);
+                          bool isMod = false;
                           var moderatorProvider =
                               context.read<ModeratorProvider>();
-                          if (isMod) {
-                            await moderatorProvider.getModAccess(
-                                userController.userAbout!.username,
-                                post["community_name"]);
+                          if (userController.userAbout != null) {
+                            isMod = userController
+                                .userAbout!.moderatedCommunities!
+                                .any((element) =>
+                                    element.name == post["community_name"]);
+                            if (isMod) {
+                              await moderatorProvider.getModAccess(
+                                  userController.userAbout!.username,
+                                  post["community_name"]);
+                            } else {
+                              moderatorProvider.moderatorController.modAccess =
+                                  ModeratorItem(
+                                      everything: false,
+                                      managePostsAndComments: false,
+                                      manageSettings: false,
+                                      manageUsers: false,
+                                      username:
+                                          userController.userAbout!.username);
+                            }
                           } else {
+                            isMod = false;
                             moderatorProvider.moderatorController.modAccess =
                                 ModeratorItem(
                                     everything: false,
@@ -110,7 +131,8 @@ class _PostUIState extends State<PostUI> {
                                     manageSettings: false,
                                     manageUsers: false,
                                     username:
-                                        userController.userAbout!.username);
+                                        userController.userAbout?.username ??
+                                            "");
                           }
 
                           Navigator.of(context).push(
@@ -127,15 +149,23 @@ class _PostUIState extends State<PostUI> {
                             ),
                           );
                         } else {
-                          UserAbout otherUserData = (await (userService
-                              .getUserAbout(post["username"])))!;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileScreen(otherUserData, 'other'),
-                            ),
-                          );
+                          if (userController.userAbout != null) {
+                            UserAbout otherUserData = (await (userService
+                                .getUserAbout(post["username"])))!;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProfileScreen(otherUserData, 'other'),
+                              ),
+                            );
+                          } else {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
                         }
                       },
                       child: Row(
@@ -284,23 +314,37 @@ class _PostUIState extends State<PostUI> {
                                 if ((post["is_reposted_flag"] &&
                                         ogPost!.inCommunityFlag!) ||
                                     post["post_in_community_flag"]) {
-                                  bool isMod = userController
-                                      .userModeratedCommunities!
-                                      .any((element) =>
-                                          element.name ==
-                                          (post["is_reposted_flag"]
-                                              ? ogPost?.communityName
-                                              : post["community_name"]));
-
                                   var moderatorProvider =
                                       context.read<ModeratorProvider>();
-                                  if (isMod) {
-                                    await moderatorProvider.getModAccess(
-                                        userController.userAbout!.username,
-                                        post["is_reposted_flag"]
-                                            ? ogPost?.communityName
-                                            : post["community_name"]);
+                                  bool isMod = false;
+                                  if (userController.userAbout != null) {
+                                    isMod = userController
+                                        .userModeratedCommunities!
+                                        .any((element) =>
+                                            element.name ==
+                                            (post["is_reposted_flag"]
+                                                ? ogPost?.communityName
+                                                : post["community_name"]));
+
+                                    if (isMod) {
+                                      await moderatorProvider.getModAccess(
+                                          userController.userAbout!.username,
+                                          post["is_reposted_flag"]
+                                              ? ogPost?.communityName
+                                              : post["community_name"]);
+                                    } else {
+                                      moderatorProvider
+                                              .moderatorController.modAccess =
+                                          ModeratorItem(
+                                              everything: false,
+                                              managePostsAndComments: false,
+                                              manageSettings: false,
+                                              manageUsers: false,
+                                              username: userController
+                                                  .userAbout!.username);
+                                    }
                                   } else {
+                                    isMod = false;
                                     moderatorProvider
                                             .moderatorController.modAccess =
                                         ModeratorItem(
@@ -309,7 +353,8 @@ class _PostUIState extends State<PostUI> {
                                             manageSettings: false,
                                             manageUsers: false,
                                             username: userController
-                                                .userAbout!.username);
+                                                    .userAbout?.username ??
+                                                "");
                                   }
 
                                   Navigator.of(context).push(
@@ -332,17 +377,25 @@ class _PostUIState extends State<PostUI> {
                                     ),
                                   );
                                 } else {
-                                  UserAbout otherUserData = await (userService
-                                      .getUserAbout(post["is_reposted_flag"]
-                                          ? ogPost?.username
-                                          : post["username"]))!;
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProfileScreen(otherUserData, 'other'),
-                                    ),
-                                  );
+                                  if (userController.userAbout != null) {
+                                    UserAbout otherUserData = await (userService
+                                        .getUserAbout(post["is_reposted_flag"]
+                                            ? ogPost?.username
+                                            : post["username"]))!;
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ProfileScreen(
+                                            otherUserData, 'other'),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => LoginPage()),
+                                      (Route<dynamic> route) => false,
+                                    );
+                                  }
                                 }
                               },
                               child: Row(

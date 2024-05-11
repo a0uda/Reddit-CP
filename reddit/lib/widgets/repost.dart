@@ -177,7 +177,6 @@ class RepostState extends State<Repost> {
   }
 
   Future<void> loadOriginalPost() async {
-    print("HEERRREEEE");
     post = await postService.getPostById(widget.originalID);
     if (post!.inCommunityFlag! || (post!.communityName != "")) {
       fetchRepostCommPic = fetchRepostCommPicture(post!.communityName);
@@ -378,29 +377,46 @@ class RepostState extends State<Repost> {
                               child: (widget.communityName != "")
                                   ? InkWell(
                                       onTap: () async {
-                                        await userController.getUserModerated();
-                                        bool isMod = userController
-                                            .userModeratedCommunities!
-                                            .any((comm) =>
-                                                comm.name ==
-                                                widget.communityName);
-                                        var moderatorProvider =
-                                            context.read<ModeratorProvider>();
-                                        if (isMod) {
-                                          await moderatorProvider.getModAccess(
-                                              userController
-                                                  .userAbout!.username,
-                                              widget.communityName);
+                                        bool isMod = false;
+                                        if (userController.userAbout == null) {
+                                          await userController
+                                              .getUserModerated();
+                                          isMod = userController
+                                              .userModeratedCommunities!
+                                              .any((comm) =>
+                                                  comm.name ==
+                                                  widget.communityName);
+                                          var moderatorProvider =
+                                              context.read<ModeratorProvider>();
+                                          if (isMod) {
+                                            await moderatorProvider
+                                                .getModAccess(
+                                                    userController
+                                                        .userAbout!.username,
+                                                    widget.communityName);
+                                          } else {
+                                            moderatorProvider
+                                                    .moderatorController
+                                                    .modAccess =
+                                                ModeratorItem(
+                                                    everything: false,
+                                                    managePostsAndComments:
+                                                        false,
+                                                    manageSettings: false,
+                                                    manageUsers: false,
+                                                    username: userController
+                                                        .userAbout!.username);
+                                          }
                                         } else {
-                                          moderatorProvider.moderatorController
-                                                  .modAccess =
-                                              ModeratorItem(
-                                                  everything: false,
-                                                  managePostsAndComments: false,
-                                                  manageSettings: false,
-                                                  manageUsers: false,
-                                                  username: userController
-                                                      .userAbout!.username);
+                                          isMod = false;
+                                          ModeratorItem(
+                                              everything: false,
+                                              managePostsAndComments: false,
+                                              manageSettings: false,
+                                              manageUsers: false,
+                                              username: userController
+                                                      .userAbout?.username ??
+                                                  "");
                                         }
                                         //IS MOD HENA.
                                         Navigator.of(context).push(
@@ -439,7 +455,7 @@ class RepostState extends State<Repost> {
                                   : InkWell(
                                       onTap: () => {
                                         userType = userController
-                                                    .userAbout!.username ==
+                                                    .userAbout?.username ==
                                                 widget.name
                                             ? 'me'
                                             : 'other',
@@ -508,7 +524,7 @@ class RepostState extends State<Repost> {
                               child: InkWell(
                                 onTap: () => {
                                   userType =
-                                      userController.userAbout!.username ==
+                                      userController.userAbout?.username ==
                                               widget.name
                                           ? 'me'
                                           : 'other',
@@ -781,26 +797,46 @@ class RepostState extends State<Repost> {
                                                             ? InkWell(
                                                                 onTap:
                                                                     () async {
-                                                                  await userController
-                                                                      .getUserModerated();
-                                                                  bool isMod = userController
-                                                                      .userModeratedCommunities!
-                                                                      .any((comm) =>
-                                                                          comm.name ==
-                                                                          post!
+                                                                  bool isMod =
+                                                                      false;
+                                                                  if (userController
+                                                                          .userAbout ==
+                                                                      null) {
+                                                                    await userController
+                                                                        .getUserModerated();
+                                                                    isMod = userController
+                                                                        .userModeratedCommunities!
+                                                                        .any((comm) =>
+                                                                            comm.name ==
+                                                                            widget.communityName);
+                                                                    var moderatorProvider =
+                                                                        context.read<
+                                                                            ModeratorProvider>();
+                                                                    if (isMod) {
+                                                                      await moderatorProvider.getModAccess(
+                                                                          userController
+                                                                              .userAbout!
+                                                                              .username,
+                                                                          widget
                                                                               .communityName);
-                                                                  var moderatorProvider =
-                                                                      context.read<
-                                                                          ModeratorProvider>();
-                                                                  if (isMod) {
-                                                                    await moderatorProvider.getModAccess(
-                                                                        userController
-                                                                            .userAbout!
-                                                                            .username,
-                                                                        post!
-                                                                            .communityName);
+                                                                    } else {
+                                                                      moderatorProvider.moderatorController.modAccess = ModeratorItem(
+                                                                          everything:
+                                                                              false,
+                                                                          managePostsAndComments:
+                                                                              false,
+                                                                          manageSettings:
+                                                                              false,
+                                                                          manageUsers:
+                                                                              false,
+                                                                          username: userController
+                                                                              .userAbout!
+                                                                              .username);
+                                                                    }
                                                                   } else {
-                                                                    moderatorProvider.moderatorController.modAccess = ModeratorItem(
+                                                                    isMod =
+                                                                        false;
+                                                                    ModeratorItem(
                                                                         everything:
                                                                             false,
                                                                         managePostsAndComments:
@@ -809,9 +845,9 @@ class RepostState extends State<Repost> {
                                                                             false,
                                                                         manageUsers:
                                                                             false,
-                                                                        username: userController
-                                                                            .userAbout!
-                                                                            .username);
+                                                                        username:
+                                                                            userController.userAbout?.username ??
+                                                                                "");
                                                                   }
                                                                   //IS MOD HENA.
                                                                   Navigator.of(
@@ -852,8 +888,7 @@ class RepostState extends State<Repost> {
                                                             : InkWell(
                                                                 onTap: () => {
                                                                   userType = userController
-                                                                              .userAbout!
-                                                                              .username ==
+                                                                              .userAbout?.username ==
                                                                           post!
                                                                               .username
                                                                       ? 'me'
@@ -937,8 +972,7 @@ class RepostState extends State<Repost> {
                                                     child: InkWell(
                                                       onTap: () => {
                                                         userType = userController
-                                                                    .userAbout!
-                                                                    .username ==
+                                                                    .userAbout?.username ==
                                                                 post!.username
                                                             ? 'me'
                                                             : 'other',

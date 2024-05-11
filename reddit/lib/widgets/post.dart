@@ -8,6 +8,7 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
@@ -207,6 +208,8 @@ class PostState extends State<Post> {
     if (!pictureFetched) {
       UserAbout user = await userService.getUserAbout(widget.name!)!;
       profilePicture = user.profilePicture;
+      print("badrrrrrrrrrrrrrrr");
+      print(user.username);
 
       pictureFetched = true;
     }
@@ -290,15 +293,25 @@ class PostState extends State<Post> {
       width: MediaQuery.of(context).size.width * 0.5,
       child: InkWell(
         onTap: () => {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CommentsDesktop(
-                postId: widget.id,
-                isModInComment: widget.isPostMod,
-              ), // pass the post ID here
-            ),
-          ),
+          if (userController.userAbout == null)
+            {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LoginPage()),
+                (Route<dynamic> route) => false,
+              ),
+            }
+          else
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CommentsDesktop(
+                    postId: widget.id,
+                    isModInComment: widget.isPostMod,
+                  ), // pass the post ID here
+                ),
+              ),
+            }
         },
         onHover: (value) {
           ishovering = value;
@@ -376,21 +389,35 @@ class PostState extends State<Post> {
                         child: (widget.communityName != "")
                             ? InkWell(
                                 onTap: () async {
-                                  await userController.getUserModerated();
-                                  print("nav");
-                                  print(
-                                      userController.userModeratedCommunities);
-                                  bool isMod = userController
-                                      .userModeratedCommunities!
-                                      .any((comm) =>
-                                          comm.name == widget.communityName);
+                                  bool isMod = false;
                                   var moderatorProvider =
                                       context.read<ModeratorProvider>();
-                                  if (isMod) {
-                                    await moderatorProvider.getModAccess(
-                                        userController.userAbout!.username,
-                                        widget.communityName);
+                                  if (userController.userAbout != null) {
+                                    await userController.getUserModerated();
+                                    print("nav");
+                                    print(userController
+                                        .userModeratedCommunities);
+                                    isMod = userController
+                                        .userModeratedCommunities!
+                                        .any((comm) =>
+                                            comm.name == widget.communityName);
+                                    if (isMod) {
+                                      await moderatorProvider.getModAccess(
+                                          userController.userAbout!.username,
+                                          widget.communityName);
+                                    } else {
+                                      moderatorProvider
+                                              .moderatorController.modAccess =
+                                          ModeratorItem(
+                                              everything: false,
+                                              managePostsAndComments: false,
+                                              manageSettings: false,
+                                              manageUsers: false,
+                                              username: userController
+                                                  .userAbout!.username);
+                                    }
                                   } else {
+                                    isMod = false;
                                     moderatorProvider
                                             .moderatorController.modAccess =
                                         ModeratorItem(
@@ -399,7 +426,8 @@ class PostState extends State<Post> {
                                             manageSettings: false,
                                             manageUsers: false,
                                             username: userController
-                                                .userAbout!.username);
+                                                    .userAbout?.username ??
+                                                "");
                                   }
                                   //IS MOD HENA.
                                   Navigator.of(context).push(MaterialPageRoute(
@@ -432,48 +460,59 @@ class PostState extends State<Post> {
                               )
                             : InkWell(
                                 onTap: () => {
-                                  userType =
-                                      userController.userAbout!.username ==
-                                              widget.name
-                                          ? 'me'
-                                          : 'other',
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FutureBuilder<UserAbout?>(
-                                        future: userService
-                                            .getUserAbout(widget.name),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return Container(
-                                              color: Colors.white,
-                                              child: const SizedBox(
-                                                  height: 30,
-                                                  width: 30,
-                                                  child: Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  )),
-                                            );
-                                          } else if (snapshot.hasError) {
-                                            print(widget.name);
-                                            print(snapshot.data);
-                                            return Text(
-                                                'Error: ${snapshot.error}');
-                                          } else {
-                                            print(widget.name);
-                                            print(snapshot.data);
-                                            return ProfileScreen(
-                                              snapshot.data,
-                                              userType,
-                                            );
-                                          }
-                                        },
+                                  if (userController.userAbout != null)
+                                    {
+                                      userType =
+                                          userController.userAbout?.username ==
+                                                  widget.name
+                                              ? 'me'
+                                              : 'other',
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FutureBuilder<UserAbout?>(
+                                            future: userService
+                                                .getUserAbout(widget.name),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return Container(
+                                                  color: Colors.white,
+                                                  child: const SizedBox(
+                                                      height: 30,
+                                                      width: 30,
+                                                      child: Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      )),
+                                                );
+                                              } else if (snapshot.hasError) {
+                                                print(widget.name);
+                                                print(snapshot.data);
+                                                return Text(
+                                                    'Error: ${snapshot.error}');
+                                              } else {
+                                                print(widget.name);
+                                                print(snapshot.data);
+                                                return ProfileScreen(
+                                                  snapshot.data,
+                                                  userType,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                                    }
+                                  else
+                                    {
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginPage()),
+                                        (Route<dynamic> route) => false,
+                                      ),
+                                    }
                                 },
                                 onHover: (hover) {
                                   setState(() {
@@ -503,44 +542,58 @@ class PostState extends State<Post> {
                         alignment: Alignment.topLeft,
                         child: InkWell(
                           onTap: () => {
-                            userType = userController.userAbout!.username ==
-                                    widget.name
-                                ? 'me'
-                                : 'other',
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => FutureBuilder<UserAbout?>(
-                                  future: userService.getUserAbout(widget.name),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return Container(
-                                        color: Colors.white,
-                                        child: const SizedBox(
-                                            height: 30,
-                                            width: 30,
-                                            child: Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            )),
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      print(widget.name);
-                                      print(snapshot.data);
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      print(widget.name);
-                                      print(snapshot.data);
-                                      return ProfileScreen(
-                                        snapshot.data,
-                                        userType,
-                                      );
-                                    }
-                                  },
+                            if (userController.userAbout != null)
+                              {
+                                userType = userController.userAbout!.username ==
+                                        widget.name
+                                    ? 'me'
+                                    : 'other',
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FutureBuilder<UserAbout?>(
+                                      future:
+                                          userService.getUserAbout(widget.name),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Container(
+                                            color: Colors.white,
+                                            child: const SizedBox(
+                                                height: 30,
+                                                width: 30,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                )),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          print(widget.name);
+                                          print(snapshot.data);
+                                          return Text(
+                                              'Error: ${snapshot.error}');
+                                        } else {
+                                          print(widget.name);
+                                          print(snapshot.data);
+                                          return ProfileScreen(
+                                            snapshot.data,
+                                            userType,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                              }
+                            else
+                              {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()),
+                                  (Route<dynamic> route) => false,
+                                ),
+                              }
                           },
                           onHover: (hover) {
                             setState(() {
@@ -716,8 +769,8 @@ class PostState extends State<Post> {
                               .toList(),
                           option1UserVotes: widget.poll!.option1Votes,
                           option2UserVotes: widget.poll!.option2Votes,
-                          currentUser: userController.userAbout!.username,
-                          currentUserId: userController.userAbout!.id!,
+                          currentUser: userController.userAbout?.username ?? "",
+                          currentUserId: userController.userAbout?.id! ?? "",
                           isExpired: widget.pollExpired!,
                         ),
                       ),
@@ -751,7 +804,16 @@ class PostState extends State<Post> {
                                   Theme.of(context).colorScheme.primary,
                               icon: const Icon(Icons.arrow_upward_sharp),
                               onPressed: () {
-                                incrementCounter();
+                                if (userController.userAbout == null) {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()),
+                                    (Route<dynamic> route) => false,
+                                  );
+                                }
+                                {
+                                  incrementCounter();
+                                }
                               },
                             ),
                             Text(
@@ -765,7 +827,15 @@ class PostState extends State<Post> {
                               color: downVoteColor,
                               icon: const Icon(Icons.arrow_downward_outlined),
                               onPressed: () {
-                                decrementCounter();
+                                if (userController.userAbout == null) {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()),
+                                    (Route<dynamic> route) => false,
+                                  );
+                                } else {
+                                  decrementCounter();
+                                }
                               },
                             ),
                           ],
@@ -781,15 +851,23 @@ class PostState extends State<Post> {
                           ),
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommentsDesktop(
-                                    postId: widget.id,
-                                    isModInComment: widget.isPostMod,
-                                  ), // pass the post ID here
-                                ),
-                              );
+                              if (userController.userAbout == null) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CommentsDesktop(
+                                      postId: widget.id,
+                                      isModInComment: widget.isPostMod,
+                                    ), // pass the post ID here
+                                  ),
+                                );
+                              }
                             },
                             icon: Icon(Icons.messenger_outline,
                                 color: Theme.of(context).colorScheme.secondary),
@@ -810,197 +888,173 @@ class PostState extends State<Post> {
                       ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        if (!ismobile) {
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                scrollable: true,
-                                content: Builder(
-                                  builder: ((context) {
-                                    return Container(
-                                      child: SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.28,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.5,
-                                        child: Column(
-                                          children: [
-                                            ListTile(
-                                              leading: Text(
-                                                "Share to",
-                                                style: TextStyle(
-                                                    fontSize: 32,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black),
-                                              ),
-                                            ),
-                                            ListTile(
-                                              leading: const Icon(
-                                                Icons.mediation_sharp,
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                              ),
-                                              title: const Text(
-                                                  "Share to Community"),
-                                              onTap: () => {
-                                                showDialog(
-                                                  context: context,
-                                                  barrierDismissible: true,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      surfaceTintColor:
-                                                          Colors.white,
-                                                      scrollable: true,
-                                                      content: Builder(
-                                                        builder: ((context) {
-                                                          return SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.5,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.5,
-                                                            child:
-                                                                SearchCommunityList(
-                                                                    postId:
-                                                                        widget
-                                                                            .id),
-                                                          );
-                                                        }),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              },
-                                            ),
-                                            ListTile(
-                                              leading: const Icon(
-                                                Icons.person,
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                              ),
-                                              title: const Text(
-                                                  "Share to profile"),
-                                              onTap: () => {
-                                                showDialog(
-                                                  context: context,
-                                                  barrierDismissible: true,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      scrollable: true,
-                                                      content: Builder(
-                                                        builder: ((context) {
-                                                          return SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.5,
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.5,
-                                                            child: AddtextShare(
-                                                              comName: "",
-                                                              postId: widget.id,
-                                                            ),
-                                                          );
-                                                        }),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              );
-                            },
+                        if (userController.userAbout == null) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                            (Route<dynamic> route) => false,
                           );
                         } else {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              return Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(24),
-                                        topRight: Radius.circular(24))),
-                                height: heigth * 0.4,
-                                width: width,
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      leading: Text(
-                                        "Share to",
-                                        style: TextStyle(
-                                            fontSize: 32,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(
-                                        Icons.mediation_sharp,
-                                        color: Color.fromARGB(255, 0, 0, 0),
-                                      ),
-                                      title: const Text("Share to Community"),
-                                      onTap: () => {
-                                        showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          builder: (BuildContext context) {
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  24),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  24))),
-                                              height: heigth * 0.9,
-                                              width: width,
-                                              padding:
-                                                  const EdgeInsets.all(16.0),
-                                              child: SearchCommunityList(
-                                                postId: widget.id,
+                          if (!ismobile) {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  scrollable: true,
+                                  content: Builder(
+                                    builder: ((context) {
+                                      return Container(
+                                        child: SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.28,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                leading: Text(
+                                                  "Share to",
+                                                  style: TextStyle(
+                                                      fontSize: 32,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black),
+                                                ),
                                               ),
-                                            );
-                                          },
+                                              ListTile(
+                                                leading: const Icon(
+                                                  Icons.mediation_sharp,
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                ),
+                                                title: const Text(
+                                                    "Share to Community"),
+                                                onTap: () => {
+                                                  showDialog(
+                                                    context: context,
+                                                    barrierDismissible: true,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        surfaceTintColor:
+                                                            Colors.white,
+                                                        scrollable: true,
+                                                        content: Builder(
+                                                          builder: ((context) {
+                                                            return SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.5,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.5,
+                                                              child: SearchCommunityList(
+                                                                  postId: widget
+                                                                      .id),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: const Icon(
+                                                  Icons.person,
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0),
+                                                ),
+                                                title: const Text(
+                                                    "Share to profile"),
+                                                onTap: () => {
+                                                  showDialog(
+                                                    context: context,
+                                                    barrierDismissible: true,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        scrollable: true,
+                                                        content: Builder(
+                                                          builder: ((context) {
+                                                            return SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.5,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.5,
+                                                              child:
+                                                                  AddtextShare(
+                                                                comName: "",
+                                                                postId:
+                                                                    widget.id,
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(
-                                        Icons.person,
-                                        color: Color.fromARGB(255, 0, 0, 0),
+                                      );
+                                    }),
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(24),
+                                          topRight: Radius.circular(24))),
+                                  height: heigth * 0.4,
+                                  width: width,
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      ListTile(
+                                        leading: Text(
+                                          "Share to",
+                                          style: TextStyle(
+                                              fontSize: 32,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
                                       ),
-                                      title: const Text("Share to profile"),
-                                      onTap: () => {
-                                        showModalBottomSheet(
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.mediation_sharp,
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                        ),
+                                        title: const Text("Share to Community"),
+                                        onTap: () => {
+                                          showModalBottomSheet(
                                             context: context,
                                             isScrollControlled: true,
                                             builder: (BuildContext context) {
@@ -1014,23 +1068,57 @@ class PostState extends State<Post> {
                                                             topRight:
                                                                 Radius.circular(
                                                                     24))),
-                                                height: heigth * 0.8,
+                                                height: heigth * 0.9,
                                                 width: width,
                                                 padding:
                                                     const EdgeInsets.all(16.0),
-                                                child: AddtextShare(
-                                                  comName: "",
+                                                child: SearchCommunityList(
                                                   postId: widget.id,
                                                 ),
                                               );
-                                            })
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                                            },
+                                          ),
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: const Icon(
+                                          Icons.person,
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                        ),
+                                        title: const Text("Share to profile"),
+                                        onTap: () => {
+                                          showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                              topLeft: Radius
+                                                                  .circular(24),
+                                                              topRight: Radius
+                                                                  .circular(
+                                                                      24))),
+                                                  height: heigth * 0.8,
+                                                  width: width,
+                                                  padding: const EdgeInsets.all(
+                                                      16.0),
+                                                  child: AddtextShare(
+                                                    comName: "",
+                                                    postId: widget.id,
+                                                  ),
+                                                );
+                                              })
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         }
                       },
                       icon: Icon(Icons.file_upload_outlined,
