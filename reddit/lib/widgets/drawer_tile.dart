@@ -95,7 +95,7 @@ class _DrawerTileState extends State<DrawerTile> {
                       final item = widget.lists[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: AssetImage(item.profilePictureURL),
+                          backgroundImage: NetworkImage(item.profilePictureURL),
                           radius: 10,
                         ),
                         title: Text(item.name),

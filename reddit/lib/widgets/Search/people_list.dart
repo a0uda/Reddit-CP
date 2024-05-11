@@ -7,13 +7,15 @@ import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Pages/profile_screen.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/Services/user_service.dart';
-import 'package:reddit/widgets/best_listing.dart';
 import 'package:reddit/widgets/chat_screen.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 
 class PeopleList extends StatefulWidget {
   final String searchFor;
   final bool inChat;
-  const PeopleList({super.key, required this.searchFor, this.inChat = false});
+  OnNewChat? onChat;
+  PeopleList(
+      {super.key, required this.searchFor, this.inChat = false, this.onChat});
 
   @override
   State<PeopleList> createState() => _PeopleListState();
@@ -97,6 +99,7 @@ class _PeopleListState extends State<PeopleList> {
                         builder: (context) => ChatPage(
                           name: item["username"],
                           image: item["profile_picture"],
+                          onNewChat: widget.onChat!,
                         ),
                       ),
                     );

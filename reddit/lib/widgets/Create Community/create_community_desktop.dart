@@ -451,7 +451,7 @@ class _CreateCommunityPopupState extends State<CreateCommunityPopup> {
                             },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: isFinished
-                            ? const Color.fromARGB(255, 0, 110, 200)
+                            ? const Color.fromARGB(255, 0, 69, 172) //(0, 69, 172)
                             : const Color.fromARGB(255, 243, 243, 243),
                         side: const BorderSide(color: Colors.transparent),
                         padding: const EdgeInsets.symmetric(vertical: 16),

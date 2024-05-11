@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/chat_user.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/chat_controller.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 
 class ChatPage extends StatefulWidget {
   final String name;
   final String image;
+  OnNewChat? onNewChat;
 
-  ChatPage({
-    required this.name,
-    required this.image,
-  });
+  ChatPage({required this.name, required this.image, this.onNewChat});
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -117,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
                   alignment: Alignment.center,
                   child: widget.image == ""
                       ? CircleAvatar(
-                          backgroundImage: AssetImage("images/Greddit.png"),
+                          backgroundImage: AssetImage("./images/Greddit.png"),
                           maxRadius: 40,
                         )
                       : CircleAvatar(
@@ -186,24 +183,42 @@ class _ChatPageState extends State<ChatPage> {
                                                   .username !=
                                               previoususername)
                                           ? Row(children: [
-                                              CircleAvatar(
-                                                backgroundImage: (messages[
-                                                                messages.length -
-                                                                    index -
-                                                                    1]
-                                                            .username ==
-                                                        userController
-                                                            .userAbout!
-                                                            .username)
-                                                    ? NetworkImage(
-                                                        userController
-                                                            .userAbout!
-                                                            .profilePicture!)
-                                                    : 
-                                                    NetworkImage(
-                                                        widget.image),
-                                                maxRadius: 13,
-                                              ),
+                                              (messages[messages.length -
+                                                              index -
+                                                              1]
+                                                          .username ==
+                                                      userController
+                                                          .userAbout!.username)
+                                                  ? userController.userAbout!
+                                                              .profilePicture !=
+                                                          ""
+                                                      ? CircleAvatar(
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  userController
+                                                                      .userAbout!
+                                                                      .profilePicture!),
+                                                          maxRadius: 13,
+                                                        )
+                                                      : CircleAvatar(
+                                                          backgroundImage:
+                                                              AssetImage(
+                                                                  "./images/Greddit.png"),
+                                                          maxRadius: 13,
+                                                        )
+                                                  : widget.image != ""
+                                                      ? CircleAvatar(
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  widget.image),
+                                                          maxRadius: 13,
+                                                        )
+                                                      : CircleAvatar(
+                                                          backgroundImage:
+                                                              AssetImage(
+                                                                  "./images/Greddit.png"),
+                                                          maxRadius: 13,
+                                                        ),
                                               SizedBox(
                                                 width: 2,
                                               ),
@@ -308,6 +323,9 @@ class _ChatPageState extends State<ChatPage> {
                                   createdAt: DateFormat('HH:mm')
                                       .format(DateTime.now())));
                               textController.clear();
+                              if (widget.onNewChat != null) {
+                                widget.onNewChat!();
+                              }
                             });
                           }
                         }
