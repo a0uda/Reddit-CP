@@ -182,17 +182,6 @@ class _MobileLayoutState extends State<MobileLayout> {
                         size: kToolbarHeight * (3 / 7),
                       ),
                 label: "Home"),
-            BottomNavigationBarItem(
-                icon: selectedIndexPage == 1
-                    ? const Icon(
-                        CupertinoIcons.group_solid,
-                        size: kToolbarHeight * (3 / 7),
-                      )
-                    : const Icon(
-                        CupertinoIcons.group,
-                        size: kToolbarHeight * (3 / 7),
-                      ),
-                label: "Communities"),
             const BottomNavigationBarItem(
                 icon: Icon(
                   Icons.add,
@@ -200,7 +189,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                 ),
                 label: "Create"),
             BottomNavigationBarItem(
-                icon: selectedIndexPage == 3
+                icon: selectedIndexPage == 2
                     ? const Icon(
                         CupertinoIcons.chat_bubble_text_fill,
                         size: kToolbarHeight * (3 / 7),
@@ -215,7 +204,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                 children: [
                   // The icon
                   Icon(
-                    selectedIndexPage == 4
+                    selectedIndexPage == 3
                         ? Icons.notifications
                         : Icons.notifications_outlined,
                     size: kToolbarHeight * (3 / 7),
@@ -265,7 +254,7 @@ class _MobileLayoutState extends State<MobileLayout> {
             )
           ],
           onTap: (value) => {
-            if (value != 2)
+            if (value != 1)
               {
                 setState(() {
                   selectedIndexPage = value;
@@ -286,7 +275,7 @@ class _MobileLayoutState extends State<MobileLayout> {
                     ))
                   }
               },
-            if (value == 4)
+            if (value == 3)
               {
                 setState(() {
                   isInbox = true;

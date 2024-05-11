@@ -94,10 +94,17 @@ class _DrawerTileState extends State<DrawerTile> {
                       print("hnaaa");
                       final item = widget.lists[index];
                       return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: AssetImage(item.profilePictureURL),
-                          radius: 10,
-                        ),
+                        leading: (item.profilePictureURL != "")
+                                    ? CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            item.profilePictureURL),
+                                        radius: 15,
+                                      )
+                                    : CircleAvatar(
+                                        backgroundImage:
+                                            AssetImage("images/Greddit.png"), //comm badr
+                                        radius: 15,
+                                      ),
                         title: Text(item.name),
                         onTap: () async {
                           moderatorController.profilePictureURL =

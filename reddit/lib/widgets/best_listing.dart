@@ -70,6 +70,37 @@ class BestListingBuild extends State<BestListing> {
     });
   }
 
+  void handleEditChanged(String postid, String text) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.description = text;
+      }
+    }
+  }
+
+  void handleLockChange(String postid, bool lock) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.lockedFlag = lock;
+      }
+    }
+  }
+
+  void handleDeleteListingChanged(String postid) {
+    setState(() {
+      List<PostItem> postsToRemove = [];
+
+      for (var post in posts) {
+        if (post.id == postid) {
+          postsToRemove.add(post);
+          post.isRemoved = true;
+        }
+      }
+
+      posts.removeWhere((post) => postsToRemove.contains(post));
+    });
+  }
+
   @override
   void HandleScrolling() {
     if (controller.position.maxScrollExtent == controller.position.pixels &&
@@ -132,6 +163,9 @@ class BestListingBuild extends State<BestListing> {
                     (moderatorController.modAccess.everything ||
                         moderatorController.modAccess.managePostsAndComments)),
                 moderatorDetails: posts[index].moderatorDetails,
+                onLock: handleLockChange,
+                onclearDelete: handleDeleteListingChanged,
+                onclearEdit: handleEditChanged,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -173,6 +207,9 @@ class BestListingBuild extends State<BestListing> {
               moderatorDetails: posts[index].moderatorDetails,
               pollExpired: posts[index].pollExpired!,
               pollVote: posts[index].pollVote!,
+              onclearDelete: handleDeleteListingChanged,
+              onclearEdit: handleEditChanged,
+              onLock: handleLockChange,
             );
           }
         }

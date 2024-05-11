@@ -347,11 +347,9 @@ class _PostUIState extends State<PostUI> {
                               },
                               child: Row(
                                 children: [
-                                  ((post["community_profile_picture"] != null &&
-                                              post["community_profile_picture"] !=
-                                                  "") ||
-                                          post["is_reposted_flag"] &&
-                                              ogPost?.profilePicture != "")
+                                  (post["is_reposted_flag"] &&
+                                          (ogPost?.profilePicture != "" &&
+                                              ogPost?.profilePicture != null))
                                       ? CircleAvatar(
                                           backgroundImage: NetworkImage(post[
                                                   "is_reposted_flag"]

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/Services/chat_service.dart';
 import 'package:reddit/Models/chat_user.dart';
-import 'package:reddit/widgets/add_chat.dart';
 import 'package:reddit/widgets/chat_search.dart';
 import 'package:reddit/widgets/chat_tile.dart';
 import 'package:socket_io_client/socket_io_client.dart' as Io;
+
+typedef OnNewChat = void Function();
 
 class ChatIntro extends StatefulWidget {
   @override
@@ -18,6 +19,33 @@ class _ChatIntroState extends State<ChatIntro> {
   List<ChatUsers> chatUsers = [];
   List<ChatUsers> foundChats = [];
   late Future<void> _dataFuture;
+
+  bool isInit = true;
+  bool setStateAyHaga = false;
+  void handleNewChat() {
+    setState(() {
+      _dataFuture = fetchChats();
+    });
+    print('Ana abdullah w geet hena');
+  }
+
+  // Future<void> fetchCallback() async {
+  //   if (isInit) {
+  //     await fetchChats();
+  //     isInit = false;
+  //   } else {
+  //     await fetchChatsPartTwo();
+  //     setState(() {
+  //       setStateAyHaga = !setStateAyHaga;
+  //     });
+  //   }
+  // }
+
+  Future<void> fetchChatsPartTwo() async {
+    chatUsers = await chatService.getChats();
+    foundChats = chatUsers;
+    print(chatUsers);
+  }
 
   Future<void> fetchChats() async {
     chatUsers = await chatService.getChats();
@@ -108,7 +136,9 @@ class _ChatIntroState extends State<ChatIntro> {
                         //         AddChat(),
                         //   ),
                         // );
-                        showSearch(context: context, delegate: ChatSearch());
+                        showSearch(
+                            context: context,
+                            delegate: ChatSearch(onNewChat: handleNewChat));
                       },
                       icon: Icon(Icons.add, color: Colors.white),
                       label: Text(
@@ -157,6 +187,7 @@ class _ChatIntroState extends State<ChatIntro> {
                         time: foundChats[index].time.split('T')[0],
                         isMessageRead:
                             (index == 0 || index == 3) ? true : false,
+                        onNewChat: handleNewChat,
                       );
                     },
                   );

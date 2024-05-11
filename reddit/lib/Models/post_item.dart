@@ -84,7 +84,10 @@ class PostItem {
   });
 
   factory PostItem.fromJson(Map<String, dynamic> json) {
-    print(json);
+    print("BADRRRRRRR IN FROM JSON");
+    print(json["post_in_community_flag"]);
+    print(json["title"]);
+    print(json["community_name"]);
     Map<String, dynamic> data =
         json['reposted'] != null ? json['reposted'] : {};
     final List<dynamic> jsonlist = json['images'] ?? [];
@@ -148,7 +151,7 @@ class PostItem {
               approvedFlag: json['moderator_details']['approved_flag'],
             )
           : null,
-             pollVote: json['poll_vote'] ?? "",
+      pollVote: json['poll_vote'] ?? "",
     );
   }
 }

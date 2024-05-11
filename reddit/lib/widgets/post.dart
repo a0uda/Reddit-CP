@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/post_controller.dart';
@@ -10,10 +8,8 @@ import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/comments.dart';
 import 'package:reddit/Models/moderator_item.dart';
 import 'package:reddit/Models/user_about.dart';
-import 'package:reddit/Pages/community_page.dart';
 import 'package:reddit/Services/community_service.dart';
 import 'package:reddit/Services/moderator_service.dart';
-import 'package:reddit/test_files/test_communities.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -22,8 +18,6 @@ import 'package:reddit/widgets/comments_desktop.dart';
 import 'package:reddit/widgets/listing_certain_user.dart';
 import 'package:reddit/widgets/options.dart';
 import 'package:reddit/widgets/search_community_list.dart';
-import 'package:reddit/widgets/share_post.dart';
-import 'package:reddit/widgets/video_player_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/poll_widget.dart';
@@ -161,9 +155,7 @@ class PostState extends State<Post> {
   }
 
   void handledeleteChanged(bool delete) {
-    setState(() {
-      widget.onclearDelete!(widget.id);
-    });
+    widget.onclearDelete!(widget.id);
   }
 
   void incrementCounter() {
@@ -215,16 +207,19 @@ class PostState extends State<Post> {
     if (!pictureFetched) {
       UserAbout user = await userService.getUserAbout(widget.name!)!;
       profilePicture = user.profilePicture;
+
       pictureFetched = true;
     }
   }
 
   Future<void> fetchCommPicture() async {
     if (!pictureFetched) {
-      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
-          communityName: widget.communityName);
-      profilePicture = comm['communityProfilePicture'];
-      pictureFetched = true;
+      if (widget.communityName != "") {
+        Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+            communityName: widget.communityName);
+        profilePicture = comm['communityProfilePicture'];
+        pictureFetched = true;
+      }
     }
   }
 
@@ -381,7 +376,6 @@ class PostState extends State<Post> {
                         child: (widget.communityName != "")
                             ? InkWell(
                                 onTap: () async {
-                                  //TODO: go to community
                                   await userController.getUserModerated();
                                   print("nav");
                                   print(
@@ -859,6 +853,10 @@ class PostState extends State<Post> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return AlertDialog(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      surfaceTintColor:
+                                                          Colors.white,
                                                       scrollable: true,
                                                       content: Builder(
                                                         builder: ((context) {

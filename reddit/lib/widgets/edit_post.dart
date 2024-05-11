@@ -10,10 +10,7 @@ import 'package:reddit/widgets/post.dart';
 class EditPost extends StatefulWidget {
   String postId;
   OnEditChanged onEditChanged;
-  EditPost({required this.postId,
-  required this.onEditChanged
-  
-  });
+  EditPost({required this.postId, required this.onEditChanged});
 
   @override
   _EditPostState createState() => _EditPostState();
@@ -46,7 +43,6 @@ class _EditPostState extends State<EditPost> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                
                 ],
               ),
             ),
@@ -75,13 +71,10 @@ class _EditPostState extends State<EditPost> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 3, 55, 146)),
                   onPressed: () {
-              
-                      postController.EditPost(widget.postId, bodyController.text);
-        postController.shouldRefresh=true;
-        widget.onEditChanged(bodyController.text);
-                     Navigator.of(context).pop();
-          
-         
+                    Navigator.of(context).pop();
+                    postController.EditPost(widget.postId, bodyController.text);
+                    postController.shouldRefresh = true;
+                    widget.onEditChanged(bodyController.text);
                   },
                   icon: Icon(Icons.edit, color: Colors.white),
                   label: Text(
