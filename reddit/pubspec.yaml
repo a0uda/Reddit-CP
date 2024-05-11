@@ -77,9 +77,11 @@ dependencies:
   
 
 dev_dependencies:
+  coverage: any
   flutter_launcher_icons: "^0.13.1"
   flutter_test:
     sdk: flutter
+  test: ^1.24.9
 
 flutter_launcher_icons:
   android: "launcher_icon"

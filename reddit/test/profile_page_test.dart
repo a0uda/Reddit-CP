@@ -436,8 +436,7 @@ void main() {
 
       var userService = GetIt.I.get<UserService>();
       UserAbout? otherUser = await userService.getUserAbout('johndoe');
-      int socialLinksCount = otherUser!.socialLinks!.length;
-      print(otherUser.username);
+      print(otherUser!.username);
 
       await tester.pumpWidget(
         MaterialApp(

@@ -597,13 +597,6 @@ class UserService {
       List<Messages> messages = List.from(users
           .firstWhere((element) => element.userAbout.username == username)
           .usermessages!);
-      List<BlockedUsersItem> blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      messages.removeWhere((element) => blockedUsers.any((blockedUser) =>
-          blockedUser.username == element.senderUsername ||
-          blockedUser.username == element.receiverUsername));
       return messages;
     } else {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -737,7 +730,7 @@ class UserService {
         senderVia: null,
         message: message,
         createdAt: DateTime.now().toString(),
-        unreadFlag: true,
+        unreadFlag: false,
         isSent: true,
         isReply: false,
         parentMessageId: null,

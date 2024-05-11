@@ -471,14 +471,6 @@ void main() {
       var expectedMessages = List.from(users
           .firstWhere((element) => element.userAbout.username == username)
           .usermessages!);
-      var blockedUsers = users
-          .firstWhere((element) => element.userAbout.username == username)
-          .safetySettings!
-          .blockedUsers;
-      expectedMessages.removeWhere((element) => blockedUsers.any(
-          (blockedUser) =>
-              blockedUser.username == element.senderUsername ||
-              blockedUser.username == element.receiverUsername));
 
       expect(messages, expectedMessages);
     });

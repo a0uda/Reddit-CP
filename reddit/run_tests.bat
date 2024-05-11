@@ -1,0 +1,1 @@
+for %%G in (test\*_test.dart) do flutter test --coverage %%G
