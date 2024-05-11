@@ -41,7 +41,7 @@ final rules = [
 
 final communities = [
   CommunityItem(
-    communityName: 'Hyatt___Tillman',
+    communityName: 'Hyatt___Tillman', 
     general: generalSettings[0],
     communityMembersNo: "5000",
     communityRules: rules,
