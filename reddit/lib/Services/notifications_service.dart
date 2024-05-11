@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:reddit/Models/notification_item.dart';
 import 'package:reddit/widgets/best_listing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,7 +118,7 @@ class NotificationsService with ChangeNotifier {
     String? token = prefs.getString('token');
     final url =
         Uri.parse('https://redditech.me/backend/users/mute-unmute-community');
-    final response = await http.patch(
+    final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -127,6 +128,9 @@ class NotificationsService with ChangeNotifier {
         'community_name': communityName,
       }),
     );
+    print("mute");
+    print(response.body);
+    print(response.statusCode);
     if (response.statusCode == 200) {
       notifyListeners();
       return true;

@@ -58,7 +58,7 @@ class NotificationCardState extends State<NotificationCard> {
     if (widget.notificationItem.type == 'upvotes_posts' &&
         widget.notificationItem.isInCommunity == true) {
       title =
-          'u/${widget.notificationItem.sendingUserUsername} upvoted your post in ${widget.notificationItem.communityName}';
+          'u/${widget.notificationItem.sendingUserUsername} upvoted your post in r/${widget.notificationItem.communityName}';
       subtitle =
           'Go see your post on u/${widget.notificationItem.communityName}';
       isPost = true;
@@ -70,7 +70,7 @@ class NotificationCardState extends State<NotificationCard> {
     } else if (widget.notificationItem.type == 'comments' &&
         widget.notificationItem.isInCommunity == true) {
       title =
-          'u/${widget.notificationItem.sendingUserUsername} replied to your post in ${widget.notificationItem.communityName}';
+          'u/${widget.notificationItem.sendingUserUsername} replied to your post in r/${widget.notificationItem.communityName}';
       subtitle = '';
       isPost = true;
     } else if (widget.notificationItem.type == 'comments') {
@@ -81,7 +81,7 @@ class NotificationCardState extends State<NotificationCard> {
     } else if (widget.notificationItem.type == 'replies' &&
         widget.notificationItem.isInCommunity == true) {
       title =
-          'u/${widget.notificationItem.sendingUserUsername} replied to your comment in ${widget.notificationItem.communityName}';
+          'u/${widget.notificationItem.sendingUserUsername} replied to your comment in r/${widget.notificationItem.communityName}';
       subtitle = '';
       isPost = true;
     } else if (widget.notificationItem.type == 'replies') {
@@ -92,6 +92,17 @@ class NotificationCardState extends State<NotificationCard> {
     } else if (widget.notificationItem.type == 'new_followers') {
       title = 'u/${widget.notificationItem.sendingUserUsername} followed you';
       subtitle = '';
+    } else if (widget.notificationItem.type == 'upvotes_comments' &&
+        widget.notificationItem.isInCommunity == true) {
+      title =
+          'u/${widget.notificationItem.sendingUserUsername} upvoted your comment in r/${widget.notificationItem.communityName}';
+      subtitle = '';
+      isPost = true;
+    } else if (widget.notificationItem.type == 'upvotes_comments') {
+      title =
+          'u/${widget.notificationItem.sendingUserUsername} upvoted your comment';
+      subtitle = '';
+      isPost = true;
     } else {
       title = '';
 
@@ -210,24 +221,27 @@ class NotificationCardState extends State<NotificationCard> {
                       ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await notificationsService.muteUnmuteCommunity(
-                          widget.notificationItem.communityName!);
-                    },
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.disabled_by_default_outlined,
-                          color: Colors.black,
+                  widget.notificationItem.communityName == null ||
+                          widget.notificationItem.communityName == ''
+                      ? Container()
+                      : TextButton(
+                          onPressed: () async {
+                            Navigator.pop(context);
+                            await notificationsService.muteUnmuteCommunity(
+                                widget.notificationItem.communityName!);
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(
+                                Icons.disabled_by_default_outlined,
+                                color: Colors.black,
+                              ),
+                              SizedBox(width: 10),
+                              Text("Disable updates from this community",
+                                  style: TextStyle(color: Colors.black))
+                            ],
+                          ),
                         ),
-                        SizedBox(width: 10),
-                        Text("Disable updates from this community",
-                            style: TextStyle(color: Colors.black))
-                      ],
-                    ),
-                  ),
                   TextButton(
                     onPressed: () => {
                       userController.updateSingleNotificationSetting(
