@@ -28,11 +28,13 @@ class _DrawerRedditState extends State<DrawerReddit> {
   List<Map<String, dynamic>> communitiesDrawer = [];
 
   Future<void> fetchUserCommunities() async {
-    await userController.getUserCommunities();
-    print("henaa");
-    print(userController.userCommunities);
-    await userController.getUserModerated();
-     print("moderated");
+    if (userController.userAbout != null) {
+      await userController.getUserCommunities();
+      print("henaa");
+      print(userController.userCommunities);
+      await userController.getUserModerated();
+      print("moderated");
+    }
   }
 
   @override
@@ -193,7 +195,8 @@ class _DrawerRedditState extends State<DrawerReddit> {
                                     : const SizedBox(),
                                 (userController.userModeratedCommunities !=
                                             null &&
-                                        userController.userModeratedCommunities !=
+                                        userController
+                                                .userModeratedCommunities !=
                                             [])
                                     ? DrawerTile(
                                         tileTitle: "MODERATION",

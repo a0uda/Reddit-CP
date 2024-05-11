@@ -438,7 +438,9 @@ class QuestionScreen extends State<Question> {
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
-                          return SizedBox(
+                          return Container(
+                            decoration: BoxDecoration(color: Colors.white,
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(24),topRight: Radius.circular(24))),
                             height: heigth * 0.5,
                             width: width,
                             child: const Column(
@@ -466,11 +468,11 @@ class QuestionScreen extends State<Question> {
               if (selectedAnswer == "") {
                 return Colors.grey;
               } else {
-                return Colors.deepOrange;
+                return  const Color.fromARGB(255, 3, 55, 146);
               }
             }),
           ),
-          child: const Text('submit'),
+          child: const Text('Submit',style: TextStyle(color: Colors.white),),
         )
       ],
     );

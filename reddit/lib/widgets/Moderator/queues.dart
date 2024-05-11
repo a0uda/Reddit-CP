@@ -144,7 +144,7 @@ class _ModQueuesState extends State<ModQueues> {
                           itemCount: moderatorController.queuePosts.length,
                           itemBuilder: (context, index) {
                             final item = moderatorController.queuePosts[index];
-                            return item.commentInCommunityFlag
+                            return item.postInCommunityFlag
                                 ? PostModQueue(
                                     post: item,
                                     queueType: needReviewTitle,
@@ -182,7 +182,7 @@ class _ModQueuesState extends State<ModQueues> {
                               itemBuilder: (context, index) {
                                 final item =
                                     moderatorController.queuePosts[index];
-                                return item.commentInCommunityFlag
+                                return item.postInCommunityFlag
                                     ? PostModQueue(
                                         post: item,
                                         queueType: needReviewTitle,

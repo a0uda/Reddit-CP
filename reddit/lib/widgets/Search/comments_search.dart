@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/followers_following_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/Services/search_service.dart';
 import 'package:reddit/Services/user_service.dart';
@@ -37,6 +38,26 @@ class _CommentsSearchState extends State<CommentsSearch> {
   ScrollController scrollController = ScrollController();
   bool isLoading = false;
 
+  Future<void> getExtraData(Map<String, dynamic> comment) async {
+    if (comment["post_id"]["post_in_community_flag"]) {
+      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+          communityName: comment["post_id"]["community_name"]);
+      comment["community_profile_picture"] = comm["communityProfilePicture"];
+    } else {
+      UserAbout? userInPost =
+          await userService.getUserAbout(comment["post_id"]["username"]);
+      if (userInPost != null) {
+        comment["community_profile_picture"] = userInPost.profilePicture!;
+      }
+    }
+    //getprofilesettings -> pp
+    UserAbout? userInComment =
+        await userService.getUserAbout(comment["username"]);
+    if (userInComment != null) {
+      comment["profile_picture"] = userInComment.profilePicture!;
+    }
+  }
+
   Future<void> fetchComments() async {
     searchFor = widget.searchFor;
     setState(() {
@@ -49,29 +70,9 @@ class _CommentsSearchState extends State<CommentsSearch> {
       temp = await searchService.getSearchComments(
           searchFor, pageNum, selectedOption);
     }
-    //getcommunity->pp
-    temp.forEach(
-      (comment) async {
-        if (comment["post_id"]["post_in_community_flag"]) {
-          Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
-              communityName: comment["post_id"]["community_name"]);
-          comment["community_profile_picture"] =
-              comm["communityProfilePicture"];
-        } else {
-          ProfileSettings? userInPost = await userService
-              .getProfileSettings(comment["post_id"]["username"]);
-          if (userInPost != null) {
-            comment["community_profile_picture"] = userInPost.profilePicture!;
-          }
-        }
-        //getprofilesettings -> pp
-        ProfileSettings? userInComment =
-            await userService.getProfileSettings(comment["username"]);
-        if (userInComment != null) {
-          comment["profile_picture"] = userInComment.profilePicture!;
-        }
-      },
-    );
+    List<Future<void>> futures =
+        temp.map((comment) => getExtraData(comment)).toList();
+    await Future.wait(futures);
 
     foundComments.addAll(temp);
 

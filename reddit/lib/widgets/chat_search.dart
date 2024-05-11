@@ -1,15 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:reddit/widgets/Search/Suggestions.dart';
-import 'package:reddit/widgets/Search/comments_search.dart';
-import 'package:reddit/widgets/Search/communities_search.dart';
 import 'package:reddit/widgets/Search/people_list.dart';
-import 'package:reddit/widgets/Search/post_search.dart';
+import 'package:reddit/widgets/chat_intro.dart';
 
 class ChatSearch extends SearchDelegate {
 // first overwrite to
 // clear the search text
+
+  OnNewChat? onNewChat;
+
+  ChatSearch({this.onNewChat});
+
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -37,7 +37,11 @@ class ChatSearch extends SearchDelegate {
   int index = 0;
   @override
   Widget buildResults(BuildContext context) {
-    return PeopleList(searchFor: query , inChat: true,);
+    return PeopleList(
+      searchFor: query,
+      inChat: true,
+      onChat: onNewChat,
+    );
   }
 
   @override

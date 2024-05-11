@@ -123,6 +123,12 @@ class RepostState extends State<Repost> {
   bool spammedFlag = false;
   bool approvedFlag = false;
   bool removedPost = false;
+  late Future fetchPic;
+  late Future fetchCommPic;
+  late Future fetchRepostPic;
+  late Future fetchRepostCommPic;
+  String? profilePicture;
+  String? repostProfilePic;
 
   late Future fetch;
   CommunityController communityController =
@@ -146,8 +152,37 @@ class RepostState extends State<Repost> {
     });
   }
 
+  Future<void> fetchPicture() async {
+    UserAbout user = await userService.getUserAbout(widget.name)!;
+    profilePicture = user.profilePicture;
+  }
+
+  Future<void> fetchCommPicture() async {
+    if (widget.communityName != "") {
+      Map<String, dynamic> comm = await moderatorService.getCommunityInfo(
+          communityName: widget.communityName);
+      profilePicture = comm['communityProfilePicture'];
+    }
+  }
+
+  Future<void> fetchRepostPicture(String name) async {
+    UserAbout user = await userService.getUserAbout(name)!;
+    repostProfilePic = user.profilePicture;
+  }
+
+  Future<void> fetchRepostCommPicture(String name) async {
+    Map<String, dynamic> comm =
+        await moderatorService.getCommunityInfo(communityName: name);
+    repostProfilePic = comm['communityProfilePicture'];
+  }
+
   Future<void> loadOriginalPost() async {
     post = await postService.getPostById(widget.originalID);
+    if (post!.inCommunityFlag! || (post!.communityName != "")) {
+      fetchRepostCommPic = fetchRepostCommPicture(post!.communityName);
+    } else {
+      fetchRepostPic = fetchRepostPicture(post!.username);
+    }
   }
 
   void incrementCounter() {
@@ -208,6 +243,9 @@ class RepostState extends State<Repost> {
     } else if (widget.vote == -1) {
       downVote = true;
     }
+
+    fetchPic = fetchPicture();
+    fetchCommPic = fetchCommPicture();
   }
   // List of items in our dropdown menu
 
@@ -275,10 +313,10 @@ class RepostState extends State<Repost> {
                   children: <Widget>[
                     ListTile(
                       leading: widget.communityName == ''
-                          ? FutureBuilder<UserAbout>(
-                              future: userService.getUserAbout(widget.name!),
+                          ? FutureBuilder<void>(
+                              future: fetchPic,
                               builder: (BuildContext context,
-                                  AsyncSnapshot<UserAbout> snapshot) {
+                                  AsyncSnapshot<void> snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return const CircularProgressIndicator();
@@ -286,13 +324,8 @@ class RepostState extends State<Repost> {
                                   print("el sora");
                                   return Text('Error: ${snapshot.error}');
                                 } else {
-                                  print('in comment');
-                                  print(snapshot.data!);
-                                  print('username in comment');
-                                  print(widget.name!);
-                                  print(snapshot.data!.profilePicture!);
-                                  if (snapshot.data!.profilePicture == null ||
-                                      snapshot.data!.profilePicture!.isEmpty) {
+                                  if (profilePicture == null ||
+                                      profilePicture!.isEmpty) {
                                     return const CircleAvatar(
                                       radius: 15,
                                       backgroundImage:
@@ -300,20 +333,18 @@ class RepostState extends State<Repost> {
                                     );
                                   } else {
                                     return CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          snapshot.data!.profilePicture!),
+                                      backgroundImage:
+                                          NetworkImage(profilePicture!),
                                       radius: 15,
                                     );
                                   }
                                 }
                               },
                             )
-                          : FutureBuilder<Map<String, dynamic>>(
-                              future: moderatorService.getCommunityInfo(
-                                  communityName: widget.communityName),
+                          : FutureBuilder<void>(
+                              future: fetchCommPic,
                               builder: (BuildContext context,
-                                  AsyncSnapshot<Map<String, dynamic>>
-                                      snapshot) {
+                                  AsyncSnapshot<void> snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
                                   return const CircularProgressIndicator();
@@ -321,17 +352,8 @@ class RepostState extends State<Repost> {
                                   print("el sora");
                                   return Text('Error: ${snapshot.error}');
                                 } else {
-                                  print('in comment');
-                                  print(snapshot.data!);
-                                  print('username in comment');
-                                  print(widget.name!);
-                                  print(snapshot
-                                      .data!['communityProfilePicture']);
-                                  if (snapshot.data![
-                                              'communityProfilePicture'] ==
-                                          null ||
-                                      snapshot.data!['communityProfilePicture']!
-                                          .isEmpty) {
+                                  if (profilePicture == null ||
+                                      profilePicture!.isEmpty) {
                                     return const CircleAvatar(
                                       radius: 15,
                                       backgroundImage:
@@ -339,8 +361,8 @@ class RepostState extends State<Repost> {
                                     );
                                   } else {
                                     return CircleAvatar(
-                                      backgroundImage: NetworkImage(snapshot
-                                          .data!['communityProfilePicture']!),
+                                      backgroundImage:
+                                          NetworkImage(profilePicture!),
                                       radius: 15,
                                     );
                                   }
@@ -355,29 +377,46 @@ class RepostState extends State<Repost> {
                               child: (widget.communityName != "")
                                   ? InkWell(
                                       onTap: () async {
-                                        await userController.getUserModerated();
-                                        bool isMod = userController
-                                            .userModeratedCommunities!
-                                            .any((comm) =>
-                                                comm.name ==
-                                                widget.communityName);
-                                        var moderatorProvider =
-                                            context.read<ModeratorProvider>();
-                                        if (isMod) {
-                                          await moderatorProvider.getModAccess(
-                                              userController
-                                                  .userAbout!.username,
-                                              widget.communityName);
+                                        bool isMod = false;
+                                        if (userController.userAbout == null) {
+                                          await userController
+                                              .getUserModerated();
+                                          isMod = userController
+                                              .userModeratedCommunities!
+                                              .any((comm) =>
+                                                  comm.name ==
+                                                  widget.communityName);
+                                          var moderatorProvider =
+                                              context.read<ModeratorProvider>();
+                                          if (isMod) {
+                                            await moderatorProvider
+                                                .getModAccess(
+                                                    userController
+                                                        .userAbout!.username,
+                                                    widget.communityName);
+                                          } else {
+                                            moderatorProvider
+                                                    .moderatorController
+                                                    .modAccess =
+                                                ModeratorItem(
+                                                    everything: false,
+                                                    managePostsAndComments:
+                                                        false,
+                                                    manageSettings: false,
+                                                    manageUsers: false,
+                                                    username: userController
+                                                        .userAbout!.username);
+                                          }
                                         } else {
-                                          moderatorProvider.moderatorController
-                                                  .modAccess =
-                                              ModeratorItem(
-                                                  everything: false,
-                                                  managePostsAndComments: false,
-                                                  manageSettings: false,
-                                                  manageUsers: false,
-                                                  username: userController
-                                                      .userAbout!.username);
+                                          isMod = false;
+                                          ModeratorItem(
+                                              everything: false,
+                                              managePostsAndComments: false,
+                                              manageSettings: false,
+                                              manageUsers: false,
+                                              username: userController
+                                                      .userAbout?.username ??
+                                                  "");
                                         }
                                         //IS MOD HENA.
                                         Navigator.of(context).push(
@@ -416,7 +455,7 @@ class RepostState extends State<Repost> {
                                   : InkWell(
                                       onTap: () => {
                                         userType = userController
-                                                    .userAbout!.username ==
+                                                    .userAbout?.username ==
                                                 widget.name
                                             ? 'me'
                                             : 'other',
@@ -485,7 +524,7 @@ class RepostState extends State<Repost> {
                               child: InkWell(
                                 onTap: () => {
                                   userType =
-                                      userController.userAbout!.username ==
+                                      userController.userAbout?.username ==
                                               widget.name
                                           ? 'me'
                                           : 'other',
@@ -670,14 +709,12 @@ class RepostState extends State<Repost> {
                                         child: Column(children: <Widget>[
                                           ListTile(
                                             leading: post!.communityName == ''
-                                                ? FutureBuilder<UserAbout>(
-                                                    future: userService
-                                                        .getUserAbout(
-                                                            widget.name!),
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<UserAbout>
-                                                            snapshot) {
+                                                ? FutureBuilder<void>(
+                                                    future: fetchRepostPic,
+                                                    builder:
+                                                        (BuildContext context,
+                                                            AsyncSnapshot<void>
+                                                                snapshot) {
                                                       if (snapshot
                                                               .connectionState ==
                                                           ConnectionState
@@ -689,19 +726,9 @@ class RepostState extends State<Repost> {
                                                         return Text(
                                                             'Error: ${snapshot.error}');
                                                       } else {
-                                                        print('in comment');
-                                                        print(snapshot.data!);
-                                                        print(
-                                                            'username in comment');
-                                                        print(widget.name!);
-                                                        print(snapshot.data!
-                                                            .profilePicture!);
-                                                        if (snapshot.data!
-                                                                    .profilePicture ==
+                                                        if (repostProfilePic ==
                                                                 null ||
-                                                            snapshot
-                                                                .data!
-                                                                .profilePicture!
+                                                            repostProfilePic!
                                                                 .isEmpty) {
                                                           return const CircleAvatar(
                                                             radius: 15,
@@ -713,27 +740,19 @@ class RepostState extends State<Repost> {
                                                           return CircleAvatar(
                                                             backgroundImage:
                                                                 NetworkImage(
-                                                                    snapshot
-                                                                        .data!
-                                                                        .profilePicture!),
+                                                                    repostProfilePic!),
                                                             radius: 15,
                                                           );
                                                         }
                                                       }
                                                     },
                                                   )
-                                                : FutureBuilder<
-                                                    Map<String, dynamic>>(
-                                                    future: moderatorService
-                                                        .getCommunityInfo(
-                                                            communityName: post!
-                                                                .communityName),
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<
-                                                                Map<String,
-                                                                    dynamic>>
-                                                            snapshot) {
+                                                : FutureBuilder<void>(
+                                                    future: fetchRepostCommPic,
+                                                    builder:
+                                                        (BuildContext context,
+                                                            AsyncSnapshot<void>
+                                                                snapshot) {
                                                       if (snapshot
                                                               .connectionState ==
                                                           ConnectionState
@@ -745,19 +764,9 @@ class RepostState extends State<Repost> {
                                                         return Text(
                                                             'Error: ${snapshot.error}');
                                                       } else {
-                                                        print('in comment');
-                                                        print(snapshot.data!);
-                                                        print(
-                                                            'username in comment');
-                                                        print(widget.name!);
-                                                        print(snapshot.data![
-                                                            'communityProfilePicture']);
-                                                        if (snapshot.data![
-                                                                    'communityProfilePicture'] ==
+                                                        if (repostProfilePic ==
                                                                 null ||
-                                                            snapshot
-                                                                .data![
-                                                                    'communityProfilePicture']!
+                                                            repostProfilePic!
                                                                 .isEmpty) {
                                                           return const CircleAvatar(
                                                             radius: 15,
@@ -768,9 +777,8 @@ class RepostState extends State<Repost> {
                                                         } else {
                                                           return CircleAvatar(
                                                             backgroundImage:
-                                                                NetworkImage(snapshot
-                                                                        .data![
-                                                                    'communityProfilePicture']!),
+                                                                NetworkImage(
+                                                                    repostProfilePic!),
                                                             radius: 15,
                                                           );
                                                         }
@@ -789,26 +797,46 @@ class RepostState extends State<Repost> {
                                                             ? InkWell(
                                                                 onTap:
                                                                     () async {
-                                                                  await userController
-                                                                      .getUserModerated();
-                                                                  bool isMod = userController
-                                                                      .userModeratedCommunities!
-                                                                      .any((comm) =>
-                                                                          comm.name ==
-                                                                          post!
+                                                                  bool isMod =
+                                                                      false;
+                                                                  if (userController
+                                                                          .userAbout ==
+                                                                      null) {
+                                                                    await userController
+                                                                        .getUserModerated();
+                                                                    isMod = userController
+                                                                        .userModeratedCommunities!
+                                                                        .any((comm) =>
+                                                                            comm.name ==
+                                                                            widget.communityName);
+                                                                    var moderatorProvider =
+                                                                        context.read<
+                                                                            ModeratorProvider>();
+                                                                    if (isMod) {
+                                                                      await moderatorProvider.getModAccess(
+                                                                          userController
+                                                                              .userAbout!
+                                                                              .username,
+                                                                          widget
                                                                               .communityName);
-                                                                  var moderatorProvider =
-                                                                      context.read<
-                                                                          ModeratorProvider>();
-                                                                  if (isMod) {
-                                                                    await moderatorProvider.getModAccess(
-                                                                        userController
-                                                                            .userAbout!
-                                                                            .username,
-                                                                        post!
-                                                                            .communityName);
+                                                                    } else {
+                                                                      moderatorProvider.moderatorController.modAccess = ModeratorItem(
+                                                                          everything:
+                                                                              false,
+                                                                          managePostsAndComments:
+                                                                              false,
+                                                                          manageSettings:
+                                                                              false,
+                                                                          manageUsers:
+                                                                              false,
+                                                                          username: userController
+                                                                              .userAbout!
+                                                                              .username);
+                                                                    }
                                                                   } else {
-                                                                    moderatorProvider.moderatorController.modAccess = ModeratorItem(
+                                                                    isMod =
+                                                                        false;
+                                                                    ModeratorItem(
                                                                         everything:
                                                                             false,
                                                                         managePostsAndComments:
@@ -817,9 +845,9 @@ class RepostState extends State<Repost> {
                                                                             false,
                                                                         manageUsers:
                                                                             false,
-                                                                        username: userController
-                                                                            .userAbout!
-                                                                            .username);
+                                                                        username:
+                                                                            userController.userAbout?.username ??
+                                                                                "");
                                                                   }
                                                                   //IS MOD HENA.
                                                                   Navigator.of(
@@ -860,8 +888,7 @@ class RepostState extends State<Repost> {
                                                             : InkWell(
                                                                 onTap: () => {
                                                                   userType = userController
-                                                                              .userAbout!
-                                                                              .username ==
+                                                                              .userAbout?.username ==
                                                                           post!
                                                                               .username
                                                                       ? 'me'
@@ -945,8 +972,7 @@ class RepostState extends State<Repost> {
                                                     child: InkWell(
                                                       onTap: () => {
                                                         userType = userController
-                                                                    .userAbout!
-                                                                    .username ==
+                                                                    .userAbout?.username ==
                                                                 post!.username
                                                             ? 'me'
                                                             : 'other',

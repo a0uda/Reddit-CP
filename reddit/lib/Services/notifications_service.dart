@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:reddit/Models/notification_item.dart';
 import 'package:reddit/widgets/best_listing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,6 +110,32 @@ class NotificationsService with ChangeNotifier {
       return true;
     } else {
       throw Exception('Failed to mark notification as read');
+    }
+  }
+
+  Future<bool> muteUnmuteCommunity(String communityName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/mute-unmute-community');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: jsonEncode({
+        'community_name': communityName,
+      }),
+    );
+    print("mute");
+    print(response.body);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return true;
+    } else {
+      throw Exception('Failed to mute community');
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/profile_settings.dart';
+import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/moderator_service.dart';
 import 'package:reddit/Services/post_service.dart';
 import 'package:reddit/Services/search_service.dart';
@@ -57,8 +58,8 @@ class _CommentsSearchState extends State<PostSearch> {
             communityName: post["community_name"]);
         post["community_profile_picture"] = comm["communityProfilePicture"];
       } else {
-        ProfileSettings? userInPost =
-            await userService.getProfileSettings(post["username"]);
+        UserAbout? userInPost =
+            await userService.getUserAbout(post["username"]);
         if (userInPost != null) {
           post["community_profile_picture"] = userInPost.profilePicture!;
         }
@@ -71,16 +72,16 @@ class _CommentsSearchState extends State<PostSearch> {
               communityName: ogPost.communityName);
           ogPost.profilePicture = ogcomm["communityProfilePicture"];
         } else {
-          ProfileSettings? userInPost =
-              await userService.getProfileSettings(ogPost!.username);
+          UserAbout? userInPost =
+              await userService.getUserAbout(ogPost!.username);
           if (userInPost != null) {
             ogPost.profilePicture = userInPost.profilePicture!;
           }
         }
         post["ogPost"] = ogPost;
-        // print("REPSTEDDDD");
-        // print(ogPost.communityName);
-        // print(ogPost.username);
+        print("REPSTEDDDD");
+        print(ogPost.communityName);
+        print(ogPost.profilePicture);
         // print(ogPost.createdAt);
         // print(ogPost.title);
       }

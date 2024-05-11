@@ -250,6 +250,11 @@ class Postoptions extends State<Options> {
                     isScrollControlled: true,
                     builder: (BuildContext context) {
                       return Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(24),
+                                topRight: Radius.circular(24))),
                         height: heigth * 0.4,
                         width: width,
                         padding: const EdgeInsets.all(16.0),
@@ -267,8 +272,14 @@ class Postoptions extends State<Options> {
                                     context: context,
                                     isScrollControlled: true,
                                     builder: (BuildContext context) {
-                                      return SizedBox(
-                                          height: heigth * 0.9,
+                                      return Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(24),
+                                                  topRight:
+                                                      Radius.circular(24))),
+                                          height: heigth * 0.87,
                                           width: width,
                                           child: Column(children: [
                                             const ListTile(
@@ -327,12 +338,12 @@ class Postoptions extends State<Options> {
                                     ? "Unlock Comments"
                                     : "Lock Comments"),
                                 onTap: () {
+                                  Navigator.of(context).pop();
                                   widget.onLockChanged(!widget.islocked);
                                   setState(() {
                                     postLockController.lockPost(widget.postId!);
                                     widget.islocked = !widget.islocked;
                                   });
-                                  Navigator.of(context).pop();
                                 },
                               ),
                             if (isMyPost)
@@ -347,7 +358,11 @@ class Postoptions extends State<Options> {
                                       builder: (BuildContext context) {
                                         return Container(
                                           decoration: BoxDecoration(
-                                              color: Colors.white),
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(24),
+                                                  topRight:
+                                                      Radius.circular(24))),
                                           height: heigth * 0.8,
                                           width: width,
                                           padding: const EdgeInsets.all(16.0),
@@ -373,7 +388,11 @@ class Postoptions extends State<Options> {
                                       builder: (BuildContext context) {
                                         return Container(
                                           decoration: BoxDecoration(
-                                              color: Colors.white),
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(24),
+                                                  topRight:
+                                                      Radius.circular(24))),
                                           height: heigth * 0.3,
                                           width: width,
                                           padding: const EdgeInsets.all(16.0),

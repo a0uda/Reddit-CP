@@ -279,6 +279,7 @@ class _CreatePostState extends State<CreatePost> {
               padding: const EdgeInsets.only(right: 8.0),
               child: ElevatedButton(
                 onPressed: (() async => {
+                  
                       if (titleController.text.isEmpty)
                         {
                           showDialog(
@@ -345,15 +346,15 @@ class _CreatePostState extends State<CreatePost> {
                                   imageSelected
                                       ? [
                                           ImageItem(
-                                              path: _image!.path,
-                                              link: imageUrl!)
+                                              link: _image!.path,
+                                              path: imageUrl!)
                                         ]
                                       : null,
                                   videoSelected
                                       ? [
                                           VideoItem(
-                                              path: _video!.path,
-                                              link: videoUrl!)
+                                              link: _video!.path,
+                                              path: videoUrl!)
                                         ]
                                       : null,
                                   pollSelected
@@ -375,7 +376,7 @@ class _CreatePostState extends State<CreatePost> {
                                   _selections[0],
                                   !(selectedCommunity == "Select Community")),
                             },
-                          //print(_selections),
+                          print(_selections),
                           if (await response == 400)
                             {
                               showDialog(

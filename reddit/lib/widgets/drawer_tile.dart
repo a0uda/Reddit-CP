@@ -5,6 +5,7 @@ import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Controllers/user_controller.dart';
 import 'package:reddit/Models/communtiy_backend.dart';
 import 'package:reddit/Models/moderator_item.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/Community/community_responsive.dart';
 import 'package:reddit/widgets/Community/desktop_community_page.dart';
 import 'package:reddit/widgets/Community/mobile_community_page.dart';
@@ -70,15 +71,24 @@ class _DrawerTileState extends State<DrawerTile> {
                         leading: const Icon(Icons.add, color: Colors.black),
                         title: const Text("Create Community"),
                         onTap: () {
-                          screenWidth > 700
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return const CreateCommunityPopup();
-                                  })
-                              : Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => const CreateCommunity(),
-                                ));
+                          if (userController.userAbout != null) {
+                            screenWidth > 700
+                                ? showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const CreateCommunityPopup();
+                                    })
+                                : Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CreateCommunity(),
+                                  ));
+                          } else {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
                         },
                       )
                     : const SizedBox(),
@@ -94,31 +104,51 @@ class _DrawerTileState extends State<DrawerTile> {
                       print("hnaaa");
                       final item = widget.lists[index];
                       return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: AssetImage(item.profilePictureURL),
-                          radius: 10,
-                        ),
+                        leading: (item.profilePictureURL != "")
+                            ? CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(item.profilePictureURL),
+                                radius: 15,
+                              )
+                            : CircleAvatar(
+                                backgroundImage: AssetImage(
+                                    "images/Greddit.png"), //comm badr
+                                radius: 15,
+                              ),
                         title: Text(item.name),
                         onTap: () async {
                           moderatorController.profilePictureURL =
                               item.profilePictureURL;
-                          await userController.getUserModerated();
-                          bool isMod = userController.userModeratedCommunities!
-                              .any((comm) => comm.name == item.name);
-                          var moderatorProvider =
-                              context.read<ModeratorProvider>();
-                          if (isMod) {
-                            await moderatorProvider.getModAccess(
-                                userController.userAbout!.username, item.name);
+                          bool isMod = false;
+                          if (userController.userAbout != null) {
+                            await userController.getUserModerated();
+                            isMod = userController.userModeratedCommunities!
+                                .any((comm) => comm.name == item.name);
+                            var moderatorProvider =
+                                context.read<ModeratorProvider>();
+                            if (isMod) {
+                              await moderatorProvider.getModAccess(
+                                  userController.userAbout?.username ?? "",
+                                  item.name);
+                            } else {
+                              moderatorProvider.moderatorController.modAccess =
+                                  ModeratorItem(
+                                      everything: false,
+                                      managePostsAndComments: false,
+                                      manageSettings: false,
+                                      manageUsers: false,
+                                      username:
+                                          userController.userAbout?.username ??
+                                              "");
+                            }
                           } else {
-                            moderatorProvider.moderatorController.modAccess =
-                                ModeratorItem(
-                                    everything: false,
-                                    managePostsAndComments: false,
-                                    manageSettings: false,
-                                    manageUsers: false,
-                                    username:
-                                        userController.userAbout!.username);
+                            isMod = false;
+                            ModeratorItem(
+                                everything: false,
+                                managePostsAndComments: false,
+                                manageSettings: false,
+                                manageUsers: false,
+                                username: "");
                           }
                           //IS MOD HENA.
                           Navigator.of(context).push(MaterialPageRoute(

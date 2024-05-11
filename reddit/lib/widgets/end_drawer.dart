@@ -102,13 +102,14 @@ class EndDrawerReddit extends StatelessWidget {
               bool isloggedout = await userService.logout();
               if (isloggedout) {
                 userController.userAbout = null;
+                userController.Destructor();
                 await chatservice.SocketClose();
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.clear();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => const LoginPage()));
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.clear();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  (Route<dynamic> route) => false,
+                );
               }
             },
           ),

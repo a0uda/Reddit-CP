@@ -34,7 +34,7 @@ class HotListingBuild extends State<HotListing> {
   // List of items in our dropdown menu
   bool isloading = false;
   List<PostItem> posts = [];
-  late Future<void> _dataFuture;
+
   Future<void> fetchdata() async {
     final postService = GetIt.instance.get<PostService>();
     if (isloading) return;
@@ -50,7 +50,9 @@ class HotListingBuild extends State<HotListing> {
         post = await postService.getPosts(user, "hot", page);
         page = page + 1;
       } else {
-        posts = postService.fetchPosts();
+        post = await postService.getGuestPosts("hot", page);
+        page = page + 1;
+
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
@@ -67,6 +69,37 @@ class HotListingBuild extends State<HotListing> {
     setState(() {
       posts.addAll(post);
       isloading = false;
+    });
+  }
+
+  void handleEditChanged(String postid, String text) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.description = text;
+      }
+    }
+  }
+
+  void handleLockChange(String postid, bool lock) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.lockedFlag = lock;
+      }
+    }
+  }
+
+  void handleDeleteListingChanged(String postid) {
+    setState(() {
+      List<PostItem> postsToRemove = [];
+
+      for (var post in posts) {
+        if (post.id == postid) {
+          postsToRemove.add(post);
+          post.isRemoved = true;
+        }
+      }
+
+      posts.removeWhere((post) => postsToRemove.contains(post));
     });
   }
 
@@ -124,7 +157,8 @@ class HotListingBuild extends State<HotListing> {
                 date: posts[index].createdAt.toString(),
                 likes: posts[index].upvotesCount - posts[index].downvotesCount,
                 commentsCount: posts[index].commentsCount,
-                communityName: posts[index].communityName,
+                communityName:
+                    widget.type == "comm" ? "" : posts[index].communityName,
                 isLocked: posts[index].lockedFlag,
                 vote: posts[index].vote,
                 isSaved: posts[index].isSaved ?? false,
@@ -132,6 +166,9 @@ class HotListingBuild extends State<HotListing> {
                     (moderatorController.modAccess.everything ||
                         moderatorController.modAccess.managePostsAndComments)),
                 moderatorDetails: posts[index].moderatorDetails,
+                onclearEdit: handleEditChanged,
+                onclearDelete: handleDeleteListingChanged,
+                onLock: handleLockChange,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -166,15 +203,19 @@ class HotListingBuild extends State<HotListing> {
               videoUrl: posts[index].videos?[0].path,
               poll: posts[index].poll,
               id: posts[index].id,
-              communityName: posts[index].communityName,
+              communityName:
+                  widget.type == "comm" ? "" : posts[index].communityName,
               isLocked: posts[index].lockedFlag,
               isSaved: posts[index].isSaved ?? false,
               isPostMod: (widget.commmunityName != "" &&
                   (moderatorController.modAccess.everything ||
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
-              pollExpired: posts[index].pollExpired!,
-              pollVote: posts[index].pollVote!,
+              pollExpired: posts[index].pollExpired ?? false,
+              pollVote: posts[index].pollVote ?? "",
+              onclearEdit: handleEditChanged,
+              onclearDelete: handleDeleteListingChanged,
+              onLock: handleLockChange,
             );
           }
         }

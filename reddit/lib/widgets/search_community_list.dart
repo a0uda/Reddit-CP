@@ -116,7 +116,12 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                         builder: (BuildContext context) {
                                           return Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.white),
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(24),
+                                                    topRight:
+                                                        Radius.circular(24))),
                                             height: heigth * 0.8,
                                             width: screenWidth,
                                             padding: const EdgeInsets.all(16.0),
@@ -135,6 +140,8 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                       barrierDismissible: true,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
+                                          backgroundColor: Colors.white,
+                                          surfaceTintColor: Colors.white,
                                           scrollable: true,
                                           content: Builder(
                                             builder: ((context) {
@@ -165,11 +172,17 @@ class _SearchCommunityListState extends State<SearchCommunityList> {
                                 color: Colors.white,
                                 child: ListTile(
                                   tileColor: Colors.white,
-                                  leading: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage(item.profilePictureURL),
-                                    radius: 15,
-                                  ),
+                                  leading: (item.profilePictureURL != "")
+                                      ? CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              item.profilePictureURL),
+                                          radius: 15,
+                                        )
+                                      : CircleAvatar(
+                                          backgroundImage:
+                                              AssetImage("images/Greddit.png"), //comm badr
+                                          radius: 15,
+                                        ),
                                   title: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

@@ -87,8 +87,8 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                 backgroundColor:
                                     const Color.fromARGB(255, 42, 101, 210)),
                             onPressed: () {
-                              if (moderatorController.modAccess.everything ||
-                                  moderatorController.modAccess.manageUsers) {
+                              if ((moderatorController.modAccess.everything ||
+                                  moderatorController.modAccess.manageUsers)) {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) => AddBannedUser(
@@ -96,7 +96,9 @@ class _BannedUsersListState extends State<BannedUsersList> {
                                     ),
                                   ),
                                 );
+                                print("Baned");
                               } else {
+                                print("banned");
                                 showError(context);
                               }
                             }, // Ban user Badrrr ele hya add

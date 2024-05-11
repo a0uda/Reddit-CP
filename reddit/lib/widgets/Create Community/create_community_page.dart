@@ -174,321 +174,331 @@ class _CreateCommunityState extends State<CreateCommunity> {
           },
         ),
       ),
-      body: Container(
-        color: Colors.white,
+      body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                child: const Text(
-                  'Community name',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Column(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 243, 243, 243),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 4, left: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'r/',
-                            style: TextStyle(
-                                fontSize: 15.0,
-                                color: Color.fromARGB(255, 124, 129, 128)),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: inputController,
-                              maxLines: null,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15.0,
-                              ),
-                              cursorColor:
-                                  const Color.fromARGB(255, 39, 79, 164),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                              ),
-                              onChanged: ((value) {
-                                notAvailable = false;
-                                updateCharachterCounter();
-                                checkViolation();
-                                checkTyping();
-                                checkIfFinished();
-                                showClearButton = value.isNotEmpty;
-                              }),
-                            ),
-                          ),
-                          Text(
-                            '$remainingCharacters',
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 173, 173, 173),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          startedTyping
-                              ? AnimatedOpacity(
-                                  opacity: showClearButton ? 1.0 : 0.0,
-                                  duration: const Duration(milliseconds: 10000),
-                                  child: CupertinoButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        inputController.clear();
-                                        startedTyping = false;
-                                        updateCharachterCounter();
-                                        checkViolation();
-                                        checkTyping();
-                                        checkIfFinished();
-                                      });
-                                    },
-                                    child: const Icon(
-                                      CupertinoIcons.clear_circled_solid,
-                                      size: 18,
-                                      color: Color.fromARGB(255, 117, 117, 117),
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox(width: 8),
-                        ],
-                      ),
+          color: Colors.white,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: const Text(
+                    'Community name',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ],
-              ),
-              isViolated
-                  ? const Text(
-                      'Community names must be between 3-21 characters, and can only contain letters, numbers, or underscores.',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 101, 101, 101),
-                        fontSize: 12,
-                      ),
-                    )
-                  : notAvailable
-                      ? Text(
-                          "Sorry, ${inputController.text} is taken. Try another.",
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 255, 0, 0),
-                            fontSize: 12,
-                          ),
-                        )
-                      : const SizedBox(),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                child: const Text(
-                  'Community type',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
                 ),
-              ),
-              ListTile(
-                title: Row(
+                Column(
                   children: [
-                    Text(
-                      chosenCommunityType,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                    const Icon(
-                      Icons.arrow_drop_down,
-                      size: 24,
-                      color: Color.fromARGB(255, 117, 117, 117),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 243, 243, 243),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4, left: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'r/',
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: Color.fromARGB(255, 124, 129, 128)),
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: inputController,
+                                maxLines: null,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15.0,
+                                ),
+                                cursorColor:
+                                    const Color.fromARGB(255, 39, 79, 164),
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: ((value) {
+                                  notAvailable = false;
+                                  updateCharachterCounter();
+                                  checkViolation();
+                                  checkTyping();
+                                  checkIfFinished();
+                                  showClearButton = value.isNotEmpty;
+                                }),
+                              ),
+                            ),
+                            Text(
+                              '$remainingCharacters',
+                              style: const TextStyle(
+                                color: Color.fromARGB(255, 173, 173, 173),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w100,
+                              ),
+                            ),
+                            startedTyping
+                                ? AnimatedOpacity(
+                                    opacity: showClearButton ? 1.0 : 0.0,
+                                    duration:
+                                        const Duration(milliseconds: 10000),
+                                    child: CupertinoButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          inputController.clear();
+                                          startedTyping = false;
+                                          updateCharachterCounter();
+                                          checkViolation();
+                                          checkTyping();
+                                          checkIfFinished();
+                                        });
+                                      },
+                                      child: const Icon(
+                                        CupertinoIcons.clear_circled_solid,
+                                        size: 18,
+                                        color:
+                                            Color.fromARGB(255, 117, 117, 117),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(width: 8),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                subtitle: Text(
-                  chosenCommunityTypeSubtitle,
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 117, 117, 117),
+                isViolated
+                    ? const Text(
+                        'Community names must be between 3-21 characters, and can only contain letters, numbers, or underscores.',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 101, 101, 101),
+                          fontSize: 12,
+                        ),
+                      )
+                    : notAvailable
+                        ? Text(
+                            "Sorry, ${inputController.text} is taken. Try another.",
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 255, 0, 0),
+                              fontSize: 12,
+                            ),
+                          )
+                        : const SizedBox(),
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 16),
+                  child: const Text(
+                    'Community type',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                onTap: () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Container(
-                        margin: const EdgeInsets.only(top: 16),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 5,
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 209, 212, 217),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Community Type',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            ListTile(
-                              title: Text(
-                                publicTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                              subtitle: Text(
-                                publicSubtitle,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 117, 117, 117),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              leading: const Icon(
-                                CupertinoIcons.person_crop_circle,
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  chosenCommunityType = publicTitle;
-                                  chosenCommunityTypeSubtitle = publicSubtitle;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                restrictedTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                              subtitle: Text(
-                                restrictedSubtitle,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 117, 117, 117),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              leading: const Icon(
-                                CupertinoIcons.checkmark_alt_circle,
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  chosenCommunityType = restrictedTitle;
-                                  chosenCommunityTypeSubtitle =
-                                      restrictedSubtitle;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                privateTitle,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
-                              ),
-                              subtitle: Text(
-                                privateSubtitle,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 117, 117, 117),
-                                  fontSize: 13,
-                                ),
-                              ),
-                              leading: const Icon(CupertinoIcons.lock),
-                              onTap: () {
-                                setState(() {
-                                  chosenCommunityType = privateTitle;
-                                  chosenCommunityTypeSubtitle = privateSubtitle;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    '18+ community',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  ),
-                  Switch(
-                    value: initCommunityFlag,
-                    onChanged: (newValue) {
-                      setState(() {
-                        initCommunityFlag = newValue;
-                      });
-                    },
-                    activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
-                    inactiveThumbColor: Colors.white,
-                    inactiveTrackColor:
-                        const Color.fromARGB(255, 242, 242, 242),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: (isViolated || inputController.text.isEmpty)
-                          ? null
-                          : () async {
-                              await checkAvailibleName();
-                            },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: isFinished
-                            ? const Color.fromARGB(255, 0, 110, 200)
-                            : const Color.fromARGB(255, 243, 243, 243),
-                        side: const BorderSide(color: Colors.transparent),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                ListTile(
+                  title: Row(
+                    children: [
+                      Text(
+                        chosenCommunityType,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 18),
                       ),
-                      child: Text(
-                        'Create community',
-                        style: TextStyle(
-                          color: isFinished
-                              ? Colors.white
-                              : const Color.fromARGB(255, 211, 211, 211),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                      const Icon(
+                        Icons.arrow_drop_down,
+                        size: 24,
+                        color: Color.fromARGB(255, 117, 117, 117),
+                      ),
+                    ],
+                  ),
+                  subtitle: Text(
+                    chosenCommunityTypeSubtitle,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 117, 117, 117),
+                    ),
+                  ),
+                  onTap: () {
+                    showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Container(
+                          margin: const EdgeInsets.only(top: 16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 5,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 209, 212, 217),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Community Type',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              ListTile(
+                                title: Text(
+                                  publicTitle,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                                subtitle: Text(
+                                  publicSubtitle,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 117, 117, 117),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                leading: const Icon(
+                                  CupertinoIcons.person_crop_circle,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    chosenCommunityType = publicTitle;
+                                    chosenCommunityTypeSubtitle =
+                                        publicSubtitle;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: Text(
+                                  restrictedTitle,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                                subtitle: Text(
+                                  restrictedSubtitle,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 117, 117, 117),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                leading: const Icon(
+                                  CupertinoIcons.checkmark_alt_circle,
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    chosenCommunityType = restrictedTitle;
+                                    chosenCommunityTypeSubtitle =
+                                        restrictedSubtitle;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              ListTile(
+                                title: Text(
+                                  privateTitle,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16),
+                                ),
+                                subtitle: Text(
+                                  privateSubtitle,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(255, 117, 117, 117),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                leading: const Icon(CupertinoIcons.lock),
+                                onTap: () {
+                                  setState(() {
+                                    chosenCommunityType = privateTitle;
+                                    chosenCommunityTypeSubtitle =
+                                        privateSubtitle;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '18+ community',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
+                    ),
+                    Switch(
+                      value: initCommunityFlag,
+                      onChanged: (newValue) {
+                        setState(() {
+                          initCommunityFlag = newValue;
+                        });
+                      },
+                      activeTrackColor: const Color.fromARGB(255, 0, 110, 200),
+                      inactiveThumbColor: Colors.white,
+                      inactiveTrackColor:
+                          const Color.fromARGB(255, 242, 242, 242),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: (isViolated || inputController.text.isEmpty)
+                            ? null
+                            : () async {
+                                await checkAvailibleName();
+                              },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: isFinished
+                              ? const Color.fromARGB(255, 0, 110, 200)
+                              : const Color.fromARGB(255, 243, 243, 243),
+                          side: const BorderSide(color: Colors.transparent),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                        child: Text(
+                          'Create community',
+                          style: TextStyle(
+                            color: isFinished
+                                ? Colors.white
+                                : const Color.fromARGB(255, 211, 211, 211),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

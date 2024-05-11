@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
-import 'package:reddit/Controllers/post_controller.dart';
 import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/widgets/collapse_post.dart';
-
 import 'package:reddit/widgets/post.dart';
 import 'package:get_it/get_it.dart';
 import 'package:reddit/widgets/repost.dart';
 import '../Controllers/user_controller.dart';
-
-import 'package:reddit/Models/post_item.dart';
 import 'package:reddit/Models/user_about.dart';
 import 'package:reddit/Services/post_service.dart';
 
@@ -50,7 +45,8 @@ class NewListingBuild extends State<NewListing> {
         post = await postService.getPosts(user, "new", page);
         page = page + 1;
       } else {
-        posts = postService.fetchPosts();
+          post = await postService.getGuestPosts("best", page);
+        page = page + 1;
       }
     } else if (widget.type == "profile") {
       final String username = widget.userData!.username;
@@ -85,6 +81,37 @@ class NewListingBuild extends State<NewListing> {
 
       // setState(() {});
     }
+  }
+
+  void handleEditChanged(String postid, String text) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.description = text;
+      }
+    }
+  }
+
+  void handleLockChange(String postid, bool lock) {
+    for (var post in posts) {
+      if (post.id == postid) {
+        post.lockedFlag = lock;
+      }
+    }
+  }
+
+  void handleDeleteListingChanged(String postid) {
+    setState(() {
+      List<PostItem> postsToRemove = [];
+
+      for (var post in posts) {
+        if (post.id == postid) {
+          postsToRemove.add(post);
+          post.isRemoved = true;
+        }
+      }
+
+      posts.removeWhere((post) => postsToRemove.contains(post));
+    });
   }
 
   void initState() {
@@ -134,6 +161,9 @@ class NewListingBuild extends State<NewListing> {
                     (moderatorController.modAccess.everything ||
                         moderatorController.modAccess.managePostsAndComments)),
                 moderatorDetails: posts[index].moderatorDetails,
+                onLock: handleLockChange,
+                onclearDelete: handleDeleteListingChanged,
+                onclearEdit: handleEditChanged,
               );
             }
             if (posts[index].nsfwFlag == true ||
@@ -174,7 +204,10 @@ class NewListingBuild extends State<NewListing> {
                       moderatorController.modAccess.managePostsAndComments)),
               moderatorDetails: posts[index].moderatorDetails,
               pollExpired: posts[index].pollExpired!,
-                          pollVote: posts[index].pollVote!,
+              pollVote: posts[index].pollVote!,
+              onLock: handleLockChange,
+              onclearDelete: handleDeleteListingChanged,
+              onclearEdit: handleEditChanged,
             );
           }
         }

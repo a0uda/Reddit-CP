@@ -55,8 +55,8 @@ class LoginPageState extends State<LoginPage> {
     if (validationResult == 200) {
       final userController = GetIt.instance.get<UserController>();
       await userController.getUser(usernameController.text);
-          final userService = GetIt.instance.get<UserService>();
-       await chatService.SocketInit();
+      final userService = GetIt.instance.get<UserService>();
+      await chatService.SocketInit();
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -405,9 +405,9 @@ class LoginPageState extends State<LoginPage> {
       actions: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SignUpPage()),
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => SignUpPage()),
+              (Route<dynamic> route) => false,
             );
           },
           child: Padding(

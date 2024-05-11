@@ -122,7 +122,7 @@ class _DesktopAppBarState extends State<DesktopAppBar> {
                               ),
                             )
                           : const SizedBox(),
-                      const Text("Search..."),
+                      widget.isInCommunity ? const SizedBox() : const Text("Search..."),
                     ]),
                   ),
                 ),

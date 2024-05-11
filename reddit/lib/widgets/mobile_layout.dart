@@ -53,7 +53,6 @@ class _MobileLayoutState extends State<MobileLayout> {
       MobileHomePage(
         widgetIndex: widget.mobilePageMode,
       ),
-      const CommunitiesMobile(), //Communities Page here
       const CreatePost(),
       ChatIntro(),
 
@@ -77,7 +76,6 @@ class _MobileLayoutState extends State<MobileLayout> {
                         const Text('Notifications'),
                         const SizedBox(width: 5),
                         Consumer<NotificationsService>(
-                            
                             builder: (context, notificationsService, child) {
                           if (userController.unreadNotificationsCount > 0) {
                             return Container(
@@ -165,141 +163,141 @@ class _MobileLayoutState extends State<MobileLayout> {
         endDrawer: userLoggedIn ? EndDrawerReddit() : Container(),
         drawer: selectedDrawer,
         bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          currentIndex: selectedIndexPage,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black,
-          showUnselectedLabels: true,
-          items: [
-            BottomNavigationBarItem(
-                icon: selectedIndexPage == 0
-                    ? const Icon(
-                        Icons.home,
-                        size: kToolbarHeight * (3 / 7),
-                      )
-                    : const Icon(
-                        Icons.home_outlined,
-                        size: kToolbarHeight * (3 / 7),
-                      ),
-                label: "Home"),
-            BottomNavigationBarItem(
-                icon: selectedIndexPage == 1
-                    ? const Icon(
-                        CupertinoIcons.group_solid,
-                        size: kToolbarHeight * (3 / 7),
-                      )
-                    : const Icon(
-                        CupertinoIcons.group,
-                        size: kToolbarHeight * (3 / 7),
-                      ),
-                label: "Communities"),
-            const BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.add,
-                  size: kToolbarHeight * (3 / 7),
-                ),
-                label: "Create"),
-            BottomNavigationBarItem(
-                icon: selectedIndexPage == 3
-                    ? const Icon(
-                        CupertinoIcons.chat_bubble_text_fill,
-                        size: kToolbarHeight * (3 / 7),
-                      )
-                    : const Icon(
-                        CupertinoIcons.chat_bubble_text,
-                        size: kToolbarHeight * (3 / 7),
-                      ),
-                label: "Chat"),
-            BottomNavigationBarItem(
-              icon: Stack(
-                children: [
-                  // The icon
-                  Icon(
-                    selectedIndexPage == 4
-                        ? Icons.notifications
-                        : Icons.notifications_outlined,
+            elevation: 0,
+            currentIndex: selectedIndexPage,
+            selectedItemColor: Colors.black,
+            unselectedItemColor: Colors.black,
+            showUnselectedLabels: true,
+            items: [
+              BottomNavigationBarItem(
+                  icon: selectedIndexPage == 0
+                      ? const Icon(
+                          Icons.home,
+                          size: kToolbarHeight * (3 / 7),
+                        )
+                      : const Icon(
+                          Icons.home_outlined,
+                          size: kToolbarHeight * (3 / 7),
+                        ),
+                  label: "Home"),
+              const BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.add,
                     size: kToolbarHeight * (3 / 7),
                   ),
-                  // The notification+messages count
-                  Consumer<NotificationsService>(
-                      builder: (context, notificationsService, child) {
-                    return Consumer<GetMessagesController>(
-                        builder: (context, getMessagesController, child) {
-                      if (userController.unreadNotificationsCount +
-                              userController.unreadMessagesCount >
-                          0) {
-                        return Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(1),
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 12,
-                              minHeight: 12,
-                            ),
-                            child: Text(
-                              '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
+                  label: "Create"),
+              BottomNavigationBarItem(
+                  icon: selectedIndexPage == 2
+                      ? const Icon(
+                          CupertinoIcons.chat_bubble_text_fill,
+                          size: kToolbarHeight * (3 / 7),
+                        )
+                      : const Icon(
+                          CupertinoIcons.chat_bubble_text,
+                          size: kToolbarHeight * (3 / 7),
+                        ),
+                  label: "Chat"),
+              BottomNavigationBarItem(
+                icon: Stack(
+                  children: [
+                    // The icon
+                    Icon(
+                      selectedIndexPage == 3
+                          ? Icons.notifications
+                          : Icons.notifications_outlined,
+                      size: kToolbarHeight * (3 / 7),
+                    ),
+                    // The notification+messages count
+                    Consumer<NotificationsService>(
+                        builder: (context, notificationsService, child) {
+                      return Consumer<GetMessagesController>(
+                          builder: (context, getMessagesController, child) {
+                        if (userController.unreadNotificationsCount +
+                                userController.unreadMessagesCount >
+                            0) {
+                          return Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(1),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
                               ),
-                              textAlign: TextAlign.center,
+                              constraints: const BoxConstraints(
+                                minWidth: 12,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                '${userController.unreadNotificationsCount + userController.unreadMessagesCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
-                        );
-                      } else {
-                        return const SizedBox(
-                          height: 0,
-                          width: 0,
-                        );
-                      }
-                    });
-                  }),
-                ],
-              ),
-              label: "Inbox",
-            )
-          ],
-          onTap: (value) => {
-            if (value != 2)
-              {
-                setState(() {
-                  selectedIndexPage = value;
-                })
-              }
-            else
-              {
-                if (userLoggedIn)
-                  {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const CreatePost(),
-                    ))
-                  }
-                else
-                  {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ))
-                  }
-              },
-            if (value == 4)
-              {
-                setState(() {
-                  isInbox = true;
-                })
-              }
-            else
-              {
-                setState(() {
-                  isInbox = false;
-                })
-              }
-          },
-        ),
+                          );
+                        } else {
+                          return const SizedBox(
+                            height: 0,
+                            width: 0,
+                          );
+                        }
+                      });
+                    }),
+                  ],
+                ),
+                label: "Inbox",
+              )
+            ],
+            onTap: (value) => {
+                  if (!userLoggedIn && value != 0)
+                    {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      ),
+                    }
+                  else
+                    {
+                      if (value != 1)
+                        {
+                          setState(() {
+                            selectedIndexPage = value;
+                          })
+                        }
+                      else
+                        {
+                          if (userLoggedIn)
+                            {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const CreatePost(),
+                              ))
+                            }
+                          else
+                            {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                                (Route<dynamic> route) => false,
+                              ),
+                            }
+                        },
+                      if (value == 3)
+                        {
+                          setState(() {
+                            isInbox = true;
+                          })
+                        }
+                      else
+                        {
+                          setState(() {
+                            isInbox = false;
+                          })
+                        }
+                    },
+                }),
         body: selectedScreen);
   }
 }

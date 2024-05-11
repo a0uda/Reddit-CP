@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:reddit/Controllers/community_controller.dart';
 import 'package:reddit/Controllers/moderator_controller.dart';
 import 'package:reddit/Pages/description_widget.dart';
+import 'package:reddit/Pages/history.dart';
+import 'package:reddit/Pages/login.dart';
 import 'package:reddit/widgets/Moderator/desktop_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mobile_mod_tools.dart';
 import 'package:reddit/widgets/Moderator/mod_responsive.dart';
@@ -245,6 +247,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   backgroundColor: const Color.fromARGB(255, 242, 243, 245),
+                  surfaceTintColor: const Color.fromARGB(255, 242, 243, 245),
                   foregroundColor: const Color.fromARGB(255, 109, 109, 110),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(40),
@@ -375,7 +378,32 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                           const Spacer(),
                           OutlineButtonWidget(
                             'Create a post',
-                            () {},
+                            () {
+                              if (userController.userAbout != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ModResponsive(
+                                      mobileLayout: MobileModTools(
+                                        communityName:
+                                            moderatorController.communityName,
+                                      ),
+                                      desktopLayout: DesktopModTools(
+                                        index: 0,
+                                        communityName:
+                                            moderatorController.communityName,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              }
+                            },
                             icon: const Icon(CupertinoIcons.add),
                             borderColor: Colors.black,
                           ),
@@ -406,7 +434,8 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                                       const Color.fromARGB(255, 0, 69, 172),
                                   foregroundColour: Colors.white,
                                 )
-                              : FutureBuilder(
+                              : userController.userAbout != null ?
+                              FutureBuilder(
                                   future: fetchCommunityInfo(),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
@@ -444,7 +473,7 @@ class _DesktopCommunityPageBarState extends State<DesktopCommunityPageBar> {
                                       ));
                                     }
                                   },
-                                ),
+                                ) : const SizedBox(),
                         ],
                       ),
                     ),

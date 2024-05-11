@@ -971,7 +971,7 @@ class ModeratorMockService {
 
       final response = await http.get(
         url,
-        headers: {'Content-Type': 'application/json', 'Authorization': token!},
+        headers: {'Content-Type': 'application/json', 'Authorization': token ?? ""},
       );
       //print(response.body);
       final String membersCount =
@@ -1173,7 +1173,7 @@ class ModeratorMockService {
         'https://redditech.me/backend/communities/get-community-view/$communityName');
     final response = await http.get(
       url,
-      headers: {'Content-Type': 'application/json', 'Authorization': token!},
+      headers: {'Content-Type': 'application/json', 'Authorization': token ?? ""},
     );
     final Map<String, dynamic> decodedInfo = json.decode(response.body);
     return {

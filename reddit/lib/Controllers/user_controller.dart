@@ -160,6 +160,20 @@ class UserController {
     }
     return following!;
   }
+
+  void Destructor() {
+    userAbout = null;
+    blockedUsers = null;
+    accountSettings = null;
+    profileSettings = null;
+    notificationsSettings = null;
+    userCommunities = null;
+    userModeratedCommunities = null;
+    followers = [];
+    following = [];
+    unreadNotificationsCount = 0;
+    unreadMessagesCount = 0;
+  }
 }
 
 class AccountSettingsController extends ChangeNotifier {
@@ -278,14 +292,16 @@ class FollowerFollowingController extends ChangeNotifier {
 
   Future<void> followUser(String username) async {
     await userService.followUser(username, userController.userAbout!.username);
-    following = await userController.getFollowing(userController.userAbout!.username);
+    following =
+        await userController.getFollowing(userController.userAbout!.username);
     notifyListeners();
   }
 
   Future<void> unfollowUser(String username) async {
     await userService.unfollowUser(
         username, userController.userAbout!.username);
-    following = await userController.getFollowing(userController.userAbout!.username);
+    following =
+        await userController.getFollowing(userController.userAbout!.username);
     notifyListeners();
   }
 }
