@@ -112,6 +112,29 @@ class NotificationsService with ChangeNotifier {
     }
   }
 
+  Future<bool> muteUnmuteCommunity(String communityName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final url =
+        Uri.parse('https://redditech.me/backend/users/mute-unmute-community');
+    final response = await http.patch(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token!,
+      },
+      body: jsonEncode({
+        'community_name': communityName,
+      }),
+    );
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return true;
+    } else {
+      throw Exception('Failed to mute community');
+    }
+  }
+
   Future<bool> markAllAsRead() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');

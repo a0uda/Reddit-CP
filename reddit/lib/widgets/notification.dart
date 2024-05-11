@@ -211,7 +211,11 @@ class NotificationCardState extends State<NotificationCard> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () => {},
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await notificationsService.muteUnmuteCommunity(
+                          widget.notificationItem.communityName!);
+                    },
                     child: const Row(
                       children: [
                         Icon(
